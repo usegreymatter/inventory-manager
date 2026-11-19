@@ -1,0 +1,37 @@
+// Lifecycle: living. Offline declutter approval proof, not the full release gate.
+'use strict'
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),{pathToFileURL}=require('node:url')
+const out=path.resolve(__dirname,'../.scratch/pp'),url=pathToFileURL(path.join(__dirname,'stock-runway.html')).href,report={checks:[],errors:[],screenshots:[],not_checked:['Owner design approval','Full suite / linters','Real iPhone / Safari','Arabic UI','Live inventory']}
+const check=(name,value)=>{report.checks.push({name,pass:!!value});assert.ok(value,name)}
+const settle=p=>p.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))))
+
+async function shot(p,name){await settle(p);const f=path.join(out,name+'.png');await p.screenshot({path:f});report.screenshots.push(f)}
+async function view(p){if(!await p.locator('#work-view').evaluate(e=>e.open))await p.locator('#work-view>summary').click()}
+async function main(){
+ fs.mkdirSync(out,{recursive:true});const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright'),browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_EXECUTABLE||undefined})
+ try{
+ for(const width of [1440,390]){
+  const ctx=await browser.newContext({viewport:{width,height:width===390?844:900},isMobile:width===390,hasTouch:width===390,colorScheme:'light',reducedMotion:'reduce'});await ctx.route(/^https?:/,r=>r.abort());const p=await ctx.newPage();p.on('pageerror',e=>report.errors.push(e.message));await p.clock.setFixedTime(new Date('2026-11-15T12:00:00Z'));await p.goto(url);await p.waitForSelector('.work-row');
+  check(width+' three summary metrics',await p.locator('.work-summary>button').count()===3)
+  check(width+' first load Order now + Simple',await p.locator('[data-view=order]').getAttribute('aria-pressed')==='true'&&await p.locator('[data-density=simple]').getAttribute('aria-pressed')==='true')
+  check(width+' no page overflow',await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth))
+  check(width+' one header menu, one View',await p.locator('.topbar>details').count()===1&&await p.locator('#work-view').count()===1&&await p.locator('#view-menu,#work-more,.work-toolbar').count()===0)
+  check(width+' no per-row assumption badges',await p.locator('.work-row .assumed-delivery').count()===0)
+  if(width===1440){const top=await p.locator('#work-scroll').evaluate(e=>e.getBoundingClientRect().top);report.controls_after=await p.evaluate(top=>[...document.querySelectorAll('button,a,select,input,summary')].filter(e=>{const r=e.getBoundingClientRect();return e.checkVisibility()&&r.width>0&&r.height>0&&r.top>=0&&r.bottom<=top}).length,top);const baseline=path.join(out,'controls-before.json');if(fs.existsSync(baseline))report.controls_before=JSON.parse(fs.readFileSync(baseline)).count;else report.not_checked.push('Before control count (original baseline capture missing)')}
+  await shot(p,'clean-'+width)
+  await view(p);if(width===1440)await shot(p,'clean-view-open-1440')
+  for(const group of ['supplier','category','none','status']){await p.locator('button[data-group='+group+']').click();check(width+' group '+group,await p.locator('button[data-group='+group+']').getAttribute('aria-pressed')==='true'&&await p.locator('#work-view').evaluate(e=>e.open))}
+  await p.locator('[data-density=detailed]').click();// Auto-hidden (policy 2026-11-17): Status inside a single-status tab; Order/Excess value when no product has a cost (sample has none).
+  const autoHidden=3+/* +Stock-outs: none flagged in sample */(await p.locator('.work-head [data-column=status]').count()?0:1);check(width+' Detailed has all useful columns',await p.locator('.work-head [role=columnheader]').count()===19-autoHidden);await p.locator('[data-density=simple]').click();check(width+' Simple has nine columns minus auto-hidden',await p.locator('.work-head [role=columnheader]').count()===9-1-(await p.locator('.work-head [data-column=status]').count()?0:1))
+  await p.locator('#column-customize>summary').click();check(width+' customize opens',await p.locator('.work-column-option').first().isVisible());await p.getByRole('button',{name:'Done',exact:true}).click();check(width+' Done closes customize',!await p.locator('#column-customize').evaluate(e=>e.open))
+  for(const facet of ['supplier','category']){await p.locator('#filter-'+facet+'>summary').click();const input=p.locator('#filter-'+facet+' .work-options input').first();await input.check();check(width+' '+facet+' filter applied',await p.locator('.work-active button').first().isVisible());await p.locator('#work-view>summary').click();await p.locator('.work-active button').first().click();check(width+' '+facet+' chip removable',await p.locator('.work-active').isHidden());await view(p)}
+  p.once('dialog',d=>d.accept('Clean view'));await p.getByRole('button',{name:'Save this view',exact:true}).click();check(width+' saved view listed',await p.getByRole('button',{name:'Clean view',exact:true}).isVisible());await p.getByRole('button',{name:'Clean view',exact:true}).click();await p.locator('#work-view>summary').click()
+  await p.locator('[data-view=all]').click();check(width+' All tab',await p.locator('.work-row').count()===5);await p.locator('#work-scroll').focus();await p.keyboard.press('/');check(width+' slash focuses search',await p.locator('#search').evaluate(e=>e===document.activeElement));await p.locator('#search').pressSequentially('SEAL-WHT');check(width+' search filters while retaining typing focus',await p.locator('.work-row').count()===1&&await p.locator('#search').inputValue()==='SEAL-WHT'&&await p.locator('#search').evaluate(e=>e===document.activeElement));await p.locator('#search').fill('');await p.keyboard.press('Escape');check(width+' Escape collapses focused search',await p.locator('#search').evaluate(e=>e!==document.activeElement));await p.locator('[data-view=healthy]').click();check(width+' OK tab',await p.locator('.work-row').count()===2);await p.locator('[data-view=running-low]').click();check(width+' Soon tab',await p.locator('.work-row').count()===0);await p.locator('[data-view=all]').click()
+  const assumption=p.locator('.work-lead-note:not(.stockout-active-note):not(#analysis-progress)');check(width+' one assumption note',await assumption.count()===1&&await assumption.isVisible());await p.getByRole('button',{name:'Set in Settings',exact:true}).click();check(width+' assumption Settings link',await p.locator('#settings-sheet').evaluate(e=>e.open));await p.locator('#settings-sheet header button').click()
+  await p.locator('.work-row[data-sku="UL-FOAM-GRN"] .work-product').click();check(width+' product page opens',await p.locator('.product-page').isVisible());check(width+' product detail keeps lead assumption',await p.locator('.product-input').allTextContents().then(t=>t.some(x=>x.includes('Lead time')&&x.includes('Assumed'))));await p.locator('#product-page-close').click();await p.waitForSelector('.product-page',{state:'detached'});check(width+' no page overflow after interactions',await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await ctx.close()
+ }
+ check('No page errors',report.errors.length===0)
+ }finally{await browser.close();fs.writeFileSync(path.join(out,'clean-report.json'),JSON.stringify(report,null,2)+'\n')}
+ console.log(JSON.stringify(report,null,2))
+}
+main().catch(e=>{console.error(e);process.exitCode=1})

@@ -1,0 +1,119 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "mapping.schema.json",
+  "title": "mapping",
+  "description": "Per-connector field mapping file (JSON; the engine is standard-library only, so YAML is not parsed). Maps vendor fields to canonical fields. Contains no secrets and no URLs with credentials.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "mapping_version",
+    "connector",
+    "streams"
+  ],
+  "properties": {
+    "mapping_version": {
+      "const": "1"
+    },
+    "connector": {
+      "type": "string",
+      "pattern": "^[a-z0-9_-]{1,40}$"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 500
+    },
+    "timezone": {
+      "type": "string",
+      "maxLength": 64
+    },
+    "currency": {
+      "$ref": "common.schema.json#/$defs/currency"
+    },
+    "secrets": {
+      "type": "array",
+      "maxItems": 10,
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Z][A-Z0-9_]{1,63}$"
+      },
+      "description": "NAMES of secrets read from Hermes secrets / env / OS keychain. Never values."
+    },
+    "streams": {
+      "type": "object",
+      "maxProperties": 10,
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "fields"
+        ],
+        "properties": {
+          "source": {
+            "type": "string",
+            "maxLength": 120,
+            "description": "Vendor model/endpoint/file name. Verify against vendor docs."
+          },
+          "filter": {
+            "type": "array",
+            "maxItems": 20,
+            "items": {
+              "type": "array"
+            },
+            "description": "Connector-specific, allowlisted filter leaves."
+          },
+          "cursor_field": {
+            "type": "string",
+            "maxLength": 80
+          },
+          "fields": {
+            "type": "object",
+            "maxProperties": 40,
+            "additionalProperties": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "maxLength": 120
+                },
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "from": {
+                      "type": "string",
+                      "maxLength": 120
+                    },
+                    "const": {},
+                    "transform": {
+                      "enum": [
+                        "relation_id",
+                        "relation_name",
+                        "date_local",
+                        "decimal",
+                        "bool",
+                        "negate",
+                        "lowercase",
+                        "sum_children"
+                      ]
+                    },
+                    "default_unknown": {
+                      "const": true
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "verified": {
+            "type": "boolean",
+            "description": "False until checked against the owner's real instance (read-only)."
+          }
+        }
+      }
+    },
+    "unit_conversions": {
+      "type": "string",
+      "maxLength": 120,
+      "description": "Optional relative path of a unit_conversions.csv in the same folder."
+    }
+  }
+}

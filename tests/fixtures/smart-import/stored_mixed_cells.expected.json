@@ -1,0 +1,100 @@
+{
+  "expected_layout": "wide_months",
+  "expected_product_count": 1,
+  "expected_scenario": {
+    "items": [
+      {
+        "monthly_sales": [
+          3,
+          6,
+          9
+        ],
+        "name": "Synthetic Widget A",
+        "on_hand": 12,
+        "sku": "A-001",
+        "supplier": "Synthetic Supply A",
+        "supplier_days": 14,
+        "unit": "units"
+      }
+    ],
+    "months": [
+      "2026-01",
+      "2026-02",
+      "2026-03"
+    ]
+  },
+  "fixture": "stored_mixed_cells.xlsx",
+  "ignored_rows": [
+    {
+      "reason": "inactive in ERP",
+      "row": 3,
+      "sheet": "Inventory"
+    }
+  ],
+  "mappings": [
+    {
+      "fields": {
+        "name": {
+          "column": "B",
+          "header": "Item Name"
+        },
+        "on_hand": {
+          "column": "D",
+          "header": "Qty On Hand"
+        },
+        "sku": {
+          "column": "A",
+          "header": "Item Code"
+        },
+        "supplier": {
+          "column": "F",
+          "header": "Supplier"
+        },
+        "supplier_days": {
+          "column": "E",
+          "header": "Lead Time"
+        },
+        "unit": {
+          "column": "C",
+          "header": "UoM"
+        }
+      },
+      "header_row": 1,
+      "headers": [
+        "Item Code",
+        "Item Name",
+        "UoM",
+        "Qty On Hand",
+        "Lead Time",
+        "Supplier",
+        "Jan 2026",
+        "2026-02",
+        "March",
+        "Active"
+      ],
+      "monthly_sales": [
+        {
+          "column": "G",
+          "header": "Jan 2026",
+          "month": "2026-01"
+        },
+        {
+          "column": "H",
+          "header": "2026-02",
+          "month": "2026-02"
+        },
+        {
+          "column": "I",
+          "header": "March",
+          "month": "2026-03"
+        }
+      ],
+      "sheet": "Inventory"
+    }
+  ],
+  "notes": [
+    "Active is a boolean; FALSE marks B-002 inactive and excludes it from planning.",
+    "Includes shared strings, inline strings, numeric and boolean cells."
+  ],
+  "schema_version": 1
+}

@@ -1,0 +1,16 @@
+/* Lifecycle: living. Quiet supplier advisory below existing header actions. */
+.work-group[data-group=supplier].work-group-minimum { height:120px; flex-wrap:wrap; align-content:center; column-gap:12px; row-gap:8px; }
+.supplier-minimum-line { display:flex; align-items:center; gap:12px; width:100%; min-width:0; font-size:12px; }
+.supplier-minimum-line>span { flex:1; min-width:0; white-space:normal; overflow-wrap:anywhere; line-height:18px; }
+.work-group .supplier-minimum-line button { flex-shrink:0; margin:0; font-size:12px; padding:4px 8px; }
+.supplier-minimum-settings table { border-collapse:collapse; width:100%; table-layout:fixed; margin-top:12px; }
+.supplier-minimum-settings th,.supplier-minimum-settings td { text-align:left; font-size:12px; font-weight:400; padding:8px 4px; border-bottom:1px solid var(--line); overflow-wrap:anywhere; }
+.supplier-minimum-settings th:first-child { width:40%; }
+.supplier-minimum-settings input { width:100%; min-width:0; min-height:44px; padding:6px; border:1px solid var(--line); background:var(--bg); color:var(--ink); }
+.work-sku .local-order-pill { margin-inline-start:10px; display:inline-block; }
+@media(max-width:1023px){
+ .work-group[data-group=supplier].work-group-minimum { height:248px; align-content:start; padding-top:8px; row-gap:0; }
+ .work-group[data-group=supplier] .supplier-minimum-line { grid-column:1 / -1; grid-row:3; flex-wrap:wrap; gap:4px; padding-top:8px; }
+ .supplier-minimum-line>span { flex-basis:100%; white-space:normal; line-height:18px; overflow-wrap:anywhere; }
+ .work-group .supplier-minimum-line button { min-height:44px; padding:4px 0; }
+}

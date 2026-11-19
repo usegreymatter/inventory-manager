@@ -1,0 +1,7 @@
+from_warehouse,to_warehouse,lead_days
+MAIN,EAST,2
+MAIN,WEST,3
+EAST,MAIN,2
+EAST,WEST,2
+WEST,MAIN,3
+WEST,EAST,2

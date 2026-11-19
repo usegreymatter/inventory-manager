@@ -1,0 +1,7 @@
+sku,supplier,unit,pack_size,moq,max_order_qty,unit_cost,cbm,weight_kg,abc_override,critical,lifecycle,replaced_by
+TILE-SAND,SYN-TILE,box,12,24,120,10,0.02,20,,false,active,
+TILE-OLD,SYN-TILE,box,12,24,120,8,0.02,20,,false,discontinued,TILE-SAND
+TILE-GREY,SYN-TILE,box,12,24,120,12,0.02,20,,false,active,
+ADH-20,SYN-CHEM,bag,1,10,100,3,0.015,20,,false,active,
+GROUT-5,SYN-CHEM,bag,1,5,100,2,0.004,5,,true,active,
+EDGE-NEW,SYN-TILE,piece,4,8,80,4,0.001,0.5,,false,new,

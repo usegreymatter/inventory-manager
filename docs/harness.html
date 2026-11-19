@@ -1,0 +1,72 @@
+<!doctype html>
+<!-- Lifecycle: living. Harness, not the real app. No external resources. -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Stock Runway harness, not the real app</title>
+  <style>
+    /* Names and green/blue tokens follow the Desktop SDK and app styles.css. */
+    :root {
+      scroll-padding-bottom: calc(var(--stress-controls-height, 0px) + 8px);
+      --ui-text-primary: #202b38; --ui-text-secondary: #526171;
+      --ui-stroke-secondary: #cbd3dc; --ui-bg-secondary: #edf1f5;
+      --ui-green: #1f8a65; --ui-blue: #0053fd; --ui-accent: #536c89;
+      --ui-red: #ba294c; --ui-orange: #a45b14;
+      --harness-bg: #fafbfc;
+      color-scheme: light;
+    }
+    :root[data-theme="dark"] {
+      --ui-text-primary: #e1e7ee; --ui-text-secondary: #a6b4c3;
+      --ui-stroke-secondary: #44505f; --ui-bg-secondary: #26313f;
+      --ui-green: #55a583; --ui-blue: #699dff; --ui-accent: #9aafc9;
+      --ui-red: #ff89a5; --ui-orange: #edb66e;
+      --harness-bg: #18212c;
+      color-scheme: dark;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding-bottom: var(--stress-controls-height, 0px); font: 14px system-ui, sans-serif; background: var(--harness-bg); color: var(--ui-text-primary); }
+    .notice { display: flex; flex-wrap: wrap; gap: 8px 12px; padding: 12px 20px; border-bottom: 1px solid var(--ui-stroke-secondary); color: var(--ui-text-secondary); }
+    .notice a { margin-left: 0; }
+    a { color: inherit; margin-left: 12px; }
+    button, select { font: inherit; color: inherit; background: var(--ui-bg-secondary); border: 1px solid var(--ui-stroke-secondary); padding: 8px 12px; border-radius: 5px; }
+    button, select, input { min-height: 36px; }
+    :focus-visible { outline: 2px solid var(--ui-blue); outline-offset: 3px; }
+    /* The real host Button uses a shadow ring. Do not let the generic harness
+       outline conceal an inline box-shadow collision on product/filter rows. */
+    button[aria-pressed]:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ui-blue); }
+    .stress-controls { position: fixed; bottom: 0; left: 0; right: 0; z-index: 10; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; padding: 6px; background: var(--harness-bg); border-block: 1px solid var(--ui-stroke-secondary); }
+    .stress-controls button { font-size: 11px; min-height: 28px; padding: 4px 6px; }
+    button[aria-pressed="true"] { outline: 2px solid var(--ui-accent); outline-offset: -2px; }
+    .segments { display: flex; gap: 4px; }
+    .badge { display: inline-block; font-size: 12px; padding: 4px 8px; background: var(--ui-bg-secondary); border-radius: 4px; }
+    .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 4px; background: var(--ui-text-secondary); }
+    .dot.good { background: var(--ui-green); }
+    .dot.warn { background: var(--ui-orange); }
+    .dot.bad { background: var(--ui-red); }
+    .badge[data-variant="warn"] { color: var(--ui-orange); }
+    .badge[data-variant="success"] { color: var(--ui-green); }
+    .badge[data-variant="destructive"] { color: var(--ui-red); }
+    .harness-actions { padding: 12px 16px 0; }
+    .status-bar { padding: 8px 16px; border-top: 1px solid var(--ui-stroke-secondary); }
+    .chat-card { margin: 20px auto; padding: 16px; max-width: 1024px; min-width: 0; border: 1px solid var(--ui-stroke-secondary); border-radius: 8px; }
+    dialog { padding: 20px; max-height: 85vh; border: 1px solid var(--ui-stroke-secondary); border-radius: 12px; background: var(--harness-bg); color: var(--ui-text-primary); }
+    dialog::backdrop { background: var(--ui-bg-secondary); opacity: .85; }
+    dialog h2 { margin: 0 32px 4px 0; font-size: 18px; }
+    dialog header p { color: var(--ui-text-secondary); margin: 0 0 12px; }
+    dialog .dialog-close { position: absolute; right: 8px; top: 8px; padding: 0 10px; }
+    dialog section + button { margin-top: 16px; }
+    p { line-height: 1.55; }
+  </style>
+</head>
+<body>
+  <div class="notice">Harness, not the real app <a href="#">Forecast</a><a href="#settings">Settings</a><a href="#card">Chat card</a></div>
+  <div id="root"></div>
+  <script>document.documentElement.dataset.theme = new URLSearchParams(location.search).get('theme') || 'light'</script>
+  <script>
+    // Only two local, fixed developer bundles; arbitrary URLs are never accepted.
+    const bundle = new URLSearchParams(location.search).get('build') === 'baseline' ? 'harness-baseline.bundle.js' : 'harness.bundle.js'
+    const script = document.createElement('script'); script.src = '../.scratch/' + bundle; document.body.append(script)
+  </script>
+</body>
+</html>

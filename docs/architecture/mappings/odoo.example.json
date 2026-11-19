@@ -1,0 +1,144 @@
+{
+  "mapping_version": "1",
+  "connector": "odoo",
+  "description": "Odoo 17-19 over XML-RPC search_read only. Streams marked NEW need an owner-approved expansion of sources.ALLOWED_FIELDS before use. All technical field names are ASSUMED until checked read-only on the owner's instance (CONTRACT.md evidence rule). Verify against vendor docs: https://www.odoo.com/documentation/17.0/developer/reference/external_api.html Fields used by today's streams are within sources.ALLOWED_FIELDS (product.supplierinfo min_qty is deliberately not mapped: not allowlisted, and a price-break quantity is not an MOQ). Record 'id' relies on search_read returning ids; verify.",
+  "timezone": "Asia/Kuwait",
+  "currency": "KWD",
+  "secrets": [
+    "ODOO_URL",
+    "ODOO_DB",
+    "ODOO_USER",
+    "ODOO_API_KEY"
+  ],
+  "streams": {
+    "item": {
+      "source": "product.product",
+      "cursor_field": "write_date",
+      "verified": false,
+      "fields": {
+        "sku": "default_code",
+        "name": "name",
+        "unit": {
+          "from": "uom_id",
+          "transform": "relation_name"
+        },
+        "category": {
+          "from": "categ_id",
+          "transform": "relation_name"
+        }
+      }
+    },
+    "warehouse": {
+      "source": "stock.location (usage=internal), rolled up to stock.warehouse",
+      "verified": false,
+      "fields": {
+        "warehouse": {
+          "from": "warehouse_id",
+          "transform": "relation_id"
+        },
+        "name": {
+          "from": "warehouse_id",
+          "transform": "relation_name"
+        }
+      }
+    },
+    "stock_level": {
+      "source": "stock.quant",
+      "filter": [
+        [
+          "location_id.usage",
+          "=",
+          "internal"
+        ]
+      ],
+      "verified": false,
+      "fields": {
+        "sku": {
+          "from": "product_id",
+          "transform": "relation_id"
+        },
+        "warehouse": {
+          "from": "location_id",
+          "transform": "sum_children"
+        },
+        "on_hand": "quantity"
+      }
+    },
+    "demand_line": {
+      "source": "stock.move (state=done, internal->customer = sale, customer->internal = return)",
+      "cursor_field": "date",
+      "verified": false,
+      "fields": {
+        "line_id": "id",
+        "sku": {
+          "from": "product_id",
+          "transform": "relation_id"
+        },
+        "date": {
+          "from": "date",
+          "transform": "date_local"
+        },
+        "quantity": "quantity"
+      }
+    },
+    "supplier_item": {
+      "source": "product.supplierinfo",
+      "verified": false,
+      "fields": {
+        "sku": {
+          "from": "product_tmpl_id",
+          "transform": "relation_id"
+        },
+        "supplier_id": {
+          "from": "partner_id",
+          "transform": "relation_id"
+        },
+        "lead_days": "delay",
+        "priority": "sequence"
+      }
+    },
+    "open_po_line": {
+      "source": "NEW purchase.order.line (state in purchase) - needs allowlist approval",
+      "cursor_field": "write_date",
+      "verified": false,
+      "fields": {
+        "po_line_id": "id",
+        "po_id": {
+          "from": "order_id",
+          "transform": "relation_id"
+        },
+        "sku": {
+          "from": "product_id",
+          "transform": "relation_id"
+        },
+        "supplier_id": {
+          "from": "partner_id",
+          "transform": "relation_id"
+        },
+        "due_date": {
+          "from": "date_planned",
+          "transform": "date_local"
+        },
+        "remaining_qty": {
+          "from": "product_qty - qty_received",
+          "transform": "decimal"
+        },
+        "status": {
+          "const": "confirmed"
+        }
+      }
+    },
+    "supplier": {
+      "source": "NEW res.partner (only ids referenced by supplierinfo/PO lines) - needs allowlist + personal-data approval",
+      "verified": false,
+      "fields": {
+        "supplier_id": "id",
+        "name": "name",
+        "contacts": {
+          "from": "email",
+          "default_unknown": true
+        }
+      }
+    }
+  }
+}

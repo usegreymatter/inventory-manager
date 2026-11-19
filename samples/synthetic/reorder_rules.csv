@@ -1,0 +1,3 @@
+rule_id,sku,warehouse,min_qty,max_qty,multiple,route,trigger,lead_days
+SYN-RULE-1,TILE-SAND,MAIN,12,120,12,buy,manual,30
+SYN-RULE-2,GROUT-5,WEST,2,5,1,buy,auto,14

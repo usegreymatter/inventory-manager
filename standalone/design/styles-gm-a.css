@@ -1,0 +1,2 @@
+/* Quiet: quantity stays ink; shared tokens own all other presentation. */
+[data-design=option-gm-a] button.big-number { color:var(--ink); }

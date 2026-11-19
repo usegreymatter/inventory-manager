@@ -1,0 +1,540 @@
+Registered-handler harness, NOT a model-backed Hermes chat.
+Scratch package: .scratch/home/plugins/stock-runway
+No auth stores accessed; network denied; register(ctx) and registered stock_runway handler called.
+{
+  "source": "sample",
+  "as_of": "2026-10-31",
+  "horizon": 6,
+  "disclosure": "Includes recorded receipts; assumes nothing else is on order.",
+  "items": [
+    {
+      "sku": "SEAL-CLR-300",
+      "name": "Clear silicone sealant 300ml",
+      "unit": "units",
+      "stock": 340,
+      "monthly_demand": 72.16666666666667,
+      "seasonal": false,
+      "forecast_explanation": "Steady: 12-month average",
+      "runout_month": "2027-03",
+      "runout_day": "2027-03-23",
+      "order_by": "2027-02-23",
+      "order_overdue": false,
+      "error_percent": 13,
+      "grade": "Usable for planning",
+      "projection": [
+        {
+          "month": "2026-11",
+          "demand": 72.16666666666667,
+          "receipts": 0,
+          "stock": 267.8333333333333
+        },
+        {
+          "month": "2026-12",
+          "demand": 72.16666666666667,
+          "receipts": 0,
+          "stock": 195.66666666666663
+        },
+        {
+          "month": "2027-01",
+          "demand": 72.16666666666667,
+          "receipts": 0,
+          "stock": 123.49999999999996
+        },
+        {
+          "month": "2027-02",
+          "demand": 72.16666666666667,
+          "receipts": 0,
+          "stock": 51.333333333333286
+        },
+        {
+          "month": "2027-03",
+          "demand": 72.16666666666667,
+          "receipts": 0,
+          "stock": -20.833333333333385
+        },
+        {
+          "month": "2027-04",
+          "demand": 72.16666666666667,
+          "receipts": 0,
+          "stock": -93.00000000000006
+        }
+      ],
+      "receipts": {},
+      "held": false,
+      "demand_swing": 7.145670441645491,
+      "safety_stock": 16,
+      "reorder_point": 67,
+      "eoq": null,
+      "why": "Safety stock 16 because sales are steady and lead time is 21 days. Reorder point 67.",
+      "safety_stock_provenance": {
+        "demand_sd": "sample (n-1)",
+        "demand_samples": 12,
+        "lead_time_variability": "not available \u2014 demand variability only",
+        "receipt_samples": 0
+      },
+      "big_order": false,
+      "guidance": {
+        "demand_swing": 7.145670441645491,
+        "safety_stock": 16,
+        "reorder_point": 67,
+        "eoq": null,
+        "why": "Safety stock 16 because sales are steady and lead time is 21 days. Reorder point 67.",
+        "safety_stock_provenance": {
+          "demand_sd": "sample (n-1)",
+          "demand_samples": 12,
+          "lead_time_variability": "not available \u2014 demand variability only",
+          "receipt_samples": 0
+        },
+        "status": "order",
+        "reason": "",
+        "quantity": 144,
+        "lead_days": 21,
+        "used_default_lead": false,
+        "incoming": 0,
+        "runout_date": "2027-03-23",
+        "order_by": "2027-02-23",
+        "out_of_stock": false,
+        "stock_date": "2026-10-31",
+        "supply_gap": false,
+        "gap_date": null,
+        "delivery_date": null,
+        "delivery_quantity": null,
+        "overstock_months": 4.366666666666666,
+        "monthly_demand": 72.16666666666667,
+        "projected_balance_today": 311.1333333333333,
+        "order_date": "2027-02-23",
+        "endpoint": "2027-05-15",
+        "buffer_demand": 0,
+        "undated_on_order_assumed_within_lead": false
+      },
+      "order_bucket": "healthy"
+    },
+    {
+      "sku": "UL-FOAM-GRN",
+      "name": "Foam floor underlay roll",
+      "unit": "m",
+      "stock": 7,
+      "monthly_demand": 2.8333333333333335,
+      "seasonal": true,
+      "forecast_explanation": "Forecast follows last year's seasonal pattern, scaled to the last 3 months",
+      "runout_month": "2026-12",
+      "runout_day": "2026-12-12",
+      "order_by": "now",
+      "order_overdue": true,
+      "error_percent": 101,
+      "grade": "Too far off to plan on",
+      "projection": [
+        {
+          "month": "2026-11",
+          "demand": 2.8333333333333335,
+          "receipts": 0,
+          "stock": 4.166666666666666
+        },
+        {
+          "month": "2026-12",
+          "demand": 11.333333333333334,
+          "receipts": 0,
+          "stock": -7.166666666666668
+        },
+        {
+          "month": "2027-01",
+          "demand": 2.8333333333333335,
+          "receipts": 0,
+          "stock": -10.000000000000002
+        },
+        {
+          "month": "2027-02",
+          "demand": 2.8333333333333335,
+          "receipts": 0,
+          "stock": -12.833333333333336
+        },
+        {
+          "month": "2027-03",
+          "demand": 2.8333333333333335,
+          "receipts": 0,
+          "stock": -15.66666666666667
+        },
+        {
+          "month": "2027-04",
+          "demand": 11.333333333333334,
+          "receipts": 0,
+          "stock": -27.000000000000004
+        }
+      ],
+      "receipts": {},
+      "held": false,
+      "demand_swing": 13.896533249830203,
+      "safety_stock": 28,
+      "reorder_point": 30,
+      "eoq": null,
+      "why": "Safety stock 28 because sales are very uneven and lead time is 14 days. Reorder point 30.",
+      "safety_stock_provenance": {
+        "demand_sd": "sample (n-1)",
+        "demand_samples": 12,
+        "lead_time_variability": "not available \u2014 demand variability only",
+        "receipt_samples": 0
+      },
+      "big_order": true,
+      "guidance": {
+        "demand_swing": 13.896533249830203,
+        "safety_stock": 28,
+        "reorder_point": 30,
+        "eoq": null,
+        "why": "Safety stock 28 because sales are very uneven and lead time is 14 days. Reorder point 30.",
+        "safety_stock_provenance": {
+          "demand_sd": "sample (n-1)",
+          "demand_samples": 12,
+          "lead_time_variability": "not available \u2014 demand variability only",
+          "receipt_samples": 0
+        },
+        "status": "order",
+        "reason": "",
+        "quantity": 38,
+        "lead_days": 14,
+        "used_default_lead": true,
+        "incoming": 0,
+        "runout_date": "2026-12-12",
+        "order_by": "now",
+        "out_of_stock": false,
+        "stock_date": "2026-10-31",
+        "supply_gap": false,
+        "gap_date": null,
+        "delivery_date": null,
+        "delivery_quantity": null,
+        "overstock_months": 1,
+        "monthly_demand": 2.8333333333333335,
+        "projected_balance_today": 5.866666666666666,
+        "order_date": "2026-11-12",
+        "endpoint": "2027-01-25",
+        "buffer_demand": 0,
+        "undated_on_order_assumed_within_lead": false
+      },
+      "order_bucket": "order"
+    },
+    {
+      "sku": "GRT-GRY-5",
+      "name": "Tile adhesive 20kg",
+      "unit": "bag",
+      "stock": 90,
+      "monthly_demand": 53.25,
+      "seasonal": false,
+      "forecast_explanation": "Steady: 12-month average",
+      "runout_month": "2026-12",
+      "runout_day": "2026-12-22",
+      "order_by": "now",
+      "order_overdue": true,
+      "error_percent": 100,
+      "grade": "Too far off to plan on",
+      "projection": [
+        {
+          "month": "2026-11",
+          "demand": 53.25,
+          "receipts": 0,
+          "stock": 36.75
+        },
+        {
+          "month": "2026-12",
+          "demand": 53.25,
+          "receipts": 0,
+          "stock": -16.5
+        },
+        {
+          "month": "2027-01",
+          "demand": 53.25,
+          "receipts": 0,
+          "stock": -69.75
+        },
+        {
+          "month": "2027-02",
+          "demand": 53.25,
+          "receipts": 0,
+          "stock": -123
+        },
+        {
+          "month": "2027-03",
+          "demand": 53.25,
+          "receipts": 0,
+          "stock": -176.25
+        },
+        {
+          "month": "2027-04",
+          "demand": 53.25,
+          "receipts": 0,
+          "stock": -229.5
+        }
+      ],
+      "receipts": {},
+      "held": false,
+      "demand_swing": 34.1417499684637,
+      "safety_stock": 83,
+      "reorder_point": 145,
+      "eoq": null,
+      "why": "Safety stock 83 because sales are very uneven and lead time is 35 days. Reorder point 145.",
+      "safety_stock_provenance": {
+        "demand_sd": "sample (n-1)",
+        "demand_samples": 12,
+        "lead_time_variability": "not available \u2014 demand variability only",
+        "receipt_samples": 0
+      },
+      "big_order": false,
+      "guidance": {
+        "demand_swing": 34.1417499684637,
+        "safety_stock": 83,
+        "reorder_point": 145,
+        "eoq": null,
+        "why": "Safety stock 83 because sales are very uneven and lead time is 35 days. Reorder point 145.",
+        "safety_stock_provenance": {
+          "demand_sd": "sample (n-1)",
+          "demand_samples": 12,
+          "lead_time_variability": "not available \u2014 demand variability only",
+          "receipt_samples": 0
+        },
+        "status": "order",
+        "reason": "",
+        "quantity": 185,
+        "lead_days": 35,
+        "used_default_lead": false,
+        "incoming": 0,
+        "runout_date": "2026-12-22",
+        "order_by": "now",
+        "out_of_stock": false,
+        "stock_date": "2026-10-31",
+        "supply_gap": false,
+        "gap_date": null,
+        "delivery_date": null,
+        "delivery_quantity": null,
+        "overstock_months": 1.3333333333333333,
+        "monthly_demand": 53.25,
+        "projected_balance_today": 68.7,
+        "order_date": "2026-11-12",
+        "endpoint": "2027-02-15",
+        "buffer_demand": 0,
+        "undated_on_order_assumed_within_lead": false
+      },
+      "order_bucket": "order"
+    },
+    {
+      "sku": "TRM-ALU-25",
+      "name": "Aluminium edge trim 25mm",
+      "unit": "m",
+      "stock": 42,
+      "monthly_demand": 7.666666666666667,
+      "seasonal": true,
+      "forecast_explanation": "Forecast follows last year's seasonal pattern, scaled to the last 3 months",
+      "runout_month": "2027-06",
+      "runout_day": "2027-06-25",
+      "order_by": "2027-02-16",
+      "order_overdue": false,
+      "error_percent": 67,
+      "grade": "Too far off to plan on",
+      "projection": [
+        {
+          "month": "2026-11",
+          "demand": 7.666666666666667,
+          "receipts": 18,
+          "stock": 52.333333333333336
+        },
+        {
+          "month": "2026-12",
+          "demand": 7.666666666666667,
+          "receipts": 0,
+          "stock": 44.66666666666667
+        },
+        {
+          "month": "2027-01",
+          "demand": 7.666666666666667,
+          "receipts": 0,
+          "stock": 37.00000000000001
+        },
+        {
+          "month": "2027-02",
+          "demand": 7.666666666666667,
+          "receipts": 0,
+          "stock": 29.33333333333334
+        },
+        {
+          "month": "2027-03",
+          "demand": 7.666666666666667,
+          "receipts": 0,
+          "stock": 21.66666666666667
+        },
+        {
+          "month": "2027-04",
+          "demand": 7.666666666666667,
+          "receipts": 0,
+          "stock": 14.000000000000004
+        }
+      ],
+      "receipts": {
+        "2026-11": 18
+      },
+      "held": false,
+      "demand_swing": 14.195603245905103,
+      "safety_stock": 29,
+      "reorder_point": 33,
+      "eoq": null,
+      "why": "Safety stock 29 because sales are very uneven and lead time is 14 days. Reorder point 33.",
+      "safety_stock_provenance": {
+        "demand_sd": "sample (n-1)",
+        "demand_samples": 12,
+        "lead_time_variability": "not available \u2014 demand variability only",
+        "receipt_samples": 0
+      },
+      "big_order": false,
+      "guidance": {
+        "demand_swing": 14.195603245905103,
+        "safety_stock": 29,
+        "reorder_point": 33,
+        "eoq": null,
+        "why": "Safety stock 29 because sales are very uneven and lead time is 14 days. Reorder point 33.",
+        "safety_stock_provenance": {
+          "demand_sd": "sample (n-1)",
+          "demand_samples": 12,
+          "lead_time_variability": "not available \u2014 demand variability only",
+          "receipt_samples": 0
+        },
+        "status": "order",
+        "reason": "",
+        "quantity": 16,
+        "lead_days": 14,
+        "used_default_lead": false,
+        "incoming": 18,
+        "runout_date": "2027-06-25",
+        "order_by": "2027-02-16",
+        "out_of_stock": false,
+        "stock_date": "2026-10-31",
+        "supply_gap": false,
+        "gap_date": null,
+        "delivery_date": null,
+        "delivery_quantity": null,
+        "overstock_months": 7.5,
+        "monthly_demand": 7.666666666666667,
+        "projected_balance_today": 56.93333333333333,
+        "order_date": "2027-02-16",
+        "endpoint": "2027-05-01",
+        "buffer_demand": 0,
+        "undated_on_order_assumed_within_lead": false
+      },
+      "order_bucket": "healthy"
+    },
+    {
+      "sku": "SEAL-WHT-300",
+      "name": "White silicone sealant 300ml",
+      "unit": "units",
+      "stock": 5,
+      "monthly_demand": 0,
+      "seasonal": true,
+      "forecast_explanation": "Forecast follows last year's seasonal pattern, scaled to the last 3 months",
+      "runout_month": null,
+      "runout_day": null,
+      "order_by": null,
+      "order_overdue": false,
+      "error_percent": null,
+      "grade": "No recent sales to check",
+      "projection": [
+        {
+          "month": "2026-11",
+          "demand": 0,
+          "receipts": 0,
+          "stock": 5
+        },
+        {
+          "month": "2026-12",
+          "demand": 0,
+          "receipts": 0,
+          "stock": 5
+        },
+        {
+          "month": "2027-01",
+          "demand": 0,
+          "receipts": 0,
+          "stock": 5
+        },
+        {
+          "month": "2027-02",
+          "demand": 0,
+          "receipts": 0,
+          "stock": 5
+        },
+        {
+          "month": "2027-03",
+          "demand": 0,
+          "receipts": 0,
+          "stock": 5
+        },
+        {
+          "month": "2027-04",
+          "demand": 0,
+          "receipts": 0,
+          "stock": 5
+        }
+      ],
+      "receipts": {},
+      "held": false,
+      "demand_swing": 32.803824610720454,
+      "safety_stock": 66,
+      "reorder_point": 66,
+      "eoq": null,
+      "why": "Safety stock 66 because sales are very uneven and lead time is 14 days. Reorder point 66.",
+      "safety_stock_provenance": {
+        "demand_sd": "sample (n-1)",
+        "demand_samples": 12,
+        "lead_time_variability": "not available \u2014 demand variability only",
+        "receipt_samples": 0
+      },
+      "big_order": false,
+      "guidance": {
+        "demand_swing": 32.803824610720454,
+        "safety_stock": 66,
+        "reorder_point": 66,
+        "eoq": null,
+        "why": "Safety stock 66 because sales are very uneven and lead time is 14 days. Reorder point 66.",
+        "safety_stock_provenance": {
+          "demand_sd": "sample (n-1)",
+          "demand_samples": 12,
+          "lead_time_variability": "not available \u2014 demand variability only",
+          "receipt_samples": 0
+        },
+        "status": "overstocked",
+        "reason": "",
+        "quantity": 0,
+        "lead_days": 14,
+        "used_default_lead": true,
+        "incoming": 0,
+        "runout_date": null,
+        "order_by": null,
+        "out_of_stock": false,
+        "stock_date": "2026-10-31",
+        "supply_gap": false,
+        "gap_date": null,
+        "delivery_date": null,
+        "delivery_quantity": null,
+        "overstock_months": null,
+        "monthly_demand": 0,
+        "projected_balance_today": 5,
+        "order_date": "2026-11-12",
+        "endpoint": "2027-01-25",
+        "buffer_demand": 0,
+        "undated_on_order_assumed_within_lead": false
+      },
+      "order_bucket": "no-sales"
+    }
+  ],
+  "summary": [
+    "SEAL-CLR-300: runs out Mar 2027; Usable for planning; Sales pattern: Steady, Safety stock \u2014 extra kept for delays or surprise demand: 16, Reorder point \u2014 order when stock drops to 67",
+    "UL-FOAM-GRN: runs out Dec 2026; Too far off to plan on; Sales pattern: Very uneven, Safety stock \u2014 extra kept for delays or surprise demand: 28, Reorder point \u2014 order when stock drops to 30",
+    "GRT-GRY-5: runs out Dec 2026; Too far off to plan on; Sales pattern: Very uneven, Safety stock \u2014 extra kept for delays or surprise demand: 83, Reorder point \u2014 order when stock drops to 145",
+    "TRM-ALU-25: does not run out within 6 months; Too far off to plan on; Sales pattern: Very uneven, Safety stock \u2014 extra kept for delays or surprise demand: 29, Reorder point \u2014 order when stock drops to 33",
+    "SEAL-WHT-300: does not run out within 6 months; No recent sales to check; Sales pattern: Very uneven, Safety stock \u2014 extra kept for delays or surprise demand: 66, Reorder point \u2014 order when stock drops to 66"
+  ],
+  "purchase_summary": [
+    "SEAL-CLR-300: Order 144 units by 23 Feb 2027; OK",
+    "UL-FOAM-GRN: Order 38 m now; Order now; Check this order: about 13.4 months of stock, much bigger than usual.",
+    "GRT-GRY-5: Order 185 bag now; Order now",
+    "TRM-ALU-25: Order 16 m by 16 Feb 2027; OK",
+    "SEAL-WHT-300: No order needed \u2014 stock on hand with no recent sales; No sales"
+  ],
+  "data_age_days": 12,
+  "sales_month": "2026-10",
+  "card": "::stock-runway{data=\"eyJhc19vZiI6IjIwMjYtMTAtMzEiLCJob3Jpem9uIjo2LCJkaXNjbG9zdXJlIjoiSW5jbHVkZXMgcmVjb3JkZWQgcmVjZWlwdHM7IGFzc3VtZXMgbm90aGluZyBlbHNlIGlzIG9uIG9yZGVyLiIsInJvd3MiOlt7InNrdSI6IlVMLUZPQU0tR1JOIiwibmFtZSI6IkZvYW0gZmxvb3IgdW5kZXJsYXkgcm9sbCIsInJ1bm91dCI6IjIwMjYtMTIiLCJncmFkZSI6IlRvbyBmYXIgb2ZmIHRvIHBsYW4gb24iLCJzdG9jayI6NywibW9udGhseSI6Mi44MzMzMzMzMzMzMzMzMzM1LCJoZWxkIjpmYWxzZX0seyJza3UiOiJHUlQtR1JZLTUiLCJuYW1lIjoiVGlsZSBhZGhlc2l2ZSAyMGtnIiwicnVub3V0IjoiMjAyNi0xMiIsImdyYWRlIjoiVG9vIGZhciBvZmYgdG8gcGxhbiBvbiIsInN0b2NrIjo5MCwibW9udGhseSI6NTMuMjUsImhlbGQiOmZhbHNlfSx7InNrdSI6IlNFQUwtQ0xSLTMwMCIsIm5hbWUiOiJDbGVhciBzaWxpY29uZSBzZWFsYW50IDMwMG1sIiwicnVub3V0IjoiMjAyNy0wMyIsImdyYWRlIjoiVXNhYmxlIGZvciBwbGFubmluZyIsInN0b2NrIjozNDAsIm1vbnRobHkiOjcyLjE2NjY2NjY2NjY2NjY3LCJoZWxkIjpmYWxzZX0seyJza3UiOiJUUk0tQUxVLTI1IiwibmFtZSI6IkFsdW1pbml1bSBlZGdlIHRyaW0gMjVtbSIsInJ1bm91dCI6bnVsbCwiZ3JhZGUiOiJUb28gZmFyIG9mZiB0byBwbGFuIG9uIiwic3RvY2siOjQyLCJtb250aGx5Ijo3LjY2NjY2NjY2NjY2NjY2NywiaGVsZCI6ZmFsc2V9LHsic2t1IjoiU0VBTC1XSFQtMzAwIiwibmFtZSI6IldoaXRlIHNpbGljb25lIHNlYWxhbnQgMzAwbWwiLCJydW5vdXQiOm51bGwsImdyYWRlIjoiTm8gcmVjZW50IHNhbGVzIHRvIGNoZWNrIiwic3RvY2siOjUsIm1vbnRobHkiOjAsImhlbGQiOmZhbHNlfV0sIm1vcmUiOjB9\"}"
+}

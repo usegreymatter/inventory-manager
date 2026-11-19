@@ -1,0 +1,22 @@
+# Draft only. Not a submission; replace SHA only after a reviewed public commit.
+name: stock-runway
+repo: https://github.com/usegreymatter/inventory-manager
+sha: PLACEHOLDER_NOT_SUBMITTABLE
+subdir: ""
+description: Estimate inventory run-out and forecast accuracy from sample, CSV, or read-only Odoo data.
+maintainer: Stock Runway contributors
+tier: community
+category: tools
+requires_hermes: ">=0.22.2"
+docs_url: ""
+version: "0.1.0"
+readme: true
+platforms: []
+title: Stock Runway
+onboarding: false
+known_issues: []
+capabilities:
+  provides_tools: [stock_runway]
+  provides_hooks: []
+  provides_middleware: []
+  requires_env: []

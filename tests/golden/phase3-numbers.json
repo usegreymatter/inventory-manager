@@ -1,0 +1,86 @@
+[
+  {
+    "sku": "SHORT",
+    "js": {
+      "order_qty": 40,
+      "order_by": "2027-04-16",
+      "run_out": "2027-04-30",
+      "status": "healthy"
+    },
+    "python": {
+      "order_qty": 40.0,
+      "order_by": "2027-04-16",
+      "run_out": "2027-04-30",
+      "status": "healthy"
+    },
+    "cli": {
+      "order_qty": 40.0,
+      "order_by": "2027-04-16",
+      "run_out": "2027-04-30",
+      "status": "healthy"
+    }
+  },
+  {
+    "sku": "FLAT",
+    "js": {
+      "order_qty": 59,
+      "order_by": "2027-02-14",
+      "run_out": "2027-02-28",
+      "status": "healthy"
+    },
+    "python": {
+      "order_qty": 59.0,
+      "order_by": "2027-02-14",
+      "run_out": "2027-02-28",
+      "status": "healthy"
+    },
+    "cli": {
+      "order_qty": 59.0,
+      "order_by": "2027-02-14",
+      "run_out": "2027-02-28",
+      "status": "healthy"
+    }
+  },
+  {
+    "sku": "TREND",
+    "js": {
+      "order_qty": 96,
+      "order_by": "2027-01-01",
+      "run_out": "2027-01-20",
+      "status": "healthy"
+    },
+    "python": {
+      "order_qty": 96.0,
+      "order_by": "2027-01-01",
+      "run_out": "2027-01-20",
+      "status": "healthy"
+    },
+    "cli": {
+      "order_qty": 96.0,
+      "order_by": "2027-01-01",
+      "run_out": "2027-01-20",
+      "status": "healthy"
+    }
+  },
+  {
+    "sku": "SLOW",
+    "js": {
+      "order_qty": 0,
+      "order_by": null,
+      "run_out": null,
+      "status": "no-sales"
+    },
+    "python": {
+      "order_qty": 0,
+      "order_by": null,
+      "run_out": null,
+      "status": "no-sales"
+    },
+    "cli": {
+      "order_qty": 0,
+      "order_by": null,
+      "run_out": null,
+      "status": "no-sales"
+    }
+  }
+]

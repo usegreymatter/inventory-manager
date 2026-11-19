@@ -1,0 +1,105 @@
+{
+  "expected_layout": "wide_months",
+  "expected_product_count": 2,
+  "expected_scenario": {
+    "items": [
+      {
+        "monthly_sales": [
+          3,
+          6,
+          9
+        ],
+        "name": "Synthetic Widget A",
+        "on_hand": 12,
+        "sku": "A-001",
+        "supplier": "Synthetic Supply A",
+        "supplier_days": 14,
+        "unit": "units"
+      },
+      {
+        "monthly_sales": [
+          2,
+          4,
+          6
+        ],
+        "name": "Synthetic Widget B",
+        "on_hand": 8,
+        "sku": "B-002",
+        "supplier": "Synthetic Supply B",
+        "supplier_days": 21,
+        "unit": "units"
+      }
+    ],
+    "months": [
+      "2026-01",
+      "2026-02",
+      "2026-03"
+    ]
+  },
+  "fixture": "fuzzy_qty_pcs.xlsx",
+  "ignored_rows": [],
+  "mappings": [
+    {
+      "fields": {
+        "name": {
+          "column": "B",
+          "header": "Item Name"
+        },
+        "on_hand": {
+          "column": "D",
+          "header": "Qty (pcs)"
+        },
+        "sku": {
+          "column": "A",
+          "header": "Item Code"
+        },
+        "supplier": {
+          "column": "F",
+          "header": "Supplier"
+        },
+        "supplier_days": {
+          "column": "E",
+          "header": "Lead Time"
+        },
+        "unit": {
+          "column": "C",
+          "header": "UoM"
+        }
+      },
+      "header_row": 1,
+      "headers": [
+        "Item Code",
+        "Item Name",
+        "UoM",
+        "Qty (pcs)",
+        "Lead Time",
+        "Supplier",
+        "Jan 2026",
+        "2026-02",
+        "March"
+      ],
+      "monthly_sales": [
+        {
+          "column": "G",
+          "header": "Jan 2026",
+          "month": "2026-01"
+        },
+        {
+          "column": "H",
+          "header": "2026-02",
+          "month": "2026-02"
+        },
+        {
+          "column": "I",
+          "header": "March",
+          "month": "2026-03"
+        }
+      ],
+      "sheet": "Inventory"
+    }
+  ],
+  "notes": [
+    "Deliberate fuzzy-only stock header; review proposal before confirmation."
+  ],
+  "schema_version": 1
+}

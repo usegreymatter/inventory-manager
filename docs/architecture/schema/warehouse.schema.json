@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "warehouse.schema.json",
+  "title": "warehouse",
+  "description": "A stock-holding site. Feeds warehouses.csv. Child locations must be rolled up once by the connector.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "warehouse",
+    "name"
+  ],
+  "properties": {
+    "warehouse": {
+      "$ref": "common.schema.json#/$defs/warehouse"
+    },
+    "name": {
+      "$ref": "common.schema.json#/$defs/text"
+    },
+    "timezone": {
+      "type": "string",
+      "maxLength": 64,
+      "description": "IANA zone, e.g. Asia/Kuwait. Defaults to the envelope timezone."
+    },
+    "source_ref": {
+      "$ref": "common.schema.json#/$defs/source_ref"
+    }
+  }
+}

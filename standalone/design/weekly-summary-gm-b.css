@@ -1,0 +1,79 @@
+/* Lifecycle: living. Arctic weekly digest, scoped so closed reports do not restyle the app. */
+.weekly-summary {
+ box-sizing:border-box; width:min(1080px,calc(100vw - 48px)); max-width:none;
+ max-height:calc(100dvh - 48px); padding:0; border:1px solid var(--rule,var(--rule,#c1cbdc));
+ border-radius:6px; color:var(--ink,var(--ink,#0b1020)); background:var(--bg,var(--bg,#f5f8fd));
+ font:inherit; overflow:auto; overscroll-behavior:contain; font-variant-numeric:tabular-nums;
+}
+.weekly-summary::backdrop { background:var(--backdrop,rgb(11 16 32 / .5)); }
+.weekly-summary-header { position:sticky; top:0; z-index:1; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:16px; padding:20px 32px; border-bottom:1px solid var(--line,var(--line,#d9e1ee)); background:var(--bg,var(--bg,#f5f8fd)); }
+.weekly-summary-header h1 { margin:0; font-size:22px; line-height:1.25; letter-spacing:-.5px; }
+.weekly-summary-actions { display:flex; flex-wrap:wrap; gap:8px; }
+.weekly-summary-actions button { min-height:44px; padding:8px 12px; border:1px solid var(--rule,var(--rule,#c1cbdc)); border-radius:6px; color:inherit; background:transparent; }
+.weekly-summary-actions button:hover { background:var(--subtle,var(--subtle,#e6ecf7)); }
+.weekly-summary-actions .weekly-summary-primary { color:var(--on-accent,var(--surface,#fff)); background:var(--accent,var(--accent,#3f5687)); border-color:var(--accent,var(--accent,#3f5687)); }
+.weekly-summary-actions .weekly-summary-primary:hover { background:var(--ink,var(--ink,#0b1020)); }
+.weekly-summary button:focus-visible,.weekly-summary textarea:focus-visible { outline:2px solid var(--accent,var(--accent,#3f5687)); outline-offset:3px; }
+.weekly-summary-report { padding:24px 32px 0; }
+.weekly-summary-meta,.weekly-summary-note { color:var(--muted,var(--muted,#5b6274)); font-size:13px; line-height:1.6; }
+.weekly-summary-meta { margin:0 0 24px; }
+.weekly-summary-lead { padding:0 0 28px; }
+.weekly-summary-lead strong { display:block; font-size:64px; line-height:1.05; font-weight:500; letter-spacing:-2px; }
+.weekly-summary-lead div { font-size:18px; margin-top:8px; }
+.weekly-summary-lead p { margin:8px 0 0; font-size:16px; color:var(--muted,var(--muted,#5b6274)); overflow-wrap:anywhere; }
+.weekly-summary-section { padding:20px 0; border-top:1px solid var(--rule,var(--rule,#c1cbdc)); }
+.weekly-summary-section h2 { margin:0 0 12px; font-size:15px; font-weight:600; }
+.weekly-summary-section p { line-height:1.6; margin:8px 0; overflow-wrap:anywhere; }
+.weekly-summary-table-wrap { max-width:100%; overflow-x:auto; }
+.weekly-summary table { width:100%; border-collapse:collapse; table-layout:fixed; font-size:13px; }
+.weekly-summary th,.weekly-summary td { text-align:start; vertical-align:top; padding:10px 8px; border-bottom:1px solid var(--line,var(--line,#d9e1ee)); overflow-wrap:anywhere; white-space:normal; }
+.weekly-summary th { color:var(--muted,var(--muted,#5b6274)); font-weight:500; }
+.weekly-summary th:first-child,.weekly-summary td:first-child { padding-inline-start:0; width:28%; }
+.weekly-summary table[aria-label="Supplier totals"] th:nth-child(2) { width:8%; }
+.weekly-summary table[aria-label="Supplier totals"] th:nth-child(3) { width:38%; }
+.weekly-summary table[aria-label="Supplier totals"] th:nth-child(4) { width:26%; }
+.weekly-summary table[aria-label="Supplier totals"] :is(th,td):nth-child(2),.weekly-summary table[aria-label="Supplier totals"] :is(th,td):nth-child(4) { text-align:right; }
+.weekly-summary-status { margin:0; padding:8px 32px 20px; min-height:20px; color:var(--muted,var(--muted,#5b6274)); font-size:13px; }
+.weekly-summary-copy { display:block; box-sizing:border-box; width:calc(100% - 64px); height:240px; margin:0 32px 24px; font:13px/1.6 ui-monospace,monospace; }
+.weekly-summary-copy[hidden] { display:none; }
+@media(max-width:600px) {
+ .weekly-summary { width:100%; max-height:100dvh; height:100dvh; margin:0; border:0; border-radius:0; }
+ .weekly-summary-header { padding:16px; gap:12px; }
+ .weekly-summary-header h1 { font-size:20px; }
+ .weekly-summary-actions { width:100%; }
+ .weekly-summary-actions button { flex:1 1 auto; font-size:13px; }
+ .weekly-summary-report { padding:20px 16px 0; }
+ .weekly-summary-status { padding-inline:16px; }
+ .weekly-summary table { min-width:600px; }
+ .weekly-summary-section:last-child table { min-width:0; }
+ .weekly-summary-copy { width:calc(100% - 32px); margin-inline:16px; }
+}
+@media screen { .weekly-summary tbody tr:nth-child(n+21) { display:none; } }
+@page { size:A4 portrait; margin:14mm; }
+@media print {
+ /* Native browser print headers/footers are controlled in the print dialog.
+    App chrome, overlay controls, clipboard fallback and backdrop never print. */
+ body:has(> .weekly-summary[open]) { display:block!important; height:auto!important; min-height:0!important; overflow:visible!important; background:var(--surface,#fff)!important; }
+ body:has(> .weekly-summary[open]) > :not(.weekly-summary) { display:none!important; }
+ body:has(> .weekly-summary[open]) > .weekly-summary {
+  display:block!important; position:static!important; inset:auto!important; box-sizing:border-box;
+  width:100%!important; max-width:none!important; height:auto!important; max-height:none!important;
+  overflow:visible!important; margin:0!important; padding:0!important; border:0!important; border-radius:0;
+  background:var(--surface,#fff)!important; color:var(--ink,#111)!important; box-shadow:none!important; font-size:10pt;
+ }
+ .weekly-summary::backdrop { display:none; background:none; }
+ .weekly-summary-header { position:static; padding:0 0 5mm; background:var(--surface,#fff); border-color:var(--rule,#bbb); }
+ .weekly-summary-header h1 { font-size:20pt; }
+ .weekly-summary-actions,.weekly-summary-status,.weekly-summary-copy,.weekly-summary-screen-only { display:none!important; }
+ .weekly-summary-report { padding:5mm 0 0; }
+ .weekly-summary-lead { padding-bottom:5mm; }
+ .weekly-summary-lead strong { font-size:40pt; }
+ .weekly-summary-section { padding:4mm 0; border-color:var(--rule,#bbb); }
+ .weekly-summary-section h2 { break-after:avoid; }
+ .weekly-summary-table-wrap { overflow:visible; }
+ .weekly-summary table { width:100%; min-width:0; font-size:9pt; }
+ .weekly-summary th,.weekly-summary td { padding:2mm 1mm; border-color:var(--line,#ccc); }
+ .weekly-summary thead { display:table-header-group; }
+ .weekly-summary tr { break-inside:avoid; }
+ .weekly-summary-meta,.weekly-summary-note,.weekly-summary th,.weekly-summary-lead p { color:var(--muted,#444); }
+}

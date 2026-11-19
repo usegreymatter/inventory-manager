@@ -1,0 +1,8 @@
+{
+  "contract_version": "1.0",
+  "snapshot_date": "2026-10-31",
+  "currency": "KWD",
+  "synthetic": true,
+  "source": "SYNTHETIC deterministic generator, not company or Odoo data",
+  "planning_example_date": "2026-11-01"
+}

@@ -1,0 +1,102 @@
+{
+  "expected_layout": "long_transactions",
+  "expected_product_count": 2,
+  "expected_scenario": {
+    "items": [
+      {
+        "monthly_sales": [
+          3,
+          6,
+          9
+        ],
+        "name": "Synthetic Widget A",
+        "on_hand": 12,
+        "sku": "A-001",
+        "supplier": "Synthetic Supply A",
+        "supplier_days": 14,
+        "unit": "units"
+      },
+      {
+        "monthly_sales": [
+          2,
+          4,
+          6
+        ],
+        "name": "Synthetic Widget B",
+        "on_hand": 8,
+        "sku": "B-002",
+        "supplier": "Synthetic Supply B",
+        "supplier_days": 21,
+        "unit": "units"
+      }
+    ],
+    "months": [
+      "2026-01",
+      "2026-02",
+      "2026-03"
+    ]
+  },
+  "fixture": "dates_serial_text.xlsx",
+  "ignored_rows": [],
+  "mappings": [
+    {
+      "fields": {
+        "date": {
+          "column": "G",
+          "header": "Date"
+        },
+        "name": {
+          "column": "B",
+          "header": "Item Name"
+        },
+        "on_hand": {
+          "column": "D",
+          "header": "Qty On Hand"
+        },
+        "quantity": {
+          "column": "H",
+          "header": "Quantity Sold"
+        },
+        "sku": {
+          "column": "A",
+          "header": "Item Code"
+        },
+        "supplier": {
+          "column": "F",
+          "header": "Supplier"
+        },
+        "supplier_days": {
+          "column": "E",
+          "header": "Lead Time"
+        },
+        "transaction_id": {
+          "column": "I",
+          "header": "Transaction ID"
+        },
+        "unit": {
+          "column": "C",
+          "header": "UoM"
+        }
+      },
+      "header_row": 1,
+      "headers": [
+        "Item Code",
+        "Item Name",
+        "UoM",
+        "Qty On Hand",
+        "Lead Time",
+        "Supplier",
+        "Date",
+        "Quantity Sold",
+        "Transaction ID"
+      ],
+      "sheet": "Transactions"
+    }
+  ],
+  "notes": [
+    "Date column mixes ISO text with numeric Excel serial dates.",
+    "Style 1 is built-in numFmtId 14; style 2 is custom yyyy-mm-dd.",
+    "Use the 1900 date system; never interpret serials as Unix milliseconds."
+  ],
+  "schema_version": 1
+}

@@ -1,0 +1,7 @@
+sku,name,unit,on_hand,supplier_days,category,on_order,2025-11,2025-12,2026-01,2026-02,2026-03,2026-04,2026-05,2026-06,2026-07,2026-08,2026-09,2026-10
+TILE-SAND,SYNTHETIC Sand tile,box,120,30,SYNTHETIC building materials,0,120,120,120,120,120,120,120,120,120,120,120,120
+TILE-OLD,SYNTHETIC Old sand tile,box,24,30,SYNTHETIC building materials,0,24,24,24,24,24,24,24,24,24,24,24,24
+TILE-GREY,SYNTHETIC Grey tile,box,96,30,SYNTHETIC building materials,0,60,60,60,60,60,60,60,60,60,60,60,60
+ADH-20,SYNTHETIC Tile adhesive 20kg,bag,80,14,SYNTHETIC building materials,0,60,60,60,60,60,60,60,60,60,60,60,60
+GROUT-5,SYNTHETIC Grout 5kg,bag,40,14,SYNTHETIC building materials,0,30,30,30,30,30,30,30,30,30,30,30,30
+EDGE-NEW,SYNTHETIC Edge trim,piece,12,14,SYNTHETIC building materials,0,0,0,0,0,0,0,0,0,4,8,12,16

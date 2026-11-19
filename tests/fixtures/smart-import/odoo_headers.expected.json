@@ -1,0 +1,105 @@
+{
+  "expected_layout": "wide_months",
+  "expected_product_count": 2,
+  "expected_scenario": {
+    "items": [
+      {
+        "monthly_sales": [
+          3,
+          6,
+          9
+        ],
+        "name": "Synthetic Widget A",
+        "on_hand": 12,
+        "sku": "A-001",
+        "supplier": "Synthetic Supply A",
+        "supplier_days": 14,
+        "unit": "units"
+      },
+      {
+        "monthly_sales": [
+          2,
+          4,
+          6
+        ],
+        "name": "Synthetic Widget B",
+        "on_hand": 8,
+        "sku": "B-002",
+        "supplier": "Synthetic Supply B",
+        "supplier_days": 21,
+        "unit": "units"
+      }
+    ],
+    "months": [
+      "2026-01",
+      "2026-02",
+      "2026-03"
+    ]
+  },
+  "fixture": "odoo_headers.xlsx",
+  "ignored_rows": [],
+  "mappings": [
+    {
+      "fields": {
+        "name": {
+          "column": "B",
+          "header": "Name"
+        },
+        "on_hand": {
+          "column": "D",
+          "header": "On Hand"
+        },
+        "sku": {
+          "column": "A",
+          "header": "Internal Reference"
+        },
+        "supplier": {
+          "column": "F",
+          "header": "Vendor"
+        },
+        "supplier_days": {
+          "column": "E",
+          "header": "Vendor Lead Time"
+        },
+        "unit": {
+          "column": "C",
+          "header": "Unit of Measure"
+        }
+      },
+      "header_row": 1,
+      "headers": [
+        "Internal Reference",
+        "Name",
+        "Unit of Measure",
+        "On Hand",
+        "Vendor Lead Time",
+        "Vendor",
+        "Jan 2026",
+        "2026-02",
+        "March"
+      ],
+      "monthly_sales": [
+        {
+          "column": "G",
+          "header": "Jan 2026",
+          "month": "2026-01"
+        },
+        {
+          "column": "H",
+          "header": "2026-02",
+          "month": "2026-02"
+        },
+        {
+          "column": "I",
+          "header": "March",
+          "month": "2026-03"
+        }
+      ],
+      "sheet": "Products"
+    }
+  ],
+  "notes": [
+    "Fictional Odoo-style export; no live ERP data."
+  ],
+  "schema_version": 1
+}

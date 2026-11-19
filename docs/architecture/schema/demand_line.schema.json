@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "demand_line.schema.json",
+  "title": "demand_line",
+  "description": "One completed customer delivery or return line (an event). The bundle writer aggregates lines to monthly net sales in the envelope timezone. Returns reduce the month; a month never goes below zero silently (writer reports it).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "line_id",
+    "sku",
+    "date",
+    "quantity",
+    "kind"
+  ],
+  "properties": {
+    "line_id": {
+      "$ref": "common.schema.json#/$defs/id"
+    },
+    "sku": {
+      "$ref": "common.schema.json#/$defs/sku"
+    },
+    "warehouse": {
+      "$ref": "common.schema.json#/$defs/warehouse"
+    },
+    "date": {
+      "$ref": "common.schema.json#/$defs/date"
+    },
+    "quantity": {
+      "$ref": "common.schema.json#/$defs/quantity"
+    },
+    "kind": {
+      "enum": [
+        "sale",
+        "return"
+      ]
+    },
+    "project": {
+      "type": "boolean",
+      "description": "True only when verified one-off/project demand."
+    },
+    "document_ref": {
+      "type": "string",
+      "maxLength": 128
+    },
+    "source_ref": {
+      "$ref": "common.schema.json#/$defs/source_ref"
+    }
+  }
+}

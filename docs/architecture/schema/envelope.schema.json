@@ -1,0 +1,190 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "envelope.schema.json",
+  "title": "envelope",
+  "description": "One connector sync result. Records are bounded per stream (10,000, matching CONTRACT.md). The bundle writer turns a valid envelope into a Contract 1.0 CSV bundle plus suppliers.json; the engine only ever reads the bundle.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "contract_version",
+    "connector",
+    "run_id",
+    "snapshot_date",
+    "timezone",
+    "currency",
+    "synthetic",
+    "mode",
+    "dry_run",
+    "streams"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1"
+    },
+    "contract_version": {
+      "const": "1.0"
+    },
+    "connector": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "version"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9_-]{1,40}$"
+        },
+        "version": {
+          "type": "string",
+          "maxLength": 20
+        },
+        "mapping_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "source_label": {
+      "type": "string",
+      "maxLength": 80,
+      "description": "Human label such as 'Odoo 17 main company'. Never a URL with credentials."
+    },
+    "run_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]{8,64}$"
+    },
+    "started_at": {
+      "$ref": "common.schema.json#/$defs/datetime"
+    },
+    "snapshot_date": {
+      "$ref": "common.schema.json#/$defs/date"
+    },
+    "timezone": {
+      "type": "string",
+      "maxLength": 64
+    },
+    "currency": {
+      "$ref": "common.schema.json#/$defs/currency"
+    },
+    "synthetic": {
+      "type": "boolean"
+    },
+    "mode": {
+      "enum": [
+        "full",
+        "incremental"
+      ]
+    },
+    "dry_run": {
+      "type": "boolean"
+    },
+    "cursors": {
+      "type": "object",
+      "maxProperties": 20,
+      "additionalProperties": {
+        "type": "string",
+        "maxLength": 200
+      },
+      "description": "Opaque per-stream high-water marks to resume from."
+    },
+    "streams": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "item": {
+          "type": "array",
+          "maxItems": 10000,
+          "items": {
+            "$ref": "item.schema.json"
+          }
+        },
+        "warehouse": {
+          "type": "array",
+          "maxItems": 10000,
+          "items": {
+            "$ref": "warehouse.schema.json"
+          }
+        },
+        "stock_level": {
+          "type": "array",
+          "maxItems": 10000,
+          "items": {
+            "$ref": "stock_level.schema.json"
+          }
+        },
+        "demand_line": {
+          "type": "array",
+          "maxItems": 10000,
+          "items": {
+            "$ref": "demand_line.schema.json"
+          }
+        },
+        "open_po_line": {
+          "type": "array",
+          "maxItems": 10000,
+          "items": {
+            "$ref": "open_po_line.schema.json"
+          }
+        },
+        "receipt": {
+          "type": "array",
+          "maxItems": 10000,
+          "items": {
+            "$ref": "receipt.schema.json"
+          }
+        },
+        "supplier": {
+          "type": "array",
+          "maxItems": 10000,
+          "items": {
+            "$ref": "supplier.schema.json"
+          }
+        },
+        "supplier_item": {
+          "type": "array",
+          "maxItems": 10000,
+          "items": {
+            "$ref": "supplier_item.schema.json"
+          }
+        }
+      }
+    },
+    "unavailable": {
+      "type": "array",
+      "maxItems": 20,
+      "items": {
+        "type": "string",
+        "maxLength": 40
+      },
+      "description": "Streams this source cannot provide. Unknown, not zero."
+    },
+    "warnings": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "code"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "maxLength": 60
+          },
+          "stream": {
+            "type": "string",
+            "maxLength": 40
+          },
+          "record_id": {
+            "type": "string",
+            "maxLength": 128
+          }
+        }
+      }
+    }
+  }
+}

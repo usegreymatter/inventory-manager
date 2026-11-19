@@ -1,0 +1,31 @@
+{
+  "expected_layout": "unusable",
+  "expected_product_count": 0,
+  "expected_scenario": null,
+  "fixture": "unusable_no_sku.xlsx",
+  "ignored_rows": [],
+  "mappings": [
+    {
+      "fields": {
+        "on_hand": {
+          "column": "C",
+          "header": "Qty On Hand"
+        }
+      },
+      "header_row": 1,
+      "headers": [
+        "Warehouse",
+        "Bin",
+        "Qty On Hand"
+      ],
+      "sheet": "Notes"
+    }
+  ],
+  "missing": [
+    "sku"
+  ],
+  "notes": [
+    "No product identifiers or product names; must block, not fabricate SKU."
+  ],
+  "schema_version": 1
+}

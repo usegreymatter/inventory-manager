@@ -1,0 +1,661 @@
+{
+  "worst": {
+    "dataset": "Synthetic visual stress only",
+    "note": "Lifecycle: living. Synthetic, no real inventory.",
+    "as_of": "2026-10-31",
+    "months": [
+      "2026-01",
+      "2026-02",
+      "2026-03",
+      "2026-04",
+      "2026-05",
+      "2026-06",
+      "2026-07",
+      "2026-08",
+      "2026-09",
+      "2026-10"
+    ],
+    "items": [
+      {
+        "sku": "UL-FOAM-GRN-2026-XL-ANTISLIP-PREMIUM",
+        "name": "Premium acoustic foam floor underlay, green, extra-wide anti-slip moisture barrier for commercial renovation projects, 2026",
+        "unit": "sheets (4x8 ft)",
+        "on_hand": 0,
+        "supplier_days": 14,
+        "monthly_sales": [
+          12345678,
+          12345678,
+          12345678,
+          12345678,
+          12345678,
+          12345678,
+          12345678,
+          12345678,
+          12345678,
+          12345678
+        ],
+        "receipts": {},
+        "historical_receipts": {
+          "2026-01": 0,
+          "2026-02": 0,
+          "2026-03": 0,
+          "2026-04": 0,
+          "2026-05": 0,
+          "2026-06": 0,
+          "2026-07": 0,
+          "2026-08": 0,
+          "2026-09": 0,
+          "2026-10": 0
+        },
+        "category": "Building supplies"
+      },
+      {
+        "sku": "METRICISO90012026CERTIFIEDGREENPREMIUMCOMMERCIALINDUSTRIALROLL0000123456789",
+        "name": "غشاء عازل أخضر — Premium moisture barrier 👷🏽‍♀️ مقاوم للانزلاق",
+        "unit": "squaremillimetresISO800002026certified",
+        "on_hand": 1000000000000,
+        "supplier_days": 14,
+        "monthly_sales": [
+          1000000000000,
+          1000000000000,
+          1000000000000,
+          1000000000000,
+          1000000000000,
+          1000000000000,
+          1000000000000,
+          1000000000000,
+          1000000000000,
+          1000000000000
+        ],
+        "receipts": {},
+        "historical_receipts": {
+          "2026-01": 0,
+          "2026-02": 0,
+          "2026-03": 0,
+          "2026-04": 0,
+          "2026-05": 0,
+          "2026-06": 0,
+          "2026-07": 0,
+          "2026-08": 0,
+          "2026-09": 0,
+          "2026-10": 0
+        },
+        "category": "CertifiedCommercialAcousticUnderlayMoistureBarrierISO90012026GreenCollection"
+      },
+      {
+        "sku": "J",
+        "name": "J",
+        "unit": "m",
+        "on_hand": 42,
+        "supplier_days": 14,
+        "monthly_sales": [
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30
+        ],
+        "receipts": {},
+        "historical_receipts": {
+          "2026-01": 0,
+          "2026-02": 0,
+          "2026-03": 0,
+          "2026-04": 0,
+          "2026-05": 0,
+          "2026-06": 0,
+          "2026-07": 0,
+          "2026-08": 0,
+          "2026-09": 0,
+          "2026-10": 0
+        },
+        "category": "Building supplies"
+      },
+      {
+        "sku": "HEALTHY-2026",
+        "name": "Acoustic insulation panel",
+        "unit": "units",
+        "on_hand": 100,
+        "supplier_days": 14,
+        "monthly_sales": [
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30
+        ],
+        "receipts": {},
+        "historical_receipts": {
+          "2026-01": 0,
+          "2026-02": 0,
+          "2026-03": 0,
+          "2026-04": 0,
+          "2026-05": 0,
+          "2026-06": 0,
+          "2026-07": 0,
+          "2026-08": 0,
+          "2026-09": 0,
+          "2026-10": 0
+        },
+        "category": "Building supplies"
+      },
+      {
+        "sku": "OVER-2026",
+        "name": "High density insulation boards",
+        "unit": "sheets (4x8 ft)",
+        "on_hand": 1000000000000,
+        "supplier_days": 14,
+        "monthly_sales": [
+          0.000001,
+          0.000001,
+          0.000001,
+          0.000001,
+          0.000001,
+          0.000001,
+          0.000001,
+          0.000001,
+          0.000001,
+          0.000001
+        ],
+        "receipts": {},
+        "historical_receipts": {
+          "2026-01": 0,
+          "2026-02": 0,
+          "2026-03": 0,
+          "2026-04": 0,
+          "2026-05": 0,
+          "2026-06": 0,
+          "2026-07": 0,
+          "2026-08": 0,
+          "2026-09": 0,
+          "2026-10": 0
+        },
+        "category": "Building supplies"
+      },
+      {
+        "sku": "NO-SALES-2026",
+        "name": "No recent sales — احتياطي 📦",
+        "unit": "units",
+        "on_hand": 1000000000,
+        "supplier_days": 14,
+        "monthly_sales": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "receipts": {},
+        "historical_receipts": {
+          "2026-01": 0,
+          "2026-02": 0,
+          "2026-03": 0,
+          "2026-04": 0,
+          "2026-05": 0,
+          "2026-06": 0,
+          "2026-07": 0,
+          "2026-08": 0,
+          "2026-09": 0,
+          "2026-10": 0
+        },
+        "category": "Building supplies"
+      },
+      {
+        "sku": "NEEDS-DATA-2026-EXTENDED-SUPPLIER-CATALOGUE-REFERENCE",
+        "name": "Premium acoustic foam floor underlay, green, extra-wide anti-slip moisture barrier for commercial renovation projects, 2026",
+        "unit": "m",
+        "on_hand": 10,
+        "supplier_days": 14,
+        "monthly_sales": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "receipts": {},
+        "historical_receipts": {
+          "2026-01": 0,
+          "2026-02": 0,
+          "2026-03": 0,
+          "2026-04": 0,
+          "2026-05": 0,
+          "2026-06": 0,
+          "2026-07": 0,
+          "2026-08": 0,
+          "2026-09": 0,
+          "2026-10": 0
+        },
+        "category": "Building supplies",
+        "hold_reason": "Delivery history unavailable for the regional warehouse catalogue reference METRICISO90012026CERTIFIEDGREENPREMIUMCOMMERCIALINDUSTRIALROLL0000123456789; check this item before ordering."
+      },
+      {
+        "sku": "FRACTION-2026",
+        "name": "Sealing compound, fractional litre pack",
+        "unit": "litres",
+        "on_hand": 0.7,
+        "supplier_days": 14,
+        "monthly_sales": [
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.25
+        ],
+        "receipts": {},
+        "historical_receipts": {
+          "2026-01": 0,
+          "2026-02": 0,
+          "2026-03": 0,
+          "2026-04": 0,
+          "2026-05": 0,
+          "2026-06": 0,
+          "2026-07": 0,
+          "2026-08": 0,
+          "2026-09": 0,
+          "2026-10": 0
+        },
+        "category": "Building supplies"
+      },
+      {
+        "sku": "NEGATIVE-HISTORY-2026",
+        "name": "Recovered delivery history with earlier negative balance",
+        "unit": "sheets (4x8 ft)",
+        "on_hand": 20,
+        "supplier_days": 14,
+        "monthly_sales": [
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30
+        ],
+        "receipts": {},
+        "historical_receipts": {
+          "2026-01": 0,
+          "2026-02": 0,
+          "2026-03": 0,
+          "2026-04": 0,
+          "2026-05": 0,
+          "2026-06": 0,
+          "2026-07": 0,
+          "2026-08": 0,
+          "2026-09": 0,
+          "2026-10": 12345678
+        },
+        "category": "Building supplies"
+      },
+      {
+        "sku": "ZERO-2026",
+        "name": "Zero stock and zero sales",
+        "unit": "units",
+        "on_hand": 0,
+        "supplier_days": 14,
+        "monthly_sales": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "receipts": {},
+        "historical_receipts": {
+          "2026-01": 0,
+          "2026-02": 0,
+          "2026-03": 0,
+          "2026-04": 0,
+          "2026-05": 0,
+          "2026-06": 0,
+          "2026-07": 0,
+          "2026-08": 0,
+          "2026-09": 0,
+          "2026-10": 0
+        },
+        "category": "Building supplies"
+      },
+      {
+        "sku": "ONE-2026",
+        "name": "One",
+        "unit": "unit",
+        "on_hand": 1,
+        "supplier_days": 14,
+        "monthly_sales": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "receipts": {},
+        "historical_receipts": {
+          "2026-01": 0,
+          "2026-02": 0,
+          "2026-03": 0,
+          "2026-04": 0,
+          "2026-05": 0,
+          "2026-06": 0,
+          "2026-07": 0,
+          "2026-08": 0,
+          "2026-09": 0,
+          "2026-10": 0
+        },
+        "category": "Building supplies"
+      },
+      {
+        "sku": "MAX-2026",
+        "name": "Maximum quantity shipment",
+        "unit": "m",
+        "on_hand": 1000000000000,
+        "supplier_days": 14,
+        "monthly_sales": [
+          1000000000,
+          1000000000,
+          1000000000,
+          1000000000,
+          1000000000,
+          1000000000,
+          1000000000,
+          1000000000,
+          1000000000,
+          1000000000
+        ],
+        "receipts": {},
+        "historical_receipts": {
+          "2026-01": 0,
+          "2026-02": 0,
+          "2026-03": 0,
+          "2026-04": 0,
+          "2026-05": 0,
+          "2026-06": 0,
+          "2026-07": 0,
+          "2026-08": 0,
+          "2026-09": 0,
+          "2026-10": 0
+        },
+        "category": "Building supplies"
+      },
+      {
+        "sku": "GAP-RESTOCK-2026",
+        "name": "غشاء العزل — Commercial insulation with confirmed December delivery 📦",
+        "unit": "squaremillimetresISO800002026certified",
+        "on_hand": 20,
+        "supplier_days": 14,
+        "monthly_sales": [
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30
+        ],
+        "receipts": {
+          "2026-12": 1000
+        },
+        "historical_receipts": {
+          "2026-01": 0,
+          "2026-02": 0,
+          "2026-03": 0,
+          "2026-04": 0,
+          "2026-05": 0,
+          "2026-06": 0,
+          "2026-07": 0,
+          "2026-08": 0,
+          "2026-09": 0,
+          "2026-10": 12345678
+        },
+        "category": "Building supplies"
+      },
+      {
+        "sku": "ZERO-BASELINE-TREND",
+        "name": "Demand resumes after a zero baseline",
+        "unit": "units",
+        "on_hand": 100,
+        "supplier_days": 14,
+        "monthly_sales": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          30,
+          30,
+          30
+        ],
+        "receipts": {},
+        "historical_receipts": {
+          "2026-01": 0,
+          "2026-02": 0,
+          "2026-03": 0,
+          "2026-04": 0,
+          "2026-05": 0,
+          "2026-06": 0,
+          "2026-07": 0,
+          "2026-08": 0,
+          "2026-09": 0,
+          "2026-10": 0
+        },
+        "category": "Building supplies"
+      }
+    ]
+  },
+  "empty": {
+    "dataset": "Synthetic visual stress only",
+    "note": "Lifecycle: living. Synthetic, no real inventory.",
+    "as_of": "2026-10-31",
+    "months": [
+      "2026-01",
+      "2026-02",
+      "2026-03",
+      "2026-04",
+      "2026-05",
+      "2026-06",
+      "2026-07",
+      "2026-08",
+      "2026-09",
+      "2026-10"
+    ],
+    "items": []
+  },
+  "one": {
+    "dataset": "Synthetic visual stress only",
+    "note": "Lifecycle: living. Synthetic, no real inventory.",
+    "as_of": "2026-10-31",
+    "months": [
+      "2026-01",
+      "2026-02",
+      "2026-03",
+      "2026-04",
+      "2026-05",
+      "2026-06",
+      "2026-07",
+      "2026-08",
+      "2026-09",
+      "2026-10"
+    ],
+    "items": [
+      {
+        "sku": "UL-FOAM-GRN-2026-XL-ANTISLIP-PREMIUM",
+        "name": "Premium acoustic foam floor underlay, green, extra-wide anti-slip moisture barrier for commercial renovation projects, 2026",
+        "unit": "sheets (4x8 ft)",
+        "on_hand": 0,
+        "supplier_days": 14,
+        "monthly_sales": [
+          12345678,
+          12345678,
+          12345678,
+          12345678,
+          12345678,
+          12345678,
+          12345678,
+          12345678,
+          12345678,
+          12345678
+        ],
+        "receipts": {},
+        "historical_receipts": {
+          "2026-01": 0,
+          "2026-02": 0,
+          "2026-03": 0,
+          "2026-04": 0,
+          "2026-05": 0,
+          "2026-06": 0,
+          "2026-07": 0,
+          "2026-08": 0,
+          "2026-09": 0,
+          "2026-10": 0
+        },
+        "category": "Building supplies"
+      }
+    ]
+  },
+  "thousand": {
+    "dataset": "Synthetic visual stress only",
+    "note": "Lifecycle: living. Synthetic, no real inventory.",
+    "as_of": "2026-10-31",
+    "months": [
+      "2026-01",
+      "2026-02",
+      "2026-03",
+      "2026-04",
+      "2026-05",
+      "2026-06",
+      "2026-07",
+      "2026-08",
+      "2026-09",
+      "2026-10"
+    ],
+    "items": [
+      {
+        "sku": "UL-FOAM-GRN-2026-XL-ANTISLIP-PREMIUM",
+        "name": "Premium acoustic foam floor underlay, green, extra-wide anti-slip moisture barrier for commercial renovation projects, 2026",
+        "unit": "sheets (4x8 ft)",
+        "on_hand": 0,
+        "supplier_days": 14,
+        "monthly_sales": [
+          12345678,
+          12345678,
+          12345678,
+          12345678,
+          12345678,
+          12345678,
+          12345678,
+          12345678,
+          12345678,
+          12345678
+        ],
+        "receipts": {},
+        "historical_receipts": {
+          "2026-01": 0,
+          "2026-02": 0,
+          "2026-03": 0,
+          "2026-04": 0,
+          "2026-05": 0,
+          "2026-06": 0,
+          "2026-07": 0,
+          "2026-08": 0,
+          "2026-09": 0,
+          "2026-10": 0
+        },
+        "category": "All order now"
+      }
+    ],
+    "repeat": 1000
+  },
+  "future": {
+    "dataset": "Synthetic visual stress only",
+    "note": "Lifecycle: living. Synthetic, no real inventory.",
+    "as_of": "9998-10-31",
+    "months": [
+      "9998-01",
+      "9998-02",
+      "9998-03",
+      "9998-04",
+      "9998-05",
+      "9998-06",
+      "9998-07",
+      "9998-08",
+      "9998-09",
+      "9998-10"
+    ],
+    "items": [
+      {
+        "sku": "UL-FOAM-GRN-2026-XL-ANTISLIP-PREMIUM",
+        "name": "Premium acoustic foam floor underlay, green, extra-wide anti-slip moisture barrier for commercial renovation projects, 2026",
+        "unit": "sheets (4x8 ft)",
+        "on_hand": 0,
+        "supplier_days": 14,
+        "monthly_sales": [
+          12345678,
+          12345678,
+          12345678,
+          12345678,
+          12345678,
+          12345678,
+          12345678,
+          12345678,
+          12345678,
+          12345678
+        ],
+        "receipts": {},
+        "historical_receipts": {
+          "9998-01": 0,
+          "9998-02": 0,
+          "9998-03": 0,
+          "9998-04": 0,
+          "9998-05": 0,
+          "9998-06": 0,
+          "9998-07": 0,
+          "9998-08": 0,
+          "9998-09": 0,
+          "9998-10": 0
+        },
+        "category": "Building supplies"
+      }
+    ]
+  }
+}

@@ -1,0 +1,431 @@
+{
+  "as_of": "2026-10-31",
+  "today": "2026-11-12",
+  "cases": [
+    {
+      "item": {
+        "sku": "SEAL-CLR-300",
+        "name": "Clear silicone sealant 300ml",
+        "unit": "units",
+        "on_hand": 340,
+        "supplier_days": 21,
+        "open_receipts": [],
+        "monthly_sales": [
+          76,
+          70,
+          81,
+          71,
+          73,
+          82,
+          64,
+          61,
+          67,
+          79,
+          78,
+          64
+        ],
+        "receipts": {},
+        "category": "Sealants",
+        "supplier": "Fictional Hardware Supply",
+        "historical_receipts": {
+          "2025-11": 76,
+          "2025-12": 0,
+          "2026-01": 0,
+          "2026-02": 0,
+          "2026-03": 73,
+          "2026-04": 0,
+          "2026-05": 0,
+          "2026-06": 0,
+          "2026-07": 67,
+          "2026-08": 0,
+          "2026-09": 0,
+          "2026-10": 0
+        },
+        "minimum_order": 24,
+        "pack_size": 12
+      },
+      "months": [
+        "2025-11",
+        "2025-12",
+        "2026-01",
+        "2026-02",
+        "2026-03",
+        "2026-04",
+        "2026-05",
+        "2026-06",
+        "2026-07",
+        "2026-08",
+        "2026-09",
+        "2026-10"
+      ]
+    },
+    {
+      "item": {
+        "sku": "UL-FOAM-GRN",
+        "name": "Foam floor underlay roll",
+        "unit": "m",
+        "on_hand": 7,
+        "supplier_days": null,
+        "open_receipts": [],
+        "monthly_sales": [
+          0,
+          29,
+          0,
+          0,
+          0,
+          23,
+          0,
+          0,
+          25,
+          0,
+          0,
+          34
+        ],
+        "receipts": {},
+        "category": "Underlay",
+        "supplier": "Fictional Flooring Supply",
+        "historical_receipts": {
+          "2025-11": 0,
+          "2025-12": 0,
+          "2026-01": 0,
+          "2026-02": 0,
+          "2026-03": 0,
+          "2026-04": 0,
+          "2026-05": 0,
+          "2026-06": 0,
+          "2026-07": 25,
+          "2026-08": 0,
+          "2026-09": 0,
+          "2026-10": 0
+        }
+      },
+      "months": [
+        "2025-11",
+        "2025-12",
+        "2026-01",
+        "2026-02",
+        "2026-03",
+        "2026-04",
+        "2026-05",
+        "2026-06",
+        "2026-07",
+        "2026-08",
+        "2026-09",
+        "2026-10"
+      ]
+    },
+    {
+      "item": {
+        "sku": "GRT-GRY-5",
+        "name": "Tile adhesive 20kg",
+        "unit": "bag",
+        "on_hand": 90,
+        "supplier_days": 35,
+        "open_receipts": [],
+        "monthly_sales": [
+          23,
+          22,
+          27,
+          34,
+          66,
+          93,
+          108,
+          107,
+          68,
+          47,
+          26,
+          18
+        ],
+        "receipts": {},
+        "category": "Adhesives",
+        "supplier": "Fictional Hardware Supply",
+        "historical_receipts": {
+          "2025-11": 23,
+          "2025-12": 0,
+          "2026-01": 0,
+          "2026-02": 0,
+          "2026-03": 66,
+          "2026-04": 0,
+          "2026-05": 0,
+          "2026-06": 0,
+          "2026-07": 68,
+          "2026-08": 0,
+          "2026-09": 0,
+          "2026-10": 0
+        },
+        "minimum_order": 20,
+        "pack_size": 5
+      },
+      "months": [
+        "2025-11",
+        "2025-12",
+        "2026-01",
+        "2026-02",
+        "2026-03",
+        "2026-04",
+        "2026-05",
+        "2026-06",
+        "2026-07",
+        "2026-08",
+        "2026-09",
+        "2026-10"
+      ]
+    },
+    {
+      "item": {
+        "sku": "TRM-ALU-25",
+        "name": "Aluminium edge trim 25mm",
+        "unit": "m",
+        "on_hand": 42,
+        "supplier_days": 14,
+        "open_receipts": [
+          {
+            "qty": 18,
+            "date": "2026-11-24"
+          }
+        ],
+        "monthly_sales": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          8,
+          21,
+          32,
+          39
+        ],
+        "receipts": {
+          "2026-11": 18
+        },
+        "category": "Trims",
+        "supplier": "Fictional Flooring Supply",
+        "historical_receipts": {
+          "2025-11": 0,
+          "2025-12": 0,
+          "2026-01": 0,
+          "2026-02": 0,
+          "2026-03": 0,
+          "2026-04": 0,
+          "2026-05": 0,
+          "2026-06": 0,
+          "2026-07": 8,
+          "2026-08": 0,
+          "2026-09": 0,
+          "2026-10": 0
+        }
+      },
+      "months": [
+        "2025-11",
+        "2025-12",
+        "2026-01",
+        "2026-02",
+        "2026-03",
+        "2026-04",
+        "2026-05",
+        "2026-06",
+        "2026-07",
+        "2026-08",
+        "2026-09",
+        "2026-10"
+      ]
+    },
+    {
+      "item": {
+        "sku": "SEAL-WHT-300",
+        "name": "White silicone sealant 300ml",
+        "unit": "units",
+        "on_hand": 5,
+        "supplier_days": null,
+        "open_receipts": [],
+        "monthly_sales": [
+          91,
+          76,
+          66,
+          56,
+          43,
+          36,
+          21,
+          13,
+          0,
+          0,
+          0,
+          0
+        ],
+        "receipts": {},
+        "category": "Sealants",
+        "supplier": "Fictional Hardware Supply",
+        "historical_receipts": {
+          "2025-11": 91,
+          "2025-12": 0,
+          "2026-01": 0,
+          "2026-02": 0,
+          "2026-03": 43,
+          "2026-04": 0,
+          "2026-05": 0,
+          "2026-06": 0,
+          "2026-07": 0,
+          "2026-08": 0,
+          "2026-09": 0,
+          "2026-10": 0
+        }
+      },
+      "months": [
+        "2025-11",
+        "2025-12",
+        "2026-01",
+        "2026-02",
+        "2026-03",
+        "2026-04",
+        "2026-05",
+        "2026-06",
+        "2026-07",
+        "2026-08",
+        "2026-09",
+        "2026-10"
+      ]
+    },
+    {
+      "item": {
+        "name": "Synthetic edge",
+        "unit": "ea",
+        "on_hand": 10,
+        "supplier_days": 14,
+        "monthly_sales": [
+          0,
+          0,
+          0
+        ],
+        "receipts": {},
+        "sku": "ZERO-HISTORY"
+      },
+      "months": [
+        "2026-08",
+        "2026-09",
+        "2026-10"
+      ],
+      "settings": {}
+    },
+    {
+      "item": {
+        "name": "Synthetic edge",
+        "unit": "ea",
+        "on_hand": 1,
+        "supplier_days": 14,
+        "monthly_sales": [
+          0,
+          0,
+          10.5
+        ],
+        "receipts": {},
+        "sku": "INTERMITTENT"
+      },
+      "months": [
+        "2026-08",
+        "2026-09",
+        "2026-10"
+      ],
+      "settings": {}
+    },
+    {
+      "item": {
+        "name": "Synthetic edge",
+        "unit": "ea",
+        "on_hand": 10,
+        "supplier_days": 14,
+        "monthly_sales": [
+          10.125,
+          10.25,
+          10.375
+        ],
+        "receipts": {},
+        "sku": "HUGE-MOQ"
+      },
+      "months": [
+        "2026-08",
+        "2026-09",
+        "2026-10"
+      ],
+      "settings": {
+        "product_overrides": {
+          "HUGE-MOQ": {
+            "minimum_order": 10000
+          }
+        }
+      }
+    },
+    {
+      "item": {
+        "name": "Synthetic edge",
+        "unit": "ea",
+        "on_hand": 10,
+        "supplier_days": 14,
+        "monthly_sales": [
+          10.125,
+          10.25,
+          10.375
+        ],
+        "receipts": {},
+        "sku": "PACK-SIZE"
+      },
+      "months": [
+        "2026-08",
+        "2026-09",
+        "2026-10"
+      ],
+      "settings": {
+        "product_overrides": {
+          "PACK-SIZE": {
+            "pack_size": 2.5
+          }
+        }
+      }
+    },
+    {
+      "item": {
+        "name": "Synthetic edge",
+        "unit": "ea",
+        "on_hand": 70,
+        "supplier_days": 240,
+        "monthly_sales": [
+          10,
+          10,
+          10
+        ],
+        "receipts": {},
+        "sku": "OVERSTOCK-FUTURE"
+      },
+      "months": [
+        "2026-08",
+        "2026-09",
+        "2026-10"
+      ],
+      "settings": {}
+    },
+    {
+      "item": {
+        "name": "Synthetic edge",
+        "unit": "ea",
+        "on_hand": 30,
+        "supplier_days": 14,
+        "monthly_sales": [
+          10.125,
+          10.25,
+          10.375
+        ],
+        "receipts": {},
+        "sku": "UNDATED-INCOMING",
+        "on_order": 100
+      },
+      "months": [
+        "2026-08",
+        "2026-09",
+        "2026-10"
+      ],
+      "settings": {}
+    }
+  ]
+}

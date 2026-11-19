@@ -1,0 +1,1029 @@
+{
+  "assertion_scope": "Independent fixture intent; not generated from importer results.",
+  "conventions": {
+    "as_of": "Unspecified: compare months/items only; do not assert clock-derived dates",
+    "columns": "Excel letters",
+    "inactive_products": "An explicit FALSE Active flag excludes a product; never used as quantity",
+    "missing_sku": "Block unusable input; never fabricate product identifiers",
+    "reference_year": 2026,
+    "rows": "Physical one-based rows",
+    "sales": "Historical fulfilled quantities in units, not forecasts",
+    "stock": "Snapshot, never summed across transactions"
+  },
+  "fixture_count": 15,
+  "fixtures": [
+    {
+      "compression": "STORE",
+      "date1904": false,
+      "expected_file": "stored_mixed_cells.expected.json",
+      "expected_layout": "wide_months",
+      "expected_product_count": 1,
+      "filename": "stored_mixed_cells.xlsx",
+      "important_mappings": [
+        {
+          "fields": {
+            "name": {
+              "column": "B",
+              "header": "Item Name"
+            },
+            "on_hand": {
+              "column": "D",
+              "header": "Qty On Hand"
+            },
+            "sku": {
+              "column": "A",
+              "header": "Item Code"
+            },
+            "supplier": {
+              "column": "F",
+              "header": "Supplier"
+            },
+            "supplier_days": {
+              "column": "E",
+              "header": "Lead Time"
+            },
+            "unit": {
+              "column": "C",
+              "header": "UoM"
+            }
+          },
+          "header_row": 1,
+          "headers": [
+            "Item Code",
+            "Item Name",
+            "UoM",
+            "Qty On Hand",
+            "Lead Time",
+            "Supplier",
+            "Jan 2026",
+            "2026-02",
+            "March",
+            "Active"
+          ],
+          "monthly_sales": [
+            {
+              "column": "G",
+              "header": "Jan 2026",
+              "month": "2026-01"
+            },
+            {
+              "column": "H",
+              "header": "2026-02",
+              "month": "2026-02"
+            },
+            {
+              "column": "I",
+              "header": "March",
+              "month": "2026-03"
+            }
+          ],
+          "sheet": "Inventory"
+        }
+      ],
+      "sha256": "b0d1b313ff3f5e3cc729281a8fc4e8ec72813f8affd351fa5bf41a021b829f1c"
+    },
+    {
+      "compression": "DEFLATE",
+      "date1904": false,
+      "expected_file": "title_rows.expected.json",
+      "expected_layout": "wide_months",
+      "expected_product_count": 2,
+      "filename": "title_rows.xlsx",
+      "important_mappings": [
+        {
+          "fields": {
+            "name": {
+              "column": "B",
+              "header": "Item Name"
+            },
+            "on_hand": {
+              "column": "D",
+              "header": "Qty On Hand"
+            },
+            "sku": {
+              "column": "A",
+              "header": "Item Code"
+            },
+            "supplier": {
+              "column": "F",
+              "header": "Supplier"
+            },
+            "supplier_days": {
+              "column": "E",
+              "header": "Lead Time"
+            },
+            "unit": {
+              "column": "C",
+              "header": "UoM"
+            }
+          },
+          "header_row": 4,
+          "headers": [
+            "Item Code",
+            "Item Name",
+            "UoM",
+            "Qty On Hand",
+            "Lead Time",
+            "Supplier",
+            "Jan 2026",
+            "2026-02",
+            "March"
+          ],
+          "monthly_sales": [
+            {
+              "column": "G",
+              "header": "Jan 2026",
+              "month": "2026-01"
+            },
+            {
+              "column": "H",
+              "header": "2026-02",
+              "month": "2026-02"
+            },
+            {
+              "column": "I",
+              "header": "March",
+              "month": "2026-03"
+            }
+          ],
+          "sheet": "Inventory"
+        }
+      ],
+      "sha256": "3992b5eaf6c29fbde858b4afe119692a60a414e06932eb5a4f47f44cde1e6927"
+    },
+    {
+      "compression": "DEFLATE",
+      "date1904": false,
+      "expected_file": "wide_months.expected.json",
+      "expected_layout": "wide_months",
+      "expected_product_count": 2,
+      "filename": "wide_months.xlsx",
+      "important_mappings": [
+        {
+          "fields": {
+            "name": {
+              "column": "B",
+              "header": "Item Name"
+            },
+            "on_hand": {
+              "column": "D",
+              "header": "Qty On Hand"
+            },
+            "sku": {
+              "column": "A",
+              "header": "Item Code"
+            },
+            "supplier": {
+              "column": "F",
+              "header": "Supplier"
+            },
+            "supplier_days": {
+              "column": "E",
+              "header": "Lead Time"
+            },
+            "unit": {
+              "column": "C",
+              "header": "UoM"
+            }
+          },
+          "header_row": 1,
+          "headers": [
+            "Item Code",
+            "Item Name",
+            "UoM",
+            "Qty On Hand",
+            "Lead Time",
+            "Supplier",
+            "Jan 2026",
+            "2026-02",
+            "March"
+          ],
+          "monthly_sales": [
+            {
+              "column": "G",
+              "header": "Jan 2026",
+              "month": "2026-01"
+            },
+            {
+              "column": "H",
+              "header": "2026-02",
+              "month": "2026-02"
+            },
+            {
+              "column": "I",
+              "header": "March",
+              "month": "2026-03"
+            }
+          ],
+          "sheet": "Inventory"
+        }
+      ],
+      "sha256": "e9a141080dae8d37b1fc4fc7bc7ef56f31f162b0916cc228f36b0d187979c9be"
+    },
+    {
+      "compression": "DEFLATE",
+      "date1904": false,
+      "expected_file": "long_transactions.expected.json",
+      "expected_layout": "long_transactions",
+      "expected_product_count": 2,
+      "filename": "long_transactions.xlsx",
+      "important_mappings": [
+        {
+          "fields": {
+            "date": {
+              "column": "G",
+              "header": "Date"
+            },
+            "name": {
+              "column": "B",
+              "header": "Item Name"
+            },
+            "on_hand": {
+              "column": "D",
+              "header": "Qty On Hand"
+            },
+            "quantity": {
+              "column": "H",
+              "header": "Quantity Sold"
+            },
+            "sku": {
+              "column": "A",
+              "header": "Item Code"
+            },
+            "supplier": {
+              "column": "F",
+              "header": "Supplier"
+            },
+            "supplier_days": {
+              "column": "E",
+              "header": "Lead Time"
+            },
+            "transaction_id": {
+              "column": "I",
+              "header": "Transaction ID"
+            },
+            "unit": {
+              "column": "C",
+              "header": "UoM"
+            }
+          },
+          "header_row": 1,
+          "headers": [
+            "Item Code",
+            "Item Name",
+            "UoM",
+            "Qty On Hand",
+            "Lead Time",
+            "Supplier",
+            "Date",
+            "Quantity Sold",
+            "Transaction ID"
+          ],
+          "sheet": "Transactions"
+        }
+      ],
+      "sha256": "3ad5a2178da4991774dca1c1c4f733c1d79de0bc2007d7402be94bbb0f496500"
+    },
+    {
+      "compression": "DEFLATE",
+      "date1904": false,
+      "expected_file": "three_sheet_join.expected.json",
+      "expected_layout": "multi_sheet_join",
+      "expected_product_count": 2,
+      "filename": "three_sheet_join.xlsx",
+      "important_mappings": [
+        {
+          "fields": {
+            "name": {
+              "column": "B",
+              "header": "Item Name"
+            },
+            "on_hand": {
+              "column": "D",
+              "header": "Qty On Hand"
+            },
+            "sku": {
+              "column": "A",
+              "header": "Item Code"
+            },
+            "supplier_days": {
+              "column": "E",
+              "header": "Lead Time"
+            },
+            "unit": {
+              "column": "C",
+              "header": "UoM"
+            }
+          },
+          "header_row": 1,
+          "headers": [
+            "Item Code",
+            "Item Name",
+            "UoM",
+            "Qty On Hand",
+            "Lead Time"
+          ],
+          "sheet": "Stock"
+        },
+        {
+          "fields": {
+            "sku": {
+              "column": "A",
+              "header": "Item Code"
+            }
+          },
+          "header_row": 1,
+          "headers": [
+            "Item Code",
+            "Jan 2026",
+            "2026-02",
+            "March"
+          ],
+          "monthly_sales": [
+            {
+              "column": "B",
+              "header": "Jan 2026",
+              "month": "2026-01"
+            },
+            {
+              "column": "C",
+              "header": "2026-02",
+              "month": "2026-02"
+            },
+            {
+              "column": "D",
+              "header": "March",
+              "month": "2026-03"
+            }
+          ],
+          "sheet": "Sales"
+        },
+        {
+          "fields": {
+            "sku": {
+              "column": "A",
+              "header": "Item Code"
+            },
+            "supplier": {
+              "column": "B",
+              "header": "Supplier"
+            },
+            "supplier_days": {
+              "column": "C",
+              "header": "Lead Time"
+            }
+          },
+          "header_row": 1,
+          "headers": [
+            "Item Code",
+            "Supplier",
+            "Lead Time"
+          ],
+          "sheet": "Suppliers"
+        }
+      ],
+      "sha256": "8b2295865328d1968f6df3105c3a3919d4f6e52116cb32f2b4652d95e7217b8d"
+    },
+    {
+      "compression": "DEFLATE",
+      "date1904": false,
+      "expected_file": "odoo_headers.expected.json",
+      "expected_layout": "wide_months",
+      "expected_product_count": 2,
+      "filename": "odoo_headers.xlsx",
+      "important_mappings": [
+        {
+          "fields": {
+            "name": {
+              "column": "B",
+              "header": "Name"
+            },
+            "on_hand": {
+              "column": "D",
+              "header": "On Hand"
+            },
+            "sku": {
+              "column": "A",
+              "header": "Internal Reference"
+            },
+            "supplier": {
+              "column": "F",
+              "header": "Vendor"
+            },
+            "supplier_days": {
+              "column": "E",
+              "header": "Vendor Lead Time"
+            },
+            "unit": {
+              "column": "C",
+              "header": "Unit of Measure"
+            }
+          },
+          "header_row": 1,
+          "headers": [
+            "Internal Reference",
+            "Name",
+            "Unit of Measure",
+            "On Hand",
+            "Vendor Lead Time",
+            "Vendor",
+            "Jan 2026",
+            "2026-02",
+            "March"
+          ],
+          "monthly_sales": [
+            {
+              "column": "G",
+              "header": "Jan 2026",
+              "month": "2026-01"
+            },
+            {
+              "column": "H",
+              "header": "2026-02",
+              "month": "2026-02"
+            },
+            {
+              "column": "I",
+              "header": "March",
+              "month": "2026-03"
+            }
+          ],
+          "sheet": "Products"
+        }
+      ],
+      "sha256": "1a53c6260c13b145203f2bf6d7cba250cac1f0d212fa832f7d92c1b3a8f0ce7a"
+    },
+    {
+      "compression": "DEFLATE",
+      "date1904": false,
+      "expected_file": "arabic_headers.expected.json",
+      "expected_layout": "wide_months",
+      "expected_product_count": 2,
+      "filename": "arabic_headers.xlsx",
+      "important_mappings": [
+        {
+          "fields": {
+            "name": {
+              "column": "B",
+              "header": "اسم الصنف"
+            },
+            "on_hand": {
+              "column": "D",
+              "header": "الكمية"
+            },
+            "sku": {
+              "column": "A",
+              "header": "الصنف"
+            },
+            "supplier": {
+              "column": "F",
+              "header": "المورد"
+            },
+            "supplier_days": {
+              "column": "E",
+              "header": "Lead Time"
+            },
+            "unit": {
+              "column": "C",
+              "header": "UoM"
+            }
+          },
+          "header_row": 1,
+          "headers": [
+            "الصنف",
+            "اسم الصنف",
+            "UoM",
+            "الكمية",
+            "Lead Time",
+            "المورد",
+            "Jan 2026",
+            "2026-02",
+            "March"
+          ],
+          "monthly_sales": [
+            {
+              "column": "G",
+              "header": "Jan 2026",
+              "month": "2026-01"
+            },
+            {
+              "column": "H",
+              "header": "2026-02",
+              "month": "2026-02"
+            },
+            {
+              "column": "I",
+              "header": "March",
+              "month": "2026-03"
+            }
+          ],
+          "sheet": "المخزون"
+        }
+      ],
+      "sha256": "798403da699bfd0dc0981bbc266e82287c4d652ba079583893459b6a00aff1c8"
+    },
+    {
+      "compression": "DEFLATE",
+      "date1904": false,
+      "expected_file": "totals_merged_title.expected.json",
+      "expected_layout": "wide_months",
+      "expected_product_count": 2,
+      "filename": "totals_merged_title.xlsx",
+      "important_mappings": [
+        {
+          "fields": {
+            "name": {
+              "column": "B",
+              "header": "Item Name"
+            },
+            "on_hand": {
+              "column": "D",
+              "header": "Qty On Hand"
+            },
+            "sku": {
+              "column": "A",
+              "header": "Item Code"
+            },
+            "supplier": {
+              "column": "F",
+              "header": "Supplier"
+            },
+            "supplier_days": {
+              "column": "E",
+              "header": "Lead Time"
+            },
+            "unit": {
+              "column": "C",
+              "header": "UoM"
+            }
+          },
+          "header_row": 3,
+          "headers": [
+            "Item Code",
+            "Item Name",
+            "UoM",
+            "Qty On Hand",
+            "Lead Time",
+            "Supplier",
+            "Jan 2026",
+            "2026-02",
+            "March"
+          ],
+          "monthly_sales": [
+            {
+              "column": "G",
+              "header": "Jan 2026",
+              "month": "2026-01"
+            },
+            {
+              "column": "H",
+              "header": "2026-02",
+              "month": "2026-02"
+            },
+            {
+              "column": "I",
+              "header": "March",
+              "month": "2026-03"
+            }
+          ],
+          "sheet": "Inventory"
+        }
+      ],
+      "sha256": "8c004c38161fdf6ced7c1e2d6068384b2b866a872766ac08b92d79712548f375"
+    },
+    {
+      "compression": "DEFLATE",
+      "date1904": false,
+      "expected_file": "dates_serial_text.expected.json",
+      "expected_layout": "long_transactions",
+      "expected_product_count": 2,
+      "filename": "dates_serial_text.xlsx",
+      "important_mappings": [
+        {
+          "fields": {
+            "date": {
+              "column": "G",
+              "header": "Date"
+            },
+            "name": {
+              "column": "B",
+              "header": "Item Name"
+            },
+            "on_hand": {
+              "column": "D",
+              "header": "Qty On Hand"
+            },
+            "quantity": {
+              "column": "H",
+              "header": "Quantity Sold"
+            },
+            "sku": {
+              "column": "A",
+              "header": "Item Code"
+            },
+            "supplier": {
+              "column": "F",
+              "header": "Supplier"
+            },
+            "supplier_days": {
+              "column": "E",
+              "header": "Lead Time"
+            },
+            "transaction_id": {
+              "column": "I",
+              "header": "Transaction ID"
+            },
+            "unit": {
+              "column": "C",
+              "header": "UoM"
+            }
+          },
+          "header_row": 1,
+          "headers": [
+            "Item Code",
+            "Item Name",
+            "UoM",
+            "Qty On Hand",
+            "Lead Time",
+            "Supplier",
+            "Date",
+            "Quantity Sold",
+            "Transaction ID"
+          ],
+          "sheet": "Transactions"
+        }
+      ],
+      "sha256": "5f805f3e041475e3e0fd76402dae32bc47c013a5b2c65d4404cc2c1ec5bbe419"
+    },
+    {
+      "compression": "DEFLATE",
+      "date1904": false,
+      "expected_file": "date_headers_serial.expected.json",
+      "expected_layout": "wide_months",
+      "expected_product_count": 2,
+      "filename": "date_headers_serial.xlsx",
+      "important_mappings": [
+        {
+          "fields": {
+            "name": {
+              "column": "B",
+              "header": "Item Name"
+            },
+            "on_hand": {
+              "column": "D",
+              "header": "Qty On Hand"
+            },
+            "sku": {
+              "column": "A",
+              "header": "Item Code"
+            },
+            "supplier": {
+              "column": "F",
+              "header": "Supplier"
+            },
+            "supplier_days": {
+              "column": "E",
+              "header": "Lead Time"
+            },
+            "unit": {
+              "column": "C",
+              "header": "UoM"
+            }
+          },
+          "header_row": 1,
+          "headers": [
+            "Item Code",
+            "Item Name",
+            "UoM",
+            "Qty On Hand",
+            "Lead Time",
+            "Supplier",
+            "2026-01-01",
+            "2026-02-01",
+            "March"
+          ],
+          "monthly_sales": [
+            {
+              "column": "G",
+              "header": "2026-01-01",
+              "month": "2026-01"
+            },
+            {
+              "column": "H",
+              "header": "2026-02-01",
+              "month": "2026-02"
+            },
+            {
+              "column": "I",
+              "header": "March",
+              "month": "2026-03"
+            }
+          ],
+          "sheet": "Inventory"
+        }
+      ],
+      "sha256": "da6b12e7ca40668a4895d33e4b4c99c624fddd414dbacfae8620eccbedeb9393"
+    },
+    {
+      "compression": "DEFLATE",
+      "date1904": true,
+      "expected_file": "date_system_1904.expected.json",
+      "expected_layout": "long_transactions",
+      "expected_product_count": 2,
+      "filename": "date_system_1904.xlsx",
+      "important_mappings": [
+        {
+          "fields": {
+            "date": {
+              "column": "G",
+              "header": "Date"
+            },
+            "name": {
+              "column": "B",
+              "header": "Item Name"
+            },
+            "on_hand": {
+              "column": "D",
+              "header": "Qty On Hand"
+            },
+            "quantity": {
+              "column": "H",
+              "header": "Quantity Sold"
+            },
+            "sku": {
+              "column": "A",
+              "header": "Item Code"
+            },
+            "supplier": {
+              "column": "F",
+              "header": "Supplier"
+            },
+            "supplier_days": {
+              "column": "E",
+              "header": "Lead Time"
+            },
+            "transaction_id": {
+              "column": "I",
+              "header": "Transaction ID"
+            },
+            "unit": {
+              "column": "C",
+              "header": "UoM"
+            }
+          },
+          "header_row": 1,
+          "headers": [
+            "Item Code",
+            "Item Name",
+            "UoM",
+            "Qty On Hand",
+            "Lead Time",
+            "Supplier",
+            "Date",
+            "Quantity Sold",
+            "Transaction ID"
+          ],
+          "sheet": "Transactions"
+        }
+      ],
+      "sha256": "df98ce3c1442b8316b6f8fe1d27ad53a8f7197ada93838416dc5226af3efc1ef"
+    },
+    {
+      "compression": "DEFLATE",
+      "date1904": false,
+      "expected_file": "fuzzy_qty_pcs.expected.json",
+      "expected_layout": "wide_months",
+      "expected_product_count": 2,
+      "filename": "fuzzy_qty_pcs.xlsx",
+      "important_mappings": [
+        {
+          "fields": {
+            "name": {
+              "column": "B",
+              "header": "Item Name"
+            },
+            "on_hand": {
+              "column": "D",
+              "header": "Qty (pcs)"
+            },
+            "sku": {
+              "column": "A",
+              "header": "Item Code"
+            },
+            "supplier": {
+              "column": "F",
+              "header": "Supplier"
+            },
+            "supplier_days": {
+              "column": "E",
+              "header": "Lead Time"
+            },
+            "unit": {
+              "column": "C",
+              "header": "UoM"
+            }
+          },
+          "header_row": 1,
+          "headers": [
+            "Item Code",
+            "Item Name",
+            "UoM",
+            "Qty (pcs)",
+            "Lead Time",
+            "Supplier",
+            "Jan 2026",
+            "2026-02",
+            "March"
+          ],
+          "monthly_sales": [
+            {
+              "column": "G",
+              "header": "Jan 2026",
+              "month": "2026-01"
+            },
+            {
+              "column": "H",
+              "header": "2026-02",
+              "month": "2026-02"
+            },
+            {
+              "column": "I",
+              "header": "March",
+              "month": "2026-03"
+            }
+          ],
+          "sheet": "Inventory"
+        }
+      ],
+      "sha256": "a0c2c3dd22ee01b534e4583a1beb5fde2427310b91adae54b3be4868b1ab4f9a"
+    },
+    {
+      "compression": "DEFLATE",
+      "date1904": false,
+      "expected_file": "fuzzy_qoh.expected.json",
+      "expected_layout": "wide_months",
+      "expected_product_count": 2,
+      "filename": "fuzzy_qoh.xlsx",
+      "important_mappings": [
+        {
+          "fields": {
+            "name": {
+              "column": "B",
+              "header": "Item Name"
+            },
+            "on_hand": {
+              "column": "D",
+              "header": "QOH"
+            },
+            "sku": {
+              "column": "A",
+              "header": "Item Code"
+            },
+            "supplier": {
+              "column": "F",
+              "header": "Supplier"
+            },
+            "supplier_days": {
+              "column": "E",
+              "header": "Lead Time"
+            },
+            "unit": {
+              "column": "C",
+              "header": "UoM"
+            }
+          },
+          "header_row": 1,
+          "headers": [
+            "Item Code",
+            "Item Name",
+            "UoM",
+            "QOH",
+            "Lead Time",
+            "Supplier",
+            "Jan 2026",
+            "2026-02",
+            "March"
+          ],
+          "monthly_sales": [
+            {
+              "column": "G",
+              "header": "Jan 2026",
+              "month": "2026-01"
+            },
+            {
+              "column": "H",
+              "header": "2026-02",
+              "month": "2026-02"
+            },
+            {
+              "column": "I",
+              "header": "March",
+              "month": "2026-03"
+            }
+          ],
+          "sheet": "Inventory"
+        }
+      ],
+      "sha256": "27f0c6d4bdabb0f86970f882451bc60224d4b8c857fe0c0fe196885dad5d7820"
+    },
+    {
+      "compression": "DEFLATE",
+      "date1904": false,
+      "expected_file": "unusable_no_sku.expected.json",
+      "expected_layout": "unusable",
+      "expected_product_count": 0,
+      "filename": "unusable_no_sku.xlsx",
+      "important_mappings": [
+        {
+          "fields": {
+            "on_hand": {
+              "column": "C",
+              "header": "Qty On Hand"
+            }
+          },
+          "header_row": 1,
+          "headers": [
+            "Warehouse",
+            "Bin",
+            "Qty On Hand"
+          ],
+          "sheet": "Notes"
+        }
+      ],
+      "missing": [
+        "sku"
+      ],
+      "sha256": "753542f42aa1cc74ebbe1acae3065cde9d9e7572eeeb2b75e7bbb085a0483add"
+    },
+    {
+      "expected_file": "messy_title.expected.json",
+      "expected_layout": "wide_months",
+      "expected_product_count": 2,
+      "filename": "messy_title.csv",
+      "important_mappings": [
+        {
+          "fields": {
+            "name": {
+              "column": "B",
+              "header": "Item Name"
+            },
+            "on_hand": {
+              "column": "D",
+              "header": "Qty On Hand"
+            },
+            "sku": {
+              "column": "A",
+              "header": "Item Code"
+            },
+            "supplier": {
+              "column": "F",
+              "header": "Supplier"
+            },
+            "supplier_days": {
+              "column": "E",
+              "header": "Lead Time"
+            },
+            "unit": {
+              "column": "C",
+              "header": "UoM"
+            }
+          },
+          "header_row": 4,
+          "headers": [
+            "Item Code",
+            "Item Name",
+            "UoM",
+            "Qty On Hand",
+            "Lead Time",
+            "Supplier",
+            "Jan 2026",
+            "2026-02",
+            "March"
+          ],
+          "monthly_sales": [
+            {
+              "column": "G",
+              "header": "Jan 2026",
+              "month": "2026-01"
+            },
+            {
+              "column": "H",
+              "header": "2026-02",
+              "month": "2026-02"
+            },
+            {
+              "column": "I",
+              "header": "March",
+              "month": "2026-03"
+            }
+          ],
+          "sheet": "CSV"
+        }
+      ],
+      "sha256": "bafbb4fdb6bb09fe31a15c52c6faf685d65b0c3ac59afdfcee8280da550ad6d6"
+    }
+  ],
+  "generator": "scripts/generate_smart_import_fixtures.py",
+  "schema_version": 1,
+  "synthetic": true
+}

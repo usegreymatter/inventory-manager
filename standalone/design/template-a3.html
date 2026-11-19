@@ -1,0 +1,20 @@
+<!doctype html>
+<!-- Lifecycle: generated. Built by standalone/build.py from separate A3 sources. -->
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="light"><title>__S_stock_Runway_A3__</title>
+<style>__DESIGN_CSS__</style></head>
+<body data-design="__DESIGN__"><header class="topbar"><div class="brand">__S_stock_Runway__<span class="edition">__S_a3__</span></div><div class="provenance" id="snapshot"></div><button id="health-chip" class="health-chip" type="button" aria-haspopup="dialog" hidden></button><details class="tools" id="tools"><summary aria-label="__S_settings_import_and_purchase_order__">__S_symbol__</summary><div class="tools-body"><button id="copy-po" type="button" class="primary">__S_copy_order__</button><p id="copy-status" role="status"></p><div id="copy-fallback" hidden><label for="po-text">__S_order_text__</label><textarea id="po-text" readonly></textarea><button id="select-po" type="button">__S_select_all__</button></div>
+<details id="file-panel"><summary>__S_import_CSV__</summary><div id="dropzone" class="detail-body"><p>__S_drop_your_stock_CSV_here_Your_file_stays_o__</p><label class="field">__S_choose_CSV__<input id="csv-file" type="file" accept=".xlsx,.csv,.json,.xls,.xlsb,text/csv,application/json" aria-label="__S_choose_stock_CSV__"></label><button id="sample" type="button" hidden>__S_sample_data__</button><p id="source-status" role="status">__S_built_in_sample_not_real_stock__</p><p id="file-error" role="alert" hidden></p></div></details>__CONTROLS__</div></details></header>
+<div class="layout"><aside id="sidebar" aria-label="__S_products_6__"><button id="browse-toggle" type="button" aria-expanded="false" aria-controls="sku-list">__S_products__<span id="product-total"></span><span aria-hidden="true">__S_symbol_1__</span></button><label class="search"><span aria-hidden="true">__S_symbol_2__</span><input id="search" type="search" placeholder="__S_search_products__" aria-label="__S_search_products__" autocomplete="off"></label><div id="sku-list"></div><div class="list-footer" aria-hidden="true">__S_symbol_3__<span>__S_j_k__</span></div></aside>
+<main id="main"><div class="selection-nav"><span id="selection-count" aria-live="polite"></span><div><button id="prev-sku" type="button" aria-label="__S_previous_product__">__S_symbol_4__</button><button id="next-sku" type="button" aria-label="__S_next_product__">__S_symbol_5__</button></div></div><section id="hero" aria-label="__S_selected_product__"></section></main></div>
+<dialog id="health-dialog" class="health-dialog" aria-labelledby="health-title"><div class="sheet-heading"><h2 id="health-title">__S_healthTitle__</h2><button class="sheet-close" type="button" aria-label="__S_close__">__S_closeIcon__</button></div><ul id="health-list" class="health-list"></ul></dialog>
+<dialog id="why-dialog" class="why-dialog" aria-labelledby="why-title"><div class="sheet-heading"><h2 id="why-title">__S_whyTitle__</h2><button class="sheet-close" type="button" aria-label="__S_close__">__S_closeIcon__</button></div><p id="why-sku" class="sheet-sku"></p><div id="why-chart"></div></dialog>
+<noscript>__S_javaScript_required__</noscript>
+<script type="module" id="runway-app">
+const a3Started=performance.now()
+/* STOCK_RUNWAY_CORE_START */
+__STOCK_RUNWAY_CORE__/* STOCK_RUNWAY_CORE_END */
+/* STOCK_RUNWAY_HELPERS_START */
+__HELPERS__/* STOCK_RUNWAY_HELPERS_END */
+applyOrderPolicyCopy()
+__DESIGN_APP__
+</script></body></html>

@@ -1,0 +1,27 @@
+Lifecycle: living
+
+# Evidence contract
+
+Inputs: `PLAN-R2.md`, `../../plugin.yaml`, `../../desktop/plugin.js`, `../../tests/`.
+Job: keep local verification reproducible without credentials or external reviewers.
+Outputs: local receipts and gate results under ignored `../.scratch/`; `../smoke-chat.txt`; harness source in
+`../harness.html`, `../harness-entry.js`, `../sdk-shim.js`, `../capture-harness.cjs`.
+Human check: rerun the checks in `../../README.md`; successful source checks do not prove real-app or hosted behavior.
+Screenshots, if available, are labeled harness, not the real app. Scratch files are ignored.
+
+Current order-guidance task route: `../../README.md` Validation links the maintainer's task brief (not published); build evidence belongs in `../.scratch/ORDER-BUILD-REPORT.md`, earlier repair evidence in `../.scratch/ORDER-REPAIR-REPORT.md`, RESUME3 repair evidence in `../.scratch/ORDER-RESUME3-REPAIR-REPORT.md`, current RESUME4 repair evidence in `../.scratch/ORDER-RESUME4-REPAIR-REPORT.md` and browser captures in `../.scratch/order-screens/`. `PLAN-R2.md` and Amendment 12 are historical context; their invariants and retained harness assertions remain in force.
+Historical inventory task route: `../../README.md` Validation links the historical Amendment 12 packet (preserving prior amendments); `../.scratch/A9-BUILD-REPORT.md` is the original build handoff and `../.scratch/A9-REPAIR1-REPORT.md` is the sole harness repair handoff; `../.scratch/A10-BUILD-REPORT.md` is the exact on-hand build/test handoff; `../.scratch/A11-BUILD-REPORT.md` is the table-readability build/test handoff; `../.scratch/A12-BUILD-REPORT.md` is the maximum-quantity table handoff.
+Inventory harness inputs: `../capture-inventory.cjs`, `../capture-quick-view.cjs`, `../harness.html`, `../harness-entry.js`, `../sdk-shim.js`, `../../desktop/plugin.js`.
+Outputs: `../.scratch/a4-screens/` and `../.scratch/a9-browser.log`; human check: compare all six viewport/theme captures against the approved target and inspect actual browser assertions. A11 adds ten configurations with both fixtures: every timeline cell is reached by native table scroll, numeric tokens must remain intact, and stock-scrolled header/Now/last captures include sticky Month. A12 retains that matrix and adds a maximum-quantity CSV, cell overflow checks and exact accessible values; current methods and proof status live in `../.scratch/A12-BUILD-REPORT.md`.
+
+Current RESUME5 writer handoff: `../.scratch/ORDER-RESUME5-REPAIR-REPORT.md`; targeted source checks and bounded diagnostic logs use `../.scratch/order-resume5-*`. Controller-owned canonical browser outputs remain `../.scratch/order-screens/report.json` and `../.scratch/quick-view-screens/report.json`. Older RESUME4 launch-denied statuses remain historical evidence. Screenshots require successful browser execution; a blocked report is not visual proof.
+
+Current visual polish packet (2026-11-11): owner authority is the maintainer's task brief (not published); writer instructions are in a maintainer-local receipt (not published). Controller baseline assets and matrices are preserved under `../.scratch/polish-before/`; writer build evidence is `../.scratch/POLISH-BUILD-REPORT.md`. `capture-polish.cjs --label after` captures the sample at 390/1440 light/dark and computes semantic contrast; controller owns all browser runs. The capture is offline harness evidence, never real Desktop proof.
+
+Sole authorized polish repair handoff: `../.scratch/POLISH-REPAIR-REPORT.md`; controller owns browser matrices and fresh independent review.
+
+Historical stress writer route (2026-11-11; requires original Git history at `6dcda30`, excluded from fresh-export release gates): `../capture-stress.cjs`, `../harness-entry.js`, `../harness.html` consume `../../tests/fixtures/visual-stress.json` through the existing `ctx.storage.csv_data/source` boundary. Developer fixture selection persists in `?data=demo|worst|empty|one|thousand|future`. Baseline/final evidence belongs in `../.scratch/stress-baseline/` and `../.scratch/stress-final/`; field map/ledger: `../.scratch/STRESS-FINDINGS.md`; sole writer handoff: `../.scratch/STRESS-BUILD-REPORT.md`. Use `node docs/capture-stress.cjs --label baseline --prepare-baseline` then `--label final` with the existing module/executable environment from README. `--prepare-only` prepares the immutable base bundle without launching Chromium. Controller owns canonical gates, visual review and commit; a sandbox-denied launch proves no visual result.
+
+Stress round2 uses `../stress-fixtures.mjs` to expand the compact JSON identically for the harness, capture and Node regressions. Current repair handoff: `../.scratch/STRESS-R2-REPORT.md`; fixture-equivalence and source-check receipts use `../.scratch/stress-r2-*`. The controller's first host baseline launched but hit the product-selector bug; its report is preserved as `../.scratch/stress-r2-host-baseline-report.json`. Native writer does not retry Chromium. Host matrices, screenshots and cross-family review remain controller-owned.
+
+Stress round3 handoff: `../.scratch/STRESS-R3-REPORT.md`. The R2 host attempts are preserved at `../.scratch/stress-baseline-attempt2-report.json` and `../.scratch/stress-final-attempt2-report.json`. Repairs address sub200px page padding, measured developer-toolbar space, timeline-only LTR and the short-name oracle; native writer still does no browser launches. Source receipts use `../.scratch/stress-r3-*`; controller reruns and reviews the host matrices.

@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "receipt.schema.json",
+  "title": "receipt",
+  "description": "One completed receipt line. Feeds receipts.csv and lead-time learning (promised vs received).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "receipt_id",
+    "po_id",
+    "sku",
+    "warehouse",
+    "po_date",
+    "received_date",
+    "quantity",
+    "supplier_id"
+  ],
+  "properties": {
+    "receipt_id": {
+      "$ref": "common.schema.json#/$defs/id"
+    },
+    "po_id": {
+      "$ref": "common.schema.json#/$defs/id"
+    },
+    "sku": {
+      "$ref": "common.schema.json#/$defs/sku"
+    },
+    "warehouse": {
+      "$ref": "common.schema.json#/$defs/warehouse"
+    },
+    "po_date": {
+      "$ref": "common.schema.json#/$defs/date"
+    },
+    "promised_date": {
+      "$ref": "common.schema.json#/$defs/date"
+    },
+    "received_date": {
+      "$ref": "common.schema.json#/$defs/date"
+    },
+    "quantity": {
+      "$ref": "common.schema.json#/$defs/quantity"
+    },
+    "supplier_id": {
+      "$ref": "common.schema.json#/$defs/id"
+    },
+    "po_complete": {
+      "type": "boolean"
+    },
+    "source_ref": {
+      "$ref": "common.schema.json#/$defs/source_ref"
+    }
+  }
+}

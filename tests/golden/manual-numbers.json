@@ -1,0 +1,107 @@
+[
+  {
+    "sku": "MANUAL-UP",
+    "js": {
+      "order_qty": 89,
+      "order_by": "2026-11-15",
+      "run_out": "2026-11-17",
+      "status": "running-low"
+    },
+    "python": {
+      "order_qty": 89.0,
+      "order_by": "2026-11-15",
+      "run_out": "2026-11-17",
+      "status": "running-low"
+    },
+    "cli": {
+      "order_qty": 89.0,
+      "order_by": "2026-11-15",
+      "run_out": "2026-11-17",
+      "status": "running-low"
+    }
+  },
+  {
+    "sku": "MANUAL-DOWN",
+    "js": {
+      "order_qty": 31,
+      "order_by": "2026-12-19",
+      "run_out": "2026-12-21",
+      "status": "healthy"
+    },
+    "python": {
+      "order_qty": 31.0,
+      "order_by": "2026-12-19",
+      "run_out": "2026-12-21",
+      "status": "healthy"
+    },
+    "cli": {
+      "order_qty": 31.0,
+      "order_by": "2026-12-19",
+      "run_out": "2026-12-21",
+      "status": "healthy"
+    }
+  },
+  {
+    "sku": "MANUAL-LOW",
+    "js": {
+      "order_qty": 6,
+      "order_by": "2027-07-09",
+      "run_out": "2027-07-11",
+      "status": "healthy"
+    },
+    "python": {
+      "order_qty": 6.0,
+      "order_by": "2027-07-09",
+      "run_out": "2027-07-11",
+      "status": "healthy"
+    },
+    "cli": {
+      "order_qty": 6.0,
+      "order_by": "2027-07-09",
+      "run_out": "2027-07-11",
+      "status": "healthy"
+    }
+  },
+  {
+    "sku": "MANUAL-HIGH",
+    "js": {
+      "order_qty": 239,
+      "order_by": "2026-11-05",
+      "run_out": "2026-11-07",
+      "status": "order"
+    },
+    "python": {
+      "order_qty": 239.0,
+      "order_by": "2026-11-05",
+      "run_out": "2026-11-07",
+      "status": "order"
+    },
+    "cli": {
+      "order_qty": 239.0,
+      "order_by": "2026-11-05",
+      "run_out": "2026-11-07",
+      "status": "order"
+    }
+  },
+  {
+    "sku": "MANUAL-CLEANED",
+    "js": {
+      "order_qty": 89,
+      "order_by": "2026-11-15",
+      "run_out": "2026-11-17",
+      "status": "running-low"
+    },
+    "python": {
+      "order_qty": 89.0,
+      "order_by": "2026-11-15",
+      "run_out": "2026-11-17",
+      "status": "running-low"
+    },
+    "cli": {
+      "order_qty": 89.0,
+      "order_by": "2026-11-15",
+      "run_out": "2026-11-17",
+      "status": "running-low"
+    }
+  }
+]

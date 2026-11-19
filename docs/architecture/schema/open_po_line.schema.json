@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "open_po_line.schema.json",
+  "title": "open_po_line",
+  "description": "Remaining quantity on an open purchase-order line. Feeds incoming_pos.csv. Absent stream = unknown incoming, never zero.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "po_line_id",
+    "sku",
+    "warehouse",
+    "supplier_id",
+    "remaining_qty",
+    "due_date",
+    "status"
+  ],
+  "properties": {
+    "po_line_id": {
+      "$ref": "common.schema.json#/$defs/id"
+    },
+    "po_id": {
+      "$ref": "common.schema.json#/$defs/id"
+    },
+    "sku": {
+      "$ref": "common.schema.json#/$defs/sku"
+    },
+    "warehouse": {
+      "$ref": "common.schema.json#/$defs/warehouse"
+    },
+    "supplier_id": {
+      "$ref": "common.schema.json#/$defs/id"
+    },
+    "remaining_qty": {
+      "$ref": "common.schema.json#/$defs/quantity"
+    },
+    "due_date": {
+      "$ref": "common.schema.json#/$defs/date"
+    },
+    "status": {
+      "enum": [
+        "draft",
+        "confirmed",
+        "cancelled",
+        "received"
+      ]
+    },
+    "ordered_on": {
+      "$ref": "common.schema.json#/$defs/date"
+    },
+    "unit_cost": {
+      "$ref": "common.schema.json#/$defs/money"
+    },
+    "source_ref": {
+      "$ref": "common.schema.json#/$defs/source_ref"
+    }
+  }
+}

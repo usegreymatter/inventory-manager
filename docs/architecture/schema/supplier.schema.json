@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "supplier.schema.json",
+  "title": "supplier",
+  "description": "A supplier. Contact emails are personal data: kept in suppliers.json beside, never inside, the CSV bundle, never in fixtures with real addresses, and never sent to an AI model unless the owner allows it.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "supplier_id",
+    "name"
+  ],
+  "properties": {
+    "supplier_id": {
+      "$ref": "common.schema.json#/$defs/id"
+    },
+    "name": {
+      "$ref": "common.schema.json#/$defs/text"
+    },
+    "currency": {
+      "$ref": "common.schema.json#/$defs/currency"
+    },
+    "default_lead_days": {
+      "$ref": "common.schema.json#/$defs/lead_days"
+    },
+    "language": {
+      "type": "string",
+      "maxLength": 16,
+      "description": "BCP 47 tag for email templates, e.g. en, ar."
+    },
+    "contacts": {
+      "type": "array",
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "email",
+          "role"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "maxLength": 254,
+            "pattern": "^[^\\s@<>,;\"]+@[^\\s@<>,;\"]+\\.[^\\s@<>,;\"]+$"
+          },
+          "role": {
+            "enum": [
+              "purchasing",
+              "accounts",
+              "other"
+            ]
+          },
+          "name": {
+            "$ref": "common.schema.json#/$defs/text"
+          }
+        }
+      }
+    },
+    "source_ref": {
+      "$ref": "common.schema.json#/$defs/source_ref"
+    }
+  }
+}

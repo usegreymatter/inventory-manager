@@ -1,0 +1,43 @@
+/* One palette for the shipped app. Inherited templates retain their fallbacks. */
+:root,html[data-theme=light] {
+ color-scheme:light;
+ --bg:#f5f8fd; --surface:#ffffff; --subtle:#e6ecf7;
+ --ink:#0b1020; --muted:#5b6274; --line:#d9e1ee; --rule:#7d899c;
+ --accent:#3f5687; --on-accent:#ffffff; --red:#b42318; --order-ink:#8e1b13;
+ --amber:#805b00; --fine:#286c5f; --demand:#aeb8ca; --demand-edge:#5b6274;
+ --warning-surface:#fff6e8; --backdrop:rgb(11 16 32 / .5); --shadow:rgb(11 16 32 / .12);
+ --cloud-90:.14; --cloud-50:.30; --stock-area:.12; --forecast-shade:.04;
+}
+@media screen { html[data-theme=dark] {
+ color-scheme:dark;
+ --bg:#0f1113; --surface:#191c20; --subtle:#23272d;
+ --ink:#e8e8e6; --muted:#a1a1a0; --line:#30363d; --rule:#697480;
+ --accent:#9eb8ea; --on-accent:#111720; --red:#ff9b90; --order-ink:#ff9b90;
+ --amber:#e9c17a; --fine:#83cbbb; --demand:#566273; --demand-edge:#a1adbd;
+ --warning-surface:#30291e; --backdrop:rgb(0 0 0 / .65); --shadow:rgb(0 0 0 / .32);
+ --cloud-90:.17; --cloud-50:.32; --stock-area:.10; --forecast-shade:.035;
+} }
+/* Filled controls must use their own foreground, never a surface colour. */
+[data-design=option-gm-b] .primary,
+[data-design=option-gm-b] #smart-import-use,
+[data-design=option-gm-b] .weekly-summary-primary,
+[data-design=option-gm-b] .product-order-action button:not(.product-draft-email) { color:var(--on-accent); }
+[data-design=option-gm-b] .primary:hover,
+[data-design=option-gm-b] .weekly-summary-primary:hover { background:var(--accent); filter:brightness(.95); }
+[data-design=option-gm-b] dialog { color:var(--ink); background:var(--bg); }
+[data-design=option-gm-b] dialog::backdrop { background:var(--backdrop); }
+.theme-control { display:flex; align-items:center; justify-content:space-between; gap:16px; padding-block:12px; border-block:1px solid var(--line); }
+.theme-control select { min-height:44px; width:150px; color:var(--ink); background:var(--surface); border:1px solid var(--rule); }
+[data-prediction-band="90"] { opacity:var(--cloud-90); }
+[data-prediction-band="50"] { opacity:var(--cloud-50); }
+[data-stock-area] { opacity:var(--stock-area); }
+[data-forecast-shade] { opacity:var(--forecast-shade); }
+[data-design=option-gm-b] :is(input,select,textarea) { border-color:var(--rule); }
+[data-design=option-gm-b] .work-tabs button { min-width:44px; }
+/* The full-window graph must not inherit the report's fixed plot height. */
+.table-mode .chart-focus .large-chart .chart-wrap { height:auto; min-height:0; flex:1; }
+@media print {
+ :root,html[data-theme] { --bg:#ffffff; }
+ html,body { background:var(--bg)!important; color:var(--ink)!important; }
+ .theme-control { display:none; }
+}

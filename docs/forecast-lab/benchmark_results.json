@@ -1,0 +1,1958 @@
+{
+  "synthetic": true,
+  "seed": 20261112,
+  "sku_count": 500,
+  "horizon": 3,
+  "methods": [
+    "baseline",
+    "seasonal_naive",
+    "holt_damped",
+    "seasonal",
+    "croston",
+    "sba",
+    "similar"
+  ],
+  "target": "Uncensored routine end-user demand, excluding project and one-off quantities",
+  "wape_unit": "fraction; null when total actual is zero",
+  "policy": "Rolling disjoint holdouts, prefix-only selection/cleaning/donors; paired baseline on exact eligible folds; strict all-method intersection also reported",
+  "interval_policy": "Split-conformal finite P05/P95 tails only; null bounds suppress coverage/width points, not counted as hits or misses; null rate when no finite interval",
+  "caveat": "SYNTHETIC scenarios only, not production validation; pattern labels and static cleaning metadata are known; no actual Hijri calendar",
+  "by_pattern": {
+    "intermittent": {
+      "folds": 150,
+      "methods": {
+        "baseline": {
+          "points": 450,
+          "mae": 71.7053703703704,
+          "wape": 1.6474735355185683,
+          "baseline": {
+            "points": 450,
+            "mae": 71.7053703703704,
+            "wape": 1.6474735355185683
+          },
+          "eligible_folds": 150,
+          "ineligible_folds": 0,
+          "status": "eligible",
+          "mae_improvement_vs_baseline": 0.0
+        },
+        "seasonal_naive": {
+          "points": 450,
+          "mae": 73.80666666666667,
+          "wape": 1.6957520678035332,
+          "baseline": {
+            "points": 450,
+            "mae": 71.7053703703704,
+            "wape": 1.6474735355185683
+          },
+          "eligible_folds": 150,
+          "ineligible_folds": 0,
+          "status": "eligible",
+          "mae_improvement_vs_baseline": -2.101296296296269
+        },
+        "holt_damped": {
+          "points": 450,
+          "mae": 71.57539174319608,
+          "wape": 1.6444871992463104,
+          "baseline": {
+            "points": 450,
+            "mae": 71.7053703703704,
+            "wape": 1.6474735355185683
+          },
+          "eligible_folds": 150,
+          "ineligible_folds": 0,
+          "status": "eligible",
+          "mae_improvement_vs_baseline": 0.1299786271743244
+        },
+        "seasonal": {
+          "points": 450,
+          "mae": 73.21355427701145,
+          "wape": 1.6821249578604696,
+          "baseline": {
+            "points": 450,
+            "mae": 71.7053703703704,
+            "wape": 1.6474735355185683
+          },
+          "eligible_folds": 150,
+          "ineligible_folds": 0,
+          "status": "eligible",
+          "mae_improvement_vs_baseline": -1.508183906641051
+        },
+        "croston": {
+          "points": 450,
+          "mae": 74.7212482752719,
+          "wape": 1.7167651242659225,
+          "baseline": {
+            "points": 450,
+            "mae": 71.7053703703704,
+            "wape": 1.6474735355185683
+          },
+          "eligible_folds": 150,
+          "ineligible_folds": 0,
+          "status": "eligible",
+          "mae_improvement_vs_baseline": -3.015877904901501
+        },
+        "sba": {
+          "points": 450,
+          "mae": 73.13021781386279,
+          "wape": 1.6802102530500487,
+          "baseline": {
+            "points": 450,
+            "mae": 71.7053703703704,
+            "wape": 1.6474735355185683
+          },
+          "eligible_folds": 150,
+          "ineligible_folds": 0,
+          "status": "eligible",
+          "mae_improvement_vs_baseline": -1.4248474434923821
+        },
+        "similar": {
+          "points": 450,
+          "mae": 53.71392431787534,
+          "wape": 1.2341093609233076,
+          "baseline": {
+            "points": 450,
+            "mae": 71.7053703703704,
+            "wape": 1.6474735355185683
+          },
+          "eligible_folds": 150,
+          "ineligible_folds": 0,
+          "status": "eligible",
+          "mae_improvement_vs_baseline": 17.991446052495064
+        }
+      },
+      "common_all_methods": {
+        "folds": 150,
+        "methods": {
+          "baseline": {
+            "points": 450,
+            "mae": 71.7053703703704,
+            "wape": 1.6474735355185683
+          },
+          "seasonal_naive": {
+            "points": 450,
+            "mae": 73.80666666666667,
+            "wape": 1.6957520678035332
+          },
+          "holt_damped": {
+            "points": 450,
+            "mae": 71.57539174319608,
+            "wape": 1.6444871992463104
+          },
+          "seasonal": {
+            "points": 450,
+            "mae": 73.21355427701145,
+            "wape": 1.6821249578604696
+          },
+          "croston": {
+            "points": 450,
+            "mae": 74.7212482752719,
+            "wape": 1.7167651242659225
+          },
+          "sba": {
+            "points": 450,
+            "mae": 73.13021781386279,
+            "wape": 1.6802102530500487
+          },
+          "similar": {
+            "points": 450,
+            "mae": 53.71392431787534,
+            "wape": 1.2341093609233076
+          }
+        }
+      },
+      "selection": {
+        "points": 450,
+        "mae": 67.41720608861192,
+        "wape": 1.5489504104909304,
+        "baseline": {
+          "points": 450,
+          "mae": 71.7053703703704,
+          "wape": 1.6474735355185683
+        },
+        "chosen_methods": {
+          "baseline": 96,
+          "holt_damped": 18,
+          "sba": 11,
+          "seasonal": 5,
+          "seasonal_naive": 1,
+          "similar": 19
+        }
+      },
+      "coverage": [
+        {
+          "horizon": 1,
+          "covered": 0,
+          "points": 0,
+          "total_points": 150,
+          "suppressed_points": 150,
+          "width_sum": 0.0,
+          "calibration_samples_min": 12,
+          "coverage": null,
+          "mean_width": null
+        },
+        {
+          "horizon": 2,
+          "covered": 0,
+          "points": 0,
+          "total_points": 150,
+          "suppressed_points": 150,
+          "width_sum": 0.0,
+          "calibration_samples_min": 11,
+          "coverage": null,
+          "mean_width": null
+        },
+        {
+          "horizon": 3,
+          "covered": 0,
+          "points": 0,
+          "total_points": 150,
+          "suppressed_points": 150,
+          "width_sum": 0.0,
+          "calibration_samples_min": 10,
+          "coverage": null,
+          "mean_width": null
+        }
+      ]
+    },
+    "new": {
+      "folds": 50,
+      "methods": {
+        "baseline": {
+          "points": 150,
+          "mae": 9.208888888888891,
+          "wape": 0.12384196999581619,
+          "baseline": {
+            "points": 150,
+            "mae": 9.208888888888891,
+            "wape": 0.12384196999581619
+          },
+          "eligible_folds": 50,
+          "ineligible_folds": 0,
+          "status": "eligible",
+          "mae_improvement_vs_baseline": 0.0
+        },
+        "seasonal_naive": {
+          "points": 0,
+          "mae": null,
+          "wape": null,
+          "baseline": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "eligible_folds": 0,
+          "ineligible_folds": 50,
+          "status": "ineligible",
+          "mae_improvement_vs_baseline": null
+        },
+        "holt_damped": {
+          "points": 150,
+          "mae": 13.759853727467574,
+          "wape": 0.18504375642102708,
+          "baseline": {
+            "points": 150,
+            "mae": 9.208888888888891,
+            "wape": 0.12384196999581619
+          },
+          "eligible_folds": 50,
+          "ineligible_folds": 0,
+          "status": "eligible",
+          "mae_improvement_vs_baseline": -4.5509648385786825
+        },
+        "seasonal": {
+          "points": 0,
+          "mae": null,
+          "wape": null,
+          "baseline": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "eligible_folds": 0,
+          "ineligible_folds": 50,
+          "status": "ineligible",
+          "mae_improvement_vs_baseline": null
+        },
+        "croston": {
+          "points": 0,
+          "mae": null,
+          "wape": null,
+          "baseline": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "eligible_folds": 0,
+          "ineligible_folds": 50,
+          "status": "ineligible",
+          "mae_improvement_vs_baseline": null
+        },
+        "sba": {
+          "points": 0,
+          "mae": null,
+          "wape": null,
+          "baseline": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "eligible_folds": 0,
+          "ineligible_folds": 50,
+          "status": "ineligible",
+          "mae_improvement_vs_baseline": null
+        },
+        "similar": {
+          "points": 150,
+          "mae": 52.32,
+          "wape": 0.7036040882194728,
+          "baseline": {
+            "points": 150,
+            "mae": 9.208888888888891,
+            "wape": 0.12384196999581619
+          },
+          "eligible_folds": 50,
+          "ineligible_folds": 0,
+          "status": "eligible",
+          "mae_improvement_vs_baseline": -43.11111111111111
+        }
+      },
+      "common_all_methods": {
+        "folds": 0,
+        "methods": {
+          "baseline": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "seasonal_naive": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "holt_damped": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "seasonal": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "croston": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "sba": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "similar": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          }
+        }
+      },
+      "selection": {
+        "points": 150,
+        "mae": 9.208888888888891,
+        "wape": 0.12384196999581619,
+        "baseline": {
+          "points": 150,
+          "mae": 9.208888888888891,
+          "wape": 0.12384196999581619
+        },
+        "chosen_methods": {
+          "baseline": 50
+        }
+      },
+      "coverage": [
+        {
+          "horizon": 1,
+          "covered": 0,
+          "points": 0,
+          "total_points": 50,
+          "suppressed_points": 50,
+          "width_sum": 0.0,
+          "calibration_samples_min": 3,
+          "coverage": null,
+          "mean_width": null
+        },
+        {
+          "horizon": 2,
+          "covered": 0,
+          "points": 0,
+          "total_points": 50,
+          "suppressed_points": 50,
+          "width_sum": 0.0,
+          "calibration_samples_min": 2,
+          "coverage": null,
+          "mean_width": null
+        },
+        {
+          "horizon": 3,
+          "covered": 0,
+          "points": 0,
+          "total_points": 50,
+          "suppressed_points": 50,
+          "width_sum": 0.0,
+          "calibration_samples_min": 1,
+          "coverage": null,
+          "mean_width": null
+        }
+      ]
+    },
+    "project": {
+      "folds": 150,
+      "methods": {
+        "baseline": {
+          "points": 450,
+          "mae": 7.412592592592592,
+          "wape": 0.09755978668850476,
+          "baseline": {
+            "points": 450,
+            "mae": 7.412592592592592,
+            "wape": 0.09755978668850476
+          },
+          "eligible_folds": 150,
+          "ineligible_folds": 0,
+          "status": "eligible",
+          "mae_improvement_vs_baseline": 0.0
+        },
+        "seasonal_naive": {
+          "points": 450,
+          "mae": 10.395555555555555,
+          "wape": 0.13681963089701968,
+          "baseline": {
+            "points": 450,
+            "mae": 7.412592592592592,
+            "wape": 0.09755978668850476
+          },
+          "eligible_folds": 150,
+          "ineligible_folds": 0,
+          "status": "eligible",
+          "mae_improvement_vs_baseline": -2.9829629629629633
+        },
+        "holt_damped": {
+          "points": 450,
+          "mae": 8.71136928889261,
+          "wape": 0.11465345207808121,
+          "baseline": {
+            "points": 450,
+            "mae": 7.412592592592592,
+            "wape": 0.09755978668850476
+          },
+          "eligible_folds": 150,
+          "ineligible_folds": 0,
+          "status": "eligible",
+          "mae_improvement_vs_baseline": -1.2987766963000187
+        },
+        "seasonal": {
+          "points": 450,
+          "mae": 7.937579795193346,
+          "wape": 0.1044693313397387,
+          "baseline": {
+            "points": 450,
+            "mae": 7.412592592592592,
+            "wape": 0.09755978668850476
+          },
+          "eligible_folds": 150,
+          "ineligible_folds": 0,
+          "status": "eligible",
+          "mae_improvement_vs_baseline": -0.5249872026007543
+        },
+        "croston": {
+          "points": 0,
+          "mae": null,
+          "wape": null,
+          "baseline": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "eligible_folds": 0,
+          "ineligible_folds": 150,
+          "status": "ineligible",
+          "mae_improvement_vs_baseline": null
+        },
+        "sba": {
+          "points": 0,
+          "mae": null,
+          "wape": null,
+          "baseline": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "eligible_folds": 0,
+          "ineligible_folds": 150,
+          "status": "ineligible",
+          "mae_improvement_vs_baseline": null
+        },
+        "similar": {
+          "points": 450,
+          "mae": 60.14718675147572,
+          "wape": 0.7916186726964428,
+          "baseline": {
+            "points": 450,
+            "mae": 7.412592592592592,
+            "wape": 0.09755978668850476
+          },
+          "eligible_folds": 150,
+          "ineligible_folds": 0,
+          "status": "eligible",
+          "mae_improvement_vs_baseline": -52.73459415888313
+        }
+      },
+      "common_all_methods": {
+        "folds": 0,
+        "methods": {
+          "baseline": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "seasonal_naive": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "holt_damped": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "seasonal": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "croston": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "sba": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "similar": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          }
+        }
+      },
+      "selection": {
+        "points": 450,
+        "mae": 7.495801702912867,
+        "wape": 0.09865493159927437,
+        "baseline": {
+          "points": 450,
+          "mae": 7.412592592592592,
+          "wape": 0.09755978668850476
+        },
+        "chosen_methods": {
+          "baseline": 144,
+          "holt_damped": 1,
+          "seasonal": 4,
+          "seasonal_naive": 1
+        }
+      },
+      "coverage": [
+        {
+          "horizon": 1,
+          "covered": 0,
+          "points": 0,
+          "total_points": 150,
+          "suppressed_points": 150,
+          "width_sum": 0.0,
+          "calibration_samples_min": 12,
+          "coverage": null,
+          "mean_width": null
+        },
+        {
+          "horizon": 2,
+          "covered": 0,
+          "points": 0,
+          "total_points": 150,
+          "suppressed_points": 150,
+          "width_sum": 0.0,
+          "calibration_samples_min": 11,
+          "coverage": null,
+          "mean_width": null
+        },
+        {
+          "horizon": 3,
+          "covered": 0,
+          "points": 0,
+          "total_points": 150,
+          "suppressed_points": 150,
+          "width_sum": 0.0,
+          "calibration_samples_min": 10,
+          "coverage": null,
+          "mean_width": null
+        }
+      ]
+    },
+    "ramadan_shifting": {
+      "folds": 150,
+      "methods": {
+        "baseline": {
+          "points": 450,
+          "mae": 24.817777777777735,
+          "wape": 0.411632449964984,
+          "baseline": {
+            "points": 450,
+            "mae": 24.817777777777735,
+            "wape": 0.411632449964984
+          },
+          "eligible_folds": 150,
+          "ineligible_folds": 0,
+          "status": "eligible",
+          "mae_improvement_vs_baseline": 0.0
+        },
+        "seasonal_naive": {
+          "points": 450,
+          "mae": 8.448888888888888,
+          "wape": 0.1401349010357156,
+          "baseline": {
+            "points": 450,
+            "mae": 24.817777777777735,
+            "wape": 0.411632449964984
+          },
+          "eligible_folds": 150,
+          "ineligible_folds": 0,
+          "status": "eligible",
+          "mae_improvement_vs_baseline": 16.368888888888847
+        },
+        "holt_damped": {
+          "points": 450,
+          "mae": 52.33963648672486,
+          "wape": 0.868115307914422,
+          "baseline": {
+            "points": 450,
+            "mae": 24.817777777777735,
+            "wape": 0.411632449964984
+          },
+          "eligible_folds": 150,
+          "ineligible_folds": 0,
+          "status": "eligible",
+          "mae_improvement_vs_baseline": -27.52185870894712
+        },
+        "seasonal": {
+          "points": 450,
+          "mae": 18.059449386597365,
+          "wape": 0.2995375114801819,
+          "baseline": {
+            "points": 450,
+            "mae": 24.817777777777735,
+            "wape": 0.411632449964984
+          },
+          "eligible_folds": 150,
+          "ineligible_folds": 0,
+          "status": "eligible",
+          "mae_improvement_vs_baseline": 6.75832839118037
+        },
+        "croston": {
+          "points": 0,
+          "mae": null,
+          "wape": null,
+          "baseline": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "eligible_folds": 0,
+          "ineligible_folds": 150,
+          "status": "ineligible",
+          "mae_improvement_vs_baseline": null
+        },
+        "sba": {
+          "points": 0,
+          "mae": null,
+          "wape": null,
+          "baseline": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "eligible_folds": 0,
+          "ineligible_folds": 150,
+          "status": "ineligible",
+          "mae_improvement_vs_baseline": null
+        },
+        "similar": {
+          "points": 450,
+          "mae": 43.2307364750753,
+          "wape": 0.7170333350699895,
+          "baseline": {
+            "points": 450,
+            "mae": 24.817777777777735,
+            "wape": 0.411632449964984
+          },
+          "eligible_folds": 150,
+          "ineligible_folds": 0,
+          "status": "eligible",
+          "mae_improvement_vs_baseline": -18.41295869729756
+        }
+      },
+      "common_all_methods": {
+        "folds": 0,
+        "methods": {
+          "baseline": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "seasonal_naive": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "holt_damped": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "seasonal": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "croston": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "sba": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "similar": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          }
+        }
+      },
+      "selection": {
+        "points": 450,
+        "mae": 23.83360890155114,
+        "wape": 0.39530883512211173,
+        "baseline": {
+          "points": 450,
+          "mae": 24.817777777777735,
+          "wape": 0.411632449964984
+        },
+        "chosen_methods": {
+          "baseline": 133,
+          "seasonal_naive": 15,
+          "similar": 2
+        }
+      },
+      "coverage": [
+        {
+          "horizon": 1,
+          "covered": 0,
+          "points": 0,
+          "total_points": 150,
+          "suppressed_points": 150,
+          "width_sum": 0.0,
+          "calibration_samples_min": 12,
+          "coverage": null,
+          "mean_width": null
+        },
+        {
+          "horizon": 2,
+          "covered": 0,
+          "points": 0,
+          "total_points": 150,
+          "suppressed_points": 150,
+          "width_sum": 0.0,
+          "calibration_samples_min": 11,
+          "coverage": null,
+          "mean_width": null
+        },
+        {
+          "horizon": 3,
+          "covered": 0,
+          "points": 0,
+          "total_points": 150,
+          "suppressed_points": 150,
+          "width_sum": 0.0,
+          "calibration_samples_min": 10,
+          "coverage": null,
+          "mean_width": null
+        }
+      ]
+    },
+    "seasonal": {
+      "folds": 150,
+      "methods": {
+        "baseline": {
+          "points": 450,
+          "mae": 34.74555555555553,
+          "wape": 0.4264072215555795,
+          "baseline": {
+            "points": 450,
+            "mae": 34.74555555555553,
+            "wape": 0.4264072215555795
+          },
+          "eligible_folds": 150,
+          "ineligible_folds": 0,
+          "status": "eligible",
+          "mae_improvement_vs_baseline": 0.0
+        },
+        "seasonal_naive": {
+          "points": 450,
+          "mae": 11.157777777777778,
+          "wape": 0.1369313843132977,
+          "baseline": {
+            "points": 450,
+            "mae": 34.74555555555553,
+            "wape": 0.4264072215555795
+          },
+          "eligible_folds": 150,
+          "ineligible_folds": 0,
+          "status": "eligible",
+          "mae_improvement_vs_baseline": 23.587777777777756
+        },
+        "holt_damped": {
+          "points": 450,
+          "mae": 51.416121298195165,
+          "wape": 0.6309930889109803,
+          "baseline": {
+            "points": 450,
+            "mae": 34.74555555555553,
+            "wape": 0.4264072215555795
+          },
+          "eligible_folds": 150,
+          "ineligible_folds": 0,
+          "status": "eligible",
+          "mae_improvement_vs_baseline": -16.67056574263963
+        },
+        "seasonal": {
+          "points": 450,
+          "mae": 9.316104635809516,
+          "wape": 0.11432985399024441,
+          "baseline": {
+            "points": 450,
+            "mae": 34.74555555555553,
+            "wape": 0.4264072215555795
+          },
+          "eligible_folds": 150,
+          "ineligible_folds": 0,
+          "status": "eligible",
+          "mae_improvement_vs_baseline": 25.429450919746017
+        },
+        "croston": {
+          "points": 0,
+          "mae": null,
+          "wape": null,
+          "baseline": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "eligible_folds": 0,
+          "ineligible_folds": 150,
+          "status": "ineligible",
+          "mae_improvement_vs_baseline": null
+        },
+        "sba": {
+          "points": 0,
+          "mae": null,
+          "wape": null,
+          "baseline": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "eligible_folds": 0,
+          "ineligible_folds": 150,
+          "status": "ineligible",
+          "mae_improvement_vs_baseline": null
+        },
+        "similar": {
+          "points": 450,
+          "mae": 56.59647171023712,
+          "wape": 0.6945678048872778,
+          "baseline": {
+            "points": 450,
+            "mae": 34.74555555555553,
+            "wape": 0.4264072215555795
+          },
+          "eligible_folds": 150,
+          "ineligible_folds": 0,
+          "status": "eligible",
+          "mae_improvement_vs_baseline": -21.850916154681585
+        }
+      },
+      "common_all_methods": {
+        "folds": 0,
+        "methods": {
+          "baseline": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "seasonal_naive": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "holt_damped": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "seasonal": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "croston": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "sba": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "similar": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          }
+        }
+      },
+      "selection": {
+        "points": 450,
+        "mae": 18.935765904335423,
+        "wape": 0.2323850402790155,
+        "baseline": {
+          "points": 450,
+          "mae": 34.74555555555553,
+          "wape": 0.4264072215555795
+        },
+        "chosen_methods": {
+          "baseline": 54,
+          "seasonal": 71,
+          "seasonal_naive": 24,
+          "similar": 1
+        }
+      },
+      "coverage": [
+        {
+          "horizon": 1,
+          "covered": 0,
+          "points": 0,
+          "total_points": 150,
+          "suppressed_points": 150,
+          "width_sum": 0.0,
+          "calibration_samples_min": 12,
+          "coverage": null,
+          "mean_width": null
+        },
+        {
+          "horizon": 2,
+          "covered": 0,
+          "points": 0,
+          "total_points": 150,
+          "suppressed_points": 150,
+          "width_sum": 0.0,
+          "calibration_samples_min": 11,
+          "coverage": null,
+          "mean_width": null
+        },
+        {
+          "horizon": 3,
+          "covered": 0,
+          "points": 0,
+          "total_points": 150,
+          "suppressed_points": 150,
+          "width_sum": 0.0,
+          "calibration_samples_min": 10,
+          "coverage": null,
+          "mean_width": null
+        }
+      ]
+    },
+    "smooth": {
+      "folds": 150,
+      "methods": {
+        "baseline": {
+          "points": 450,
+          "mae": 8.179629629629623,
+          "wape": 0.09600754671048621,
+          "baseline": {
+            "points": 450,
+            "mae": 8.179629629629623,
+            "wape": 0.09600754671048621
+          },
+          "eligible_folds": 150,
+          "ineligible_folds": 0,
+          "status": "eligible",
+          "mae_improvement_vs_baseline": 0.0
+        },
+        "seasonal_naive": {
+          "points": 450,
+          "mae": 11.328888888888889,
+          "wape": 0.13297164766947495,
+          "baseline": {
+            "points": 450,
+            "mae": 8.179629629629623,
+            "wape": 0.09600754671048621
+          },
+          "eligible_folds": 150,
+          "ineligible_folds": 0,
+          "status": "eligible",
+          "mae_improvement_vs_baseline": -3.1492592592592654
+        },
+        "holt_damped": {
+          "points": 450,
+          "mae": 9.112400671460698,
+          "wape": 0.10695584919161465,
+          "baseline": {
+            "points": 450,
+            "mae": 8.179629629629623,
+            "wape": 0.09600754671048621
+          },
+          "eligible_folds": 150,
+          "ineligible_folds": 0,
+          "status": "eligible",
+          "mae_improvement_vs_baseline": -0.9327710418310744
+        },
+        "seasonal": {
+          "points": 450,
+          "mae": 8.996858373810005,
+          "wape": 0.10559968356541648,
+          "baseline": {
+            "points": 450,
+            "mae": 8.179629629629623,
+            "wape": 0.09600754671048621
+          },
+          "eligible_folds": 150,
+          "ineligible_folds": 0,
+          "status": "eligible",
+          "mae_improvement_vs_baseline": -0.8172287441803814
+        },
+        "croston": {
+          "points": 0,
+          "mae": null,
+          "wape": null,
+          "baseline": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "eligible_folds": 0,
+          "ineligible_folds": 150,
+          "status": "ineligible",
+          "mae_improvement_vs_baseline": null
+        },
+        "sba": {
+          "points": 0,
+          "mae": null,
+          "wape": null,
+          "baseline": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "eligible_folds": 0,
+          "ineligible_folds": 150,
+          "status": "ineligible",
+          "mae_improvement_vs_baseline": null
+        },
+        "similar": {
+          "points": 450,
+          "mae": 50.20318070820303,
+          "wape": 0.589254579375867,
+          "baseline": {
+            "points": 450,
+            "mae": 8.179629629629623,
+            "wape": 0.09600754671048621
+          },
+          "eligible_folds": 150,
+          "ineligible_folds": 0,
+          "status": "eligible",
+          "mae_improvement_vs_baseline": -42.023551078573405
+        }
+      },
+      "common_all_methods": {
+        "folds": 0,
+        "methods": {
+          "baseline": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "seasonal_naive": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "holt_damped": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "seasonal": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "croston": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "sba": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "similar": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          }
+        }
+      },
+      "selection": {
+        "points": 450,
+        "mae": 8.201163334522406,
+        "wape": 0.09626029631798123,
+        "baseline": {
+          "points": 450,
+          "mae": 8.179629629629623,
+          "wape": 0.09600754671048621
+        },
+        "chosen_methods": {
+          "baseline": 147,
+          "holt_damped": 1,
+          "seasonal": 1,
+          "seasonal_naive": 1
+        }
+      },
+      "coverage": [
+        {
+          "horizon": 1,
+          "covered": 0,
+          "points": 0,
+          "total_points": 150,
+          "suppressed_points": 150,
+          "width_sum": 0.0,
+          "calibration_samples_min": 12,
+          "coverage": null,
+          "mean_width": null
+        },
+        {
+          "horizon": 2,
+          "covered": 0,
+          "points": 0,
+          "total_points": 150,
+          "suppressed_points": 150,
+          "width_sum": 0.0,
+          "calibration_samples_min": 11,
+          "coverage": null,
+          "mean_width": null
+        },
+        {
+          "horizon": 3,
+          "covered": 0,
+          "points": 0,
+          "total_points": 150,
+          "suppressed_points": 150,
+          "width_sum": 0.0,
+          "calibration_samples_min": 10,
+          "coverage": null,
+          "mean_width": null
+        }
+      ]
+    },
+    "stockout": {
+      "folds": 150,
+      "methods": {
+        "baseline": {
+          "points": 450,
+          "mae": 8.733281659184446,
+          "wape": 0.1014501715791471,
+          "baseline": {
+            "points": 450,
+            "mae": 8.733281659184446,
+            "wape": 0.1014501715791471
+          },
+          "eligible_folds": 150,
+          "ineligible_folds": 0,
+          "status": "eligible",
+          "mae_improvement_vs_baseline": 0.0
+        },
+        "seasonal_naive": {
+          "points": 450,
+          "mae": 13.097679573512906,
+          "wape": 0.15214920254222747,
+          "baseline": {
+            "points": 450,
+            "mae": 8.733281659184446,
+            "wape": 0.1014501715791471
+          },
+          "eligible_folds": 150,
+          "ineligible_folds": 0,
+          "status": "eligible",
+          "mae_improvement_vs_baseline": -4.36439791432846
+        },
+        "holt_damped": {
+          "points": 450,
+          "mae": 9.980221584416569,
+          "wape": 0.11593524996095451,
+          "baseline": {
+            "points": 450,
+            "mae": 8.733281659184446,
+            "wape": 0.1014501715791471
+          },
+          "eligible_folds": 150,
+          "ineligible_folds": 0,
+          "status": "eligible",
+          "mae_improvement_vs_baseline": -1.2469399252321232
+        },
+        "seasonal": {
+          "points": 450,
+          "mae": 10.062954437399155,
+          "wape": 0.11689631619674788,
+          "baseline": {
+            "points": 450,
+            "mae": 8.733281659184446,
+            "wape": 0.1014501715791471
+          },
+          "eligible_folds": 150,
+          "ineligible_folds": 0,
+          "status": "eligible",
+          "mae_improvement_vs_baseline": -1.329672778214709
+        },
+        "croston": {
+          "points": 0,
+          "mae": null,
+          "wape": null,
+          "baseline": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "eligible_folds": 0,
+          "ineligible_folds": 150,
+          "status": "ineligible",
+          "mae_improvement_vs_baseline": null
+        },
+        "sba": {
+          "points": 0,
+          "mae": null,
+          "wape": null,
+          "baseline": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "eligible_folds": 0,
+          "ineligible_folds": 150,
+          "status": "ineligible",
+          "mae_improvement_vs_baseline": null
+        },
+        "similar": {
+          "points": 450,
+          "mae": 36.66002794623147,
+          "wape": 0.4258612364036388,
+          "baseline": {
+            "points": 450,
+            "mae": 8.733281659184446,
+            "wape": 0.1014501715791471
+          },
+          "eligible_folds": 150,
+          "ineligible_folds": 0,
+          "status": "eligible",
+          "mae_improvement_vs_baseline": -27.926746287047028
+        }
+      },
+      "common_all_methods": {
+        "folds": 0,
+        "methods": {
+          "baseline": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "seasonal_naive": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "holt_damped": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "seasonal": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "croston": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "sba": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "similar": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          }
+        }
+      },
+      "selection": {
+        "points": 450,
+        "mae": 8.770709929580041,
+        "wape": 0.10188495710441992,
+        "baseline": {
+          "points": 450,
+          "mae": 8.733281659184446,
+          "wape": 0.1014501715791471
+        },
+        "chosen_methods": {
+          "baseline": 146,
+          "holt_damped": 2,
+          "seasonal": 2
+        }
+      },
+      "coverage": [
+        {
+          "horizon": 1,
+          "covered": 0,
+          "points": 0,
+          "total_points": 150,
+          "suppressed_points": 150,
+          "width_sum": 0.0,
+          "calibration_samples_min": 12,
+          "coverage": null,
+          "mean_width": null
+        },
+        {
+          "horizon": 2,
+          "covered": 0,
+          "points": 0,
+          "total_points": 150,
+          "suppressed_points": 150,
+          "width_sum": 0.0,
+          "calibration_samples_min": 11,
+          "coverage": null,
+          "mean_width": null
+        },
+        {
+          "horizon": 3,
+          "covered": 0,
+          "points": 0,
+          "total_points": 150,
+          "suppressed_points": 150,
+          "width_sum": 0.0,
+          "calibration_samples_min": 10,
+          "coverage": null,
+          "mean_width": null
+        }
+      ]
+    },
+    "substitute": {
+      "folds": 150,
+      "methods": {
+        "baseline": {
+          "points": 450,
+          "mae": 7.359999999999998,
+          "wape": 0.09311740890688257,
+          "baseline": {
+            "points": 450,
+            "mae": 7.359999999999998,
+            "wape": 0.09311740890688257
+          },
+          "eligible_folds": 150,
+          "ineligible_folds": 0,
+          "status": "eligible",
+          "mae_improvement_vs_baseline": 0.0
+        },
+        "seasonal_naive": {
+          "points": 450,
+          "mae": 10.448888888888888,
+          "wape": 0.13219748088169142,
+          "baseline": {
+            "points": 450,
+            "mae": 7.359999999999998,
+            "wape": 0.09311740890688257
+          },
+          "eligible_folds": 150,
+          "ineligible_folds": 0,
+          "status": "eligible",
+          "mae_improvement_vs_baseline": -3.0888888888888903
+        },
+        "holt_damped": {
+          "points": 450,
+          "mae": 8.54469085833229,
+          "wape": 0.10810590660845508,
+          "baseline": {
+            "points": 450,
+            "mae": 7.359999999999998,
+            "wape": 0.09311740890688257
+          },
+          "eligible_folds": 150,
+          "ineligible_folds": 0,
+          "status": "eligible",
+          "mae_improvement_vs_baseline": -1.1846908583322922
+        },
+        "seasonal": {
+          "points": 450,
+          "mae": 8.334415060933228,
+          "wape": 0.10544553467779895,
+          "baseline": {
+            "points": 450,
+            "mae": 7.359999999999998,
+            "wape": 0.09311740890688257
+          },
+          "eligible_folds": 150,
+          "ineligible_folds": 0,
+          "status": "eligible",
+          "mae_improvement_vs_baseline": -0.9744150609332305
+        },
+        "croston": {
+          "points": 0,
+          "mae": null,
+          "wape": null,
+          "baseline": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "eligible_folds": 0,
+          "ineligible_folds": 150,
+          "status": "ineligible",
+          "mae_improvement_vs_baseline": null
+        },
+        "sba": {
+          "points": 0,
+          "mae": null,
+          "wape": null,
+          "baseline": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "eligible_folds": 0,
+          "ineligible_folds": 150,
+          "status": "ineligible",
+          "mae_improvement_vs_baseline": null
+        },
+        "similar": {
+          "points": 450,
+          "mae": 72.56468738300919,
+          "wape": 0.9180754982668167,
+          "baseline": {
+            "points": 450,
+            "mae": 7.359999999999998,
+            "wape": 0.09311740890688257
+          },
+          "eligible_folds": 150,
+          "ineligible_folds": 0,
+          "status": "eligible",
+          "mae_improvement_vs_baseline": -65.20468738300919
+        }
+      },
+      "common_all_methods": {
+        "folds": 0,
+        "methods": {
+          "baseline": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "seasonal_naive": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "holt_damped": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "seasonal": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "croston": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "sba": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "similar": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          }
+        }
+      },
+      "selection": {
+        "points": 450,
+        "mae": 7.477747976242864,
+        "wape": 0.09460713532695932,
+        "baseline": {
+          "points": 450,
+          "mae": 7.359999999999998,
+          "wape": 0.09311740890688257
+        },
+        "chosen_methods": {
+          "baseline": 141,
+          "holt_damped": 4,
+          "seasonal": 4,
+          "seasonal_naive": 1
+        }
+      },
+      "coverage": [
+        {
+          "horizon": 1,
+          "covered": 0,
+          "points": 0,
+          "total_points": 150,
+          "suppressed_points": 150,
+          "width_sum": 0.0,
+          "calibration_samples_min": 12,
+          "coverage": null,
+          "mean_width": null
+        },
+        {
+          "horizon": 2,
+          "covered": 0,
+          "points": 0,
+          "total_points": 150,
+          "suppressed_points": 150,
+          "width_sum": 0.0,
+          "calibration_samples_min": 11,
+          "coverage": null,
+          "mean_width": null
+        },
+        {
+          "horizon": 3,
+          "covered": 0,
+          "points": 0,
+          "total_points": 150,
+          "suppressed_points": 150,
+          "width_sum": 0.0,
+          "calibration_samples_min": 10,
+          "coverage": null,
+          "mean_width": null
+        }
+      ]
+    },
+    "supersession": {
+      "folds": 150,
+      "methods": {
+        "baseline": {
+          "points": 450,
+          "mae": 4.401851851851852,
+          "wape": 0.09366085078884738,
+          "baseline": {
+            "points": 450,
+            "mae": 4.401851851851852,
+            "wape": 0.09366085078884738
+          },
+          "eligible_folds": 150,
+          "ineligible_folds": 0,
+          "status": "eligible",
+          "mae_improvement_vs_baseline": 0.0
+        },
+        "seasonal_naive": {
+          "points": 450,
+          "mae": 6.093333333333334,
+          "wape": 0.12965152016643813,
+          "baseline": {
+            "points": 450,
+            "mae": 4.401851851851852,
+            "wape": 0.09366085078884738
+          },
+          "eligible_folds": 150,
+          "ineligible_folds": 0,
+          "status": "eligible",
+          "mae_improvement_vs_baseline": -1.6914814814814818
+        },
+        "holt_damped": {
+          "points": 450,
+          "mae": 4.8566456691156095,
+          "wape": 0.10333777252361928,
+          "baseline": {
+            "points": 450,
+            "mae": 4.401851851851852,
+            "wape": 0.09366085078884738
+          },
+          "eligible_folds": 150,
+          "ineligible_folds": 0,
+          "status": "eligible",
+          "mae_improvement_vs_baseline": -0.45479381726375756
+        },
+        "seasonal": {
+          "points": 450,
+          "mae": 4.908078951357347,
+          "wape": 0.10443214942128735,
+          "baseline": {
+            "points": 450,
+            "mae": 4.401851851851852,
+            "wape": 0.09366085078884738
+          },
+          "eligible_folds": 150,
+          "ineligible_folds": 0,
+          "status": "eligible",
+          "mae_improvement_vs_baseline": -0.5062270995054954
+        },
+        "croston": {
+          "points": 225,
+          "mae": 0.0,
+          "wape": null,
+          "baseline": {
+            "points": 225,
+            "mae": 0.0,
+            "wape": null
+          },
+          "eligible_folds": 75,
+          "ineligible_folds": 75,
+          "status": "eligible",
+          "mae_improvement_vs_baseline": 0.0
+        },
+        "sba": {
+          "points": 225,
+          "mae": 0.0,
+          "wape": null,
+          "baseline": {
+            "points": 225,
+            "mae": 0.0,
+            "wape": null
+          },
+          "eligible_folds": 75,
+          "ineligible_folds": 75,
+          "status": "eligible",
+          "mae_improvement_vs_baseline": 0.0
+        },
+        "similar": {
+          "points": 450,
+          "mae": 49.16560319203286,
+          "wape": 1.046126125888448,
+          "baseline": {
+            "points": 450,
+            "mae": 4.401851851851852,
+            "wape": 0.09366085078884738
+          },
+          "eligible_folds": 150,
+          "ineligible_folds": 0,
+          "status": "eligible",
+          "mae_improvement_vs_baseline": -44.76375134018101
+        }
+      },
+      "common_all_methods": {
+        "folds": 75,
+        "methods": {
+          "baseline": {
+            "points": 225,
+            "mae": 0.0,
+            "wape": null
+          },
+          "seasonal_naive": {
+            "points": 225,
+            "mae": 0.0,
+            "wape": null
+          },
+          "holt_damped": {
+            "points": 225,
+            "mae": 0.0,
+            "wape": null
+          },
+          "seasonal": {
+            "points": 225,
+            "mae": 0.0,
+            "wape": null
+          },
+          "croston": {
+            "points": 225,
+            "mae": 0.0,
+            "wape": null
+          },
+          "sba": {
+            "points": 225,
+            "mae": 0.0,
+            "wape": null
+          },
+          "similar": {
+            "points": 225,
+            "mae": 4.335650828510168,
+            "wape": null
+          }
+        }
+      },
+      "selection": {
+        "points": 450,
+        "mae": 4.407548773000886,
+        "wape": 0.0937820676084164,
+        "baseline": {
+          "points": 450,
+          "mae": 4.401851851851852,
+          "wape": 0.09366085078884738
+        },
+        "chosen_methods": {
+          "baseline": 147,
+          "holt_damped": 1,
+          "seasonal": 1,
+          "seasonal_naive": 1
+        }
+      },
+      "coverage": [
+        {
+          "horizon": 1,
+          "covered": 0,
+          "points": 0,
+          "total_points": 150,
+          "suppressed_points": 150,
+          "width_sum": 0.0,
+          "calibration_samples_min": 12,
+          "coverage": null,
+          "mean_width": null
+        },
+        {
+          "horizon": 2,
+          "covered": 0,
+          "points": 0,
+          "total_points": 150,
+          "suppressed_points": 150,
+          "width_sum": 0.0,
+          "calibration_samples_min": 11,
+          "coverage": null,
+          "mean_width": null
+        },
+        {
+          "horizon": 3,
+          "covered": 0,
+          "points": 0,
+          "total_points": 150,
+          "suppressed_points": 150,
+          "width_sum": 0.0,
+          "calibration_samples_min": 10,
+          "coverage": null,
+          "mean_width": null
+        }
+      ]
+    },
+    "trending": {
+      "folds": 150,
+      "methods": {
+        "baseline": {
+          "points": 450,
+          "mae": 20.709259259259255,
+          "wape": 0.12626228412457544,
+          "baseline": {
+            "points": 450,
+            "mae": 20.709259259259255,
+            "wape": 0.12626228412457544
+          },
+          "eligible_folds": 150,
+          "ineligible_folds": 0,
+          "status": "eligible",
+          "mae_improvement_vs_baseline": 0.0
+        },
+        "seasonal_naive": {
+          "points": 450,
+          "mae": 29.373333333333335,
+          "wape": 0.17908627791025364,
+          "baseline": {
+            "points": 450,
+            "mae": 20.709259259259255,
+            "wape": 0.12626228412457544
+          },
+          "eligible_folds": 150,
+          "ineligible_folds": 0,
+          "status": "eligible",
+          "mae_improvement_vs_baseline": -8.66407407407408
+        },
+        "holt_damped": {
+          "points": 450,
+          "mae": 18.397633330449946,
+          "wape": 0.11216853184888462,
+          "baseline": {
+            "points": 450,
+            "mae": 20.709259259259255,
+            "wape": 0.12626228412457544
+          },
+          "eligible_folds": 150,
+          "ineligible_folds": 0,
+          "status": "eligible",
+          "mae_improvement_vs_baseline": 2.3116259288093097
+        },
+        "seasonal": {
+          "points": 450,
+          "mae": 32.64566370665818,
+          "wape": 0.19903734917618932,
+          "baseline": {
+            "points": 450,
+            "mae": 20.709259259259255,
+            "wape": 0.12626228412457544
+          },
+          "eligible_folds": 150,
+          "ineligible_folds": 0,
+          "status": "eligible",
+          "mae_improvement_vs_baseline": -11.936404447398928
+        },
+        "croston": {
+          "points": 0,
+          "mae": null,
+          "wape": null,
+          "baseline": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "eligible_folds": 0,
+          "ineligible_folds": 150,
+          "status": "ineligible",
+          "mae_improvement_vs_baseline": null
+        },
+        "sba": {
+          "points": 0,
+          "mae": null,
+          "wape": null,
+          "baseline": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "eligible_folds": 0,
+          "ineligible_folds": 150,
+          "status": "ineligible",
+          "mae_improvement_vs_baseline": null
+        },
+        "similar": {
+          "points": 450,
+          "mae": 71.94930306476823,
+          "wape": 0.43866771053470766,
+          "baseline": {
+            "points": 450,
+            "mae": 20.709259259259255,
+            "wape": 0.12626228412457544
+          },
+          "eligible_folds": 150,
+          "ineligible_folds": 0,
+          "status": "eligible",
+          "mae_improvement_vs_baseline": -51.240043805508975
+        }
+      },
+      "common_all_methods": {
+        "folds": 0,
+        "methods": {
+          "baseline": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "seasonal_naive": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "holt_damped": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "seasonal": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "croston": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "sba": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          },
+          "similar": {
+            "points": 0,
+            "mae": null,
+            "wape": null
+          }
+        }
+      },
+      "selection": {
+        "points": 450,
+        "mae": 19.01441439845575,
+        "wape": 0.1159289843825207,
+        "baseline": {
+          "points": 450,
+          "mae": 20.709259259259255,
+          "wape": 0.12626228412457544
+        },
+        "chosen_methods": {
+          "baseline": 31,
+          "holt_damped": 113,
+          "similar": 6
+        }
+      },
+      "coverage": [
+        {
+          "horizon": 1,
+          "covered": 0,
+          "points": 0,
+          "total_points": 150,
+          "suppressed_points": 150,
+          "width_sum": 0.0,
+          "calibration_samples_min": 12,
+          "coverage": null,
+          "mean_width": null
+        },
+        {
+          "horizon": 2,
+          "covered": 0,
+          "points": 0,
+          "total_points": 150,
+          "suppressed_points": 150,
+          "width_sum": 0.0,
+          "calibration_samples_min": 11,
+          "coverage": null,
+          "mean_width": null
+        },
+        {
+          "horizon": 3,
+          "covered": 0,
+          "points": 0,
+          "total_points": 150,
+          "suppressed_points": 150,
+          "width_sum": 0.0,
+          "calibration_samples_min": 10,
+          "coverage": null,
+          "mean_width": null
+        }
+      ]
+    }
+  }
+}

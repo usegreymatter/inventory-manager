@@ -1,0 +1,74 @@
+{
+  "mapping_version": "1",
+  "connector": "shopify",
+  "description": "Shopify Admin GraphQL API, read-only scopes. Shopify has no native supplier master (product vendor is a text label) and open purchase orders may be unavailable: those streams stay unknown. Every field path here is UNVERIFIED - verify against vendor docs: https://shopify.dev/docs/api/admin-graphql",
+  "timezone": "Asia/Kuwait",
+  "currency": "KWD",
+  "secrets": [
+    "SHOPIFY_SHOP_DOMAIN",
+    "SHOPIFY_ADMIN_TOKEN"
+  ],
+  "streams": {
+    "item": {
+      "source": "productVariants",
+      "cursor_field": "updatedAt",
+      "verified": false,
+      "fields": {
+        "sku": "sku",
+        "name": "displayName",
+        "unit": {
+          "const": "each"
+        },
+        "category": "product.productType",
+        "barcode": "barcode",
+        "unit_cost": {
+          "from": "inventoryItem.unitCost.amount",
+          "transform": "decimal"
+        },
+        "default_supplier_id": "product.vendor"
+      }
+    },
+    "warehouse": {
+      "source": "locations",
+      "verified": false,
+      "fields": {
+        "warehouse": "id",
+        "name": "name"
+      }
+    },
+    "stock_level": {
+      "source": "inventoryItem.inventoryLevels",
+      "verified": false,
+      "fields": {
+        "sku": "item.variant.sku",
+        "warehouse": "location.id",
+        "on_hand": {
+          "from": "quantities(name: on_hand)",
+          "transform": "decimal"
+        }
+      }
+    },
+    "demand_line": {
+      "source": "orders.lineItems (fulfilled) and refunds.refundLineItems (restocked)",
+      "cursor_field": "updatedAt",
+      "verified": false,
+      "fields": {
+        "line_id": "id",
+        "sku": "sku",
+        "date": {
+          "from": "order.processedAt",
+          "transform": "date_local"
+        },
+        "quantity": "quantity"
+      }
+    },
+    "supplier": {
+      "source": "distinct product.vendor labels (no contacts in Shopify)",
+      "verified": false,
+      "fields": {
+        "supplier_id": "vendor",
+        "name": "vendor"
+      }
+    }
+  }
+}

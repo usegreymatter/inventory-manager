@@ -1,0 +1,145 @@
+{
+  "expected_layout": "multi_sheet_join",
+  "expected_product_count": 2,
+  "expected_scenario": {
+    "items": [
+      {
+        "monthly_sales": [
+          3,
+          6,
+          9
+        ],
+        "name": "Synthetic Widget A",
+        "on_hand": 12,
+        "sku": "A-001",
+        "supplier": "Synthetic Supply A",
+        "supplier_days": 14,
+        "unit": "units"
+      },
+      {
+        "monthly_sales": [
+          2,
+          4,
+          6
+        ],
+        "name": "Synthetic Widget B",
+        "on_hand": 8,
+        "sku": "B-002",
+        "supplier": "Synthetic Supply B",
+        "supplier_days": 21,
+        "unit": "units"
+      }
+    ],
+    "months": [
+      "2026-01",
+      "2026-02",
+      "2026-03"
+    ]
+  },
+  "fixture": "three_sheet_join.xlsx",
+  "ignored_rows": [],
+  "mappings": [
+    {
+      "fields": {
+        "name": {
+          "column": "B",
+          "header": "Item Name"
+        },
+        "on_hand": {
+          "column": "D",
+          "header": "Qty On Hand"
+        },
+        "sku": {
+          "column": "A",
+          "header": "Item Code"
+        },
+        "supplier_days": {
+          "column": "E",
+          "header": "Lead Time"
+        },
+        "unit": {
+          "column": "C",
+          "header": "UoM"
+        }
+      },
+      "header_row": 1,
+      "headers": [
+        "Item Code",
+        "Item Name",
+        "UoM",
+        "Qty On Hand",
+        "Lead Time"
+      ],
+      "sheet": "Stock"
+    },
+    {
+      "fields": {
+        "sku": {
+          "column": "A",
+          "header": "Item Code"
+        }
+      },
+      "header_row": 1,
+      "headers": [
+        "Item Code",
+        "Jan 2026",
+        "2026-02",
+        "March"
+      ],
+      "monthly_sales": [
+        {
+          "column": "B",
+          "header": "Jan 2026",
+          "month": "2026-01"
+        },
+        {
+          "column": "C",
+          "header": "2026-02",
+          "month": "2026-02"
+        },
+        {
+          "column": "D",
+          "header": "March",
+          "month": "2026-03"
+        }
+      ],
+      "sheet": "Sales"
+    },
+    {
+      "fields": {
+        "sku": {
+          "column": "A",
+          "header": "Item Code"
+        },
+        "supplier": {
+          "column": "B",
+          "header": "Supplier"
+        },
+        "supplier_days": {
+          "column": "C",
+          "header": "Lead Time"
+        }
+      },
+      "header_row": 1,
+      "headers": [
+        "Item Code",
+        "Supplier",
+        "Lead Time"
+      ],
+      "sheet": "Suppliers"
+    }
+  ],
+  "notes": [
+    "Stock is the product universe; join on exact SKU, never row position.",
+    "Report unmatched related SKUs; do not invent stock products."
+  ],
+  "schema_version": 1,
+  "unmatched_skus": {
+    "Sales": [
+      "UNMATCHED-999"
+    ],
+    "Suppliers": [
+      "UNMATCHED-999"
+    ]
+  }
+}

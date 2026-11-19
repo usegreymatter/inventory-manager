@@ -1,0 +1,4 @@
+po_line_id,sku,warehouse,supplier,remaining_qty,due_date,status
+SYN-OPEN-1,TILE-SAND,MAIN,SYN-TILE,48,2026-11-25,confirmed
+SYN-OPEN-2,ADH-20,EAST,SYN-CHEM,20,2026-10-25,confirmed
+SYN-OPEN-3,GROUT-5,WEST,SYN-CHEM,10,2026-11-05,draft

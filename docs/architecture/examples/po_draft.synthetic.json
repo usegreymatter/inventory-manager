@@ -1,0 +1,21 @@
+{
+  "schema_version": "1",
+  "draft_id": "SYN-DRAFT-0001",
+  "supplier_id": "SYN-TILE",
+  "currency": "KWD",
+  "snapshot_date": "2026-10-31",
+  "planning_date": "2026-11-01",
+  "lines": [
+    {
+      "sku": "TILE-SAND",
+      "quantity": "96",
+      "unit": "box",
+      "unit_cost": "10",
+      "forecast_cover_qty": "90.5"
+    }
+  ],
+  "total_value": "960",
+  "proposal_digest": "0000000000000000000000000000000000000000000000000000000000000000",
+  "state": "drafted",
+  "autonomy_level": "L1"
+}

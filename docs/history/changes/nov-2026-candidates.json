@@ -1,0 +1,20 @@
+{
+  "status": "APPROVED 2026-11-18 by owner",
+  "fit_through": "2026-10",
+  "checkpoint": "2026-11",
+  "methods": ["current", "auto", "combination", "theta", "ses"],
+  "safety_stock_bases": ["sales_variation", "forecast_misses"],
+  "lead_days": 14,
+  "review_days": 30,
+  "cover_months": 2,
+  "service_target": 0.95,
+  "minimum_skus": 30,
+  "fill_improvement_points": 1.0,
+  "bootstrap_repetitions": 1000,
+  "bootstrap_seed": 20261118,
+  "confidence": 0.90,
+  "budget_tolerance_fraction": 0.005,
+  "budget_multiplier_max": 128,
+  "budget_bisection_iterations": 16,
+  "follow_up": ["2026-12", "2027-01", "2027-02"]
+}

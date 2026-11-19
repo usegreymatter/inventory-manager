@@ -1,0 +1,20 @@
+/* Lifecycle: living. Import preflight reuses Arctic sheet surfaces and tokens. */
+.import-error-banner {position:fixed;z-index:30;bottom:16px;right:16px;margin:0;padding:12px 16px;max-width:min(520px,calc(100% - 32px));background:var(--bg);border:1px solid var(--red);color:var(--red);font-size:14px;line-height:20px;overflow-wrap:anywhere}
+.import-check h2 {font-size:16px;line-height:24px}
+.import-check {display:none;grid-template-rows:auto minmax(0,1fr) auto;overflow:hidden}
+.import-check[open] {display:grid}
+.import-check .settings-sheet-content {overflow:auto;min-height:0;padding-bottom:16px}
+.import-check .import-file {font-size:12px;line-height:16px;color:var(--muted);overflow-wrap:anywhere;margin:16px 0 8px}
+.import-check .import-summary {font-size:16px;line-height:24px;font-weight:600;margin:0 0 8px;overflow-wrap:anywhere}
+.import-check .import-note {font-size:14px;line-height:20px;color:var(--muted);margin:0 0 16px}
+.import-check details {border-top:1px solid var(--line);padding:0;margin:0}
+.import-check summary {font-size:14px;line-height:20px;min-height:44px;display:flex;align-items:center;gap:8px;cursor:pointer}
+.import-check summary::before {content:'+';width:16px;font-size:16px;color:var(--muted)}
+.import-check details[open]>summary::before {content:'−'}
+.import-check ul {margin:0 0 12px;padding-inline-start:20px;font-size:12px;line-height:20px}
+.import-check li {overflow-wrap:anywhere;margin-bottom:4px}
+.import-actions {display:flex;flex-wrap:wrap;gap:8px;border-top:1px solid var(--line);padding:16px 24px;background:var(--bg)}
+.import-check #import-check-confirm {background:var(--ink);color:var(--bg);padding-inline:16px;font-weight:600}
+.import-check #import-check-confirm:disabled {opacity:.4;cursor:not-allowed}
+.import-check #import-check-download {padding-inline:0;margin-top:8px;text-align:start;text-decoration:underline}
+@media(max-width:700px){.import-actions {padding:12px 16px}.import-check .import-summary {max-width:100%}}

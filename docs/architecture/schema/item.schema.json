@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "item.schema.json",
+  "title": "item",
+  "description": "One stocked product/variant in its base unit. Feeds stock.csv (sku,name,unit,category) and product_master.csv.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "sku",
+    "name",
+    "unit"
+  ],
+  "properties": {
+    "sku": {
+      "$ref": "common.schema.json#/$defs/sku"
+    },
+    "name": {
+      "$ref": "common.schema.json#/$defs/text"
+    },
+    "unit": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 40
+    },
+    "category": {
+      "$ref": "common.schema.json#/$defs/text"
+    },
+    "active": {
+      "type": "boolean"
+    },
+    "lifecycle": {
+      "enum": [
+        "active",
+        "new",
+        "discontinued"
+      ]
+    },
+    "replaced_by": {
+      "$ref": "common.schema.json#/$defs/sku"
+    },
+    "default_supplier_id": {
+      "$ref": "common.schema.json#/$defs/id"
+    },
+    "pack_size": {
+      "$ref": "common.schema.json#/$defs/positive_quantity"
+    },
+    "moq": {
+      "$ref": "common.schema.json#/$defs/quantity"
+    },
+    "max_order_qty": {
+      "$ref": "common.schema.json#/$defs/positive_quantity"
+    },
+    "unit_cost": {
+      "$ref": "common.schema.json#/$defs/money"
+    },
+    "cbm": {
+      "$ref": "common.schema.json#/$defs/quantity"
+    },
+    "weight_kg": {
+      "$ref": "common.schema.json#/$defs/quantity"
+    },
+    "critical": {
+      "type": "boolean"
+    },
+    "abc_override": {
+      "enum": [
+        "A",
+        "B",
+        "C"
+      ]
+    },
+    "barcode": {
+      "type": "string",
+      "maxLength": 64
+    },
+    "source_ref": {
+      "$ref": "common.schema.json#/$defs/source_ref"
+    }
+  }
+}

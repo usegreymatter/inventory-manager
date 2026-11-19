@@ -1,0 +1,149 @@
+[
+  {
+    "sku": "INCLUDED-20",
+    "js": {
+      "order_qty": 59,
+      "order_by": "2026-11-16",
+      "run_out": "2026-11-25",
+      "status": "running-low"
+    },
+    "python": {
+      "order_qty": 59.0,
+      "order_by": "2026-11-16",
+      "run_out": "2026-11-25",
+      "status": "running-low"
+    },
+    "cli": {
+      "order_qty": 59.0,
+      "order_by": "2026-11-16",
+      "run_out": "2026-11-25",
+      "status": "running-low"
+    }
+  },
+  {
+    "sku": "INCLUDED-80",
+    "js": {
+      "order_qty": 59,
+      "order_by": "2026-11-16",
+      "run_out": "2026-11-25",
+      "status": "running-low"
+    },
+    "python": {
+      "order_qty": 59.0,
+      "order_by": "2026-11-16",
+      "run_out": "2026-11-25",
+      "status": "running-low"
+    },
+    "cli": {
+      "order_qty": 59.0,
+      "order_by": "2026-11-16",
+      "run_out": "2026-11-25",
+      "status": "running-low"
+    }
+  },
+  {
+    "sku": "INCREMENTAL-20",
+    "js": {
+      "order_qty": 59,
+      "order_by": "2026-11-16",
+      "run_out": "2026-11-25",
+      "status": "running-low"
+    },
+    "python": {
+      "order_qty": 59.0,
+      "order_by": "2026-11-16",
+      "run_out": "2026-11-25",
+      "status": "running-low"
+    },
+    "cli": {
+      "order_qty": 59.0,
+      "order_by": "2026-11-16",
+      "run_out": "2026-11-25",
+      "status": "running-low"
+    }
+  },
+  {
+    "sku": "OVERDUE-40",
+    "js": {
+      "order_qty": 59,
+      "order_by": "2026-11-16",
+      "run_out": "2026-11-25",
+      "status": "running-low"
+    },
+    "python": {
+      "order_qty": 59.0,
+      "order_by": "2026-11-16",
+      "run_out": "2026-11-25",
+      "status": "running-low"
+    },
+    "cli": {
+      "order_qty": 59.0,
+      "order_by": "2026-11-16",
+      "run_out": "2026-11-25",
+      "status": "running-low"
+    }
+  },
+  {
+    "sku": "RESERVED-HOLD",
+    "js": {
+      "order_qty": 59,
+      "order_by": "2026-11-16",
+      "run_out": "2026-11-25",
+      "status": "running-low"
+    },
+    "python": {
+      "order_qty": 59.0,
+      "order_by": "2026-11-16",
+      "run_out": "2026-11-25",
+      "status": "running-low"
+    },
+    "cli": {
+      "order_qty": 59.0,
+      "order_by": "2026-11-16",
+      "run_out": "2026-11-25",
+      "status": "running-low"
+    }
+  },
+  {
+    "sku": "ZERO-BASELINE",
+    "js": {
+      "order_qty": 0,
+      "order_by": null,
+      "run_out": null,
+      "status": "no-sales"
+    },
+    "python": {
+      "order_qty": 0,
+      "order_by": null,
+      "run_out": null,
+      "status": "no-sales"
+    },
+    "cli": {
+      "order_qty": 0,
+      "order_by": null,
+      "run_out": null,
+      "status": "no-sales"
+    }
+  },
+  {
+    "sku": "SAME-DAY-SUPPLY",
+    "js": {
+      "order_qty": 60,
+      "order_by": "2026-12-07",
+      "run_out": "2026-12-16",
+      "status": "healthy"
+    },
+    "python": {
+      "order_qty": 60.0,
+      "order_by": "2026-12-07",
+      "run_out": "2026-12-16",
+      "status": "healthy"
+    },
+    "cli": {
+      "order_qty": 60.0,
+      "order_by": "2026-12-07",
+      "run_out": "2026-12-16",
+      "status": "healthy"
+    }
+  }
+]

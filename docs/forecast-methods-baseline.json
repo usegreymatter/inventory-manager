@@ -1,0 +1,11 @@
+{
+  "scope": "Explicit forecast-method and experimental safety-stock-basis settings extension only; historical manifests and immutable planner reference retained.",
+  "source_commit": "e3f3b81",
+  "approvedBlocks": [
+    {
+      "start": "export const DEFAULT_ORDER_SETTINGS",
+      "end": "const dateOrdinal =",
+      "sha256": "3e7d319fd69219db1ba94da6ccd5d8f70068eb9202222ed62efbb8458d1177da"
+    }
+  ]
+}

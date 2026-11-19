@@ -1,0 +1,12 @@
+.scratch/
+__pycache__/
+.pytest_cache/
+*.pyc
+.worktrees/
+node_modules/
+*.log
+.DS_Store
+captures/
+orders.csv
+.env
+.env.*

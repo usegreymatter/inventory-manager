@@ -1,0 +1,22 @@
+<details id="accuracy-panel"><summary>__S_accuracy__</summary><div class="detail-body">
+<label class="field"><span>__S_saveForecasts__</span><input id="archive-forecasts" type="checkbox"></label>
+<label class="field"><span>__S_biasAutoFix__</span><input id="bias-auto-fix" type="checkbox"></label>
+<p id="learning-status" class="meta" role="status">__S_learningOptIn__</p>
+<div id="accuracy-report"></div>
+</div></details>
+<details id="settings"><summary>__S_all_settings__</summary><div class="detail-body">
+  <div class="settings-grid">
+    <label class="field" for="delivery-days">__S_lead_time_delivery_days__<input id="delivery-days" type="number" min="1" max="3650" step="1" inputmode="numeric" aria-describedby="delivery-help settings-error"><small id="delivery-help">__S_days_from_order_to_delivery_Used_only_when__</small></label>
+    <label class="field" for="cover-months">__S_months_of_cover__<input id="cover-months" type="number" min="0" max="36" step="any" inputmode="decimal" aria-describedby="cover-help settings-error"><small id="cover-help">__S_how_long_an_order_should_last_after_delive__</small></label>
+    <label class="field" for="buffer-days">__S_buffer_days__<input id="buffer-days" type="number" min="0" max="365" step="1" inputmode="numeric" aria-describedby="buffer-help settings-error"><small id="buffer-help">__S_buffer_days_help__</small></label>
+    <label class="field" for="service-level">__S_service_level__<select id="service-level" aria-describedby="service-help"><option value="0.9">__S_90__</option><option value="0.95">__S_95__</option><option value="0.99">__S_99__</option></select><small id="service-help">__S_planning_assumption_for_safety_stock_not_a__</small></label>
+  </div>
+  <p id="settings-error" class="error" role="alert" hidden></p><p id="storage-status" class="meta" role="status"></p>
+  <button id="reset-settings" type="button">__S_reset_to_defaults__</button>
+</div></details>
+<details><summary>__S_inventory_terms_in_plain_words__</summary><div class="detail-body"><dl>
+<dt>__S_lead_time__</dt><dd>__S_days_from_order_to_delivery__</dd>
+<dt>__S_mOQ__</dt><dd>__S_smallest_order_the_supplier_accepts__</dd>
+<dt>__S_safety_stock__</dt><dd>__S_extra_kept_for_delays_or_surprise_demand__</dd>
+<dt>__S_reorder_point__</dt><dd>__S_order_when_stock_drops_to_this_amount__</dd>
+</dl><p class="muted">__S_the_standalone_page_uses_the_same_forecast__</p></div></details>

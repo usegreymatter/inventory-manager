@@ -1,0 +1,349 @@
+{
+  "status": "PASS",
+  "scope": "Local synthetic/file-only proof; no live data, network, installation or remote actions.",
+  "pytest": {
+    "command": [
+      "/usr/bin/python3",
+      "-m",
+      "pytest",
+      "-q"
+    ],
+    "passed": 1695,
+    "exit_code": 0
+  },
+  "node": {
+    "suites": 25,
+    "tests": 2476,
+    "passed": 2476,
+    "failed": 0,
+    "skipped": 0,
+    "groups": [
+      {
+        "command": [
+          "node",
+          "--test",
+          "--test-concurrency=1",
+          "tests/a3-health-labels.test.mjs",
+          "tests/a3-why.test.mjs",
+          "tests/arctic.test.mjs",
+          "tests/committed-demand.test.mjs",
+          "tests/desktop.test.mjs"
+        ],
+        "exit_code": 0,
+        "tests": 269,
+        "pass": 269,
+        "fail": 0,
+        "skipped": 0
+      },
+      {
+        "command": [
+          "node",
+          "--test",
+          "--test-concurrency=1",
+          "tests/evaluation-pass.test.mjs",
+          "tests/forecast-policy.test.mjs",
+          "tests/forecast_lab.test.mjs",
+          "tests/guidance.parity.test.mjs",
+          "tests/learning-review-fixes.test.mjs"
+        ],
+        "exit_code": 0,
+        "tests": 2044,
+        "pass": 2044,
+        "fail": 0,
+        "skipped": 0
+      },
+      {
+        "command": [
+          "node",
+          "--test",
+          "--test-concurrency=1",
+          "tests/learning-storage.test.mjs",
+          "tests/manual-change.test.mjs",
+          "tests/phase2.test.mjs",
+          "tests/phase3-calibration.test.mjs",
+          "tests/phase3-external.test.mjs"
+        ],
+        "exit_code": 0,
+        "tests": 22,
+        "pass": 22,
+        "fail": 0,
+        "skipped": 0
+      },
+      {
+        "command": [
+          "node",
+          "--test",
+          "--test-concurrency=1",
+          "tests/phase3-review.test.mjs",
+          "tests/phase3b.test.mjs",
+          "tests/phase4-simple.test.mjs",
+          "tests/planning.test.mjs",
+          "tests/project-exclusion.test.mjs"
+        ],
+        "exit_code": 0,
+        "tests": 27,
+        "pass": 27,
+        "fail": 0,
+        "skipped": 0
+      },
+      {
+        "command": [
+          "node",
+          "--test",
+          "--test-concurrency=1",
+          "tests/safety.test.mjs",
+          "tests/settings-control.test.mjs",
+          "tests/standalone.test.mjs",
+          "tests/stockout.test.mjs",
+          "tests/why-breakdown.test.mjs"
+        ],
+        "exit_code": 0,
+        "tests": 114,
+        "pass": 114,
+        "fail": 0,
+        "skipped": 0
+      }
+    ]
+  },
+  "captures": {
+    "import": {
+      "command": [
+        "node",
+        "standalone/capture-import.cjs"
+      ],
+      "exit_code": 0,
+      "checks": 102,
+      "screenshots": 10,
+      "log": ".scratch/import-final.log"
+    },
+    "chart": {
+      "command": [
+        "node",
+        "standalone/capture-chart.cjs"
+      ],
+      "exit_code": 0,
+      "checks": 985,
+      "screenshots": 6,
+      "log": ".scratch/chart-final.log"
+    },
+    "table": {
+      "command": [
+        "node",
+        "standalone/capture-table.cjs"
+      ],
+      "exit_code": 0,
+      "checks": 141,
+      "screenshots": 5,
+      "log": ".scratch/table-final.log"
+    },
+    "browse": {
+      "command": [
+        "node",
+        "standalone/capture-browse.cjs"
+      ],
+      "exit_code": 0,
+      "checks": 31,
+      "screenshots": 0,
+      "log": ".scratch/browse-final.log"
+    },
+    "settings": {
+      "command": [
+        "node",
+        "standalone/capture-settings.cjs"
+      ],
+      "exit_code": 0,
+      "checks": 35,
+      "screenshots": 3,
+      "log": ".scratch/settings-final.log"
+    },
+    "arctic": {
+      "command": [
+        "node",
+        "standalone/capture-arctic.cjs"
+      ],
+      "exit_code": 0,
+      "checks": 461,
+      "screenshots": 4,
+      "log": ".scratch/arctic-final.log"
+    },
+    "gm": {
+      "command": [
+        "node",
+        "standalone/capture-gm.cjs"
+      ],
+      "exit_code": 0,
+      "checks": 299,
+      "screenshots": 8,
+      "log": ".scratch/gm-final.log"
+    },
+    "baseline": {
+      "command": [
+        "node",
+        "standalone/capture.cjs",
+        "--offline-only"
+      ],
+      "exit_code": 0,
+      "checks": 104,
+      "screenshots": 4,
+      "log": ".scratch/baseline-final.log"
+    },
+    "a2": {
+      "command": [
+        "node",
+        "standalone/capture-a2.cjs"
+      ],
+      "exit_code": 0,
+      "checks": 268,
+      "screenshots": 6,
+      "log": ".scratch/a2-final.log"
+    },
+    "a3": {
+      "command": [
+        "node",
+        "standalone/capture-a3.cjs"
+      ],
+      "exit_code": 0,
+      "checks": 161,
+      "screenshots": 14,
+      "log": ".scratch/a3-final.log"
+    }
+  },
+  "capture_checks": 2587,
+  "erp_examples": {
+    "status": "PASS",
+    "baseline": "af2b1c7",
+    "files": 8,
+    "item_records": 8,
+    "results": [
+      {
+        "file": "docs/erp-examples/dynamics-365.csv",
+        "items": 1,
+        "items_sha256": "9ee9cfa9b0b5606f29545cd1c1755d51cd83156d73fc3472cbefd4e8c4aed25c"
+      },
+      {
+        "file": "docs/erp-examples/netsuite.csv",
+        "items": 1,
+        "items_sha256": "ab633a900dbaa4d6d78b75d7d6c105ff1d87476d1c8c71d0167af0b131338eda"
+      },
+      {
+        "file": "docs/erp-examples/odoo.csv",
+        "items": 1,
+        "items_sha256": "9ee9cfa9b0b5606f29545cd1c1755d51cd83156d73fc3472cbefd4e8c4aed25c"
+      },
+      {
+        "file": "docs/erp-examples/quickbooks.csv",
+        "items": 1,
+        "items_sha256": "bbec1c250bb7d4d3dcaeff7d65f85df7f9953c99538324f6242db4463c307c94"
+      },
+      {
+        "file": "docs/erp-examples/sage.csv",
+        "items": 1,
+        "items_sha256": "ab633a900dbaa4d6d78b75d7d6c105ff1d87476d1c8c71d0167af0b131338eda"
+      },
+      {
+        "file": "docs/erp-examples/sap-business-one.csv",
+        "items": 1,
+        "items_sha256": "ee566381abdfc840472482e4544137d071f7dce79ec81fc3a495da6d31b9d194"
+      },
+      {
+        "file": "docs/erp-examples/sap-s4hana.csv",
+        "items": 1,
+        "items_sha256": "ab633a900dbaa4d6d78b75d7d6c105ff1d87476d1c8c71d0167af0b131338eda"
+      },
+      {
+        "file": "docs/erp-examples/zoho-inventory.csv",
+        "items": 1,
+        "items_sha256": "9ee9cfa9b0b5606f29545cd1c1755d51cd83156d73fc3472cbefd4e8c4aed25c"
+      }
+    ]
+  },
+  "import_phone_scroll": [
+    {
+      "label": "390 expanded report scroll reaches end",
+      "pass": true,
+      "evidence": {
+        "top": 422,
+        "height": 706,
+        "total": 1128,
+        "bottom": 0
+      }
+    },
+    {
+      "label": "390 action buttons reachable after scrolling",
+      "pass": true,
+      "evidence": [
+        {
+          "top": 788,
+          "bottom": 832,
+          "left": 16,
+          "right": 195.21875,
+          "hit": true
+        },
+        {
+          "top": 788,
+          "bottom": 832,
+          "left": 203.21875,
+          "right": 262.8125,
+          "hit": true
+        }
+      ]
+    }
+  ],
+  "source_sha256": {
+    "engine.py": "ea9c6e144c2486b8ad415c9b9e22664522bf6ce262123d02cebaba7587ae6a1f",
+    "sources.py": "130cf7f16d35b7fb91aa2fff30b475be6692483f8854a726ca121685825e9cdd",
+    "csv_import.py": "8478384ecda33829f0e5ff2d9ec601dba004bedf77411c6483d78a74b869235f",
+    "desktop/plugin.js": "034d25b4765c1d65456715410b2765484a633bed3dcd8bd9959df6416bcea287",
+    "tools.py": "9605f98817d005b2141ac45d9bfe9172cb39816588c70b7bd5b6b50ec978a047",
+    "scripts/golden_diff.py": "9ceca1e8acd3093faea07a66e16cf4b0e1b500c73162fad6edae42904d132912",
+    "standalone/stock-runway.html": "aae40d690cad22127643ee98ece75841d60103738822598474c27fd22eace1d0",
+    "standalone/design/option-gm-b.html": "aae40d690cad22127643ee98ece75841d60103738822598474c27fd22eace1d0"
+  },
+  "screenshots": [
+    {
+      "path": "docs/evidence/import-preflight/1440-1982-imported.png",
+      "sha256": "7d2a081f5aa6a87eb0eccc29c7db2200048d5388cb16ebdce1d4fa507ea6cdd1"
+    },
+    {
+      "path": "docs/evidence/import-preflight/1440-2000-preflight.png",
+      "sha256": "7ad8453da23792765907b48e8f2eb340e402d7f40e22ad6236ab9051e0b449c5"
+    },
+    {
+      "path": "docs/evidence/import-preflight/1440-footer.png",
+      "sha256": "2f5d8850526fea5a054798641090d315b7ca2b2d4af598243b2630c67ca31880"
+    },
+    {
+      "path": "docs/evidence/import-preflight/1440-partial-warehouses.png",
+      "sha256": "22178eead23793ae9c390edf4f58aee91d7009d9cbe917730fb77fe389abf23e"
+    },
+    {
+      "path": "docs/evidence/import-preflight/1440-warehouses.png",
+      "sha256": "0a3c84c422d090db87f24bd7d73020ac882729fea61adc7526c9ae93f7405227"
+    },
+    {
+      "path": "docs/evidence/import-preflight/390-1982-imported.png",
+      "sha256": "d600bca1b49ee68a611d94158aa2746b4e6e7bdfe9f7283123d43fb10235bf03"
+    },
+    {
+      "path": "docs/evidence/import-preflight/390-2000-preflight.png",
+      "sha256": "73d012ebb8366e78ad888b91729accd9ac34a9be6a067e2af6e57ad37b448c6e"
+    },
+    {
+      "path": "docs/evidence/import-preflight/390-footer.png",
+      "sha256": "1dd0e3b8e19392029201dca45fdbdbc36a91cbbc8b5648b54ff71136d0cf76df"
+    },
+    {
+      "path": "docs/evidence/import-preflight/390-partial-warehouses.png",
+      "sha256": "e4e58c7ef9274bbbbf231c727cbad5fb7781cf0c4c61199fd443eb5afd6f4f47"
+    },
+    {
+      "path": "docs/evidence/import-preflight/390-warehouses.png",
+      "sha256": "95ebe2205de61582a5438041b22d2f61c01749097c4de7eec72276d93c6c2081"
+    }
+  ],
+  "visual_review": "All 10 import screenshots reviewed in desktop/phone contact sheets: no clipping, overlap or inaccessible actions. Import singular/plural copy corrected after visual review; existing dashboard uses 1 data warnings.",
+  "not_checked": [
+    "Local HTTP/static-host smoke omitted via --offline-only because this packet prohibits network, including loopback.",
+    "Live ERP/customer data, hosted deployment, real device touch and non-Chromium browsers were not exercised."
+  ]
+}

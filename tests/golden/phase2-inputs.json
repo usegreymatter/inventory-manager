@@ -1,0 +1,1131 @@
+{
+  "lifecycle": "review",
+  "as_of": "2026-10-31",
+  "today": "2026-11-01",
+  "cases": [
+    {
+      "item": {
+        "sku": "INCLUDED-20",
+        "name": "Synthetic customer order",
+        "unit": "box",
+        "on_hand": 25,
+        "supplier_days": 2,
+        "monthly_sales": [
+          30,
+          30,
+          30
+        ],
+        "receipts": {},
+        "planning_facts": {
+          "version": "1.0",
+          "warehouses": [
+            "MAIN"
+          ],
+          "customer_orders": [
+            {
+              "order_line_id": "O-INCLUDED-20",
+              "sku": "INCLUDED-20",
+              "warehouse": "MAIN",
+              "quantity": 20,
+              "delivery_date": "2026-11-10",
+              "status": "confirmed",
+              "forecast_included": true
+            }
+          ],
+          "stock_states": [
+            {
+              "sku": "INCLUDED-20",
+              "warehouse": "MAIN",
+              "damaged": 0,
+              "reserved": 0,
+              "quarantine": 0,
+              "returns": 0
+            }
+          ]
+        }
+      },
+      "months": [
+        "2026-08",
+        "2026-09",
+        "2026-10"
+      ]
+    },
+    {
+      "item": {
+        "sku": "INCLUDED-80",
+        "name": "Synthetic customer order",
+        "unit": "box",
+        "on_hand": 25,
+        "supplier_days": 2,
+        "monthly_sales": [
+          30,
+          30,
+          30
+        ],
+        "receipts": {},
+        "planning_facts": {
+          "version": "1.0",
+          "warehouses": [
+            "MAIN"
+          ],
+          "customer_orders": [
+            {
+              "order_line_id": "O-INCLUDED-80",
+              "sku": "INCLUDED-80",
+              "warehouse": "MAIN",
+              "quantity": 80,
+              "delivery_date": "2026-11-20",
+              "status": "confirmed",
+              "forecast_included": true
+            }
+          ],
+          "stock_states": [
+            {
+              "sku": "INCLUDED-80",
+              "warehouse": "MAIN",
+              "damaged": 0,
+              "reserved": 0,
+              "quarantine": 0,
+              "returns": 0
+            }
+          ]
+        }
+      },
+      "months": [
+        "2026-08",
+        "2026-09",
+        "2026-10"
+      ]
+    },
+    {
+      "item": {
+        "sku": "INCREMENTAL-20",
+        "name": "Synthetic customer order",
+        "unit": "box",
+        "on_hand": 25,
+        "supplier_days": 2,
+        "monthly_sales": [
+          30,
+          30,
+          30
+        ],
+        "receipts": {},
+        "planning_facts": {
+          "version": "1.0",
+          "warehouses": [
+            "MAIN"
+          ],
+          "customer_orders": [
+            {
+              "order_line_id": "O-INCREMENTAL-20",
+              "sku": "INCREMENTAL-20",
+              "warehouse": "MAIN",
+              "quantity": 20,
+              "delivery_date": "2026-11-10",
+              "status": "confirmed",
+              "forecast_included": false
+            }
+          ],
+          "stock_states": [
+            {
+              "sku": "INCREMENTAL-20",
+              "warehouse": "MAIN",
+              "damaged": 0,
+              "reserved": 0,
+              "quarantine": 0,
+              "returns": 0
+            }
+          ]
+        }
+      },
+      "months": [
+        "2026-08",
+        "2026-09",
+        "2026-10"
+      ]
+    },
+    {
+      "item": {
+        "sku": "OVERDUE-40",
+        "name": "Synthetic customer order",
+        "unit": "box",
+        "on_hand": 25,
+        "supplier_days": 2,
+        "monthly_sales": [
+          30,
+          30,
+          30
+        ],
+        "receipts": {},
+        "planning_facts": {
+          "version": "1.0",
+          "warehouses": [
+            "MAIN"
+          ],
+          "customer_orders": [
+            {
+              "order_line_id": "O-OVERDUE-40",
+              "sku": "OVERDUE-40",
+              "warehouse": "MAIN",
+              "quantity": 40,
+              "delivery_date": "2026-10-20",
+              "status": "confirmed",
+              "forecast_included": true
+            }
+          ],
+          "stock_states": [
+            {
+              "sku": "OVERDUE-40",
+              "warehouse": "MAIN",
+              "damaged": 0,
+              "reserved": 0,
+              "quarantine": 0,
+              "returns": 0
+            }
+          ]
+        }
+      },
+      "months": [
+        "2026-08",
+        "2026-09",
+        "2026-10"
+      ]
+    },
+    {
+      "item": {
+        "sku": "RESERVED-HOLD",
+        "name": "Synthetic customer order",
+        "unit": "box",
+        "on_hand": 25,
+        "supplier_days": 2,
+        "monthly_sales": [
+          30,
+          30,
+          30
+        ],
+        "receipts": {},
+        "planning_facts": {
+          "version": "1.0",
+          "warehouses": [
+            "MAIN"
+          ],
+          "customer_orders": [
+            {
+              "order_line_id": "O-RESERVED-HOLD",
+              "sku": "RESERVED-HOLD",
+              "warehouse": "MAIN",
+              "quantity": 20,
+              "delivery_date": "2026-11-10",
+              "status": "confirmed",
+              "forecast_included": true
+            }
+          ],
+          "stock_states": [
+            {
+              "sku": "RESERVED-HOLD",
+              "warehouse": "MAIN",
+              "damaged": 0,
+              "reserved": 5,
+              "quarantine": 0,
+              "returns": 0
+            }
+          ]
+        }
+      },
+      "months": [
+        "2026-08",
+        "2026-09",
+        "2026-10"
+      ]
+    },
+    {
+      "item": {
+        "sku": "ZERO-BASELINE",
+        "name": "Synthetic customer order",
+        "unit": "box",
+        "on_hand": 25,
+        "supplier_days": 2,
+        "monthly_sales": [
+          0,
+          0,
+          0
+        ],
+        "receipts": {},
+        "planning_facts": {
+          "version": "1.0",
+          "warehouses": [
+            "MAIN"
+          ],
+          "customer_orders": [
+            {
+              "order_line_id": "O-ZERO-BASELINE",
+              "sku": "ZERO-BASELINE",
+              "warehouse": "MAIN",
+              "quantity": 40,
+              "delivery_date": "2026-11-20",
+              "status": "confirmed",
+              "forecast_included": true
+            }
+          ],
+          "stock_states": [
+            {
+              "sku": "ZERO-BASELINE",
+              "warehouse": "MAIN",
+              "damaged": 0,
+              "reserved": 0,
+              "quarantine": 0,
+              "returns": 0
+            }
+          ]
+        }
+      },
+      "months": [
+        "2026-08",
+        "2026-09",
+        "2026-10"
+      ]
+    },
+    {
+      "item": {
+        "sku": "SAME-DAY-SUPPLY",
+        "name": "Synthetic customer order",
+        "unit": "box",
+        "on_hand": 25,
+        "supplier_days": 2,
+        "monthly_sales": [
+          30,
+          30,
+          30
+        ],
+        "receipts": {},
+        "planning_facts": {
+          "version": "1.0",
+          "warehouses": [
+            "MAIN"
+          ],
+          "customer_orders": [
+            {
+              "order_line_id": "O-SAME-DAY-SUPPLY",
+              "sku": "SAME-DAY-SUPPLY",
+              "warehouse": "MAIN",
+              "quantity": 40,
+              "delivery_date": "2026-11-20",
+              "status": "confirmed",
+              "forecast_included": true
+            }
+          ],
+          "stock_states": [
+            {
+              "sku": "SAME-DAY-SUPPLY",
+              "warehouse": "MAIN",
+              "damaged": 0,
+              "reserved": 0,
+              "quarantine": 0,
+              "returns": 0
+            }
+          ],
+          "incoming_pos": [
+            {
+              "po_line_id": "P-SAME",
+              "sku": "SAME-DAY-SUPPLY",
+              "warehouse": "MAIN",
+              "supplier": "S",
+              "remaining_qty": 20,
+              "due_date": "2026-11-20",
+              "status": "confirmed"
+            }
+          ]
+        }
+      },
+      "months": [
+        "2026-08",
+        "2026-09",
+        "2026-10"
+      ]
+    },
+    {
+      "item": {
+        "sku": "LOST-SALES",
+        "name": "Synthetic stockout",
+        "unit": "box",
+        "on_hand": 25,
+        "supplier_days": 2,
+        "monthly_sales": [
+          30,
+          30,
+          30
+        ],
+        "receipts": {},
+        "planning_facts": {
+          "version": "1.0",
+          "sales_history": [
+            {
+              "sku": "LOST-SALES",
+              "month": "2026-08",
+              "quantity": 30,
+              "in_stock_days": 31,
+              "backorder": false
+            },
+            {
+              "sku": "LOST-SALES",
+              "month": "2026-09",
+              "quantity": 30,
+              "in_stock_days": 30,
+              "backorder": false
+            },
+            {
+              "sku": "LOST-SALES",
+              "month": "2026-10",
+              "quantity": 30,
+              "in_stock_days": 15,
+              "backorder": false
+            }
+          ]
+        }
+      },
+      "months": [
+        "2026-08",
+        "2026-09",
+        "2026-10"
+      ]
+    },
+    {
+      "item": {
+        "sku": "FLOOR-EXPOSURE",
+        "name": "Synthetic stockout",
+        "unit": "box",
+        "on_hand": 25,
+        "supplier_days": 2,
+        "monthly_sales": [
+          30,
+          30,
+          30
+        ],
+        "receipts": {},
+        "planning_facts": {
+          "version": "1.0",
+          "sales_history": [
+            {
+              "sku": "FLOOR-EXPOSURE",
+              "month": "2026-08",
+              "quantity": 30,
+              "in_stock_days": 31,
+              "backorder": false
+            },
+            {
+              "sku": "FLOOR-EXPOSURE",
+              "month": "2026-09",
+              "quantity": 30,
+              "in_stock_days": 30,
+              "backorder": false
+            },
+            {
+              "sku": "FLOOR-EXPOSURE",
+              "month": "2026-10",
+              "quantity": 30,
+              "in_stock_days": 1,
+              "backorder": false
+            }
+          ]
+        }
+      },
+      "months": [
+        "2026-08",
+        "2026-09",
+        "2026-10"
+      ]
+    },
+    {
+      "item": {
+        "sku": "CENSORED-MONTH",
+        "name": "Synthetic stockout",
+        "unit": "box",
+        "on_hand": 25,
+        "supplier_days": 2,
+        "monthly_sales": [
+          30,
+          30,
+          30,
+          0
+        ],
+        "receipts": {},
+        "planning_facts": {
+          "version": "1.0",
+          "sales_history": [
+            {
+              "sku": "CENSORED-MONTH",
+              "month": "2026-07",
+              "quantity": 30,
+              "in_stock_days": 31,
+              "backorder": false
+            },
+            {
+              "sku": "CENSORED-MONTH",
+              "month": "2026-08",
+              "quantity": 30,
+              "in_stock_days": 31,
+              "backorder": false
+            },
+            {
+              "sku": "CENSORED-MONTH",
+              "month": "2026-09",
+              "quantity": 30,
+              "in_stock_days": 30,
+              "backorder": false
+            },
+            {
+              "sku": "CENSORED-MONTH",
+              "month": "2026-10",
+              "quantity": 0,
+              "in_stock_days": 0,
+              "backorder": false
+            }
+          ]
+        }
+      },
+      "months": [
+        "2026-07",
+        "2026-08",
+        "2026-09",
+        "2026-10"
+      ]
+    },
+    {
+      "item": {
+        "sku": "BACKORDER-NO-UPLIFT",
+        "name": "Synthetic stockout",
+        "unit": "box",
+        "on_hand": 25,
+        "supplier_days": 2,
+        "monthly_sales": [
+          30,
+          30,
+          30
+        ],
+        "receipts": {},
+        "planning_facts": {
+          "version": "1.0",
+          "sales_history": [
+            {
+              "sku": "BACKORDER-NO-UPLIFT",
+              "month": "2026-08",
+              "quantity": 30,
+              "in_stock_days": 31,
+              "backorder": true
+            },
+            {
+              "sku": "BACKORDER-NO-UPLIFT",
+              "month": "2026-09",
+              "quantity": 30,
+              "in_stock_days": 30,
+              "backorder": true
+            },
+            {
+              "sku": "BACKORDER-NO-UPLIFT",
+              "month": "2026-10",
+              "quantity": 30,
+              "in_stock_days": 15,
+              "backorder": true
+            }
+          ]
+        }
+      },
+      "months": [
+        "2026-08",
+        "2026-09",
+        "2026-10"
+      ]
+    },
+    {
+      "item": {
+        "sku": "THIN-ELIGIBLE",
+        "name": "Synthetic stockout",
+        "unit": "box",
+        "on_hand": 25,
+        "supplier_days": 2,
+        "monthly_sales": [
+          30,
+          30,
+          0
+        ],
+        "receipts": {},
+        "planning_facts": {
+          "version": "1.0",
+          "sales_history": [
+            {
+              "sku": "THIN-ELIGIBLE",
+              "month": "2026-08",
+              "quantity": 30,
+              "in_stock_days": 31,
+              "backorder": false
+            },
+            {
+              "sku": "THIN-ELIGIBLE",
+              "month": "2026-09",
+              "quantity": 30,
+              "in_stock_days": 30,
+              "backorder": false
+            },
+            {
+              "sku": "THIN-ELIGIBLE",
+              "month": "2026-10",
+              "quantity": 0,
+              "in_stock_days": 0,
+              "backorder": false
+            }
+          ]
+        }
+      },
+      "months": [
+        "2026-08",
+        "2026-09",
+        "2026-10"
+      ]
+    },
+    {
+      "item": {
+        "sku": "PROJECT-LAST",
+        "name": "Synthetic project",
+        "unit": "box",
+        "on_hand": 25,
+        "supplier_days": 2,
+        "monthly_sales": [
+          30,
+          30,
+          30,
+          300
+        ],
+        "receipts": {},
+        "planning_facts": {
+          "version": "1.0",
+          "sales_history": [
+            {
+              "sku": "PROJECT-LAST",
+              "month": "2026-07",
+              "quantity": 30,
+              "project": false,
+              "in_stock_days": 31,
+              "backorder": false
+            },
+            {
+              "sku": "PROJECT-LAST",
+              "month": "2026-08",
+              "quantity": 30,
+              "project": false,
+              "in_stock_days": 31,
+              "backorder": false
+            },
+            {
+              "sku": "PROJECT-LAST",
+              "month": "2026-09",
+              "quantity": 30,
+              "project": false,
+              "in_stock_days": 30,
+              "backorder": false
+            },
+            {
+              "sku": "PROJECT-LAST",
+              "month": "2026-10",
+              "quantity": 300,
+              "project": true,
+              "in_stock_days": 31,
+              "backorder": false
+            }
+          ]
+        }
+      },
+      "months": [
+        "2026-07",
+        "2026-08",
+        "2026-09",
+        "2026-10"
+      ]
+    },
+    {
+      "item": {
+        "sku": "PROJECT-CORRECTED",
+        "name": "Synthetic project",
+        "unit": "box",
+        "on_hand": 25,
+        "supplier_days": 2,
+        "monthly_sales": [
+          30,
+          30,
+          30,
+          60
+        ],
+        "receipts": {},
+        "planning_facts": {
+          "version": "1.0",
+          "sales_history": [
+            {
+              "sku": "PROJECT-CORRECTED",
+              "month": "2026-07",
+              "quantity": 30,
+              "project": false,
+              "in_stock_days": 31,
+              "backorder": false
+            },
+            {
+              "sku": "PROJECT-CORRECTED",
+              "month": "2026-08",
+              "quantity": 30,
+              "project": false,
+              "in_stock_days": 31,
+              "backorder": false
+            },
+            {
+              "sku": "PROJECT-CORRECTED",
+              "month": "2026-09",
+              "quantity": 30,
+              "project": false,
+              "in_stock_days": 30,
+              "backorder": false
+            },
+            {
+              "sku": "PROJECT-CORRECTED",
+              "month": "2026-10",
+              "quantity": 60,
+              "project": true,
+              "in_stock_days": 10,
+              "backorder": false
+            }
+          ]
+        }
+      },
+      "months": [
+        "2026-07",
+        "2026-08",
+        "2026-09",
+        "2026-10"
+      ]
+    },
+    {
+      "item": {
+        "sku": "PROJECT-GAP",
+        "name": "Synthetic project",
+        "unit": "box",
+        "on_hand": 25,
+        "supplier_days": 2,
+        "monthly_sales": [
+          10,
+          20,
+          30,
+          40,
+          50,
+          60,
+          70,
+          80,
+          90,
+          100,
+          45,
+          60,
+          75
+        ],
+        "receipts": {},
+        "planning_facts": {
+          "version": "1.0",
+          "sales_history": [
+            {
+              "sku": "PROJECT-GAP",
+              "month": "2025-10",
+              "quantity": 10,
+              "project": false,
+              "in_stock_days": 31,
+              "backorder": false
+            },
+            {
+              "sku": "PROJECT-GAP",
+              "month": "2025-11",
+              "quantity": 20,
+              "project": false,
+              "in_stock_days": 30,
+              "backorder": false
+            },
+            {
+              "sku": "PROJECT-GAP",
+              "month": "2025-12",
+              "quantity": 30,
+              "project": false,
+              "in_stock_days": 31,
+              "backorder": false
+            },
+            {
+              "sku": "PROJECT-GAP",
+              "month": "2026-01",
+              "quantity": 40,
+              "project": false,
+              "in_stock_days": 31,
+              "backorder": false
+            },
+            {
+              "sku": "PROJECT-GAP",
+              "month": "2026-02",
+              "quantity": 50,
+              "project": false,
+              "in_stock_days": 28,
+              "backorder": false
+            },
+            {
+              "sku": "PROJECT-GAP",
+              "month": "2026-03",
+              "quantity": 60,
+              "project": false,
+              "in_stock_days": 31,
+              "backorder": false
+            },
+            {
+              "sku": "PROJECT-GAP",
+              "month": "2026-04",
+              "quantity": 70,
+              "project": true,
+              "in_stock_days": 30,
+              "backorder": false
+            },
+            {
+              "sku": "PROJECT-GAP",
+              "month": "2026-05",
+              "quantity": 80,
+              "project": false,
+              "in_stock_days": 31,
+              "backorder": false
+            },
+            {
+              "sku": "PROJECT-GAP",
+              "month": "2026-06",
+              "quantity": 90,
+              "project": false,
+              "in_stock_days": 30,
+              "backorder": false
+            },
+            {
+              "sku": "PROJECT-GAP",
+              "month": "2026-07",
+              "quantity": 100,
+              "project": false,
+              "in_stock_days": 31,
+              "backorder": false
+            },
+            {
+              "sku": "PROJECT-GAP",
+              "month": "2026-08",
+              "quantity": 45,
+              "project": false,
+              "in_stock_days": 31,
+              "backorder": false
+            },
+            {
+              "sku": "PROJECT-GAP",
+              "month": "2026-09",
+              "quantity": 60,
+              "project": false,
+              "in_stock_days": 30,
+              "backorder": false
+            },
+            {
+              "sku": "PROJECT-GAP",
+              "month": "2026-10",
+              "quantity": 75,
+              "project": false,
+              "in_stock_days": 31,
+              "backorder": false
+            }
+          ]
+        }
+      },
+      "months": [
+        "2025-10",
+        "2025-11",
+        "2025-12",
+        "2026-01",
+        "2026-02",
+        "2026-03",
+        "2026-04",
+        "2026-05",
+        "2026-06",
+        "2026-07",
+        "2026-08",
+        "2026-09",
+        "2026-10"
+      ]
+    },
+    {
+      "item": {
+        "sku": "PROJECT-THIN",
+        "name": "Synthetic project",
+        "unit": "box",
+        "on_hand": 25,
+        "supplier_days": 2,
+        "monthly_sales": [
+          30,
+          30,
+          300
+        ],
+        "receipts": {},
+        "planning_facts": {
+          "version": "1.0",
+          "sales_history": [
+            {
+              "sku": "PROJECT-THIN",
+              "month": "2026-08",
+              "quantity": 30,
+              "project": false,
+              "in_stock_days": 31,
+              "backorder": false
+            },
+            {
+              "sku": "PROJECT-THIN",
+              "month": "2026-09",
+              "quantity": 30,
+              "project": false,
+              "in_stock_days": 30,
+              "backorder": false
+            },
+            {
+              "sku": "PROJECT-THIN",
+              "month": "2026-10",
+              "quantity": 300,
+              "project": true,
+              "in_stock_days": 31,
+              "backorder": false
+            }
+          ]
+        }
+      },
+      "months": [
+        "2026-08",
+        "2026-09",
+        "2026-10"
+      ]
+    },
+    {
+      "item": {
+        "sku": "PROJECT-ONLY",
+        "name": "Synthetic project",
+        "unit": "box",
+        "on_hand": 25,
+        "supplier_days": 2,
+        "monthly_sales": [
+          30,
+          30,
+          30,
+          300
+        ],
+        "receipts": {},
+        "planning_facts": {
+          "version": "1.0",
+          "sales_history": [
+            {
+              "sku": "PROJECT-ONLY",
+              "month": "2026-07",
+              "quantity": 30,
+              "project": false
+            },
+            {
+              "sku": "PROJECT-ONLY",
+              "month": "2026-08",
+              "quantity": 30,
+              "project": false
+            },
+            {
+              "sku": "PROJECT-ONLY",
+              "month": "2026-09",
+              "quantity": 30,
+              "project": false
+            },
+            {
+              "sku": "PROJECT-ONLY",
+              "month": "2026-10",
+              "quantity": 300,
+              "project": true
+            }
+          ]
+        }
+      },
+      "months": [
+        "2026-07",
+        "2026-08",
+        "2026-09",
+        "2026-10"
+      ]
+    },
+    {
+      "item": {
+        "sku": "OUTLIER-CHECK",
+        "name": "Synthetic project",
+        "unit": "box",
+        "on_hand": 25,
+        "supplier_days": 2,
+        "monthly_sales": [
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          300,
+          30
+        ],
+        "receipts": {},
+        "planning_facts": {
+          "version": "1.0",
+          "sales_history": [
+            {
+              "sku": "OUTLIER-CHECK",
+              "month": "2026-02",
+              "quantity": 30,
+              "project": false,
+              "in_stock_days": 28,
+              "backorder": false
+            },
+            {
+              "sku": "OUTLIER-CHECK",
+              "month": "2026-03",
+              "quantity": 30,
+              "project": false,
+              "in_stock_days": 31,
+              "backorder": false
+            },
+            {
+              "sku": "OUTLIER-CHECK",
+              "month": "2026-04",
+              "quantity": 30,
+              "project": false,
+              "in_stock_days": 30,
+              "backorder": false
+            },
+            {
+              "sku": "OUTLIER-CHECK",
+              "month": "2026-05",
+              "quantity": 30,
+              "project": false,
+              "in_stock_days": 31,
+              "backorder": false
+            },
+            {
+              "sku": "OUTLIER-CHECK",
+              "month": "2026-06",
+              "quantity": 30,
+              "project": false,
+              "in_stock_days": 30,
+              "backorder": false
+            },
+            {
+              "sku": "OUTLIER-CHECK",
+              "month": "2026-07",
+              "quantity": 30,
+              "project": false,
+              "in_stock_days": 31,
+              "backorder": false
+            },
+            {
+              "sku": "OUTLIER-CHECK",
+              "month": "2026-08",
+              "quantity": 30,
+              "project": false,
+              "in_stock_days": 31,
+              "backorder": false
+            },
+            {
+              "sku": "OUTLIER-CHECK",
+              "month": "2026-09",
+              "quantity": 300,
+              "project": false,
+              "in_stock_days": 30,
+              "backorder": false
+            },
+            {
+              "sku": "OUTLIER-CHECK",
+              "month": "2026-10",
+              "quantity": 30,
+              "project": false,
+              "in_stock_days": 31,
+              "backorder": false
+            }
+          ]
+        }
+      },
+      "months": [
+        "2026-02",
+        "2026-03",
+        "2026-04",
+        "2026-05",
+        "2026-06",
+        "2026-07",
+        "2026-08",
+        "2026-09",
+        "2026-10"
+      ]
+    },
+    {
+      "item": {
+        "sku": "CENSORED-PROJECT",
+        "name": "Synthetic project",
+        "unit": "box",
+        "on_hand": 25,
+        "supplier_days": 2,
+        "monthly_sales": [
+          30,
+          30,
+          0,
+          30,
+          90
+        ],
+        "receipts": {},
+        "planning_facts": {
+          "version": "1.0",
+          "sales_history": [
+            {
+              "sku": "CENSORED-PROJECT",
+              "month": "2026-06",
+              "quantity": 30,
+              "project": false,
+              "in_stock_days": 30,
+              "backorder": false
+            },
+            {
+              "sku": "CENSORED-PROJECT",
+              "month": "2026-07",
+              "quantity": 30,
+              "project": false,
+              "in_stock_days": 31,
+              "backorder": false
+            },
+            {
+              "sku": "CENSORED-PROJECT",
+              "month": "2026-08",
+              "quantity": 0,
+              "project": false,
+              "in_stock_days": 0,
+              "backorder": false
+            },
+            {
+              "sku": "CENSORED-PROJECT",
+              "month": "2026-09",
+              "quantity": 30,
+              "project": false,
+              "in_stock_days": 30,
+              "backorder": false
+            },
+            {
+              "sku": "CENSORED-PROJECT",
+              "month": "2026-10",
+              "quantity": 90,
+              "project": true,
+              "in_stock_days": 31,
+              "backorder": false
+            }
+          ]
+        }
+      },
+      "months": [
+        "2026-06",
+        "2026-07",
+        "2026-08",
+        "2026-09",
+        "2026-10"
+      ]
+    }
+  ]
+}

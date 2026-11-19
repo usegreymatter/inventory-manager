@@ -1,0 +1,6 @@
+SYNTHETIC inventory export
+Fictional example only; reporting year 2026
+
+Item Code,Item Name,UoM,Qty On Hand,Lead Time,Supplier,Jan 2026,2026-02,March
+A-001,Synthetic Widget A,units,12,14,Synthetic Supply A,3,6,9
+B-002,Synthetic Widget B,units,8,21,Synthetic Supply B,2,4,6

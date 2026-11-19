@@ -1,0 +1,84 @@
+{
+  "schema_version": "1",
+  "contract_version": "1.0",
+  "connector": {
+    "id": "csv",
+    "version": "0.1.0"
+  },
+  "run_id": "SYN-RUN-0001",
+  "snapshot_date": "2026-10-31",
+  "timezone": "Asia/Kuwait",
+  "currency": "KWD",
+  "synthetic": true,
+  "mode": "full",
+  "dry_run": true,
+  "streams": {
+    "item": [
+      {
+        "sku": "TILE-SAND",
+        "name": "SYNTHETIC Sand tile",
+        "unit": "box",
+        "pack_size": 12,
+        "moq": 24
+      }
+    ],
+    "warehouse": [
+      {
+        "warehouse": "MAIN",
+        "name": "SYNTHETIC MAIN warehouse"
+      }
+    ],
+    "stock_level": [
+      {
+        "sku": "TILE-SAND",
+        "warehouse": "MAIN",
+        "on_hand": 24,
+        "reserved": 6
+      }
+    ],
+    "demand_line": [
+      {
+        "line_id": "SYN-L1",
+        "sku": "TILE-SAND",
+        "date": "2026-10-03",
+        "quantity": 12,
+        "kind": "sale"
+      }
+    ],
+    "open_po_line": [
+      {
+        "po_line_id": "SYN-OPEN-1",
+        "po_id": "SYN-PO9",
+        "sku": "TILE-SAND",
+        "warehouse": "MAIN",
+        "supplier_id": "SYN-TILE",
+        "remaining_qty": 48,
+        "due_date": "2026-11-25",
+        "status": "confirmed"
+      }
+    ],
+    "supplier": [
+      {
+        "supplier_id": "SYN-TILE",
+        "name": "SYNTHETIC Tile Co",
+        "contacts": [
+          {
+            "email": "orders@example.invalid",
+            "role": "purchasing"
+          }
+        ]
+      }
+    ],
+    "supplier_item": [
+      {
+        "sku": "TILE-SAND",
+        "supplier_id": "SYN-TILE",
+        "lead_days": 30,
+        "priority": 1
+      }
+    ]
+  },
+  "unavailable": [
+    "receipt"
+  ]
+}

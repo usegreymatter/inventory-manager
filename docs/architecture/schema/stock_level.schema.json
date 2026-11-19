@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "stock_level.schema.json",
+  "title": "stock_level",
+  "description": "Gross physical stock for one SKU at one site at the snapshot close-of-day. A full snapshot (state), never a delta. Feeds warehouse_stock.csv, stock_states.csv and the summed stock.csv on_hand.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "sku",
+    "warehouse",
+    "on_hand"
+  ],
+  "properties": {
+    "sku": {
+      "$ref": "common.schema.json#/$defs/sku"
+    },
+    "warehouse": {
+      "$ref": "common.schema.json#/$defs/warehouse"
+    },
+    "on_hand": {
+      "$ref": "common.schema.json#/$defs/quantity"
+    },
+    "damaged": {
+      "$ref": "common.schema.json#/$defs/quantity"
+    },
+    "reserved": {
+      "$ref": "common.schema.json#/$defs/quantity"
+    },
+    "quarantine": {
+      "$ref": "common.schema.json#/$defs/quantity"
+    },
+    "returns": {
+      "$ref": "common.schema.json#/$defs/quantity"
+    },
+    "counted_on": {
+      "$ref": "common.schema.json#/$defs/date"
+    },
+    "source_ref": {
+      "$ref": "common.schema.json#/$defs/source_ref"
+    }
+  }
+}

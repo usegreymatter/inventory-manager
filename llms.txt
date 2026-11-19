@@ -1,0 +1,38 @@
+# Stock Runway
+
+> Free, open-source reorder planner: what to buy, how much, by when. Offline; your data stays on your device. Python standard-library engine/CLI, Hermes Desktop plugin (JS mirror of the engine), offline single-file HTML page. Read-only data sources; nothing places orders.
+
+## Start here
+- [README.md](README.md): what it is, try it, quickstart
+- [AGENTS.md](AGENTS.md): what exists vs roadmap, commands, invariants
+- [CONTEXT.md](CONTEXT.md): package contract and folder routes
+- [docs/AI-GUIDE.md](docs/AI-GUIDE.md): task recipes (map ERP fields, dry run, change a column)
+- [docs/GUIDE.md](docs/GUIDE.md): full reference (settings, CLI, CSV import, Odoo, Desktop plugin, number rules)
+- [CONTRIBUTING.md](CONTRIBUTING.md): checks to run before a change
+
+## Data
+**Missing-data gates.** Missing incoming supply stays unknown in source data and exports, but purchase estimates assume 0 incoming; check existing orders before buying. Missing or invalid stock or sales holds advice (at least 3 complete sales months are required). Missing supplier lead time uses the configured fallback (14 days by default, marked `used_default_lead`); clearing that fallback without another valid lead holds purchase advice, not the physical forecast. A supplied source lead of 0 is valid. Invalid supplied incoming holds advice.
+
+- [docs/data/CONTRACT.md](docs/data/CONTRACT.md): canonical CSV bundle contract v1.0 (the input every source must produce)
+- [docs/data/ORDER-BUILDING-SPEC.md](docs/data/ORDER-BUILDING-SPEC.md): order ledger, capability gates, signed offline proposals (spec)
+- [docs/data/AR-GLOSSARY.md](docs/data/AR-GLOSSARY.md): Arabic terms (draft)
+- [docs/terminology.md](docs/terminology.md): plain-English inventory terms
+- [docs/erp-examples/](docs/erp-examples/): synthetic example exports from eight ERPs
+- [samples/synthetic/](samples/synthetic/): synthetic canonical bundle
+
+## Forecasting
+- [docs/forecast-methods-spec.md](docs/forecast-methods-spec.md): forecast methods (Current = default, Auto = experimental)
+- [docs/forecast-lab/](docs/forecast-lab/): forecast method lab report and integration notes
+
+## Roadmap (proposed designs, NOT implemented)
+- [docs/ROADMAP-CONNECT.md](docs/ROADMAP-CONNECT.md): phased packets and owner-approval gates
+- [docs/architecture/CONNECTORS.md](docs/architecture/CONNECTORS.md): ERP adapter interface, sync modes, idempotency, mapping files, secrets, conformance kit
+- [docs/architecture/schema/](docs/architecture/schema/): canonical JSON Schemas (envelope, item, stock_level, demand_line, open_po_line, receipt, supplier, supplier_item, po_draft, mapping)
+- [docs/architecture/mappings/](docs/architecture/mappings/): Odoo, Shopify, CSV mapping examples
+- [docs/architecture/AUTOMATION.md](docs/architecture/AUTOMATION.md): autonomy ladder L0–L3, guardrails, audit log, email
+- [docs/architecture/LEARNING-LOOP.md](docs/architecture/LEARNING-LOOP.md): forecast snapshots, accuracy metrics, shadow models, Monte Carlo risk
+- [docs/architecture/MCP.md](docs/architecture/MCP.md): local MCP server design for AI assistants
+
+## History
+- [docs/history/changes/](docs/history/changes/): phase notes with before/after tables (phase1–4, order policy v2, import preflight, settings, chart focus)
+- [CHANGELOG.md](CHANGELOG.md): release summary

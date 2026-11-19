@@ -1,0 +1,4 @@
+source_sku,target_sku,kind,direction,ratio
+TILE-SAND,TILE-GREY,substitute,both,1
+TILE-SAND,ADH-20,complement,forward,0.25
+TILE-SAND,GROUT-5,kit,forward,0.125

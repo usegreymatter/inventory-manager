@@ -1,0 +1,418 @@
+{
+  "scope": "Offline synthetic local verification; no live/private data or network",
+  "captures": {
+    "smart-import": {
+      "exit_code": 0,
+      "checks": 1264,
+      "log": ".scratch/smart-regression-smart-import.log"
+    },
+    "risk": {
+      "exit_code": 0,
+      "checks": 47,
+      "log": ".scratch/smart-regression-risk.log"
+    },
+    "stockout": {
+      "exit_code": 0,
+      "checks": 28,
+      "log": ".scratch/smart-regression-stockout.log"
+    },
+    "round3": {
+      "exit_code": 0,
+      "checks": 36,
+      "log": ".scratch/smart-regression-round3.log"
+    },
+    "local-orders": {
+      "exit_code": 0,
+      "checks": 36,
+      "log": ".scratch/smart-regression-local-orders.log"
+    },
+    "orders": {
+      "exit_code": 0,
+      "checks": 144,
+      "log": ".scratch/smart-regression-orders.log"
+    },
+    "columns": {
+      "exit_code": 0,
+      "checks": 28,
+      "log": ".scratch/smart-regression-columns.log"
+    },
+    "clean": {
+      "exit_code": 0,
+      "checks": 59,
+      "log": ".scratch/smart-regression-clean.log"
+    },
+    "demo": {
+      "exit_code": 0,
+      "checks": 52,
+      "log": ".scratch/smart-regression-demo.log"
+    },
+    "import": {
+      "exit_code": 0,
+      "checks": 102,
+      "log": ".scratch/smart-regression-import.log"
+    }
+  },
+  "not_checked": [
+    "Actual Desktop host rendering",
+    "Excel/LibreOffice opening",
+    "Safari/real iPhone",
+    "Live/private exports and ERP services",
+    "Protected AGENTS.md AI-guide update was not authorized; README updated instead"
+  ],
+  "smart_capture": {
+    "status": "PASS",
+    "fixtureRuns": [
+      {
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "fixture": "stored_mixed_cells.xlsx",
+        "expectedCount": 1,
+        "status": "PASS"
+      },
+      {
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "fixture": "title_rows.xlsx",
+        "expectedCount": 2,
+        "status": "PASS"
+      },
+      {
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "fixture": "wide_months.xlsx",
+        "expectedCount": 2,
+        "status": "PASS"
+      },
+      {
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "fixture": "long_transactions.xlsx",
+        "expectedCount": 2,
+        "status": "PASS"
+      },
+      {
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "fixture": "three_sheet_join.xlsx",
+        "expectedCount": 2,
+        "status": "PASS"
+      },
+      {
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "fixture": "odoo_headers.xlsx",
+        "expectedCount": 2,
+        "status": "PASS"
+      },
+      {
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "fixture": "arabic_headers.xlsx",
+        "expectedCount": 2,
+        "status": "PASS"
+      },
+      {
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "fixture": "totals_merged_title.xlsx",
+        "expectedCount": 2,
+        "status": "PASS"
+      },
+      {
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "fixture": "dates_serial_text.xlsx",
+        "expectedCount": 2,
+        "status": "PASS"
+      },
+      {
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "fixture": "date_headers_serial.xlsx",
+        "expectedCount": 2,
+        "status": "PASS"
+      },
+      {
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "fixture": "date_system_1904.xlsx",
+        "expectedCount": 2,
+        "status": "PASS"
+      },
+      {
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "fixture": "fuzzy_qty_pcs.xlsx",
+        "expectedCount": 2,
+        "status": "PASS"
+      },
+      {
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "fixture": "fuzzy_qoh.xlsx",
+        "expectedCount": 2,
+        "status": "PASS"
+      },
+      {
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "fixture": "unusable_no_sku.xlsx",
+        "expectedCount": 0,
+        "status": "PASS"
+      },
+      {
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "fixture": "messy_title.csv",
+        "expectedCount": 2,
+        "status": "PASS"
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "fixture": "stored_mixed_cells.xlsx",
+        "expectedCount": 1,
+        "status": "PASS"
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "fixture": "title_rows.xlsx",
+        "expectedCount": 2,
+        "status": "PASS"
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "fixture": "wide_months.xlsx",
+        "expectedCount": 2,
+        "status": "PASS"
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "fixture": "long_transactions.xlsx",
+        "expectedCount": 2,
+        "status": "PASS"
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "fixture": "three_sheet_join.xlsx",
+        "expectedCount": 2,
+        "status": "PASS"
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "fixture": "odoo_headers.xlsx",
+        "expectedCount": 2,
+        "status": "PASS"
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "fixture": "arabic_headers.xlsx",
+        "expectedCount": 2,
+        "status": "PASS"
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "fixture": "totals_merged_title.xlsx",
+        "expectedCount": 2,
+        "status": "PASS"
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "fixture": "dates_serial_text.xlsx",
+        "expectedCount": 2,
+        "status": "PASS"
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "fixture": "date_headers_serial.xlsx",
+        "expectedCount": 2,
+        "status": "PASS"
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "fixture": "date_system_1904.xlsx",
+        "expectedCount": 2,
+        "status": "PASS"
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "fixture": "fuzzy_qty_pcs.xlsx",
+        "expectedCount": 2,
+        "status": "PASS"
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "fixture": "fuzzy_qoh.xlsx",
+        "expectedCount": 2,
+        "status": "PASS"
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "fixture": "unusable_no_sku.xlsx",
+        "expectedCount": 0,
+        "status": "PASS"
+      },
+      {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "fixture": "messy_title.csv",
+        "expectedCount": 2,
+        "status": "PASS"
+      }
+    ],
+    "errors": 0,
+    "network": 0,
+    "consoleErrors": 0
+  },
+  "core": {
+    "exit_code": 0,
+    "tests": 38,
+    "log": ".scratch/smart-core-final.log"
+  },
+  "cli": {
+    "exit_code": 0,
+    "tests": 20,
+    "log": ".scratch/smart-cli-final.log"
+  },
+  "node": {
+    "tests": 3432,
+    "pass": 3432,
+    "fail": 0,
+    "skipped": 0,
+    "command": "node --test tests/*.mjs",
+    "exit_code": 0
+  },
+  "legacy_import_examples": {
+    "status": "PASS",
+    "baseline": "af2b1c7",
+    "files": 8,
+    "item_records": 8,
+    "results": [
+      {
+        "file": "docs/erp-examples/dynamics-365.csv",
+        "items": 1,
+        "items_sha256": "9ee9cfa9b0b5606f29545cd1c1755d51cd83156d73fc3472cbefd4e8c4aed25c"
+      },
+      {
+        "file": "docs/erp-examples/netsuite.csv",
+        "items": 1,
+        "items_sha256": "ab633a900dbaa4d6d78b75d7d6c105ff1d87476d1c8c71d0167af0b131338eda"
+      },
+      {
+        "file": "docs/erp-examples/odoo.csv",
+        "items": 1,
+        "items_sha256": "9ee9cfa9b0b5606f29545cd1c1755d51cd83156d73fc3472cbefd4e8c4aed25c"
+      },
+      {
+        "file": "docs/erp-examples/quickbooks.csv",
+        "items": 1,
+        "items_sha256": "bbec1c250bb7d4d3dcaeff7d65f85df7f9953c99538324f6242db4463c307c94"
+      },
+      {
+        "file": "docs/erp-examples/sage.csv",
+        "items": 1,
+        "items_sha256": "ab633a900dbaa4d6d78b75d7d6c105ff1d87476d1c8c71d0167af0b131338eda"
+      },
+      {
+        "file": "docs/erp-examples/sap-business-one.csv",
+        "items": 1,
+        "items_sha256": "ee566381abdfc840472482e4544137d071f7dce79ec81fc3a495da6d31b9d194"
+      },
+      {
+        "file": "docs/erp-examples/sap-s4hana.csv",
+        "items": 1,
+        "items_sha256": "ab633a900dbaa4d6d78b75d7d6c105ff1d87476d1c8c71d0167af0b131338eda"
+      },
+      {
+        "file": "docs/erp-examples/zoho-inventory.csv",
+        "items": 1,
+        "items_sha256": "9ee9cfa9b0b5606f29545cd1c1755d51cd83156d73fc3472cbefd4e8c4aed25c"
+      }
+    ]
+  },
+  "golden_diff": "All SKUs/all fields unchanged; scripts/golden_diff.py exit 0",
+  "default_equals_option_gm_b": true,
+  "sha256": {
+    "smart_import.py": "371bb0c027c6d00c66d98e0f06a5b6848040f256b3a19c4fa25ec7e511e4ef07",
+    "desktop/smart-import.js": "86477a2e7a9565f03cc504352e08ebdea625a5128cbe995d688a5cd63e4341a5",
+    "desktop/plugin.js": "a29347b91f7ffcf994e698733df084532246259d36906ec72679a43066070a7b",
+    "standalone/design/smart-import.js": "bde362415ad4b6244c3e7707bf80c501582a4b500caaf7813e56adfd2ad85936",
+    "standalone/design/smart-import.css": "5db33c7780eb7611a98c1e59ee28edc02c5a0940d82faa8624cb86a6c921657f",
+    "standalone/stock-runway.html": "798cf5947d8af961b06c6b69d0160934a8a24f91cd0d117a3dfc91a2b1290366",
+    "standalone/stock-runway-demo-1000.html": "55c8e1567ccecb6cb5217f06ec898c92d240dd1282e244130e533fe2652764fe"
+  },
+  "guard_note": "Only plugin pureBlock manifest hash refreshed. Historical engine/csv_import manifest hashes were already stale; guard additionally binds those exact files to immutable task-entry e036646 bytes. Other backend/sample manifest hashes remain unchanged. Mutation-rejection tests pass."
+}

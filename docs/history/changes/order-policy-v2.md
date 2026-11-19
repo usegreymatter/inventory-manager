@@ -1,0 +1,45 @@
+# Replenishment policy v2
+
+Local, synthetic/sample evidence only. Baseline: `af2b1c7`. The retired sample tables used stock date **2026-10-31** and decision date **2026-10-31**, default settings unless stated. “now” means the order deadline is on or before the decision date; it is not an order sent to a supplier.
+
+## What changes
+
+- Keep the existing forecast methods, demand, model labels, backtests and chart projections. Change the purchasing policy around those forecasts, not the forecasts themselves.
+- Safety stock is extra stock for demand variation and, when usable receipt history exists, delivery-time variation. Use **sample** standard deviation (divide by n−1), not population standard deviation. With monthly sales, `SS = ceil(z × sampleSD × sqrt((L + R)/30))`, where L is delivery time in days and R is the review period. With at least five valid matched order/receipt date pairs (positive valid quantity, received no later than the stock snapshot), add `(monthly mean / 30)² × sample lead-time variance` inside the variance before taking its square root and multiplying by z. Provenance states whether that evidence is available.
+- Include safety stock in orders **by default**. Turning it off removes it from both the trigger and purchase target; its informational value remains visible.
+- The service-level label is **“Chance of not running out per order cycle”**. This is a model-based cycle-service target, not a guaranteed fill rate or a promise that every customer order will be filled.
+- Buffer days default to **0**. If set, add the forecast demand for those extra days once to the purchase target. Buffer does not move the safety-stock trigger and is not a second copy of safety stock.
+- Inventory position for the trigger includes stock on hand, undated on-order stock, dated receipts as they arrive, and demand used since the snapshot. Undated stock is assumed to arrive within delivery time, and the selected-item detail / Why drawer explicitly says so. It is not treated as physical stock for the chart's run-out calculation.
+- Keep the trigger unchanged: find the first projected inventory-position crossing of safety stock, then subtract delivery time for the **order-by** deadline. Plan the actual order date as the later of today and that deadline. Let **A** be that order date plus delivery time and **E** be A plus selected cover. Net dated receipts throughout this arrival-to-cover window, not only at the order date. Buy enough to keep every window prefix at active safety stock: take the largest positive value of `SS + demand(snapshot..t) + optional buffer demand − snapshot stock − undated incoming − dated receipts through t`. Add buffer demand once (the demand from E through E + buffer days); it does not extend receipt eligibility beyond E. Check A, E, and each receipt date in (A,E], excluding all receipts on that date at its **pre-receipt** checkpoint. The owner-approved conservative business-day convention retains that date's demand, including committed orders, at that checkpoint. A receipt on A already counts at A. This convention deliberately differs from physical-chart start-of-day receipts; it can overstate bridging need when a customer order and covering PO share a day. Later receipts reduce the purchase but cannot erase an earlier uncovered prefix. Elapsed demand/backlog is included exactly once. The Why ledger labels the resulting reduction **Window delivery netting**, not pack rounding.
+- Clamp net need at zero, apply MOQ only to a positive need, then round up to a pack multiple. Use exact decimal/calendar accumulation with a narrow float-safe rounding boundary; do not round a mathematically exact 913-unit requirement to two 913-unit packs because of binary64 noise. Cover **0** explicitly disables replenishment even with a positive MOQ.
+- Reorder point is lead-time demand plus active safety stock. The default buffer is not part of that trigger. Status bands use the order-by deadline: “Order now” within 7 days and “Order soon” within 30 days by default; farther-future replenishment is healthy, not overstock. Held purchases and uncovered delivery gaps retain their existing precedence.
+- Legacy forecast date fields now come from the same guidance calculation. Missing product delivery time uses the configured default only when available, visibly marked **“Assumed delivery time”**.
+
+## Before / after: five sample SKUs
+
+Historical sample-derived numerical table retired in synthetic-data publication refresh; regenerate current results with `python3 scripts/golden_diff.py` and `node --test tests/policy-v2.test.mjs`. The retired before/after rows are not replaced with current numbers presented as historical evidence.
+
+## Required probes
+
+Historical sample-derived numerical table retired in synthetic-data publication refresh; regenerate current results with `python3 -m pytest -q tests/test_policy_v2.py` and `node --test tests/policy-v2.test.mjs`.
+
+Undated incoming defers the order window; it does not suppress later replenishment forever. Calculated safety stock remains visible when explicitly excluded from ordering and reorder point. Zero cover never creates a rounding-only order. The independent synthetic dated-receipt examples and approved policy rules below are retained.
+
+## Dated receipts: 150 / 100 / 300 example
+
+With stock 150, steady demand 100/month, delivery time 30 days, two months of cover, zero safety stock and no buffer, the unchanged order-by date is **2026-11-16**, arrival **2026-12-16**, endpoint **2027-02-14**. Before this correction the recommendation was **200**, both with and without 300 units due **2027-01-01**. After window netting it is **54** when that receipt is present: the binding checkpoint is Jan 1 before its receipt, `100 + 100 + 100/31 − 150 = 53.225806…`, rounded up. The final endpoint is already covered by that PO. With the 300-unit receipt after E (for example **2027-03-01**), the recommendation remains **200**. The retired five-SKU table and probes had no future dated receipts; this independent synthetic example is not derived from their values.
+
+## Two stale expectations resolved from the policy
+
+- Fractional receipt test: order date Nov 3 and endpoint Dec 3. Demand is `3 + 9/31`; subtract 0.1 stock, 0.1 undated incoming, and Nov/Dec receipts of 0.1 each: `2.890322…`, rounded to a 0.1 pack gives **2.9**, replacing 3.0. January remains outside E, so removing it changes nothing. If December's receipt is 100, the binding prefix is just before Dec 1: `3 + 3/31 − 0.3 = 2.796774…`, rounded gives **2.8**, not 3.0.
+- Dated-PO test: stock reaches its zero-safety threshold on Nov 10; with two-day delivery time the order date remains Nov 8. Before the Nov 20 receipt, 20 days × 1 unit/day less stock 10 requires **10**, replacing 59. At Jan 9's endpoint, `30 + 30 + 270/31 − 10 − 60 < 0`; the earlier prefix controls. Physical shortage and later delivery remain visible. The monthly Dec 1 receipt analogue needs **21**: `ceil(30 + 30/31 − 10)`, replacing 59.
+
+Annual year-skips now sum monthly demand exactly before subtracting skipped years in both runtimes. The fractional `s11/32` regression (steady monthly demand 0.3, position 22.42258064516129, safety disabled, zero lead) orders by **2033-01-23**, not Jan 24. Tool summaries suppress run-out dates beyond the selected horizon, matching card behavior; zero stock and zero demand says **out of stock; no sales to forecast**.
+
+## Evidence and regeneration
+
+The historical local `.scratch/policy-evidence.py` generator compared five sample forecasts over 12 horizons and three settings combinations: **180 Python comparisons**, preserving every non-policy field and allowing at most four ULP of calendar/projection roundoff only. That ignored script and its retired sample tables are not a current regeneration path. Use the committed commands above for current synthetic results. `tests/policy-v2.test.mjs` retains **180 JavaScript comparisons** and negative controls for changed demand/model/projection values. No forecast model substitution is used in these comparisons.
+
+`tests/test_policy_v2.py` independently checks sample-SD safety stock, receipt lead variance, the safety threshold date, a one-window quantity, explicit zero cover, decimal/pack boundaries and dated receipt eligibility. `tests/policy-v2.test.mjs` checks Python/JavaScript agreement and independent quantity/date calculations. `scripts/golden_diff.py --write` accepts golden purchase numbers only after JavaScript, Python and the actual CLI export boundary agree. Historical forecast fixtures and backtest guards are not regenerated to fit policy changes. `docs/seasonal-logic-baseline.json` updates only policy/settings-derived pins; source-loader and sample-data hashes remain unchanged.
+
+Browser captures exercise generated offline pages, not an installed Hermes plugin, live ERP, remote deployment or real supplier order. See the local verification receipt for actual gate counts and failures; a written command is not evidence that it passed.

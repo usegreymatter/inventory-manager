@@ -1,0 +1,161 @@
+{
+  "lifecycle": "review",
+  "as_of": "2026-10-31",
+  "today": "2026-11-01",
+  "cases": [
+    {
+      "item": {
+        "sku": "MANUAL-UP",
+        "name": "Synthetic customer order",
+        "unit": "box",
+        "on_hand": 25,
+        "supplier_days": 2,
+        "monthly_sales": [
+          30,
+          30,
+          30
+        ],
+        "receipts": {},
+        "demand_change_pct": 50
+      },
+      "months": [
+        "2026-08",
+        "2026-09",
+        "2026-10"
+      ]
+    },
+    {
+      "item": {
+        "sku": "MANUAL-DOWN",
+        "name": "Synthetic customer order",
+        "unit": "box",
+        "on_hand": 25,
+        "supplier_days": 2,
+        "monthly_sales": [
+          30,
+          30,
+          30
+        ],
+        "receipts": {},
+        "demand_change_pct": -50
+      },
+      "months": [
+        "2026-08",
+        "2026-09",
+        "2026-10"
+      ]
+    },
+    {
+      "item": {
+        "sku": "MANUAL-LOW",
+        "name": "Synthetic customer order",
+        "unit": "box",
+        "on_hand": 25,
+        "supplier_days": 2,
+        "monthly_sales": [
+          30,
+          30,
+          30
+        ],
+        "receipts": {},
+        "demand_change_pct": -90
+      },
+      "months": [
+        "2026-08",
+        "2026-09",
+        "2026-10"
+      ]
+    },
+    {
+      "item": {
+        "sku": "MANUAL-HIGH",
+        "name": "Synthetic customer order",
+        "unit": "box",
+        "on_hand": 25,
+        "supplier_days": 2,
+        "monthly_sales": [
+          30,
+          30,
+          30
+        ],
+        "receipts": {},
+        "demand_change_pct": 300
+      },
+      "months": [
+        "2026-08",
+        "2026-09",
+        "2026-10"
+      ]
+    },
+    {
+      "item": {
+        "sku": "MANUAL-CLEANED",
+        "name": "Synthetic project",
+        "unit": "box",
+        "on_hand": 25,
+        "supplier_days": 2,
+        "monthly_sales": [
+          30,
+          30,
+          0,
+          30,
+          90
+        ],
+        "receipts": {},
+        "planning_facts": {
+          "version": "1.0",
+          "sales_history": [
+            {
+              "sku": "MANUAL-CLEANED",
+              "month": "2026-06",
+              "quantity": 30,
+              "project": false,
+              "in_stock_days": 30,
+              "backorder": false
+            },
+            {
+              "sku": "MANUAL-CLEANED",
+              "month": "2026-07",
+              "quantity": 30,
+              "project": false,
+              "in_stock_days": 31,
+              "backorder": false
+            },
+            {
+              "sku": "MANUAL-CLEANED",
+              "month": "2026-08",
+              "quantity": 0,
+              "project": false,
+              "in_stock_days": 0,
+              "backorder": false
+            },
+            {
+              "sku": "MANUAL-CLEANED",
+              "month": "2026-09",
+              "quantity": 30,
+              "project": false,
+              "in_stock_days": 30,
+              "backorder": false
+            },
+            {
+              "sku": "MANUAL-CLEANED",
+              "month": "2026-10",
+              "quantity": 90,
+              "project": true,
+              "in_stock_days": 31,
+              "backorder": false
+            }
+          ]
+        },
+        "demand_change_pct": 50
+      },
+      "months": [
+        "2026-06",
+        "2026-07",
+        "2026-08",
+        "2026-09",
+        "2026-10"
+      ]
+    }
+  ]
+}

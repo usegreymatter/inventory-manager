@@ -1,0 +1,38 @@
+name: stock-runway
+version: 0.1.0
+description: >-
+  See when inventory may run out, understand forecast accuracy, and check stock from a sample,
+  local CSV, or read-only Odoo connection.
+author: Stock Runway contributors
+license: MIT
+manifest_version: 2
+api_version: 1
+requires_hermes: ">=0.22.2"
+tags: [inventory, stock, forecast, odoo]
+provides_tools:
+  - stock_runway
+provides_hooks: []
+requires_env: []
+config_schema:
+  default_horizon:
+    type: integer
+    minimum: 1
+    maximum: 12
+    default: 6
+  ODOO_URL:
+    type: string
+    secret: true
+    env: ODOO_URL
+    description: HTTPS URL of your Odoo server.
+  ODOO_DB:
+    type: string
+    secret: true
+    env: ODOO_DB
+  ODOO_USER:
+    type: string
+    secret: true
+    env: ODOO_USER
+  ODOO_API_KEY:
+    type: string
+    secret: true
+    env: ODOO_API_KEY

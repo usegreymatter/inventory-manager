@@ -1,0 +1,50 @@
+{
+  "lifecycle": "review",
+  "packet": "owner packet 2026-11-11: seasonal forecast",
+  "scope": "Historical starting scope: seasonal demand. Later owner-approved expansions below supersede the original backtest/settings constraints. Owner 2026-11-12: CSV import also accepts common ERP export headers (forecast maths unchanged). Exact-byte baseline is pinned to the independently tested source commit below. Owner-approved 2026-11-12 (maintainer): add plain-language inventory planning, optional settings, product cost override and short tool/stock planning figures; default legacy forecasts, statuses, dates and quantities preserved. Planning settings/editors are re-pinned below; original historical checks stay byte-identical. OWNER-APPROVED 2026-11-12 (maintainer): fix seven ERP import edge cases in Python/JavaScript parity and simplify Desktop presentation (Order today, collapsed All settings, history-gated planning and nested costs). ERP normalization and presentation bytes are re-pinned; engine maths, historical checks and legacy output fixtures unchanged. OWNER-APPROVED safety packet (maintainer): optional on_order inventory position and CSV aliases, sales-data age warning, persisted 14-day skips and big-order threshold. Safety calculation/settings bytes re-pinned; no-data legacy forecast and guidance fixtures remain unchanged. Tool data_age_days, sales_month, item big_order and stale /stock notice are intentional additive output changes. Opus review fixes align Python and Desktop purchase windows/coverage, retain physical shortage warnings and preserve ERP missing/text incoming compatibility. OWNER-APPROVED terminology packet: standard-plus-plain labels, display-only sales-pattern buckets, grouped planning why sentences and freshness/order warning copy. Python/JavaScript planning wording stays in parity; internal JSON keys, forecast/purchase maths, dates, quantities and historical fixtures unchanged. Exact touched presentation/backend bytes are re-pinned. Python purchase-guidance port approved by maintainer 2026-11-12; Desktop JS pureBlock unchanged. Approval covers engine.py, tools.py and commands.py: additive Desktop orderGuidance/orderBucket mirrors, purchase_summary and /stock purchase lines, including malformed-settings default fallback. Only pinned engine.py/tools.py hashes refreshed after 468 exact legacy forecast comparisons versus 04d15a9 (sample plus all eight ERP example CSVs; today 2026-11-12; horizons 1-12; three settings variants) showed no changed values or keys. Sample, sources.py, pureBlock and approvedBlocks hashes unchanged. Owner-authorized Opus finding repairs: fixed en-GB September dates, JS empty-held/null-sales parity, cached bucket guidance and isolated purchase failures; integral JSON numbers are normalized only at the tool boundary. engine.py/tools.py hashes refreshed again; the committed 468-case legacy comparison against 04d15a9 and the existing snapshot guard remain intact. Desktop JavaScript is unchanged. OWNER-APPROVED Phase 1 part A: keep fractional demand until final purchase rounding; use the same calendar crossing for status cover and order-by; add default 7-day time buffer to purchase deadlines with Advanced editors and Python/CLI/slash settings. Intentional engine/tools, pure-core and settings/editor hashes updated; source/sample and historical backtest guards retained. See docs/changes/phase1.md for per-commit golden deltas and test-pin changes. OWNER-APPROVED Phase 2 dated events: engine/core/source/tool hashes refreshed for the explicit opt-in bundle path only; absent-data whole-output oracles and historical backtests retained. See docs/changes/phase2.md. OWNER-APPROVED Phase 2 feature 2: engine/core/source hashes refreshed for dated customer commitments, monthly forecast consumption and conservative reservation HOLD; feature1 whole-output and legacy historical oracles retained. See docs/changes/phase2.md. OWNER-APPROVED Phase 2 checkpoint review-repair: source/core pins refreshed for scoped implementation; historical oracles and no-data numeric fields retained. OWNER-APPROVED Phase 2 feature3: engine/core/source pins refreshed for actual lab exposure correction and calendar eligibility; absent-data whole JSON, historical oracles and all prior numeric fields retained. OWNER-APPROVED Phase 2 feature4: engine/core/source pins refreshed for explicit projects, preserved calendar eligibility and suggestion-only diagnostics; absent-data whole JSON, historical oracles and all prior numeric fields retained. OWNER-APPROVED Phase 3 (maintainer 2026-11-13): optional external archive challenger, guarded identical-fold scale-free gate, physical lead-demand adapter and modern-Python locked-facts fallback parity. Legacy golden outputs unchanged; exact-byte guard re-pinned, mutation checks retained. Opus GO-WITH-FIXES F1-F10: pass-scoped identity memoization, intermittent/lumpy lead-plus-review protection only, origin-required external adoption/calibration, ASCII source rule, locked four-origin readiness, additive smart_forecast metadata, ignored-archive warnings and compact evidence labels. See docs/changes/phase3.md. OWNER-APPROVED Phase 3 + 3b (maintainer 2026-11-13): integrated review fixes and local diary, capped bias correction, pattern alerts, report card and exact-proposal Approve/Dismiss. Memo keys include learning context contents to invalidate diary/correction changes within one evaluation pass. OWNER-APPROVED Phase 3 + 3b (maintainer 2026-11-13): merge shared evaluation with learning-safety, durable owner decisions, persisted undo, hysteresis, corruption pause and torn-tail quarantine; all committed golden numbers unchanged.",
+  "source_commit": "c90d72d002064d5ddb78138108addf0f1715136c",
+  "pureBlock": {
+    "start": "const SAMPLE =",
+    "end": "const pageStyle =",
+    "sha256": "3cd052802cd3a452ac4aaddae5dbb37db106fa503d19aa91d48363ffe66910b9"
+  },
+  "files": {
+    "engine.py": "5a79a419c7a50cf8e27334d58d03cd589a385bcde7a3916d1604144c6a668c75",
+    "sources.py": "719273dab50336ab71f554f35d2277e1cb06ca85f2cfae5fe32ba2e218143cf7",
+    "tools.py": "c786b44e0cba91a1ec20c4b7eb83d1b1f9c06512a6abedcf5e2a8cf2a664b567",
+    "data/sample.json": "56627bb427090f85e1ebf4ef0a3c4172cb69d0118e6d4f7313e84645fc6e8986"
+  },
+  "approvedBlocks": [
+    {
+      "start": "export const DEFAULT_ORDER_SETTINGS",
+      "end": "const dateOrdinal =",
+      "sha256": "fe5177d6cf59487a485ca0b064bff33b0adf372e6ac12928fccbf526376488f0"
+    },
+    {
+      "start": "      // Owner 'align this'",
+      "end": "function defaultHorizon(",
+      "sha256": "27285fb07d27e0edf593dce0520d3018037ae078f3a74557c5485a012024a912"
+    }
+  ],
+  "browse_metadata_scope": "Owner-authorized Arctic status/category/supplier browsing: supplier CSV aliases, read-only Odoo partner metadata, and synthetic sample supplier names only. No forecasting, guidance, status or arithmetic changes. Golden fields and complete sample forecast objects verified unchanged; generated copies rebuilt only for shared loader/sample metadata. Previous pure/source/sample hashes retained below.",
+  "settings_control_scope": "Owner-authorized ordering, safety-stock, alerts and per-supplier/product controls. Shared input resolution and strict JSON validation only; formulas unchanged. Prior hashes retained below. Complete sample forecast/guidance/bucket objects and all golden number fields match faa26db without overrides. See docs/changes/settings-control.md.",
+  "settings_control_wip_hashes": {
+    "pureBlock": "ab3b649d147f4ef6612a22c7d462a21bfc2c9396ac96a6d3571138863b97884a",
+    "approvedSettingsBlock": "bf82d5e154c85d2a94391e9fda0d947d22e58ad5167c10fd21143855538b0edc",
+    "note": "Intermediate settings-control snapshot retained before rebuilding and verifying the final input-resolution source."
+  },
+  "pre_settings_control_hashes": {
+    "pureBlock": "b99f4c686a1f24fe928a7792840005b20b649bacf99d705affd7c5c8c20959fb",
+    "engine.py": "59e6b3050d60ac8fe6be244b1ff7a4fde6e856b905682296744d9cea2b556e8c",
+    "approvedSettingsBlock": "fcefea500b8d668ed628f77383a0921dc01ccf114ee5b5b7eda4c1db0a75339b"
+  },
+  "pre_browse_metadata_hashes": {
+    "pureBlock": "643ce0959f41f8a9c38f1f8d5f161eb50d8c6ce464911cbf7a174fb88f160188",
+    "sources.py": "2ddea28e0df6121425d19088e0304583c001adeba023d31cf0a8548863c49a57",
+    "data/sample.json": "29f3f746ad58e269710e6f227ed4f050d258a31c825553d44338416b1aa835a3"
+  },
+  "phase3b_scope": "Owner-authorized opt-in diary, gated capped correction, pattern alert, tap-only report, append-only log and durable owner decisions (bias request changes over five percentage points or a different method pair require a new decision). First archived forecast per SKU/month remains immutable for scoring; method continuity comes from the change log. Absent diary preserves legacy output. Prior failed challengers withdraw to champion; baseline is compared against champion rather than itself.",
+  "performance_scope": "Owner-requested 1000-SKU snapshot sharing in CLI/A3; demand-input and learning-context memo keys, identical fold/score reuse and linear diary grouping only. All committed golden numbers remain unchanged; full 1000-SKU CLI CSV/JSON/diary/log bytes and synthetic-bundle CSV/JSON match 3daa1ae. Parent review/merge remains required.",
+  "phase4_simple_scope": "OWNER-APPROVED Phase 4 simple hybrid (maintainer 2026-11-14). Full-prefix Syntetos-Boylan smooth class (ADI <1.32, CV2 <0.49), minimum 3 full months, flat mean of last 12 or available months. All other classes retain legacy champion. No tuning, no changed safety/adoption/approval gates. Snapshot-local classifier memo invalidates changed sales and rolling prefixes. Label: Steady: 12-month average. Prior legacy-number preservation claims are superseded only at this approved model and label seam.",
+  "order_policy_v2_scope": "Owner-approved replenishment policy v2: sample-SD cycle safety stock, additive zero-default buffer, dated/undated supply at order date, safety-stock trigger and one order-up-to window. Forecast/model/backtest/projection guards retained. See docs/changes/order-policy-v2.md."
+}

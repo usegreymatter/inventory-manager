@@ -1,0 +1,5 @@
+/* Brand type: same status treatment, with embedded brand faces. */
+:root { --font-ui:'GM Poppins',-apple-system,'SF Pro Text','Segoe UI',Roboto,sans-serif; }
+html:lang(ar) { --font-ui:'GM Tajawal','Noto Sans Arabic','Geeza Pro',sans-serif; }
+[data-design=option-gm-c] #hero>div[data-gm-status=order] button.big-number { color:var(--red); }
+html:lang(ar) h1,html:lang(ar) h2,html:lang(ar) strong,html:lang(ar) .big-number,html:lang(ar) .pill,html:lang(ar) .brand { font-weight:500; }

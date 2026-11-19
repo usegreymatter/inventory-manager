@@ -1,0 +1,4 @@
+order_line_id,sku,warehouse,quantity,delivery_date,status,forecast_included
+SYN-SO-1,TILE-SAND,MAIN,36,2026-11-10,confirmed,true
+SYN-SO-2,TILE-SAND,EAST,24,2026-11-20,confirmed,true
+SYN-SO-3,ADH-20,MAIN,10,2026-11-15,confirmed,false

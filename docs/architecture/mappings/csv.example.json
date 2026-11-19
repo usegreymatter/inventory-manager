@@ -1,0 +1,73 @@
+{
+  "mapping_version": "1",
+  "connector": "csv",
+  "description": "Any ERP export dropped as files. Headers not listed fall back to sources.ERP_ALIASES (stock.csv) or the canonical bundle column names. Example matches samples/synthetic/.",
+  "timezone": "Asia/Kuwait",
+  "currency": "KWD",
+  "secrets": [],
+  "streams": {
+    "item": {
+      "source": "items_export.csv",
+      "verified": true,
+      "fields": {
+        "sku": "Item Code",
+        "name": "Item Name",
+        "unit": "UoM",
+        "category": "Item Group"
+      }
+    },
+    "stock_level": {
+      "source": "stock_by_warehouse.csv",
+      "verified": true,
+      "fields": {
+        "sku": "Item Code",
+        "warehouse": "Warehouse",
+        "on_hand": "Qty On Hand"
+      }
+    },
+    "demand_line": {
+      "source": "sales_lines.csv",
+      "verified": true,
+      "fields": {
+        "line_id": "Line ID",
+        "sku": "Item Code",
+        "date": {
+          "from": "Delivery Date",
+          "transform": "date_local"
+        },
+        "quantity": "Qty",
+        "kind": {
+          "const": "sale"
+        }
+      }
+    },
+    "open_po_line": {
+      "source": "open_pos.csv",
+      "verified": true,
+      "fields": {
+        "po_line_id": "PO Line",
+        "po_id": "PO Number",
+        "sku": "Item Code",
+        "warehouse": "Warehouse",
+        "supplier_id": "Vendor Code",
+        "remaining_qty": "Open Qty",
+        "due_date": "Due Date",
+        "status": {
+          "const": "confirmed"
+        }
+      }
+    },
+    "supplier": {
+      "source": "vendors.csv",
+      "verified": true,
+      "fields": {
+        "supplier_id": "Vendor Code",
+        "name": "Vendor Name",
+        "contacts": {
+          "from": "PO Email",
+          "default_unknown": true
+        }
+      }
+    }
+  }
+}

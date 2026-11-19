@@ -1,0 +1,107 @@
+[
+  {
+    "sku": "MANUAL-UP",
+    "js": {
+      "order_qty": 59,
+      "order_by": "2026-11-16",
+      "run_out": "2026-11-25",
+      "status": "running-low"
+    },
+    "python": {
+      "order_qty": 59.0,
+      "order_by": "2026-11-16",
+      "run_out": "2026-11-25",
+      "status": "running-low"
+    },
+    "cli": {
+      "order_qty": 59.0,
+      "order_by": "2026-11-16",
+      "run_out": "2026-11-25",
+      "status": "running-low"
+    }
+  },
+  {
+    "sku": "MANUAL-DOWN",
+    "js": {
+      "order_qty": 59,
+      "order_by": "2026-11-16",
+      "run_out": "2026-11-25",
+      "status": "running-low"
+    },
+    "python": {
+      "order_qty": 59.0,
+      "order_by": "2026-11-16",
+      "run_out": "2026-11-25",
+      "status": "running-low"
+    },
+    "cli": {
+      "order_qty": 59.0,
+      "order_by": "2026-11-16",
+      "run_out": "2026-11-25",
+      "status": "running-low"
+    }
+  },
+  {
+    "sku": "MANUAL-LOW",
+    "js": {
+      "order_qty": 59,
+      "order_by": "2026-11-16",
+      "run_out": "2026-11-25",
+      "status": "running-low"
+    },
+    "python": {
+      "order_qty": 59.0,
+      "order_by": "2026-11-16",
+      "run_out": "2026-11-25",
+      "status": "running-low"
+    },
+    "cli": {
+      "order_qty": 59.0,
+      "order_by": "2026-11-16",
+      "run_out": "2026-11-25",
+      "status": "running-low"
+    }
+  },
+  {
+    "sku": "MANUAL-HIGH",
+    "js": {
+      "order_qty": 59,
+      "order_by": "2026-11-16",
+      "run_out": "2026-11-25",
+      "status": "running-low"
+    },
+    "python": {
+      "order_qty": 59.0,
+      "order_by": "2026-11-16",
+      "run_out": "2026-11-25",
+      "status": "running-low"
+    },
+    "cli": {
+      "order_qty": 59.0,
+      "order_by": "2026-11-16",
+      "run_out": "2026-11-25",
+      "status": "running-low"
+    }
+  },
+  {
+    "sku": "MANUAL-CLEANED",
+    "js": {
+      "order_qty": 59,
+      "order_by": "2026-11-16",
+      "run_out": "2026-11-25",
+      "status": "running-low"
+    },
+    "python": {
+      "order_qty": 59.0,
+      "order_by": "2026-11-16",
+      "run_out": "2026-11-25",
+      "status": "running-low"
+    },
+    "cli": {
+      "order_qty": 59.0,
+      "order_by": "2026-11-16",
+      "run_out": "2026-11-25",
+      "status": "running-low"
+    }
+  }
+]

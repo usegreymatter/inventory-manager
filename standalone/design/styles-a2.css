@@ -1,0 +1,48 @@
+/* A2: a compact monthly decision view. Existing A and B stay unchanged. */
+body[data-design=option-a2] header { min-height:64px; }
+body[data-design=option-a2] .page-title { padding:14px 0 4px; }
+body[data-design=option-a2] h1 { font-size:38px; margin:4px 0 6px; }
+body[data-design=option-a2] .workspace { gap:0 36px; }
+body[data-design=option-a2] .chart-heading { padding-top:14px; }
+body[data-design=option-a2] .chart-heading h2 { margin-top:5px; font-size:23px; }
+body[data-design=option-a2] .inventory-figure { margin-top:14px; }
+body[data-design=option-a2] .chart-panel { max-width:none; }
+body[data-design=option-a2] .big-order .number { font-size:42px; }
+body[data-design=option-a2] .chart-note { margin-top:8px; font-size:11px; }
+body[data-design=option-a2] .inventory-figure h3 { font-size:16px; margin:0; }
+body[data-design=option-a2] .chart-toolbar { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:8px; flex-wrap:wrap; }
+.zoom-controls { display:flex; align-items:center; gap:2px; }
+.zoom-controls button { min-height:44px; min-width:44px; padding:8px; border-color:transparent; font-size:12px; }
+.zoom-controls button[aria-pressed=true] { color:var(--accent); background:var(--hover); border-color:var(--line); font-weight:650; }
+.zoom-controls button[data-zoom=reset] { margin-left:6px; color:var(--muted); }
+body[data-design=option-a2] svg[data-chart] { touch-action:none; user-select:none; cursor:grab; }
+body[data-design=option-a2] svg[data-chart]:active { cursor:grabbing; }
+body[data-design=option-a2] [data-delivery-marker] { cursor:pointer; }
+body[data-design=option-a2] [data-delivery-marker]:hover,body[data-design=option-a2] [data-delivery-marker]:focus-visible { stroke:var(--accent); stroke-width:3px; outline:none; }
+body[data-design=option-a2] .inventory-legend .delivery-dot { width:9px; height:9px; border:2px solid var(--ink); border-radius:50%; background:var(--bg); margin-inline:3px; }
+body[data-design=option-a2] .status[data-bucket=overstocked]::before { background:var(--accent); }
+body[data-design=option-a2] .status[data-bucket=no-sales]::before { background:var(--history); }
+body[data-design=option-a2] .section-head { flex-wrap:wrap; gap:8px; padding-bottom:8px; }
+body[data-design=option-a2] #order-count { margin-right:auto; }
+body[data-design=option-a2] #copy-po { padding:7px 11px; font-size:12px; }
+body[data-design=option-a2] .list-quantity { font-size:22px; max-width:132px; }
+body[data-design=option-a2] .list-quantity small { line-height:1.45; margin-top:3px; }
+body[data-design=option-a2] .inventory-tooltip { min-width:180px; max-width:260px; font-size:12px; }
+body[data-design=option-a2] .inventory-tooltip strong { font-size:14px; }
+@media(max-width:700px) {
+  body[data-design=option-a2] main { padding-inline:16px; }
+  body[data-design=option-a2] header { min-height:62px; }
+  body[data-design=option-a2] .page-title { padding-top:12px; }
+  body[data-design=option-a2] h1 { font-size:30px; }
+  body[data-design=option-a2] #hero { order:0; margin-top:0; }
+  body[data-design=option-a2] .order-section { order:1; margin-top:20px; }
+  body[data-design=option-a2] .chart-heading { padding-top:10px; }
+  body[data-design=option-a2] .chart-heading h2 { font-size:21px; }
+  body[data-design=option-a2] .big-order .number { font-size:34px; }
+  body[data-design=option-a2] .chart-toolbar { gap:0; }
+  body[data-design=option-a2] .chart-toolbar h3 { flex:1; font-size:14px; }
+  .zoom-controls { gap:0; }
+  .zoom-controls button { min-width:38px; padding-inline:6px; }
+  .zoom-controls button[data-zoom=reset] { margin-left:0; }
+  body[data-design=option-a2] .inventory-legend { gap:6px 17px; font-size:11px; }
+}

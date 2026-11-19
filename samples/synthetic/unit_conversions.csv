@@ -1,0 +1,4 @@
+sku,from_unit,to_unit,factor
+TILE-SAND,box,m2,1.44
+TILE-GREY,box,m2,1.44
+TILE-OLD,box,m2,1.44

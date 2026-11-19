@@ -1,0 +1,401 @@
+[
+  {
+    "sku": "INCLUDED-20",
+    "js": {
+      "order_qty": 49,
+      "order_by": "2026-11-13",
+      "run_out": "2026-11-15",
+      "status": "running-low"
+    },
+    "python": {
+      "order_qty": 49.0,
+      "order_by": "2026-11-13",
+      "run_out": "2026-11-15",
+      "status": "running-low"
+    },
+    "cli": {
+      "order_qty": 49.0,
+      "order_by": "2026-11-13",
+      "run_out": "2026-11-15",
+      "status": "running-low"
+    }
+  },
+  {
+    "sku": "INCLUDED-80",
+    "js": {
+      "order_qty": 104,
+      "order_by": "2026-11-18",
+      "run_out": "2026-11-20",
+      "status": "running-low"
+    },
+    "python": {
+      "order_qty": 104.0,
+      "order_by": "2026-11-18",
+      "run_out": "2026-11-20",
+      "status": "running-low"
+    },
+    "cli": {
+      "order_qty": 104.0,
+      "order_by": "2026-11-18",
+      "run_out": "2026-11-20",
+      "status": "running-low"
+    }
+  },
+  {
+    "sku": "INCREMENTAL-20",
+    "js": {
+      "order_qty": 64,
+      "order_by": "2026-11-08",
+      "run_out": "2026-11-10",
+      "status": "order"
+    },
+    "python": {
+      "order_qty": 64.0,
+      "order_by": "2026-11-08",
+      "run_out": "2026-11-10",
+      "status": "order"
+    },
+    "cli": {
+      "order_qty": 64.0,
+      "order_by": "2026-11-08",
+      "run_out": "2026-11-10",
+      "status": "order"
+    }
+  },
+  {
+    "sku": "OVERDUE-40",
+    "js": {
+      "order_qty": 47,
+      "order_by": "now",
+      "run_out": "2026-11-01",
+      "status": "order"
+    },
+    "python": {
+      "order_qty": 47.0,
+      "order_by": "now",
+      "run_out": "2026-11-01",
+      "status": "order"
+    },
+    "cli": {
+      "order_qty": 47.0,
+      "order_by": "now",
+      "run_out": "2026-11-01",
+      "status": "order"
+    }
+  },
+  {
+    "sku": "RESERVED-HOLD",
+    "js": {
+      "order_qty": null,
+      "order_by": null,
+      "run_out": "2026-11-15",
+      "status": "needs-data"
+    },
+    "python": {
+      "order_qty": null,
+      "order_by": null,
+      "run_out": "2026-11-15",
+      "status": "needs-data"
+    },
+    "cli": {
+      "order_qty": null,
+      "order_by": null,
+      "run_out": "2026-11-15",
+      "status": "needs-data"
+    }
+  },
+  {
+    "sku": "ZERO-BASELINE",
+    "js": {
+      "order_qty": 15,
+      "order_by": "2026-11-18",
+      "run_out": "2026-11-20",
+      "status": "running-low"
+    },
+    "python": {
+      "order_qty": 15.0,
+      "order_by": "2026-11-18",
+      "run_out": "2026-11-20",
+      "status": "running-low"
+    },
+    "cli": {
+      "order_qty": 15.0,
+      "order_by": "2026-11-18",
+      "run_out": "2026-11-20",
+      "status": "running-low"
+    }
+  },
+  {
+    "sku": "SAME-DAY-SUPPLY",
+    "js": {
+      "order_qty": 60,
+      "order_by": "2026-12-04",
+      "run_out": "2026-12-06",
+      "status": "healthy"
+    },
+    "python": {
+      "order_qty": 60.0,
+      "order_by": "2026-12-04",
+      "run_out": "2026-12-06",
+      "status": "healthy"
+    },
+    "cli": {
+      "order_qty": 60.0,
+      "order_by": "2026-12-04",
+      "run_out": "2026-12-06",
+      "status": "healthy"
+    }
+  },
+  {
+    "sku": "LOST-SALES",
+    "js": {
+      "order_qty": 91,
+      "order_by": "now",
+      "run_out": "2026-11-19",
+      "status": "order"
+    },
+    "python": {
+      "order_qty": 91.0,
+      "order_by": "now",
+      "run_out": "2026-11-19",
+      "status": "order"
+    },
+    "cli": {
+      "order_qty": 91.0,
+      "order_by": "now",
+      "run_out": "2026-11-19",
+      "status": "order"
+    }
+  },
+  {
+    "sku": "FLOOR-EXPOSURE",
+    "js": {
+      "order_qty": 188,
+      "order_by": "now",
+      "run_out": "2026-11-13",
+      "status": "order"
+    },
+    "python": {
+      "order_qty": 188.0,
+      "order_by": "now",
+      "run_out": "2026-11-13",
+      "status": "order"
+    },
+    "cli": {
+      "order_qty": 188.0,
+      "order_by": "now",
+      "run_out": "2026-11-13",
+      "status": "order"
+    }
+  },
+  {
+    "sku": "CENSORED-MONTH",
+    "js": {
+      "order_qty": 59,
+      "order_by": "2026-11-23",
+      "run_out": "2026-11-25",
+      "status": "running-low"
+    },
+    "python": {
+      "order_qty": 59.0,
+      "order_by": "2026-11-23",
+      "run_out": "2026-11-25",
+      "status": "running-low"
+    },
+    "cli": {
+      "order_qty": 59.0,
+      "order_by": "2026-11-23",
+      "run_out": "2026-11-25",
+      "status": "running-low"
+    }
+  },
+  {
+    "sku": "BACKORDER-NO-UPLIFT",
+    "js": {
+      "order_qty": 59,
+      "order_by": "2026-11-23",
+      "run_out": "2026-11-25",
+      "status": "running-low"
+    },
+    "python": {
+      "order_qty": 59.0,
+      "order_by": "2026-11-23",
+      "run_out": "2026-11-25",
+      "status": "running-low"
+    },
+    "cli": {
+      "order_qty": 59.0,
+      "order_by": "2026-11-23",
+      "run_out": "2026-11-25",
+      "status": "running-low"
+    }
+  },
+  {
+    "sku": "THIN-ELIGIBLE",
+    "js": {
+      "order_qty": null,
+      "order_by": null,
+      "run_out": "2026-12-08",
+      "status": "needs-data"
+    },
+    "python": {
+      "order_qty": null,
+      "order_by": null,
+      "run_out": "2026-12-08",
+      "status": "needs-data"
+    },
+    "cli": {
+      "order_qty": null,
+      "order_by": null,
+      "run_out": "2026-12-08",
+      "status": "needs-data"
+    }
+  },
+  {
+    "sku": "PROJECT-LAST",
+    "js": {
+      "order_qty": 59,
+      "order_by": "2026-11-23",
+      "run_out": "2026-11-25",
+      "status": "running-low"
+    },
+    "python": {
+      "order_qty": 59.0,
+      "order_by": "2026-11-23",
+      "run_out": "2026-11-25",
+      "status": "running-low"
+    },
+    "cli": {
+      "order_qty": 59.0,
+      "order_by": "2026-11-23",
+      "run_out": "2026-11-25",
+      "status": "running-low"
+    }
+  },
+  {
+    "sku": "PROJECT-CORRECTED",
+    "js": {
+      "order_qty": 59,
+      "order_by": "2026-11-23",
+      "run_out": "2026-11-25",
+      "status": "running-low"
+    },
+    "python": {
+      "order_qty": 59.0,
+      "order_by": "2026-11-23",
+      "run_out": "2026-11-25",
+      "status": "running-low"
+    },
+    "cli": {
+      "order_qty": 59.0,
+      "order_by": "2026-11-23",
+      "run_out": "2026-11-25",
+      "status": "running-low"
+    }
+  },
+  {
+    "sku": "PROJECT-GAP",
+    "js": {
+      "order_qty": 147,
+      "order_by": "now",
+      "run_out": "2026-11-13",
+      "status": "order"
+    },
+    "python": {
+      "order_qty": 147.0,
+      "order_by": "now",
+      "run_out": "2026-11-13",
+      "status": "order"
+    },
+    "cli": {
+      "order_qty": 147.0,
+      "order_by": "now",
+      "run_out": "2026-11-13",
+      "status": "order"
+    }
+  },
+  {
+    "sku": "PROJECT-THIN",
+    "js": {
+      "order_qty": null,
+      "order_by": null,
+      "run_out": "2026-11-07",
+      "status": "needs-data"
+    },
+    "python": {
+      "order_qty": null,
+      "order_by": null,
+      "run_out": "2026-11-07",
+      "status": "needs-data"
+    },
+    "cli": {
+      "order_qty": null,
+      "order_by": null,
+      "run_out": "2026-11-07",
+      "status": "needs-data"
+    }
+  },
+  {
+    "sku": "PROJECT-ONLY",
+    "js": {
+      "order_qty": 59,
+      "order_by": "2026-11-23",
+      "run_out": "2026-11-25",
+      "status": "running-low"
+    },
+    "python": {
+      "order_qty": 59.0,
+      "order_by": "2026-11-23",
+      "run_out": "2026-11-25",
+      "status": "running-low"
+    },
+    "cli": {
+      "order_qty": 59.0,
+      "order_by": "2026-11-23",
+      "run_out": "2026-11-25",
+      "status": "running-low"
+    }
+  },
+  {
+    "sku": "OUTLIER-CHECK",
+    "js": {
+      "order_qty": 376,
+      "order_by": "now",
+      "run_out": "2026-11-07",
+      "status": "order"
+    },
+    "python": {
+      "order_qty": 376.0,
+      "order_by": "now",
+      "run_out": "2026-11-07",
+      "status": "order"
+    },
+    "cli": {
+      "order_qty": 376.0,
+      "order_by": "now",
+      "run_out": "2026-11-07",
+      "status": "order"
+    }
+  },
+  {
+    "sku": "CENSORED-PROJECT",
+    "js": {
+      "order_qty": 59,
+      "order_by": "2026-11-23",
+      "run_out": "2026-11-25",
+      "status": "running-low"
+    },
+    "python": {
+      "order_qty": 59.0,
+      "order_by": "2026-11-23",
+      "run_out": "2026-11-25",
+      "status": "running-low"
+    },
+    "cli": {
+      "order_qty": 59.0,
+      "order_by": "2026-11-23",
+      "run_out": "2026-11-25",
+      "status": "running-low"
+    }
+  }
+]

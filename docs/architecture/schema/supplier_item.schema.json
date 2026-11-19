@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "supplier_item.schema.json",
+  "title": "supplier_item",
+  "description": "Supplier terms for one SKU (Odoo product.supplierinfo, Zoho/ERPNext item supplier rows, etc.). Lowest priority number = preferred.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "sku",
+    "supplier_id"
+  ],
+  "properties": {
+    "sku": {
+      "$ref": "common.schema.json#/$defs/sku"
+    },
+    "supplier_id": {
+      "$ref": "common.schema.json#/$defs/id"
+    },
+    "supplier_sku": {
+      "type": "string",
+      "maxLength": 128
+    },
+    "priority": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 10000
+    },
+    "lead_days": {
+      "$ref": "common.schema.json#/$defs/lead_days"
+    },
+    "moq": {
+      "$ref": "common.schema.json#/$defs/quantity"
+    },
+    "pack_size": {
+      "$ref": "common.schema.json#/$defs/positive_quantity"
+    },
+    "unit_cost": {
+      "$ref": "common.schema.json#/$defs/money"
+    },
+    "currency": {
+      "$ref": "common.schema.json#/$defs/currency"
+    },
+    "price_break_qty": {
+      "$ref": "common.schema.json#/$defs/quantity",
+      "description": "A price-break threshold. NOT a true MOQ unless the owner confirms (see CONTRACT.md)."
+    },
+    "source_ref": {
+      "$ref": "common.schema.json#/$defs/source_ref"
+    }
+  }
+}

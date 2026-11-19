@@ -1,0 +1,61 @@
+/* Lifecycle: living. Arctic sheet and open-row settings; no cards or shadows. */
+#forecast-method-settings .setting-row { grid-template-columns:minmax(0,1fr); }
+#forecast-method-settings .setting-controls { width:100%; }
+#forecast-method-settings select { text-overflow:ellipsis; }
+#forecast-method-settings [hidden] { display:none; }
+.settings-sheet { position:fixed; inset:0 0 0 auto; margin:0; width:560px; max-width:100%; height:100dvh; max-height:100dvh; padding:0; border:0; border-inline-start:1px solid var(--line); border-radius:0; background:var(--bg); color:var(--ink); box-shadow:none; overflow-y:auto; overflow-x:hidden; }
+.settings-sheet::backdrop { background:var(--backdrop,rgb(11 16 32 / 32%)); }
+.settings-sheet>header { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:16px 24px; border-bottom:1px solid var(--line); position:sticky; top:0; background:var(--bg); z-index:1; }
+.settings-sheet h2 { font-size:20px; line-height:24px; margin:0; font-weight:600; }
+.settings-sheet h3,.product-settings h3 { font-size:16px; line-height:24px; font-weight:600; margin:0 0 16px; }
+.settings-sheet-content { padding:0 24px 24px; }
+.settings-sheet #settings { border:0; padding:0; margin:0; }
+.settings-sheet #settings>.detail-body { padding:0; }
+.settings-sheet .settings-group { padding:24px 0; border-bottom:1px solid var(--line); }
+.settings-sheet details.settings-group>summary { padding:0; font-size:16px; font-weight:600; }
+.settings-sheet details.settings-group[open]>summary { margin-bottom:16px; }
+.setting-row { display:grid; grid-template-columns:minmax(0,1fr) 160px; gap:8px 16px; margin-bottom:16px; align-items:start; min-width:0; }
+.setting-row:last-child { margin-bottom:0; }
+.setting-title { display:block; font-size:14px; line-height:20px; font-weight:600; }
+.setting-meaning { display:block; font-size:12px; line-height:16px; font-weight:400; color:var(--muted); margin-top:4px; overflow-wrap:anywhere; }
+.setting-controls { display:flex; align-items:center; gap:8px; min-width:0; }
+.setting-controls input,.setting-controls select { min-width:0; width:100%; min-height:44px; padding:8px; font:inherit; background:var(--bg); border:1px solid var(--rule); border-radius:4px; color:var(--ink); }
+.setting-controls input[type=checkbox] { appearance:none; display:grid; place-items:center; width:44px; height:44px; min-height:44px; margin:0; padding:0; flex-shrink:0; border:0; }
+.setting-controls input[type=checkbox]::before { content:''; grid-area:1/1; width:20px; height:20px; border:1px solid var(--muted); border-radius:4px; }
+.setting-controls input[type=checkbox]:checked::before { background:var(--fine); border-color:var(--fine); }
+.setting-controls input[type=checkbox]:checked::after { content:'✓'; grid-area:1/1; color:var(--bg); font-size:14px; }
+.setting-controls:has(input[type=checkbox]) button { margin-inline-start:auto; }
+.settings-scroll-hint { font-size:12px; color:var(--muted); line-height:20px; margin:16px 0 0; }
+.settings-sheet,.about[open] .detail-body { scrollbar-width:thin; scrollbar-gutter:stable; }
+.setting-controls:has(input[type=checkbox]) { min-height:44px; }
+.settings-sheet button,.product-settings button { min-height:44px; min-width:44px; padding:8px; font-size:14px; color:var(--ink); background:transparent; border:0; border-radius:4px; font-weight:400; }
+.settings-sheet button:hover,.product-settings button:hover { background:var(--subtle); }
+.setting-controls button { font-size:12px; color:var(--muted); flex-shrink:0; }
+.setting-row label { margin:0; }
+.setting-error { color:var(--red); font-size:12px; line-height:16px; grid-column:1/-1; margin:0; }
+.setting-source { color:var(--muted); font-size:12px; line-height:16px; grid-column:1/-1; margin:0; }
+.setting-row [aria-invalid=true] { border-color:var(--red); }
+.settings-preview { font-size:12px; line-height:20px; margin:16px 0 0; color:var(--muted); }
+.settings-sheet #storage-status { font-size:12px; margin:16px 0; color:var(--muted); }
+.settings-transfer { display:flex; flex-wrap:wrap; gap:8px; margin-top:16px; }
+.product-settings { border-top:1px solid var(--line); padding-top:24px; margin-top:24px; }
+.product-settings>.setting-meaning { margin-bottom:24px; }
+.supplier-settings-link { font-size:12px; min-height:44px; min-width:44px; padding:8px 4px; color:var(--muted); background:transparent; border:0; border-radius:4px; white-space:nowrap; }
+.custom-setting-marker { font-size:12px; color:var(--muted); }
+.browse-heading:has(.supplier-settings-link) { grid-template-columns:minmax(0,1fr) auto auto; }
+.browse-heading .supplier-settings-link { grid-column:3; grid-row:1; }
+.browse-heading:has(.supplier-settings-link) .supplier-copy { grid-column:2; padding-inline:4px; }
+.browse-heading:has(.supplier-settings-link) .group-label { grid-column:1; }
+.browse-heading:has(.supplier-settings-link) .group-quantity { grid-column:1/-1; }
+@media(max-width:700px) {
+  /* The supplier action adds a 44px metadata row; reclaim nearby whitespace,
+     not hit-target or chart size, so the chart footer still fits on phones. */
+  .product-heading { margin-bottom:8px; }
+  .chart-section { margin-top:8px; }
+  .settings-sheet { width:100%; border:0; }
+  .settings-sheet>header { padding:12px 16px; }
+  .settings-sheet-content { padding:0 16px 24px; }
+  .setting-row { grid-template-columns:minmax(0,1fr); gap:8px; }
+  .setting-controls { width:100%; }
+  .settings-sheet button,.product-settings button,.supplier-settings-link { min-height:44px; min-width:44px; }
+}
