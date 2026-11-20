@@ -1,5 +1,7 @@
 // Lifecycle: living. English A3 copy; canonical core/helper strings are embedded unchanged.
 const STRINGS = {
+  "checkBeforeOrdering": "Check before ordering",
+  "inputWarningsFor": "Input warnings for {sku}",
   "warning_external_ignored": "Import ignored",
   "accuracy": "Accuracy",
   "approve": "Approve",
@@ -204,6 +206,9 @@ const STRINGS = {
   "manualChange": "Manual change",
   "customerOrders": "Customer orders",
   "forecastAlignment": "Forecast alignment",
+  "noRecentDemand": "No recent demand",
+  "policyCap": "Replenishment policy cap",
+  "policyAdjustment": "Replenishment policy adjustment",
   "datedReceiptNetting": "Window delivery netting",
   "arithmeticAdjustment": "Arithmetic adjustment",
   "latePoHold": "Late PO hold",

@@ -7,7 +7,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright')
 const root=path.resolve(__dirname,'..'),out=path.resolve(process.env.PROGRESSIVE_OUT||path.join(root,'.scratch/progressive-safety'))
 fs.mkdirSync(out,{recursive:true})
 const report={checks:[],errors:[],network:[],not_checked:['Live inventory','CSV import acceptance','Safari / real phone','Forecast maths (unchanged)']}
-function check(name,value){report.checks.push({name,pass:!!value});assert.ok(value,name)}
+function check(name,value){report.checks.push({name,pass:!!value});console.log(JSON.stringify({check:name,pass:!!value}));assert.ok(value,name)}
 const fixture={dataset:'Synthetic progressive safety',note:'Trusted synthetic scheduler regression only',months:['2026-05','2026-06','2026-07','2026-08','2026-09','2026-10'],as_of:'2026-10-31',items:Array.from({length:1001},(_,n)=>({sku:'QA-'+String(n).padStart(4,'0'),name:n===1000?'Late order':'Healthy '+n,unit:'units',supplier:'Test supplier',category:'Test category',monthly_sales:[10,10,10,10,10,10],on_hand:n===1000?0:10000,supplier_days:14,on_order:0,receipts:{},open_receipts:[]}))}
 function build(name,data){const target=path.join(out,name+'.html'),args=['standalone/build.py','--template','option-gm-b','--out',target];if(data){const f=path.join(out,name+'.json');fs.writeFileSync(f,JSON.stringify(data));args.push('--data',f)}const r=spawnSync(process.env.PYTHON||'/usr/bin/python3',args,{cwd:root,encoding:'utf8'});assert.equal(r.status,0,r.stderr);return fs.readFileSync(target,'utf8')}
 const source=build('large',fixture),small=build('small'),scheduler=fs.readFileSync(path.join(__dirname,'design/progressive-gm-b.js'),'utf8')

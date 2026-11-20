@@ -24,12 +24,24 @@ python3 stock_runway.py samples/synthetic --bundle --today 2026-11-01 --all
 python3 stock_runway.py docs/erp-examples/odoo.csv --today 2026-11-01 --all
 python3 data_contract/validate.py samples/synthetic   # contract check
 ```
+Every single CSV runs input review and prints `Input meaning: {…}` JSON to stderr,
+even without interpretation flags. Exit **2** means input review needs
+acknowledgement (including a latest sales month still in progress), or an
+argument/file/output error occurred: read stderr, check the file, and use `--show-orders-anyway` only to acknowledge understood risks. Never
+auto-add it to make a failing command pass. `--stock-includes-reserved` subtracts
+a recognised reserved/allocated column (incompatible with `--strict`);
+`--incoming-not-in-file` ignores incoming in this file, retains
+`incoming_unknown` and counts it as 0, with a warning to check open POs; separately
+supplied dated receipts remain. These two flags are
+for single CSVs, not `--bundle`. Exit **0** means export succeeded. Exact rules:
+[CLI input review](GUIDE.md#input-review-and-acknowledgement).
+
 Nothing here touches a network or an ERP. Compare with `scripts/golden_diff.py` if you changed engine code.
 
 ## Recipe: map my ERP's CSV export (works today)
 
 1. Export items with stock (and monthly sales if available) to CSV.
-2. Run `python3 stock_runway.py my_export.csv --today YYYY-MM-DD`. Recognised headers are mapped by `sources.ERP_ALIASES` (Python) / `ERP_ALIASES` (JS).
+2. Run `python3 stock_runway.py my_export.csv --today YYYY-MM-DD`. Recognised headers are mapped by `sources.ERP_ALIASES` (Python) / `ERP_ALIASES` (JS). Read the input-review report on stderr; if exit 2 requests acknowledgement, check the risks before explicitly adding `--show-orders-anyway`.
 3. If a needed header isn't recognised, rename it in the export, **or** add the alias in **both** `sources.py` and `desktop/plugin.js`. Then add a fixture under `docs/erp-examples/`, run `scripts/verify_import_examples.py`, both test suites, and `standalone/build.py`.
 4. Never map a price-break quantity to MOQ, or a display name to SKU (CONTRACT "Required semantics").
 

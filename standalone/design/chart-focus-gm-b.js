@@ -2,6 +2,8 @@
 const chartFocus={overlay:null,figure:null,home:null,trigger:null,inert:[]}
 function chartKeyline(row){
  const {item:i,guidance:g}=row
+ const local=localOrderFor(i.sku)
+ if(local)return localOrderDisplay(local)+' · '+(g.runout_date?`Runs out ${shortDate(g.runout_date)}`:'Runs out: not forecast')
  const order=g.quantity>0?`Order ${orderAmount(g.quantity)} ${i.unit} by ${g.order_by==='now'?'Today':g.order_by?gmDate(g.order_by):'not set'}`:g.status==='needs-data'?'Check product data':'No order needed'
  const out=g.runout_date?`Runs out ${shortDate(g.runout_date)}`:'Runs out: not forecast'
  const date=g.order_by==='now'?currentToday:g.order_by,day=dateOrdinal(date),arrival=g.quantity>0&&day!==null&&Number.isFinite(g.lead_days)?ordinalDate(day+g.lead_days):null

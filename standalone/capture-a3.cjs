@@ -1,3 +1,4 @@
+const {acceptMeaning}=require('./qa-input-meaning.cjs')
 // Lifecycle: living. Disposable offline Chromium proof for A3 only. No install/server.
 'use strict'
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),{pathToFileURL}=require('node:url')
@@ -381,7 +382,7 @@ async function main(){
   await ip.locator('#tools>summary').click();await ip.locator('#file-panel>summary').click()
   const fixture=path.join(root,'docs/erp-examples/sap-business-one.csv')
   const csvFiles=fs.readdirSync(path.join(root,'docs/erp-examples')).filter(n=>n.endsWith('.csv'))
-  await ip.locator('#csv-file').setInputFiles(fs.existsSync(fixture)?fixture:path.join(root,'docs/erp-examples',csvFiles[0]));await ip.waitForFunction(()=>document.querySelector('#snapshot').textContent.startsWith('Local CSV'))
+  await ip.locator('#csv-file').setInputFiles(fs.existsSync(fixture)?fixture:path.join(root,'docs/erp-examples',csvFiles[0]));await acceptMeaning(ip);await ip.waitForFunction(()=>document.querySelector('#snapshot').textContent.startsWith('Local CSV'))
   check('synthetic ERP fixture import available',/Using/.test(await ip.locator('#source-status').textContent()))
   await ip.locator('#sample').click();check('sample restoration after import',await ip.locator('.sku-button').count()===5)
   await imports.context.close()

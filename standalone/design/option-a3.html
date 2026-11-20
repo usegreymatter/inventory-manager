@@ -1,13 +1,10 @@
 <!--
 Stock Runway — MIT License, Copyright (c) 2026 Stock Runway contributors
-Embedded fonts Poppins and Tajawal: SIL Open Font License 1.1, see LICENSES/OFL-1.1.txt and THIRD_PARTY_NOTICES.md
-Copyright 2020 The Poppins Project Authors (https://github.com/itfoundry/Poppins)
-(c) 2017 by Boutros International. All rights reserved.
 -->
 <!doctype html>
 <!-- Lifecycle: generated. Built by standalone/build.py from separate A3 sources. -->
 <html lang="en"><head>
-<script type="application/json" id="stock-runway-distribution-licenses">{"LICENSE": "MIT License\n\nCopyright (c) 2026 Stock Runway contributors\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE.\n", "LICENSES/OFL-1.1.txt": "SIL OPEN FONT LICENSE Version 1.1 - 26 February 2007\n\nPREAMBLE\nThe goals of the Open Font License (OFL) are to stimulate worldwide\ndevelopment of collaborative font projects, to support the font creation\nefforts of academic and linguistic communities, and to provide a free and\nopen framework in which fonts may be shared and improved in partnership\nwith others.\n\nThe OFL allows the licensed fonts to be used, studied, modified and\nredistributed freely as long as they are not sold by themselves. The\nfonts, including any derivative works, can be bundled, embedded,\nredistributed and/or sold with any software provided that any reserved\nnames are not used by derivative works. The fonts and derivatives,\nhowever, cannot be released under any other type of license. The\nrequirement for fonts to remain under this license does not apply\nto any document created using the fonts or their derivatives.\n\nDEFINITIONS\n\"Font Software\" refers to the set of files released by the Copyright\nHolder(s) under this license and clearly marked as such. This may\ninclude source files, build scripts and documentation.\n\n\"Reserved Font Name\" refers to any names specified as such after the\ncopyright statement(s).\n\n\"Original Version\" refers to the collection of Font Software components as\ndistributed by the Copyright Holder(s).\n\n\"Modified Version\" refers to any derivative made by adding to, deleting,\nor substituting -- in part or in whole -- any of the components of the\nOriginal Version, by changing formats or by porting the Font Software to a\nnew environment.\n\n\"Author\" refers to any designer, engineer, programmer, technical\nwriter or other person who contributed to the Font Software.\n\nPERMISSION & CONDITIONS\nPermission is hereby granted, free of charge, to any person obtaining\na copy of the Font Software, to use, study, copy, merge, embed, modify,\nredistribute, and sell modified and unmodified copies of the Font\nSoftware, subject to the following conditions:\n\n1) Neither the Font Software nor any of its individual components,\nin Original or Modified Versions, may be sold by itself.\n\n2) Original or Modified Versions of the Font Software may be bundled,\nredistributed and/or sold with any software, provided that each copy\ncontains the above copyright notice and this license. These can be\nincluded either as stand-alone text files, human-readable headers or\nin the appropriate machine-readable metadata fields within text or\nbinary files as long as those fields can be easily viewed by the user.\n\n3) No Modified Version of the Font Software may use the Reserved Font\nName(s) unless explicit written permission is granted by the corresponding\nCopyright Holder. This restriction only applies to the primary font name as\npresented to the users.\n\n4) The name(s) of the Copyright Holder(s) or the Author(s) of the Font\nSoftware shall not be used to promote, endorse or advertise any\nModified Version, except to acknowledge the contribution(s) of the\nCopyright Holder(s) and the Author(s) or with their explicit written\npermission.\n\n5) The Font Software, modified or unmodified, in part or in whole,\nmust be distributed entirely under this license, and must not be\ndistributed under any other license. The requirement for fonts to\nremain under this license does not apply to any document created\nusing the Font Software.\n\nTERMINATION\nThis license becomes null and void if any of the above conditions are\nnot met.\n\nDISCLAIMER\nTHE FONT SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND,\nEXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF\nMERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT\nOF COPYRIGHT, PATENT, TRADEMARK, OR OTHER RIGHT. IN NO EVENT SHALL THE\nCOPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,\nINCLUDING ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL\nDAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING\nFROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM\nOTHER DEALINGS IN THE FONT SOFTWARE.\n", "THIRD_PARTY_NOTICES.md": "# Third-party notices\n\nThe code in this repository is MIT-licensed ([LICENSE](LICENSE)). No third-party code is vendored. The Python engine uses only the standard library; the offline page has no runtime JavaScript dependencies. Development-only tools (Playwright, Chromium, esbuild) are not included.\n\n## Embedded fonts\n\n`standalone/design/fonts-gm.css` embeds subsets of these fonts as base64 WOFF2, and they are inlined into the built HTML pages:\n\n| Font | Copyright | License |\n|---|---|---|\n| Poppins (400, 600) | Copyright 2020 The Poppins Project Authors (https://github.com/itfoundry/Poppins) | SIL Open Font License 1.1 |\n| Tajawal (400, 500) | (c) 2017 by Boutros International. All rights reserved. | SIL Open Font License 1.1 |\n\nThe full SIL Open Font License 1.1 is included locally in [LICENSES/OFL-1.1.txt](LICENSES/OFL-1.1.txt) (official reference: \u003chttps://openfontlicense.org/open-font-license-official-text/>). Copyright lines above match the embedded WOFF2 name-table metadata for both weights of each font. The fonts are renamed in CSS (`GM Poppins`, `GM Tajawal`) and subset; they are not sold separately. Keep the license and this notice alongside redistributed HTML files.\n\n## Name and logo\n\nThe \"by GreyMatter\" wordmark, `standalone/design/logo-gm.svg` and its byte-identical README copy `docs/img/greymatter-logo.svg` are the maintainer's brand marks. They are not covered by the MIT license; forks should replace them.\n"}</SCRIPT><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="light"><title>Stock Runway · A3</title>
+<script type="application/json" id="stock-runway-distribution-licenses">{"LICENSE": "MIT License\n\nCopyright (c) 2026 Stock Runway contributors\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE.\n", "THIRD_PARTY_NOTICES.md": "# Third-party notices\n\nThe code in this repository is MIT-licensed ([LICENSE](LICENSE)). No third-party code is vendored. The Python engine uses only the standard library; the offline page has no runtime JavaScript dependencies. Development-only tools (Playwright, Chromium, esbuild) are not included.\n\n## Embedded fonts\n\nOnly the `option-gm-c` variant embeds Poppins and Tajawal: `standalone/design/fonts-gm.css` contains subsets as base64 WOFF2, inlined into that variant's built HTML. The shipped Arctic (`option-gm-b`) page, its synthetic demos and all other variants use system fonts and do not embed these font files.\n\n| Font | Copyright | License |\n|---|---|---|\n| Poppins (400, 600) | Copyright 2020 The Poppins Project Authors (https://github.com/itfoundry/Poppins) | SIL Open Font License 1.1 |\n| Tajawal (400, 500) | (c) 2017 by Boutros International. All rights reserved. | SIL Open Font License 1.1 |\n\nThe full SIL Open Font License 1.1 is included locally in [LICENSES/OFL-1.1.txt](LICENSES/OFL-1.1.txt) (official reference: \u003chttps://openfontlicense.org/open-font-license-official-text/>). Copyright lines above match the embedded WOFF2 name-table metadata for both weights of each font. The fonts are renamed in CSS (`GM Poppins`, `GM Tajawal`) and subset; they are not sold separately. Every built HTML includes the MIT license and this notice. Only outputs embedding `@font-face` also carry the font copyright notice and full OFL text. Keep the OFL license and this notice alongside redistributed `option-gm-c` HTML or embedded font files; system-font outputs do not require the OFL license.\n\n## Name and logo\n\nThe \"by GreyMatter\" wordmark, `standalone/design/logo-gm.svg` and its byte-identical README copy `docs/img/greymatter-logo.svg` are the maintainer's brand marks. They are not covered by the MIT license; forks should replace them.\n"}</SCRIPT><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="light"><title>Stock Runway · A3</title>
 <style>
 /* Lifecycle: living. A3 only; intentionally white in every system theme. */
 .forecast-method{margin:20px 0 4px;font-weight:600}
@@ -942,6 +939,20 @@ dialog.smart-import::backdrop{background:var(--backdrop,rgb(0 0 0 / .4))}
 /* Theme follows the host tokens, never the operating-system colour scheme. */
 @media(max-width:600px){.smart-mapping-value{display:block;margin-top:4px;line-height:1.4;font-size:12px;overflow-wrap:anywhere}}
 
+.input-meaning-card,.input-meaning-results{border:1px solid var(--line,#a7b5c7);border-radius:12px;padding:16px;margin:12px 0;background:var(--surface,#f4f7fb);color:var(--ink,#182234)}
+.input-meaning-card label{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:12px 0;font-weight:600}
+.input-meaning-card label select{display:block;width:100%;min-height:44px;max-width:100%;font:inherit}
+.input-meaning-card input[type=checkbox]{width:20px;height:20px;flex-shrink:0}
+.input-meaning-card h3,.input-meaning-results h3{margin:0 0 12px}
+.input-meaning-results li{overflow-wrap:anywhere}
+/* Remains outside collapsed import controls without crowding out the worklist. */
+.worklist>.input-meaning-results{flex:0 0 auto;max-height:28vh;overflow:auto;padding:12px;font-size:13px;overflow-wrap:anywhere}
+.worklist>.input-meaning-results h3{font-size:14px;margin:0 0 8px}
+.worklist>.input-meaning-results p{margin:6px 0}
+.input-warning-marker{margin-inline-start:8px;font-size:11px;font-weight:600;text-decoration:underline;text-decoration-style:dotted}
+.item-input-warnings{margin:8px 0;padding:10px 12px;border-inline-start:3px solid var(--accent,#3f5687);font-size:13px;line-height:1.5;overflow-wrap:anywhere}
+.item-input-warnings p{margin:4px 0}
+
 </style></head>
 <body data-design="option-a3"><header class="topbar"><div class="brand">Stock Runway <span class="edition">A3</span></div><div class="provenance" id="snapshot"></div><button id="health-chip" class="health-chip" type="button" aria-haspopup="dialog" hidden></button><details class="tools" id="tools"><summary aria-label="Settings, import and purchase order">•••</summary><div class="tools-body"><button id="copy-po" type="button" class="primary">Copy order</button><p id="copy-status" role="status"></p><div id="copy-fallback" hidden><label for="po-text">Order text</label><textarea id="po-text" readonly></textarea><button id="select-po" type="button">Select all</button></div>
 <details id="file-panel"><summary>Import Excel or CSV</summary><div id="dropzone" class="detail-body"><p>Drop Excel or CSV here. Excel up to 20 MiB; standard CSV up to 2 MiB. Your file stays on this device.</p><label class="field">Choose Excel or CSV<input id="csv-file" type="file" accept=".xlsx,.csv,.json,.xls,.xlsb,text/csv,application/json" aria-label="Choose stock Excel or CSV"></label><button id="sample" type="button" hidden>Sample data</button><p id="source-status" role="status">Built-in sample, not real stock.</p><p id="file-error" role="alert" hidden></p></div></details><details id="accuracy-panel"><summary>Accuracy</summary><div class="detail-body">
@@ -975,6 +986,8 @@ dialog.smart-import::backdrop{background:var(--backdrop,rgb(0 0 0 / .4))}
 <script type="module" id="runway-app">
 // Lifecycle: living. English A3 copy; canonical core/helper strings are embedded unchanged.
 const STRINGS = {
+  "checkBeforeOrdering": "Check before ordering",
+  "inputWarningsFor": "Input warnings for {sku}",
   "warning_external_ignored": "Import ignored",
   "accuracy": "Accuracy",
   "approve": "Approve",
@@ -1179,6 +1192,9 @@ const STRINGS = {
   "manualChange": "Manual change",
   "customerOrders": "Customer orders",
   "forecastAlignment": "Forecast alignment",
+  "noRecentDemand": "No recent demand",
+  "policyCap": "Replenishment policy cap",
+  "policyAdjustment": "Replenishment policy adjustment",
   "datedReceiptNetting": "Window delivery netting",
   "arithmeticAdjustment": "Arithmetic adjustment",
   "latePoHold": "Late PO hold",
@@ -1433,6 +1449,7 @@ function orderBreakdown(item, guidance, settings = {}, today, asOf = item.as_of)
     stockout_correction:STRINGS.soldOutFixed,projects_excluded:STRINGS.projectsRemoved,
     manual_change:STRINGS.manualChange,committed_orders:STRINGS.customerOrders,
     forecast_alignment:STRINGS.forecastAlignment,arithmetic_reconciliation:STRINGS.arithmeticAdjustment,
+    no_recent_demand:STRINGS.noRecentDemand,policy_cap:STRINGS.policyCap,policy_adjustment:STRINGS.policyAdjustment,
     late_po_hold:STRINGS.latePoHold,demand_history_hold:STRINGS.historyHold,
     committed_orders_hold:STRINGS.ordersHold,data_hold:STRINGS.dataHold}
   const steps=whyBreakdown(item,today,settings,asOf)
@@ -3279,7 +3296,9 @@ const MAX_ROWS=200000, MAX_COLS=16384, MAX_CELLS=2000000;
 const FIXED=['sku','name','unit','on_hand','supplier_days'];
 const OPTIONAL=['category','supplier','on_order','demand_change_pct','last_count_date'];
 const PER_ITEM=['minimum_order','pack_size','unit_cost'];
-const NUMERIC_FIELDS=new Set(['on_hand','on_order','supplier_days','demand_change_pct','quantity',...PER_ITEM]);
+const REVIEW_FIELDS=['reserved','stock_unit','sales_unit'];
+const REVIEW_ALIASES={reserved:['reserved','reserved qty','reserved quantity','allocated','allocated qty','allocated stock','reserved stock','reserved or allocated stock'],stock_unit:['stock unit','stock uom','inventory unit'],sales_unit:['sales unit','sales uom','sold unit']};
+const NUMERIC_FIELDS=new Set(['reserved','on_hand','on_order','supplier_days','demand_change_pct','quantity',...PER_ITEM]);
 const BALANCE_ERROR='differing on-hand balances; use stock snapshot';
 const AMBIGUOUS_NUMBER='ambiguous number format';
 const DATE_HEADERS=['date','transaction date','sales date','invoice date','document date','posting date','month','period'];
@@ -3641,6 +3660,7 @@ function analyse(sheet,overrides,aliases,typeAliases){
   }
   if(!best)best=[{name,header_row:1,score:0,layout:'products',mapping:[],unmapped:[],missing:REQUIRED.map(([,t])=>t),products:0},new Map(),[],2000,false];
   const [report,picked,headers,inferred,hasYear]=best,records=new Map(),warnings=[],locations=new Map();
+  report.accepted_rows=[];report.incoming_evidence=Object.create(null);report.reserved_warnings=Object.create(null);report.input_warnings=Object.create(null);report.reasons=[];
   const [number,style]=sheetNumbers(sheet,picked,report.header_row);
   const percentCells=new Set((sheet.percent_cells||[]).map(([row,col])=>`${row}:${col}`));
   warnings.push(`${name}: Number format: ${style}; review numeric text conventions.`);
@@ -3667,15 +3687,27 @@ function analyse(sheet,overrides,aliases,typeAliases){
     const location=Array.from(get('location').toLowerCase(),c=>c==='\u0131'?c:c.toUpperCase().toLowerCase()).join('');
     if(records.has(sku)){
       const record=records.get(sku);let reason=null;
-      if((record.get('unit')||'units')!==(get('unit')||'units'))reason='conflicting stock units';
+      if((record.get('unit')||record.get('stock_unit')||'units')!==(get('unit')||get('stock_unit')||'units'))reason='conflicting stock units';
       else if(report.layout!=='long'){
-        if(!location||locations.get(sku).has(''))reason='duplicate sku without warehouse/location';
-        else if(locations.get(sku).has(location))reason='duplicate sku at same warehouse/location';
+        if(!picked.has('location'))reason='duplicate sku without warehouse/location';
+        else if(location&&locations.get(sku).has(location))reason='duplicate sku at same warehouse/location';
         else if(picked.has('on_hand')&&(!record.get('on_hand')||!get('on_hand')))reason='missing on-hand stock for warehouse row';
       }
       if(reason){warnings.push(`${name}: ${sku}: ${reason}; first row kept; row omitted (${rownum}).`);continue;}
-      if(report.layout!=='long')warnings.push(`${name}: ${sku}: combined distinct warehouse/location rows; stock, on order, sales and receipts summed; first-row metadata kept.`);
+      if(report.layout!=='long'){
+        warnings.push(`${name}: ${sku}: combined distinct warehouse/location rows; stock, on order, sales and receipts summed; first-row metadata kept.`);
+        if(!location||locations.get(sku).has(''))warnings.push(`${name}: ${sku}: blank warehouse/location treated as Unspecified; all blank-location rows aggregated, including repeated blanks. Check for duplicate exports.`);
+      }
     }
+    report.accepted_rows.push(rownum-1);
+    if(picked.has('on_hand'))(report.incoming_evidence[sku]??=[]).push(!!get('on_order'));
+    if(picked.has('reserved')&&picked.has('on_hand')){
+      const notes=report.reserved_warnings[sku]??=[],stock=number(get('on_hand')),held=number(get('reserved')||'0');
+      if(NUMERIC.test(stock)&&NUMERIC.test(held)&&+stock>=0&&+stock<=1e12&&+held>+stock)notes.push('Oversold: reserved exceeds stock in a warehouse — available stock is netted across contributing warehouses, then floored at 0. Check allocations before ordering.');
+      if(!get('reserved'))notes.push('Reserved cell is blank — counted as 0; check allocations before ordering.');
+    }
+    // Preserve stock-header provenance even when allocations join later.
+    if(picked.has('on_hand')&&key(headers[picked.get('on_hand')[0]]).includes('available'))(report.reserved_warnings[sku]??=[]).push('Stock header says already available — subtracting reserved again may double-count allocations.');
     if(!records.has(sku))records.set(sku,new Map());const record=records.get(sku);
     if(!locations.has(sku))locations.set(sku,new Set());locations.get(sku).add(location);
     for(const [f,indices] of picked){
@@ -3685,24 +3717,66 @@ function analyse(sheet,overrides,aliases,typeAliases){
       for(const [j,index] of indices.entries())if(numeric&&percentCells.has(`${rownum-1}:${index}`)&&vals[j])vals[j]=f==='demand_change_pct'?percent(vals[j]):'percentage-formatted quantity; use stock units';
       for(let j=0;j<vals.length;j++)if(monthly&&!f.startsWith('rcv:')&&report.layout!=='long'&&add('0',vals[j]).startsWith('-')){vals[j]='0';warnings.push(`${name}: ${sku}: negative sales in ${f} treated as 0 before warehouse aggregation.`);}
       value=vals[0];
+      if(f==='reserved'&&value&&(!NUMERIC.test(value)||!Number.isFinite(+value)||+value<0||+value>1e12))value='Invalid reserved stock';
       if(monthly)for(const v of vals.slice(1))value=add(value,v);
-      if(['on_hand','on_order'].includes(f)||monthly){
-        if(report.layout==='long'&&['on_hand','on_order'].includes(f)){
+      if(['on_hand','on_order','reserved'].includes(f)||monthly){
+        if(report.layout==='long'&&['on_hand','on_order','reserved'].includes(f)){
           if(value&&!record.get(f))record.set(f,value);
           else if(value&&record.get(f)!==value&&!sameNumber(value,record.get(f))){
             if(f==='on_hand'){record.set(f,BALANCE_ERROR);warnings.push(`${name}: ${sku}: ${BALANCE_ERROR}.`);}
-            else warnings.push(`${name}: differing ${f} for ${sku}; first value kept, not summed across transactions.`);
+            else {const message=`${name}: differing ${f} for ${sku}; first value kept, not summed across transactions.`;warnings.push(message);if(f==='reserved'){report.reasons.push(message);(report.input_warnings[sku]??=[]).push(message);}}
           }
         }else record.set(f,add(record.get(f)||'',value));
-      }else if(value){if(!record.has(f))record.set(f,value);}
+      }else if(value){
+        if(!record.has(f))record.set(f,value);
+      }
     }
     if(report.layout==='long'){const m=month(get('date'),inferred);if(m)record.set(m,add(record.get(m)||'',number(get('quantity'))));else if(get('date'))warnings.push(`${name}: unrecognized transaction date for ${sku}; quantity not imported.`);}
   }
   if(skipped)warnings.push(`${name}: skipped ${skipped} summary or blank-code rows.`);
-  report.products=records.size;return [report,records,warnings,headers];
+  for(const record of records.values())if(!record.get('unit')&&record.get('stock_unit'))record.set('unit',record.get('stock_unit'));
+  // Public JSON-shaped reports keep ordinary prototypes; accumulation above is
+  // null-prototype so product codes such as __proto__ remain literal keys.
+  report.incoming_evidence=Object.fromEntries(Object.entries(report.incoming_evidence));
+  report.reserved_warnings=Object.fromEntries(Object.entries(report.reserved_warnings));
+  const metadata=contributorMetadata(sheet,report);
+  for(const [sku,notes]of Object.entries(metadata.input_warnings))(report.input_warnings[sku]??=[]).push(...notes);
+  report.reserved_missing=metadata.reserved_missing;
+  if(picked.has('on_hand')&&!picked.has('reserved'))report.reserved_missing=Object.fromEntries([...records.keys()].map(sku=>[sku,[name]]));
+  report.informational_skus=metadata.informational_skus;report.reasons=boundedMessages([...report.reasons,...metadata.reasons]);warnings.push(...metadata.reasons);if(metadata.informational_skus.length)warnings.push(metadataSummary(metadata.informational_skus));
+  report.input_warnings=Object.fromEntries(Object.entries(report.input_warnings));
+  report.products=records.size;return [report,records,boundedMessages(warnings),headers];
+}
+
+function shortLabel(value,limit=64){const chars=Array.from(value);return chars.length<=limit?value:chars.slice(0,limit-1).join('')+'…';}
+function boundedMessages(messages){const unique=[...new Set(messages.map(message=>shortLabel(message,512)))];return unique.length<=100?unique:[...unique.slice(0,99),`${unique.length-99} more input warnings omitted; check all source rows before ordering.`];}
+function metadataSummary(skus){skus=[...new Set(skus)];const labels=skus.slice(0,10).map(sku=>shortLabel(sku,24)).join(', '),remaining=skus.length>10?`; ${skus.length-10} more`:'';return `Metadata differences for ${skus.length} SKUs (${labels}${remaining}); first values kept. Informational only.`;}
+function boundedInputWarnings(notes){const keys=Object.keys(notes).sort(),messages=[...new Set(keys.flatMap(sku=>notes[sku].map(note=>shortLabel(note,512))))],keep=new Set(messages.length>100?messages.slice(0,99):messages),omitted='Additional input warnings omitted; check all source rows before ordering.';return Object.fromEntries(Object.entries(notes).map(([sku,entries])=>[sku,[...new Set(entries.map(note=>{const text=shortLabel(note,512);return keep.has(text)?text:omitted;}))]]));}
+
+function contributorMetadata(sheet,meta){
+  const picked=new Map((meta.mapping||[]).filter(m=>m.field).map(m=>[m.field,[m.index]])),headers=sheet.rows[meta.header_row-1]||[];
+  const reserved=headers.findIndex(h=>REVIEW_ALIASES.reserved.includes(key(h))),[number]=sheetNumbers(sheet,picked,meta.header_row),accepted=new Set(meta.accepted_rows||[]);
+  const warnings=new Map(),missing=new Map(),reasons=[],first=new Map(),identical=new Map(),informational=new Set();
+  const mark=(sku,message)=>{message=shortLabel(message,512);if(!reasons.includes(message)&&reasons.length>=99)message='Additional input warnings omitted; check all source rows before ordering.';if(!warnings.has(sku))warnings.set(sku,[]);if(!warnings.get(sku).includes(message))warnings.get(sku).push(message);if(!reasons.includes(message))reasons.push(message);};
+  for(const [offset,row]of sheet.rows.slice(meta.header_row).entries()){
+    if(!accepted.has(meta.header_row+offset))continue;
+    const get=f=>picked.has(f)?trim(row[picked.get(f)[0]]??''):'',sku=get('sku');if(!sku)continue;
+    if(picked.has('on_hand')&&reserved>=0&&(reserved>=row.length||!trim(row[reserved])))missing.set(sku,[sheet.name]);
+    if(meta.layout!=='long'&&!get('location')){const fingerprint=JSON.stringify(row);if(!identical.has(sku))identical.set(sku,new Set());const seen=identical.get(sku);if(seen.has(fingerprint))mark(sku,`Identical rows found for SKU ${shortLabel(sku)} — possible duplicate export`);seen.add(fingerprint);}
+    if(!first.has(sku))first.set(sku,new Map());const values=first.get(sku);
+    for(const field of picked.keys()){
+      if(['sku','location','active','inactive','date','quantity','on_hand','on_order','reserved'].includes(field)||/^(?:rcv:)?[0-9]{4}-[0-9]{2}$/.test(field))continue;
+      const value=NUMERIC_FIELDS.has(field)?number(get(field),field==='supplier_days'):get(field);
+      if(value){if(values.get(field)&&values.get(field)!==value&&!(NUMERIC_FIELDS.has(field)&&sameNumber(values.get(field),value))){if(['supplier_days','unit','stock_unit','sales_unit'].includes(field))mark(sku,`${shortLabel(sheet.name)}: conflicting ${field} for ${shortLabel(sku)}; first value kept; acknowledge before ordering.`);else informational.add(sku);}if(!values.has(field))values.set(field,value);}
+    }
+  }
+  if(informational.size){const summary=metadataSummary(informational);for(const sku of informational){if(!warnings.has(sku))warnings.set(sku,[]);warnings.get(sku).push(summary);}}
+  return {input_warnings:Object.fromEntries(warnings),reserved_missing:Object.fromEntries(missing),reasons,informational_skus:[...informational]};
 }
 
 function understandWorkbook(sheets,sheet=null,overrides=null,aliases={},productTypeAliases=[]){
+  // Meaning-specific unit aliases take precedence over generic ERP unit labels.
+  aliases={...REVIEW_ALIASES,...aliases};
   sheets=sheets.map(s=>({name:String(s.name??'Sheet'),delimiter:s.delimiter??null,percent_cells:s.percent_cells||[],rows:(s.rows||[]).map(r=>r.map(v=>String(v??'')))}));limits(sheets);
   if(new Set(sheets.map(s=>s.name)).size!==sheets.length)fail('Sheet names must be unique.');
   const analyses=sheets.map(s=>analyse(s,overrides||{},aliases,productTypeAliases));if(!analyses.length)fail('Workbook has no worksheets.');let base=0;
@@ -3711,30 +3785,61 @@ function understandWorkbook(sheets,sheet=null,overrides=null,aliases={},productT
     const priority=i=>{const report=analyses[i][0],fields=new Set(report.mapping.map(m=>m.field));return [Number(fields.has('sku')&&fields.has('on_hand')),Number(fields.has('sku')),report.score];};
     for(let i=1;i<sheets.length;i++){const a=priority(i),b=priority(base);for(let j=0;j<a.length;j++){if(a[j]>b[j]){base=i;break;}if(a[j]<b[j])break;}}
   }
-  const report=analyses[base][0],products=new Map([...analyses[base][1]].map(([sku,v])=>[sku,new Map(v)])),warnings=analyses.flatMap(a=>a[2]),matched=new Set(),unmatched=new Set(),available=new Set(report.mapping.filter(m=>m.field).map(m=>m.field));
+  const report=analyses[base][0],products=new Map([...analyses[base][1]].map(([sku,v])=>[sku,new Map(v)])),warnings=analyses.flatMap(a=>a[2]).filter(w=>!w.startsWith('Metadata differences')),matched=new Set(),unmatched=new Set(),available=new Set(report.mapping.filter(m=>m.field).map(m=>m.field)),informational=new Set(analyses.flatMap(([a])=>a.informational_skus).filter(sku=>products.has(sku)));
   const hasSales=values=>[...values].some(([f,v])=>/^[1-9][0-9]{3}-(?:0[1-9]|1[0-2])$/.test(f)&&v);let externalSales=false;
+  const reasons=analyses.flatMap(([a])=>a.reasons),inputWarnings=Object.create(null),reservedMissing=Object.assign(Object.create(null),Object.fromEntries(Object.entries(report.reserved_missing).map(([sku,names])=>[sku,[...names]]))),reservedWarnings=Object.create(null),incomingEvidence=Object.assign(Object.create(null),Object.fromEntries(Object.entries(report.incoming_evidence).map(([sku,e])=>[sku,[...e]]))),baseStock=report.mapping.some(m=>m.field==='on_hand');
+  const quantitySchema=meta=>new Set(meta.mapping.filter(m=>m.field&&isMonth(m.field)).map(m=>m.field)),baseSchema=quantitySchema(report);
+  const stockSheets=baseStock?[report.name]:[],stockSources=new Map(baseStock?[...products.keys()].map(sku=>[sku,[report.name]]):[]),filledSources=new Map(),joinedReserved=new Set(),summedSources=new Set();
+  const flag=(sku,message)=>{message=shortLabel(message,512);if(!reasons.includes(message)&&reasons.length>=99)message='Additional input warnings omitted; check all source rows before ordering.';warnings.push(message);reasons.push(message);(inputWarnings[sku]??=[]).push(message);};
+  for(const [a]of analyses)for(const [sku,notes]of Object.entries(a.input_warnings))if(products.has(sku))(inputWarnings[sku]??=[]).push(...notes.filter(note=>!note.startsWith('Metadata differences')));
+  for(const [a]of analyses)for(const [sku,notes]of Object.entries(a.reserved_warnings))if(products.has(sku))(reservedWarnings[sku]??=[]).push(...notes);
   for(const [i,[other,records]] of analyses.entries()){
     if(i===base)continue;externalSales=externalSales||[...records.values()].some(hasSales);for(const m of other.mapping)if(m.field)available.add(m.field);
     for(const [sku,values] of records){
       if(!products.has(sku)){unmatched.add(sku);continue;}matched.add(sku);const target=products.get(sku);
-      if(target.get('unit')&&values.get('unit')&&target.get('unit')!==values.get('unit')){warnings.push(`${other.name}: conflicting stock units for ${sku}; auxiliary row omitted, base sheet kept.`);continue;}
-      for(const [field,value] of values){if(!target.get(field))target.set(field,value);else if(value&&target.get(field)!==value&&field==='unit')warnings.push(`${other.name}: conflicting stock units for ${sku}; base sheet value kept.`);}
+      if(target.get('unit')&&values.get('unit')&&target.get('unit')!==values.get('unit')){const message=`${other.name}: conflicting stock units for ${sku}; auxiliary row omitted, base sheet kept; acknowledge before ordering.`;flag(sku,message);continue;}
+      const otherStock=other.mapping.some(m=>m.field==='on_hand');
+      if(otherStock&&!target.get('on_hand')&&values.get('on_hand'))filledSources.set(sku,other.name);
+      if(!otherStock&&values.get('reserved')&&!target.get('reserved'))joinedReserved.add(sku);
+      // Transaction balances are snapshots; mismatched period columns may overlap.
+      const otherSchema=quantitySchema(other),combineStock=baseStock&&otherStock&&report.layout!=='long'&&other.layout!=='long'&&baseSchema.size===otherSchema.size&&[...baseSchema].every(f=>otherSchema.has(f));
+      if(combineStock&&target.get('on_hand')&&values.get('on_hand'))summedSources.add(sku);
+      if(baseStock&&otherStock&&report.layout!=='long'&&other.layout!=='long'&&!combineStock){const message=`${other.name}: ambiguous repeated stock for ${sku}: incompatible quantity schema; base sheet values kept where present, not summed; acknowledge before ordering.`;flag(sku,message);}
+      if(combineStock&&!stockSheets.includes(other.name))stockSheets.push(other.name);
+      if(otherStock&&(combineStock||!baseStock))(incomingEvidence[sku]??=[]).push(...(other.incoming_evidence[sku]||[]));
+      else if(values.get('on_order')&&!(incomingEvidence[sku]||[]).some(Boolean)&&(!otherStock||!target.get('on_order')))incomingEvidence[sku]=[true];
+      if(otherStock&&(combineStock||!target.get('on_hand')&&values.get('on_hand'))){if(!stockSources.has(sku))stockSources.set(sku,[]);stockSources.get(sku).push(other.name);for(const name of other.reserved_missing[sku]||[])if(!(reservedMissing[sku]??=[]).includes(name))reservedMissing[sku].push(name);}
+      for(const [field,value] of values){
+        const quantityField=['on_hand','reserved','on_order'].includes(field)||isMonth(field);
+        if(combineStock&&quantityField)target.set(field,add(target.get(field)||'',value));
+        else if(!target.get(field))target.set(field,value);
+        else if(value&&target.get(field)!==value&&!(NUMERIC_FIELDS.has(field)&&sameNumber(value,target.get(field)))){if(!quantityField&&!['supplier_days','unit','stock_unit','sales_unit'].includes(field))informational.add(sku);else{const message=`${shortLabel(other.name)}: conflicting ${field} for ${shortLabel(sku)}; base sheet value kept; acknowledge before ordering.`;flag(sku,message);}}
+      }
     }
   }
+  for(const names of stockSources.values())names.sort((a,b)=>sheets.findIndex(s=>s.name===a)-sheets.findIndex(s=>s.name===b));
+  for(const [sku,names]of stockSources)if(filledSources.has(sku)&&!summedSources.has(sku))flag(sku,`Blank stock in sheet ${shortLabel(report.name)} was filled from sheet ${shortLabel(filledSources.get(sku))}. Check the selected base sheet before ordering.`);else if(names.length>1)flag(sku,'Stock from sheets '+names.join(', ')+' was added together. Confirm these are separate warehouses — not totals, copies or older snapshots.');
+  if(stockSheets.length>1&&summedSources.size)warnings.push('Combined stock from sheets '+stockSheets.join(', '));
   if(unmatched.size)warnings.push(`${unmatched.size} product codes in other sheets did not match ${report.name}; not imported.`);
   const fields=products.size?new Set([...products.values()].flatMap(v=>[...v.keys()])):available;
-  const months=[...fields].filter(f=>/^[1-9][0-9]{3}-(?:0[1-9]|1[0-2])$/.test(f)).sort(),receipts=[...fields].filter(f=>/^rcv:[1-9][0-9]{3}-(?:0[1-9]|1[0-2])$/.test(f)).sort(),headers=[...FIXED,...[...OPTIONAL,...PER_ITEM].filter(f=>fields.has(f)),...months,...receipts],canonical=[headers];
+  for(const sku of joinedReserved){delete reservedMissing[sku];reservedWarnings[sku]=(reservedWarnings[sku]||[]).filter(note=>!note.startsWith('Reserved cell is blank'));if(!reservedWarnings[sku].length)delete reservedWarnings[sku];}
+  if(!fields.has('reserved'))for(const sku of Object.keys(reservedMissing))delete reservedMissing[sku];
+  if(informational.size){const summary=metadataSummary(informational);warnings.push(summary);for(const sku of informational)(inputWarnings[sku]??=[]).push(summary);}
+  const months=[...fields].filter(f=>/^[1-9][0-9]{3}-(?:0[1-9]|1[0-2])$/.test(f)).sort(),receipts=[...fields].filter(f=>/^rcv:[1-9][0-9]{3}-(?:0[1-9]|1[0-2])$/.test(f)).sort(),headers=[...FIXED,...[...OPTIONAL,...PER_ITEM,...REVIEW_FIELDS].filter(f=>fields.has(f)),...months,...receipts],canonical=[headers];
   for(const [sku,values] of products)canonical.push(headers.map(f=>f==='sku'?sku:values.get(f)||(f==='unit'?'units':'')));
   const missing=REQUIRED.filter(([f])=>!products.size&&!available.has(f)||[...products].some(([sku,values])=>f==='sku'?!sku:!values.get(f)||f==='on_hand'&&values.get(f)===BALANCE_ERROR)).map(([,title])=>title);
   const noHistory=externalSales?[...products.values()].filter(v=>!hasSales(v)).length:0;
   if(noHistory){const message=`Sales history for ${noHistory} products (exact SKU match required)`;missing.push(message);warnings.push(message+'; unmatched history is not zero demand; cannot import.');}
   if(analyses.some(([a])=>a.mapping.some(m=>['medium','low'].includes(m.confidence))))warnings.push('Some mappings are suggestions; review medium/low-confidence columns before import.');
-  return {sheets:analyses.map(a=>a[0]),sheet_used:report.name,header_row:report.header_row,layout:report.layout,mapping:report.mapping,unmapped:report.unmapped,missing,warnings:[...new Set(warnings)],match_report:{matched:matched.size,unmatched:unmatched.size},fingerprint:JSON.stringify(analyses.map(([a,,,h])=>[a.name,h])),canonical_rows:canonical};
+  const reviewName='Canonical review',reviewMeta={name:reviewName,header_row:1,mapping:headers.map((f,index)=>({index,source:f,field:f})),accepted_rows:canonical.slice(1).map((_,i)=>i+1)};
+  const review_sheets=[{name:reviewName,rows:canonical}],review_report={sheet_used:reviewName,sheets:[reviewMeta],incoming_evidence:Object.fromEntries(Object.entries(incomingEvidence)),requires_ack:!!reasons.length,reasons:boundedMessages(reasons),input_warnings:boundedInputWarnings(inputWarnings),reserved_missing:Object.fromEntries(Object.entries(reservedMissing)),reserved_warnings:Object.fromEntries(Object.entries(reservedWarnings).map(([sku,notes])=>[sku,[...new Set(notes)]]))};
+  return {review_sheets,review_report,input_warnings:review_report.input_warnings,reserved_missing:review_report.reserved_missing,sheets:analyses.map(a=>a[0]),sheet_used:report.name,header_row:report.header_row,layout:report.layout,mapping:report.mapping,unmapped:report.unmapped,missing,warnings:boundedMessages(warnings),match_report:{matched:matched.size,unmatched:unmatched.size},fingerprint:JSON.stringify(analyses.map(([a,,,h])=>[a.name,h])),canonical_rows:canonical};
 }
+
 
 const vocabulary = {"sku":["\u0627\u0644\u0635\u0646\u0641","\u0631\u0645\u0632 \u0627\u0644\u0635\u0646\u0641","\u0643\u0648\u062f \u0627\u0644\u0635\u0646\u0641","\u0631\u0642\u0645 \u0627\u0644\u0635\u0646\u0641"],"name":["\u0627\u0633\u0645 \u0627\u0644\u0635\u0646\u0641","\u0627\u0633\u0645 \u0627\u0644\u0645\u0646\u062a\u062c","\u0648\u0635\u0641 \u0627\u0644\u0635\u0646\u0641"],"on_hand":["\u0627\u0644\u0643\u0645\u064a\u0629","\u0627\u0644\u0645\u062e\u0632\u0648\u0646","\u0627\u0644\u0643\u0645\u064a\u0629 \u0627\u0644\u0645\u062a\u0627\u062d\u0629","stock qty"],"supplier":["\u0627\u0644\u0645\u0648\u0631\u062f","\u0627\u0633\u0645 \u0627\u0644\u0645\u0648\u0631\u062f"],"supplier_days":["\u0645\u062f\u0629 \u0627\u0644\u062a\u0648\u0631\u064a\u062f","\u0623\u064a\u0627\u0645 \u0627\u0644\u062a\u0648\u0631\u064a\u062f"],"unit":["\u0627\u0644\u0648\u062d\u062f\u0629"],"unit_cost":["avg cost","\u062a\u0643\u0644\u0641\u0629 \u0627\u0644\u0648\u062d\u062f\u0629"]}
 const aliases = Object.fromEntries([...new Set([...Object.keys(ERP_ALIASES),...Object.keys(vocabulary)])].map(field=>[field,[...(ERP_ALIASES[field]||[]),...(vocabulary[field]||[])]]))
-return {readWorkbook,understandWorkbook:(sheets,sheet=null,overrides=null)=>understandWorkbook(sheets,sheet,overrides,aliases,PRODUCT_TYPE_ALIASES)}
+return {readWorkbook,contributorMetadata,reviewField:source=>Object.entries(REVIEW_ALIASES).find(([,labels])=>labels.includes(key(source)))?.[0]||null,understandWorkbook:(sheets,sheet=null,overrides=null)=>understandWorkbook(sheets,sheet,overrides,aliases,PRODUCT_TYPE_ALIASES)}
 })()
 export async function readSmartWorkbook(file) {
   try {
@@ -3747,6 +3852,149 @@ export function understandStockWorkbook(sheets,sheet=null,overrides=null) {
   catch(error) {throw error instanceof CsvError?error:new CsvError(error.message||'Could not understand this workbook.')}
 }
 // SMART_WORKBOOK_END
+// INPUT_MEANING_START
+// Lifecycle: living. Input interpretation only; forecast/order maths stay unchanged.
+// Mirrored by input_meaning.py. Embedded verbatim in plugin.js by sync_input_meaning.py.
+// Generated priority list from input-meaning-warning-order.json by sync_input_meaning.py.
+export const INPUT_WARNING_PREFIXES = ["Stock is blank but reserved is filled", "Reserved stock could not be subtracted", "Stock includes reserved or allocated stock", "Oversold:", "Stock header says already available", "Reserved cell is blank", "Incoming orders unknown", "Incoming partly unknown", "Sales and stock units disagree", "More than 20%", "Sales dates", "Latest month", "New product:"]
+export function orderedInputWarnings(messages) {
+  const rank=text=>{const i=INPUT_WARNING_PREFIXES.findIndex(prefix=>text.startsWith(prefix));return i<0?INPUT_WARNING_PREFIXES.length:i}
+  return [...new Set(messages)].sort((a,b)=>rank(a)-rank(b)||(a<b?-1:a>b?1:0))
+}
+export const INCOMING_UNKNOWN = 'Incoming orders unknown — counted as 0. Check open POs before ordering.'
+export const INCOMING_PARTLY_UNKNOWN = 'Incoming partly unknown — known incoming retained; check open POs for every warehouse before ordering.'
+export function inputMeaningChoices(raw={}) {
+  return {stock_includes_reserved:raw?.stock_includes_reserved===true,incoming_not_in_file:raw?.incoming_not_in_file===true,units_confirmed:raw?.units_confirmed===true}
+}
+export function reviewInputMeaning(sheets,report,rawChoices={},today=null) {
+  let evidence=null
+  if(report.review_sheets!=null){const {review_sheets,review_report,...sourceReport}=report;evidence=reviewInputMeaning(sheets,sourceReport,{},today);sheets=review_sheets;report=review_report}
+  if(!today){const now=new Date();today=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`}
+  const choices=inputMeaningChoices(rawChoices),warnings=[],reasons=[...(report.reasons||[])],affected=new Map(),copy=sheets.map(s=>({...s,rows:s.rows.map(r=>r.slice())}))
+  const mark=(sku,text)=>{if(!sku)return;if(!affected.has(sku))affected.set(sku,[]);if(!affected.get(sku).includes(text))affected.get(sku).push(text)}
+  const key=v=>String(v??'').trim().toLowerCase().replace(/[_-]+/g,' ').replace(/\s+/g,' ')
+  const addUnit=(units,sku,value)=>{if(value){if(!units.has(sku))units.set(sku,new Set());units.get(sku).add(key(value))}}
+  for(const [sku,notes]of Object.entries(report.input_warnings||{}))for(const text of notes){mark(sku,text);if(!warnings.includes(text))warnings.push(text)}
+  if(choices.stock_includes_reserved){
+    for(const [sku,names]of Object.entries(report.reserved_missing||{}))if(names.length){const text='Reserved stock missing in sheets '+names.join(', ')+' — available stock may be overstated; check allocations before ordering.';mark(sku,text);if(!warnings.includes(text))warnings.push(text)}
+    for(const [sku,notes]of Object.entries(report.reserved_warnings||{}))for(const text of notes)mark(sku,text)
+  }
+  let missing=0,total=0,future=false,reservedFound=false,salesRows=0,missingSalesRows=0,reservedFailed=0,notLaunched=0,latestMonth=''
+  const mainRows=[],salesEvidence=new Set(),longSales=[],wideSales=[]
+  const stockUnits=new Map(),salesUnits=new Map(),stockSkus=new Set(),unknownSkus=new Set(),incomingEvidence=new Map()
+  for(const meta of report.sheets||[]){
+    const sheet=copy.find(s=>s.name===meta.name);if(!sheet||!sheet.rows.length)continue
+    const mappings=meta.mapping||[],index=f=>mappings.find(m=>m.field===f)?.index
+    const headers=sheet.rows[meta.header_row-1]||[],find=names=>headers.findIndex(h=>names.includes(key(h)))
+    const skuIndex=index('sku'),stockIndex=index('on_hand'),incoming=index('on_order'),unit=index('unit'),quantity=index('quantity'),date=index('date')
+    const reserved=find(['reserved','reserved qty','reserved quantity','allocated','allocated qty','allocated stock','reserved stock','reserved or allocated stock'])
+    const stockUnit=find(['stock unit','stock uom','inventory unit']),salesUnit=find(['sales unit','sales uom','sold unit'])
+    const months=mappings.filter(m=>/^[1-9][0-9]{3}-(?:0[1-9]|1[0-2])$/.test(m.field||'')).sort((a,b)=>a.field.localeCompare(b.field))
+    if(months.length&&months.at(-1).field>latestMonth)latestMonth=months.at(-1).field
+    if(months.some(m=>m.field>today.slice(0,7)))future=true
+    const rows=sheet.rows.slice(meta.header_row),numeric=[stockIndex,incoming,quantity,...months.map(m=>m.index)].filter(i=>i>=0)
+    const delimiter=sheet.delimiter||',',style=importNumberStyle(rows,numeric,delimiter)
+    const numericValue=raw=>{const v=importNumber(String(raw??''),delimiter,false,style);return IMPORT_NUMERIC.test(v)&&Number.isFinite(+v)&&+v>=0&&+v<=MAX_QUANTITY?+v:null}
+    const stockText=([n,d])=>{let remaining=n%d,fraction='';while(remaining){remaining*=10n;fraction+=String(remaining/d);remaining%=d}let text=String(n/d)+(fraction?'.'+fraction:'');if(style==='decimal-comma'){if(!text.includes('.'))text+='.0';text=text.replace('.',',')}return text}
+    const reservedGroups=new Map(),locations=new Map(),acceptedRows=meta.accepted_rows?new Set(meta.accepted_rows):null
+    for(const [offset,row]of rows.entries()){
+      const rowIndex=meta.header_row+offset
+      const get=i=>i==null||i<0?'':String(row[i]??'').trim(),sku=get(skuIndex)
+      if(!sku||['total','grand total','totals'].includes(key(sku)))continue
+      const inactive=index('inactive'),active=index('active');if(['false','0','no','inactive'].includes(key(get(active)))||['true','1','yes','inactive'].includes(key(get(inactive))))continue
+      const history=months.map(m=>[m.field,!!get(m.index)]);let main=null
+      if(months.some(m=>get(m.index)))salesEvidence.add(sku)
+      if(meta.name===report.sheet_used){
+        stockSkus.add(sku);total++
+        main={sku,missing:!get(stockIndex),needsSales:!months.length&&quantity==null};mainRows.push(main)
+        addUnit(stockUnits,sku,get(stockUnit>=0?stockUnit:unit))
+        if(reserved>=0)reservedFound=true
+        const location=get(index('location')).toLowerCase(),prior=locations.get(sku)||[]
+        const usable=numericValue(get(stockIndex))!=null&&(!choices.stock_includes_reserved||reserved<0||numericValue(get(reserved)||'0')!=null)
+        const contributes=usable&&(acceptedRows?acceptedRows.has(rowIndex):!prior.length||quantity!=null||(location&&prior.every(p=>p[0]&&p[0]!==location&&p[1]===get(unit))))
+        if(contributes){prior.push([location,get(unit)]);locations.set(sku,prior)}
+        if(contributes&&numericValue(get(stockIndex))!=null){if(!incomingEvidence.has(sku))incomingEvidence.set(sku,[]);incomingEvidence.get(sku).push(!!get(incoming))}
+        if(choices.stock_includes_reserved&&reserved>=0&&stockIndex!=null){
+          const stock=numericValue(get(stockIndex)),held=numericValue(get(reserved)||'0')
+          if(!get(reserved))mark(sku,'Reserved cell is blank — counted as 0; check allocations before ordering.')
+          if(key(headers[stockIndex]).includes('available'))mark(sku,'Stock header says already available — subtracting reserved again may double-count allocations.')
+          if(stock==null||held==null){reservedFailed++;const detail=!get(stockIndex)&&get(reserved)?'Stock is blank but reserved is filled — available stock cannot be calculated.':'Reserved stock could not be subtracted — check stock and reserved quantities.';row[stockIndex]=detail.startsWith('Stock is blank')?detail:'Invalid reserved stock';mark(sku,detail)}else {
+            if(held>stock)mark(sku,'Oversold: reserved exceeds stock in a warehouse — available stock is netted across contributing warehouses, then floored at 0. Check allocations before ordering.')
+            const net=subtractRatio(decimalRatio(stock),decimalRatio(held))
+            if(contributes){const group=quantity==null?sku:row;if(!reservedGroups.has(group))reservedGroups.set(group,[]);reservedGroups.get(group).push([row,net])}else row[stockIndex]=stockText(net[0]>0n?net:[0n,1n])
+          }
+        }
+        if(choices.incoming_not_in_file&&incoming!=null)row[incoming]='0'
+      }
+      if(months.length){wideSales.push([sku,history,main]);if(!main)salesRows++}
+      if(quantity!=null){salesRows++;longSales.push([sku,date!=null?erpMonth(get(date)):null,!!get(quantity)]);if(get(quantity))salesEvidence.add(sku)}
+      addUnit(salesUnits,sku,get(salesUnit>=0?salesUnit:quantity!=null||months.length?unit:null))
+      if(date!=null){const m=erpMonth(get(date));if(m&&m>latestMonth)latestMonth=m;if(m&&m>today.slice(0,7)||/^\d{4}-\d{2}-\d{2}$/.test(get(date))&&get(date)>today)future=true}
+    }
+    for(const entries of reservedGroups.values()){
+      const scale=entries.reduce((d,[,net])=>net[1]>d?net[1]:d,1n),nets=entries.map(([,net])=>net[0]*(scale/net[1]))
+      let remaining=nets.reduce((a,b)=>a+b,0n);if(remaining<0n)remaining=0n
+      entries.forEach(([row],i)=>{const positive=nets[i]>0n?nets[i]:0n,value=positive<remaining?positive:remaining;row[stockIndex]=stockText([value,scale]);remaining-=value})
+    }
+  }
+  const launchCounts=new Map(),firstLongSale=new Map()
+  for(const [sku,month,present]of longSales)if(present&&month&&(!firstLongSale.has(sku)||month<firstLongSale.get(sku)))firstLongSale.set(sku,month)
+  for(const [sku,history]of wideSales)for(const [month,present]of history)if(present&&(!firstLongSale.has(sku)||month<firstLongSale.get(sku)))firstLongSale.set(sku,month)
+  for(const [sku,history,main]of wideSales){let missingMonth=false;const firstSale=firstLongSale.get(sku);for(const [month,present]of history)if(!present){if(firstSale&&month<firstSale){notLaunched++;launchCounts.set(sku,(launchCounts.get(sku)||0)+1)}else missingMonth=true}if(main)main.missing=main.missing||missingMonth;else if(missingMonth)missingSalesRows++}
+  for(const [sku,month,present]of longSales)if(!present){if(month&&firstLongSale.has(sku)&&month<firstLongSale.get(sku)){notLaunched++;launchCounts.set(sku,(launchCounts.get(sku)||0)+1)}else missingSalesRows++}
+  missing=mainRows.filter(r=>r.missing||r.needsSales&&!salesEvidence.has(r.sku)).length
+  if(evidence){
+    missing=evidence.missing_rows;total=evidence.total_rows;missingSalesRows=evidence.missing_sales_rows;salesRows=evidence.sales_rows;notLaunched=evidence.not_yet_launched_cells
+    const keep=text=>['Sales and stock units','Sales dates','Latest month','New product:'].some(prefix=>text.startsWith(prefix))
+    for(const row of evidence.affected)for(const text of row.warnings)if(keep(text))mark(row.sku,text)
+    for(const text of evidence.warnings)if(keep(text)&&!warnings.includes(text))warnings.push(text)
+    for(const text of evidence.reasons)if(!reasons.includes(text))reasons.push(text)
+  }else for(const [sku,count]of launchCounts){const text=`New product: ${count} months before first sale ignored`;mark(sku,text);if(!warnings.includes(text))warnings.push(text)}
+  if(reservedFailed){const text=`Reserved stock could not be subtracted for ${reservedFailed} rows — they were set aside. Check stock and reserved quantities before ordering.`;warnings.push(text);reasons.push(text)}
+  if(choices.stock_includes_reserved&&!reservedFound){const text='Stock includes reserved or allocated stock, but no reserved column was found. Available stock may be overstated — check allocations before ordering.';warnings.push(text);for(const sku of stockSkus)mark(sku,text)}
+  for(const entries of affected.values())for(const text of entries)if((text.startsWith('Oversold:')||text.startsWith('Stock header'))&&!warnings.includes(text))warnings.push(text)
+  for(const sku of stockSkus){const evidence=report.incoming_evidence!=null?(report.incoming_evidence[sku]||[]):incomingEvidence.get(sku)||[];if(choices.incoming_not_in_file||!evidence.length||!evidence.every(Boolean)){unknownSkus.add(sku);const text=!choices.incoming_not_in_file&&evidence.some(Boolean)?INCOMING_PARTLY_UNKNOWN:INCOMING_UNKNOWN;if(!warnings.includes(text))warnings.push(text);mark(sku,text)}}
+  for(const sku of new Set([...stockUnits.keys(),...salesUnits.keys()]))if(new Set([...(stockUnits.get(sku)||[]),...(salesUnits.get(sku)||[])]).size>1)mark(sku,'Sales and stock units disagree — convert both to the same unit before ordering.')
+  if([...affected.values()].some(a=>a.some(s=>s.startsWith('Sales and stock units')))){const text='Sales and stock units disagree — convert both to the same unit before ordering.';warnings.push(text);reasons.push(text)}
+  if(total&&missing/total>0.2||salesRows&&missingSalesRows/salesRows>0.2)reasons.push('More than 20% of rows lack stock or sales. Missing sales can look like zero demand; check the file before ordering.')
+  if(future){const text='Sales dates are in the future. Dates may be shifted — check the sales period before ordering.';reasons.push(text);warnings.push(text);for(const sku of stockSkus)mark(sku,text)}
+  if(latestMonth===today.slice(0,7)){const text=`Latest month (${latestMonth}) is still in progress — partial sales may lower the forecast. Remove it or wait for month end.`;warnings.push(text);reasons.push(text);for(const sku of stockSkus)mark(sku,text)}
+  return {sheets:copy,choices,warnings:orderedInputWarnings(warnings),affected:[...affected].sort(([a],[b])=>a<b?-1:a>b?1:0).map(([sku,warnings])=>({sku,warnings:orderedInputWarnings(warnings)})),incoming_unknown:[...unknownSkus],requires_ack:reasons.length>0,reasons:orderedInputWarnings(reasons),missing_rows:missing,total_rows:total,missing_sales_rows:missingSalesRows,sales_rows:salesRows,not_yet_launched_cells:notLaunched,rows_kept:total-reservedFailed,rows_flagged:[...stockSkus].filter(sku=>affected.has(sku)).length}
+}
+// CSV retains its established row exclusions rather than workbook aggregation.
+// Use actual accepted logical records, then recheck eligibility after netting.
+export function reviewCsvInputMeaning(sheets,data,choices={},today=null) {
+  const sheet=sheets[0],headers=sheet.rows[0],preflight=data.import_report
+  const meta={name:sheet.name,header_row:1,mapping:headers.map((source,index)=>({index,source,field:preflight.matched.find(m=>m.source===source)?.field??SMART_WORKBOOK.reviewField(source)})),accepted_rows:preflight.accepted_rows}
+  const report={sheet_used:sheet.name,sheets:[meta]}
+  const provisional=reviewInputMeaning(sheets,report,choices,today),delimiter=sheet.delimiter||','
+  const text=provisional.sheets[0].rows.map(row=>row.map(v=>'"'+String(v??'').replaceAll('"','""')+'"').join(delimiter)).join('\n')
+  const eligibility=parseStockImport(text)
+  meta.accepted_rows=eligibility.import_report.accepted_rows
+  Object.assign(report,SMART_WORKBOOK.contributorMetadata(sheet,meta))
+  return reviewInputMeaning(sheets,report,choices,today)
+}
+export function attachInputMeaning(data,review) {
+  for(const item of data.items){
+    if((review.choices.incoming_not_in_file||item.on_order==null)&&!review.incoming_unknown.includes(item.sku)){
+      review.incoming_unknown.push(item.sku)
+      if(!review.warnings.includes(INCOMING_UNKNOWN))review.warnings.push(INCOMING_UNKNOWN)
+      let row=review.affected.find(r=>r.sku===item.sku);if(!row){row={sku:item.sku,warnings:[]};review.affected.push(row)}
+      if(!row.warnings.includes(INCOMING_UNKNOWN))row.warnings.push(INCOMING_UNKNOWN)
+    }
+    item.input_warnings=orderedInputWarnings(review.affected.find(r=>r.sku===item.sku)?.warnings||[])
+    if(review.incoming_unknown.includes(item.sku)){if(review.choices.incoming_not_in_file)delete item.on_order;item.incoming_unknown=true}
+  }
+  review.warnings=orderedInputWarnings(review.warnings)
+  for(const row of review.affected)row.warnings=orderedInputWarnings(row.warnings)
+  const report=data.import_report||{},headers=report.source_headers||[],skuSource=report.matched?.find(m=>m.field==='sku')?.source||'sku',skuIndex=headers.includes(skuSource)?headers.indexOf(skuSource):0
+  for(const entry of report.rows_set_aside||[]){const sku=String(entry.values?.[skuIndex]??'').trim(),notes=review.affected.find(r=>r.sku===sku)?.warnings||[],detail=notes.find(w=>w.startsWith('Stock is blank but reserved is filled'));if(detail&&entry.values?.includes(detail)&&entry.reason?.includes('on_hand must be a number'))entry.reason=detail}
+  review.rows_kept=report.rows_imported??data.items.length
+  review.rows_flagged=data.items.filter(item=>item.input_warnings.length).length
+  const {sheets,...meaning}=review;data.input_meaning=meaning
+  return data
+}
+// INPUT_MEANING_END
 export async function readStockFile(file) {
   if(file.size>16*1024*1024)throw new CsvError('Stock file must be no larger than 16 MiB.')
   return decodeCsvBytes(await file.arrayBuffer())
@@ -3834,7 +4082,7 @@ export function parseCsv(text,{strict=false}={}) {
     if(!vals.some(v=>IMPORT_NUMERIC.test(v)||v===AMBIGUOUS_NUMBER)){droppedOrder=headers[picked.on_order];delete picked.on_order}
   }
   const fields=new Map(Object.entries(picked).map(([f,i])=>[i,f]));for(const [f,i]of [...months,...receipts])fields.set(i,f)
-  const report={matched:headers.flatMap((h,i)=>fields.has(i)?[{source:h,field:fields.get(i)}]:[]),ignored:headers.filter((h,i)=>!fields.has(i)),defaulted:[],rows_imported:0,products_ready:0,rows_set_aside:[],warnings:[],source_headers:headers}
+  const report={matched:headers.flatMap((h,i)=>fields.has(i)?[{source:h,field:fields.get(i)}]:[]),ignored:headers.filter((h,i)=>!fields.has(i)),defaulted:[],rows_imported:0,products_ready:0,rows_set_aside:[],accepted_rows:[],warnings:[],source_headers:headers}
   report.warnings.push('Number format: '+style+(style==='decimal-comma'?' (comma decimal; dot thousands)':' (dot decimal; comma thousands)'))
   if(droppedOrder!==null)report.warnings.push(`${droppedOrder} ignored: no numeric on_order values parsed; no incoming stock counted`)
   if(!('unit'in picked))report.defaulted.push({field:'unit',value:'units',reason:'unit column missing'})
@@ -3872,7 +4120,7 @@ export function parseCsv(text,{strict=false}={}) {
       const sku=item.sku
       if(bySku.has(sku)){
         if(!('location'in picked))throw new CsvError('duplicate sku without warehouse/location — first row kept')
-        if(locations.get(sku).has(importLocationKey(get('location'))))throw new CsvError('duplicate sku at same warehouse/location — first row kept')
+        if(get('location')&&locations.get(sku).has(importLocationKey(get('location'))))throw new CsvError('duplicate sku at same warehouse/location — first row kept')
         const first=bySku.get(sku)
         if(first.unit!==item.unit)throw new CsvError('warehouse units differ — convert to one stock unit')
         const aggregate={...first,on_hand:first.on_hand+item.on_hand,monthly_sales:first.monthly_sales.map((v,i)=>v+item.monthly_sales[i])}
@@ -3882,11 +4130,13 @@ export function parseCsv(text,{strict=false}={}) {
         Object.assign(first,aggregate);combined.set(sku,(combined.get(sku)||1)+1)
       }else{items.push(item);bySku.set(sku,item)}
       if(!locations.has(sku))locations.set(sku,new Map());locations.get(sku).set(importLocationKey(get('location')),get('location'))
+      report.accepted_rows.push(index+1)
       report.rows_imported++;blanks+=localBlanks;if(item.supplier_days===null)missingLead++;for(const month of rowReturns)returns.set(month,(returns.get(month)||0)+1)
     }catch(error){aside(rownum!==2?error.message.replace('Row 2:',`Row ${rownum}:`):error.message)}
   })
   for(const [month,n]of returns)report.warnings.push(`returns exceeded sales in ${month} (${n} rows)`)
-  for(const [sku,n]of combined)report.warnings.push(`${sku}: combined ${n} warehouse rows (${[...locations.get(sku).values()].map(label=>label||'(blank)').join(', ')}); stock, on order, sales and receipts summed; first-row metadata kept`)
+  for(const [sku,n]of combined)report.warnings.push(`${sku}: combined ${n} warehouse rows (${[...locations.get(sku).values()].map(label=>label||'Unspecified').join(', ')}); stock, on order, sales and receipts summed; first-row metadata kept`)
+  if('location'in picked&&[...locations.values()].some(labels=>labels.has('')))report.warnings.push('Blank warehouse/location treated as Unspecified; all blank-location rows aggregated, including repeated blanks. Check for duplicate exports.')
   if(missingLead&&'supplier_days'in picked)report.defaulted.push({field:'supplier_days',value:null,reason:`lead time blank in ${missingLead} imported rows`})
   if('location'in picked){const partial=new Set(report.rows_set_aside.filter(r=>picked.sku<r.values.length&&bySku.has(importTrim(r.values[picked.sku]))).map(r=>importTrim(r.values[picked.sku])));for(const sku of partial)report.warnings.push(`${sku}: some warehouse rows set aside; totals include usable rows only`)}
   if(blanks)report.warnings.push(`${blanks} blank sales cells treated as 0`)
@@ -4804,11 +5054,63 @@ function whyBreakdownPass(item,today,rawSettings={},asOf=item?.as_of){
   if(exact[0]<0n)add('zero_floor',[-exact[0],exact[1]])
   const minimum=decimalRatio(resolveOrderSettings(item,rawSettings).override.minimum_order||0)
   if(exact[0]>0n&&compareRatio(minimum,exact)>0n)add('minimum_order',subtractRatio(minimum,exact))
-  add('pack_rounding',subtractRatio(decimalRatio(target),exact))
+  let delta=subtractRatio(decimalRatio(target),exact)
+  const pack=decimalRatio(resolveOrderSettings(item,rawSettings).override.pack_size||1)
+  if(delta[0]<0n&&compareRatio(delta,[-1n,1000000000n])>0n){add('arithmetic_reconciliation',delta);delta=[0n,1n]}
+  if(delta[0]<0n||compareRatio(delta,pack)>=0n){const key=target===0&&g.monthly_demand===0?'no_recent_demand':delta[0]<0n?'policy_cap':'policy_adjustment';add(key,delta);delta=[0n,1n]}
+  add('pack_rounding',delta)
   // Explicit binary64 residue; never disguise it as demand or stock.
   for(let i=0;i<2&&running!==target;i++)add('arithmetic_reconciliation',target-running)
   if(running!==target){add('arithmetic_reconciliation',-running);add('arithmetic_reconciliation',target)}
   return rows
+}
+
+// Display attribution only; Python why_this_amount mirrors labels and full precision.
+export function riskLabel(probability){return !Number.isFinite(probability)||probability<0||probability>1?null:probability<.1?'Low':probability<=.4?'Medium':'High'}
+const WHY_AMOUNT_LABELS = {
+  forecast_demand:'forecast demand', stockout_correction:'stockout correction',
+  projects_excluded:'projects excluded', manual_change:'manual demand change',
+  forecast_alignment:'forecast alignment', committed_orders:'committed orders',
+  stock_on_hand:'stock on hand', incoming_supply:'dated incoming supply',
+  undated_incoming:'undated incoming', buffer_demand:'buffer demand',
+  safety_stock:'safety stock', dated_receipt_netting:'dated receipt netting',
+  replenishment_disabled:'replenishment disabled', zero_floor:'zero floor',
+  minimum_order:'MOQ uplift', pack_rounding:'pack rounding',
+  arithmetic_reconciliation:'arithmetic reconciliation',
+  no_recent_demand:'no recent demand — not ordering',
+  policy_cap:'replenishment policy cap', policy_adjustment:'replenishment policy adjustment',
+  display_rounding:'display rounding',
+  late_po_hold:'Update overdue incoming delivery dates.',
+  demand_history_hold:'Check incomplete or invalid demand history.',
+  committed_orders_hold:'Check incomplete or invalid committed orders.',
+  data_hold:'Check missing or invalid stock, sales, dates or settings.',
+}
+// Human decimal terms reconcile to displayed quantity; whyBreakdown stays exact.
+// Hold is not zero. This helper never changes demand, order maths or its inputs.
+function humanNumber(value){const [n,d]=decimalRatio(value),a=n<0n?-n:n,ticks=(a*200n+d)/(2n*d);return (n<0n&&ticks?'-':'')+String(ticks/100n)+(ticks%100n?'.'+String(ticks%100n).padStart(2,'0').replace(/0+$/,''):'')}
+export function whyThisAmount(...args){return withEvaluationPass(()=>whyThisAmountPass(...args))}
+function whyThisAmountPass(item,today,rawSettings={},asOf=item?.as_of){
+  const g=orderGuidance(item,today,rawSettings,asOf)
+  const rows=whyBreakdown(item,today,rawSettings,asOf)
+  let text
+  // Detailed forecast reasons already exist in guidance; shared hold keys keep parity.
+  if(g.quantity==null)text='Purchase advice held: '+WHY_AMOUNT_LABELS[rows[0].key]
+  else {
+    const digits=Math.min(6,Math.max(2,(String(g.quantity).split('.')[1]||'').length)),scale=10n**BigInt(digits)
+    const tick=v=>{const [n,d]=decimalRatio(v),a=n<0n?-n:n;return (n<0n?-1n:1n)*((a*scale*2n+d)/(2n*d))}
+    const number=t=>{const negative=t<0n,a=negative?-t:t;return (negative?'-':'')+String(a/scale)+(a%scale?'.'+String(a%scale).padStart(digits,'0').replace(/0+$/,''):'')}
+    const visible=rows.filter(r=>r.key!=='arithmetic_reconciliation'&&Math.abs(r.qty)>=1e-9).map(r=>[r.key,tick(r.qty)])
+    const residue=tick(g.quantity)-visible.reduce((sum,[,v])=>sum+v,0n)
+    if(residue)visible.push(['display_rounding',residue])
+    const terms=visible.filter(([,v])=>v!==0n).map(([key,v],i)=>(i&&v>=0n?'+':'')+number(v)+' ['+WHY_AMOUNT_LABELS[key]+']')
+    text='Suggested order: '+number(tick(g.quantity))+' '+(item.unit||'units')+' = '+(terms.join(' ')||'0 [no purchase needed]')+'.'
+  }
+  if(g.quantity!=null){const values=resolveOrderSettings(item,rawSettings).values;text+=' Sells ~'+humanNumber(g.monthly_demand??0)+'/mo · '+String(g.lead_days)+'-day delivery · '+String(normalizeOrderSettings(rawSettings).months_of_cover)+' months cover'+(values.pack_size?' · pack '+String(values.pack_size):'')+(values.minimum_order?' · MOQ '+String(values.minimum_order):'')+'.'}
+  if(g.monthly_demand===0)text+=' No forecast demand; this does not prove there will be no future sales.'
+  if(g.used_default_lead)text+=' Assumed lead time: '+String(g.lead_days)+' days.'
+  if(g.undated_on_order_assumed_within_lead)text+=' Undated incoming is assumed within lead time; confirm delivery dates before buying.'
+  if(g.quantity!=null&&!Object.hasOwn(item,'on_order'))text+=' Unknown incoming is assumed zero; check existing orders before buying.'
+  return text
 }
 
 export function orderBucket(...args){return withEvaluationPass(()=>orderBucketPass(...args))}
@@ -4853,7 +5155,8 @@ const noOrderSentence = (item, guidance) => item.on_order > 0 && guidance.quanti
       : `No order needed — enough stock until ${formatDate(guidance.runout_date)}`
 
 /* STOCK_RUNWAY_CORE_END */
-// Shared, local-only workbook review. No spreadsheet rows are persisted.
+// Shared, local-only workbook review. Mapping rules persist without product rows;
+// accepted standalone datasets remain in page memory, not this mapping store.
 const smartImportUI = (() => {
   const el=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n}
   const dialog=el('dialog',undefined,'settings-sheet smart-import');dialog.id='smart-import';dialog.setAttribute('aria-labelledby','smart-import-title')
@@ -4866,13 +5169,13 @@ const smartImportUI = (() => {
   const sourceStatus=document.getElementById('source-status'),sourceAnchor=document.createComment('source status home')
   sourceStatus.before(sourceAnchor)
   function resetSourceStatus(){
-    retained=null;sourceStatus.classList.remove('smart-import-source');sourceStatus.querySelector('#smart-import-review')?.remove();sourceAnchor.after(sourceStatus)
+    retained=null;document.getElementById('input-meaning-results')?.remove();sourceStatus.classList.remove('smart-import-source');sourceStatus.querySelector('#smart-import-review')?.remove();sourceAnchor.after(sourceStatus)
   }
   const fields={sku:'Product code (SKU)',name:'Product name',unit:'Unit',on_hand:'Stock on hand',supplier_days:'Lead time (days)',supplier:'Supplier',category:'Category',unit_cost:'Unit cost',date:'Sales date',quantity:'Quantity sold',on_order:'Stock on order',minimum_order:'Minimum order quantity',pack_size:'Pack multiple'}
-  const csv=rows=>rows.map(r=>r.map(v=>'"'+String(v??'').replaceAll('"','""')+'"').join(',')).join('\r\n')+'\r\n'
+  const csv=(rows,delimiter=',')=>rows.map(r=>r.map(v=>'"'+String(v??'').replaceAll('"','""')+'"').join(delimiter)).join('\r\n')+'\r\n'
   function rules(){try{const raw=localStorage.getItem(STORE);if(!raw||raw.length>1000000)return [];const a=JSON.parse(raw);return Array.isArray(a)?a.slice(-20).filter(r=>typeof r.fingerprint==='string'&&r.overrides&&typeof r.overrides==='object'&&!Array.isArray(r.overrides)&&typeof r.warning_fingerprint==='string'):[]}catch{return []}}
   async function warningFingerprint(report,parsed){
-    const bytes=new TextEncoder().encode(JSON.stringify([report.warnings,parsed?.import_report?.warnings||[],parsed?.import_report?.defaulted||[]]))
+    const bytes=new TextEncoder().encode(JSON.stringify([report.warnings,parsed?.import_report?.warnings||[],parsed?.import_report?.defaulted||[],parsed?.input_meaning?.warnings||[],parsed?.input_meaning?.reasons||[]]))
     return Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)),b=>b.toString(16).padStart(2,'0')).join('')
   }
   async function remember(state){
@@ -4880,7 +5183,7 @@ const smartImportUI = (() => {
       const overrides=Object.create(null)
       for(const sheet of state.report.sheets)for(const m of sheet.mapping)overrides[sheet.name+':'+m.index]=m.field||''
       const confirmed=understandStockWorkbook(state.sheets,state.report.sheet_used,overrides)
-      const entry={fingerprint:state.report.fingerprint,sheet:state.report.sheet_used,overrides,warning_fingerprint:await warningFingerprint(confirmed,state.parsed)}
+      const entry={fingerprint:state.report.fingerprint,sheet:state.report.sheet_used,overrides,choices:inputMeaningChoices(state.choices),warning_fingerprint:await warningFingerprint(confirmed,state.parsed)}
       const entries=rules().filter(r=>r.fingerprint!==entry.fingerprint);entries.push(entry)
       const encoded=JSON.stringify(entries.slice(-20));if(encoded.length<=1000000)localStorage.setItem(STORE,encoded)
     }catch{/* Storage denial means the next upload receives normal review. */}
@@ -4888,21 +5191,32 @@ const smartImportUI = (() => {
   async function finish(accepted=false){
     if(!pending)return
     const state=pending;pending=null;if(dialog.open)dialog.close()
-    if(accepted&&state.parsed&&state.stillCurrent()){
-      await remember(state);retained={file:state.file};state.resolve(state.stillCurrent()?{parsed:state.parsed,smart:true,remembered:false}:null)
+    if(accepted&&state.parsed&&state.choices.units_confirmed&&(!state.meaning?.requires_ack||state.ack)&&state.stillCurrent()){
+      await remember(state);retained={file:state.file};state.resolve(state.stillCurrent()?{parsed:state.parsed,smart:!state.legacyParsed||state.edit,remembered:false}:null)
     }else state.resolve(null)
     if(state.focus?.isConnected)state.focus.focus()
   }
   function cancelPending(){finish(false);resetSourceStatus();if(typeof finishImportCheck==='function')finishImportCheck(false)}
   cancel.addEventListener('click',()=>finish(false));use.addEventListener('click',()=>{if(!use.disabled)finish(true)})
-  change.addEventListener('click',()=>{if(pending){pending.edit=true;draw(pending);body.querySelector('select')?.focus()}})
+  change.addEventListener('click',()=>{if(pending){pending.edit=true;pending.ack=false;draw(pending);body.querySelector('select')?.focus()}})
   dialog.addEventListener('cancel',event=>{event.preventDefault();finish(false)});dialog.addEventListener('close',()=>{if(!dialog.open)finish(false)})
   function disclosure(parent,label,values){if(!values?.length)return;const d=el('details'),s=el('summary',label+' · '+values.length),list=el('ul');for(const text of values.slice(0,100))list.append(el('li',text));if(values.length>100)list.append(el('li','First 100 shown.'));d.append(s,list);parent.append(d)}
   function preflight(state){
     state.parsed=null;state.error=null
     try{
-      state.report=understandStockWorkbook(state.sheets,state.sheet,state.overrides)
-      if(!state.report.missing.length&&state.report.canonical_rows.length>1){state.parsed=parseStockImport(csv(state.report.canonical_rows));validateDataset(state.parsed)}
+      const original=understandStockWorkbook(state.sheets,state.sheet,state.overrides)
+      if(state.legacyParsed&&!state.edit){
+        // Keep the established CSV row exclusions, warehouse handling and report.
+        state.meaning=reviewCsvInputMeaning(state.sheets,state.legacyParsed,state.choices)
+        state.report=original
+        state.parsed=attachInputMeaning(parseStockImport(csv(state.meaning.sheets[0].rows,state.sheets[0].delimiter||',')),state.meaning);state.report.missing=[];validateDataset(state.parsed)
+      }else{
+        state.meaning=reviewInputMeaning(state.sheets,original,state.choices)
+        // Original mappings remain editable; adjusted canonical joined rows are facts.
+        const adjusted=understandStockWorkbook(state.meaning.sheets)
+        state.report={...original,missing:[...new Set([...original.missing,...adjusted.missing])],canonical_rows:adjusted.canonical_rows}
+        if(!state.report.missing.length&&adjusted.canonical_rows.length>1){state.parsed=attachInputMeaning(parseStockImport(csv(adjusted.canonical_rows)),state.meaning);validateDataset(state.parsed)}
+      }
     }catch(error){state.error=error instanceof CsvError?error:new CsvError(error.message||'Could not read this workbook.')}
   }
   function draw(state){
@@ -4910,9 +5224,17 @@ const smartImportUI = (() => {
     preflight(state);const r=state.report;body.replaceChildren();if(!r)return
     body.append(el('p',state.file.name,'smart-import-file'))
     const summary=el('p',`${r.sheet_used} · Header row ${r.header_row} · ${r.layout==='long'?'Sales by date':r.layout==='wide'?'Monthly sales columns':'Product list'}`,'smart-import-summary');summary.id='smart-import-summary';body.append(summary)
+    const card=el('section',undefined,'input-meaning-card');card.id='input-meaning-card';card.append(el('h3','Before we suggest orders'))
+    const choose=(id,label,values,current,update)=>{const field=el('label',label),select=el('select');select.id=id;for(const [value,text]of values){const option=el('option',text);option.value=value;select.append(option)}select.value=current;select.addEventListener('change',()=>{update(select.value);state.ack=false;draw(state)});field.append(select);card.append(field)}
+    choose('meaning-stock','Your stock number is',[['available','Available to sell'],['reserved','Includes reserved or allocated stock']],state.choices.stock_includes_reserved?'reserved':'available',value=>state.choices.stock_includes_reserved=value==='reserved')
+    choose('meaning-incoming','Incoming orders',[['included','Included in file'],['unknown','Not in file']],state.choices.incoming_not_in_file?'unknown':'included',value=>state.choices.incoming_not_in_file=value==='unknown')
+    const units=el('label'),confirm=el('input');confirm.type='checkbox';confirm.id='meaning-units';confirm.checked=state.choices.units_confirmed;confirm.addEventListener('change',()=>{state.choices.units_confirmed=confirm.checked;draw(state)});units.append(confirm,document.createTextNode('Units — sales and stock use the same unit'));card.append(units)
+    for(const text of [...(state.meaning?.warnings||[]),...(state.meaning?.reasons||[])])card.append(el('p',text,'smart-import-warning'))
+    if(state.meaning?.requires_ack){const label=el('label'),ack=el('input');ack.type='checkbox';ack.id='meaning-show-anyway';ack.checked=state.ack===true;ack.addEventListener('change',()=>{state.ack=ack.checked;draw(state)});label.append(ack,document.createTextNode('Show orders anyway'));card.append(label)}
+    card.append(el('small','These answers are remembered for this file layout. Imported data stays on this device.'));body.append(card)
     const suggestions=r.sheets.some(sheet=>sheet.mapping.some(m=>['medium','low'].includes(m.confidence)))
     body.append(el('p',(suggestions?'Suggested matches need your review before you use this file. ':'Review the column matches. ')+'Your current products stay unchanged until you choose Use this.','smart-import-note'))
-    if(r.sheets.length>1){const label=el('label','Main stock sheet '),select=el('select');select.id='smart-import-sheet';for(const s of r.sheets){const o=el('option',s.name);o.value=s.name;o.selected=s.name===r.sheet_used;select.append(o)}select.addEventListener('change',()=>{state.sheet=select.value;draw(state)});label.append(select);body.append(label)}
+    if(r.sheets.length>1){const label=el('label','Main stock sheet '),select=el('select');select.id='smart-import-sheet';for(const s of r.sheets){const o=el('option',s.name);o.value=s.name;o.selected=s.name===r.sheet_used;select.append(o)}select.addEventListener('change',()=>{state.sheet=select.value;state.ack=false;draw(state)});label.append(select);body.append(label)}
     for(const sheet of r.sheets){
       const section=el('section',undefined,'smart-import-sheet');section.append(el('h3',sheet.name+' · row '+sheet.header_row))
       const table=el('table'),thead=el('thead'),head=el('tr');for(const text of ['Your column','Use as','Confidence'])head.append(el('th',text));thead.append(head);table.append(thead);const tbody=el('tbody')
@@ -4925,7 +5247,7 @@ const smartImportUI = (() => {
           const ignored=el('option','Ignore this column');ignored.value='';select.append(ignored)
           for(const f of options){const option=el('option',fields[f]||f);option.value=f;select.append(option)}select.value=m.field||''
           const selectedLabel=fields[m.field]||m.field||'Ignore this column',fullValue=el('small',selectedLabel,'smart-mapping-value');fullValue.setAttribute('aria-hidden','true');select.title=selectedLabel
-          select.addEventListener('change',()=>{state.overrides[sheet.name+':'+m.index]=select.value;draw(state)});target.append(select,fullValue)
+          select.addEventListener('change',()=>{state.overrides[sheet.name+':'+m.index]=select.value;state.ack=false;draw(state)});target.append(select,fullValue)
         }else target.textContent=fields[m.field]||m.field
         const dot=el('span','●','smart-confidence-dot');dot.setAttribute('aria-hidden','true');confidence.title=m.reason;confidence.setAttribute('aria-label',m.confidence+' confidence: '+m.reason);confidence.append(dot,document.createTextNode(' '+({high:'High',medium:'Medium — check',low:'Low — check',none:'Ignored'}[m.confidence]||m.confidence)));if(m.confidence!=='high')confidence.append(el('small',m.reason));row.append(source,target,confidence);tbody.append(row)
       }
@@ -4937,34 +5259,34 @@ const smartImportUI = (() => {
     if(state.error)body.append(el('p',state.error.message,'smart-import-problem'))
     const parsed=state.parsed,report=parsed?.import_report
     const omitted=r.warnings.filter(w=>w.includes('row omitted')),setAside=[...(report?.rows_set_aside||[]).map(x=>'Row '+x.row+': '+x.reason),...omitted.map(w=>w.replace(/^(.*?): row ([0-9]+) /,'$1: Row $2: '))]
-    const count=el('p',parsed?`${parsed.items.length} products ready${report?' · '+setAside.length+' rows set aside':''}`:'No products ready yet. Check the column matches.','smart-import-ready');count.id='smart-import-ready';count.setAttribute('aria-live','polite');body.append(count)
+    const count=el('p',parsed?`${parsed.items.length} products ready · ${state.meaning.rows_kept} rows kept · ${state.meaning.rows_flagged} rows flagged${report?' · '+setAside.length+' rows set aside':''}`:'No products ready yet. Check the column matches.','smart-import-ready');count.id='smart-import-ready';count.setAttribute('aria-live','polite');body.append(count)
     if(parsed){
       const table=el('table');table.id='smart-import-preview';const head=el('tr');for(const t of ['Product code','Product name','Stock on hand'])head.append(el('th',t));table.append(head)
       for(const product of parsed.items.slice(0,5)){const row=el('tr');for(const value of [product.sku,product.name,product.on_hand])row.append(el('td',String(value??'')));table.append(row)}body.append(el('h3','First products'),table)
       if(report){disclosure(body,'Rows set aside',setAside);disclosure(body,'Defaults',report.defaulted.map(x=>x.field+' → '+(x.value??'unknown')+' ('+x.reason+')'));disclosure(body,'Preflight column matches',report.matched.map(x=>x.source+' → '+x.field))}
     }
-    use.disabled=!parsed?.items.length||!!r.missing.length||!!state.error
+    use.disabled=!parsed?.items.length||!!r.missing.length||!!state.error||!state.choices.units_confirmed||state.meaning?.requires_ack&&!state.ack
     // Rebuilding a mapping must not strand keyboard users on the page behind it.
-    if(focusKey){const replacement=[...body.querySelectorAll('select')].find(select=>focusKey.id?select.id===focusKey.id:select.dataset.sheet===focusKey.sheet&&select.dataset.index===focusKey.index);replacement?.focus({preventScroll:true});body.scrollTop=scrollTop}
+    if(focusKey){const replacement=[...body.querySelectorAll('select,input')].find(select=>focusKey.id?select.id===focusKey.id:select.dataset.sheet===focusKey.sheet&&select.dataset.index===focusKey.index);replacement?.focus({preventScroll:true});body.scrollTop=scrollTop}
   }
   async function load(file,stillCurrent=()=>true){
     const reviewRequested=forceReview;forceReview=false
-    let legacyError
+    let legacyError,legacyText,legacyParsed
     if(!/\.(xlsx|xls|xlsb)$/i.test(file.name)){
       try{
-        const text=await readStockFile(file),parsed=parseStockImport(text)
+        const text=legacyText=await readStockFile(file),parsed=legacyParsed=parseStockImport(text)
         if(file.size>(/\.json$/i.test(file.name)?16:2)*1024*1024)throw new CsvError(/\.json$/i.test(file.name)?'Bundle bridge must be no larger than 16 MiB.':'CSV must be no larger than 2 MiB.')
         if(!stillCurrent())return null
-        return {parsed,smart:false,remembered:false}
+        if(/\.json$/i.test(file.name))return {parsed,smart:false,remembered:false}
       }catch(error){legacyError=error;if(/\.json$/i.test(file.name))throw error}
     }
     let sheets
-    try{sheets=await readSmartWorkbook(file)}catch(error){if(legacyError?.message?.includes('UTF-8'))throw legacyError;throw error}
+    try{sheets=legacyText!=null?[{name:'CSV',rows:importRows(legacyText,importDelimiter(legacyText)),delimiter:importDelimiter(legacyText)}]:await readSmartWorkbook(file)}catch(error){if(legacyError?.message?.includes('UTF-8'))throw legacyError;throw error}
     if(!stillCurrent())return null
     // Canonical first-row CSV keeps the old exclusions, preflight report and errors.
     if(legacyError&&sheets.length===1&&['sku','name','unit','on_hand','supplier_days'].every((v,i)=>sheets[0].rows[0]?.[i]===v))throw legacyError
     const report=understandStockWorkbook(sheets),saved=rules().find(r=>r.fingerprint===report.fingerprint)
-    const state={file,sheets,sheet:saved?.sheet||report.sheet_used,overrides:Object.assign(Object.create(null),saved?.overrides||{}),report,stillCurrent,edit:false,focus:document.activeElement}
+    const state={file,sheets,sheet:saved?.sheet||report.sheet_used,overrides:Object.assign(Object.create(null),saved?.overrides||{}),choices:inputMeaningChoices(saved?.choices),ack:false,legacyParsed,report,stillCurrent,edit:false,focus:document.activeElement}
     preflight(state)
     if(!state.report.mapping.some(m=>m.field==='sku')&&!state.report.canonical_rows.slice(1).length){throw new CsvError('Could not find a product code (SKU). Add a product-code column in your spreadsheet, then choose the file again.')}
     let sameWarnings=false
@@ -4972,13 +5294,30 @@ const smartImportUI = (() => {
     if(!stillCurrent())return null
     // Remember a layout, never permission to drop products from a later file.
     const noRowsSetAside=state.parsed?.import_report?.rows_set_aside?.length===0&&!state.report.warnings.some(w=>w.includes('row omitted'))
-    if(saved&&!reviewRequested&&state.parsed?.items.length&&!state.report.missing.length&&!state.error&&sameWarnings&&noRowsSetAside){retained={file};return {parsed:state.parsed,smart:true,remembered:true}}
+    if(saved&&state.choices.units_confirmed&&!state.meaning?.requires_ack&&!reviewRequested&&state.parsed?.items.length&&!state.report.missing.length&&!state.error&&sameWarnings&&noRowsSetAside){retained={file};return {parsed:state.parsed,smart:!state.legacyParsed||state.edit,remembered:true}}
     return new Promise(resolve=>{state.resolve=resolve;pending=state;draw(state);dialog.showModal()})
   }
   function status(result,file){
+    showMeaningResults(result.parsed)
     if(!result.smart)return
     const status=document.getElementById('source-status');document.body.append(status);status.classList.add('smart-import-source');status.replaceChildren(document.createTextNode(result.remembered?'Same layout as last time — imported automatically · ':'Using '+file.name+' · '+result.parsed.items.length+' products. File stays on this device. · '))
     const review=el('button','Review');review.type='button';review.id='smart-import-review';review.addEventListener('click',()=>{if(retained){forceReview=true;readCsv(retained.file)}});status.append(review)
+  }
+  function showMeaningResults(parsed){
+    document.getElementById('input-meaning-results')?.remove()
+    const affected=(parsed?.items||[]).filter(i=>i.input_warnings?.length),warnings=[...new Set([...(parsed?.input_meaning?.warnings||[]),...affected.flatMap(i=>i.input_warnings)])]
+    if(!warnings.length)return
+    const banner=el('section',undefined,'input-meaning-results');banner.id='input-meaning-results';banner.setAttribute('aria-label','Check before ordering')
+    banner.append(el('h3','Check before ordering · '+affected.length+' product'+(affected.length===1?'':'s')))
+    for(const text of parsed?.input_meaning?.warnings?.length?parsed.input_meaning.warnings:warnings)banner.append(el('p',text))
+    const list=el('details'),summary=el('summary','Affected products · '+affected.length),rows=el('ul');list.append(summary,rows)
+    for(const entry of affected){const row=el('li',entry.sku+' — '+entry.input_warnings.join(' '));row.dataset.inputWarningSku=entry.sku;rows.append(row)}banner.append(list)
+    const dismiss=el('button','Dismiss');dismiss.type='button';dismiss.setAttribute('aria-label','Dismiss input warning summary');dismiss.addEventListener('click',()=>banner.remove());banner.append(dismiss)
+    // Summary dismissal is DOM/session-only; item warnings survive and every import redraws it.
+    const worklist=document.getElementById('worklist'),layout=document.querySelector('.layout')
+    if(worklist)worklist.prepend(banner)
+    else if(layout)layout.before(banner)
+    else (document.querySelector('main')||document.body).prepend(banner)
   }
   return {load,cancelPending,status}
 })()
@@ -5226,6 +5565,13 @@ function seriesFor(item){if(!seriesCache.has(item))seriesCache.set(item,a2Series
 function hashSku(){return new URLSearchParams(location.hash.slice(1)).get('sku')}
 function groupFor(row){return ['order','running-low','needs-data'].includes(row.bucket)?row.bucket:'ok'}
 function warning(label,text){const d=node('details',null,'warning-detail');const s=node('summary',STRINGS.copy+label);s.title=text;d.append(s,node('p',text));return d}
+function itemInputWarnings(item){
+  if(!item.input_warnings?.length)return null
+  const section=node('section',null,'item-input-warnings');section.dataset.itemInputWarnings=item.sku;section.setAttribute('aria-label',S('inputWarningsFor',{sku:item.sku}))
+  section.append(node('strong',STRINGS.checkBeforeOrdering))
+  for(const text of item.input_warnings)section.append(node('p',text))
+  return section
+}
 function stat(label,value){const e=node('div',null,'date-stat');e.append(node('span',label),node('strong',value));return e}
 function chartPanel(row){
   const {item,guidance:g}=row,panel=node('div');panel.dataset.sku=item.sku
@@ -5235,7 +5581,7 @@ function chartPanel(row){
   big.dataset.long=String((big.textContent||'').length>10)
   big.append(node('small',g.status==='needs-data'?'':item.unit));amount.append(node('p',STRINGS.suggested_order,'quantity-label'),big)
   const pill=node('span',null,'pill');pill.dataset.bucket=row.bucket;pill.append(node('i',null,'dot'),node('span',g.out_of_stock?STRINGS.out_of_stock:g.quantity===0&&g.supply_gap?STRINGS.check_delivery:bucketNames[row.bucket]));amount.append(pill)
-  const dates=node('div',null,'dates');dates.append(stat(STRINGS.runs_out,item.runout_day?shortDate(item.runout_day):g.status==='needs-data'?STRINGS.unknown:'6M+'),stat(STRINGS.arrives,g.delivery_date?label(g.delivery_date.slice(0,7)):STRINGS.unknown));decision.append(amount,dates);panel.append(decision)
+  const dates=node('div',null,'dates');dates.append(stat(STRINGS.runs_out,item.runout_day?shortDate(item.runout_day):g.status==='needs-data'?STRINGS.unknown:'6M+'),stat(STRINGS.arrives,g.delivery_date?label(g.delivery_date.slice(0,7)):STRINGS.unknown));decision.append(amount,dates);panel.append(decision);const inputWarnings=itemInputWarnings(item);if(inputWarnings)panel.append(inputWarnings)
   const section=node('div',null,'chart-section'),card=node('div',null,'chart-card')
   if(item.held||g.status==='needs-data')card.append(node('p',STRINGS.needs_data,'empty'))
   else card.append(fullChart(row))

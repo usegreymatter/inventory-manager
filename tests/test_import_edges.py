@@ -35,6 +35,14 @@ def test_unicode_identity_trimming_parity(tmp_path, space):
 def test_repeat_location_is_set_aside_without_double_count(tmp_path, location):
     first = 'W1' if location.strip() else ''
     data = parity(tmp_path, f'SKU,Name,Warehouse,On Hand,Jan 2026,Feb 2026,Mar 2026\nA,Widget,{first},10,1,2,3\nA,Widget,{location},20,4,5,6\nA,Widget,W2,30,7,8,9\n')
+    # R3: explicit blank warehouse cells are Unspecified contributors, not rejected duplicates.
+    if not location.strip():
+        assert data['items'][0]['on_hand'] == 60
+        assert data['items'][0]['monthly_sales'] == [12, 15, 18]
+        assert data['import_report']['rows_imported'] == 3
+        assert not data['import_report']['rows_set_aside']
+        assert any('Unspecified' in w for w in data['import_report']['warnings'])
+        return
     assert data['items'][0]['on_hand'] == 40
     assert data['items'][0]['monthly_sales'] == [8, 10, 12]
     report = data['import_report']

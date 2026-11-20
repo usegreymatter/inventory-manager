@@ -4,15 +4,15 @@
 
 **Free, open-source reorder planner: what to buy, how much, by when. Offline, and your data stays on your device.**
 
-![Stock Runway worklist, light theme](docs/img/worklist-light.png)
+![Stock Runway Simple worklist, risk tiers, Why this amount and local Excel export using synthetic demo data](docs/img/demo.gif)
 
-<sub>Dark theme: [docs/img/worklist-dark.png](docs/img/worklist-dark.png). Both screenshots show the built-in sample data.</sub>
+<sub>Still images: [light](docs/img/worklist-light.png) · [dark](docs/img/worklist-dark.png). All demos use synthetic data.</sub>
 
 ## Try it
 
 **[Open the demo](https://usegreymatter.github.io/inventory-manager/)** · [Source repository](https://github.com/usegreymatter/inventory-manager)
 
-The Pages link above opens the demo directly in your browser. For offline use, download `stock-runway.html` from [Releases](https://github.com/usegreymatter/inventory-manager/releases) when an asset is available, or open [`standalone/stock-runway.html`](standalone/stock-runway.html) on GitHub and choose **Download raw file** (not Save Page on the code preview). Open the downloaded `.html` file in any modern browser: double-click it or use **Open with → your browser**. It is one file and needs no server, account, install or internet. A 1,000-product synthetic demo is in [`standalone/stock-runway-demo-1000.html`](standalone/stock-runway-demo-1000.html); download and open it the same way. Keep [LICENSES/OFL-1.1.txt](LICENSES/OFL-1.1.txt) and [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) alongside copies you redistribute.
+The Pages link above opens the demo directly in your browser. For offline use, download **`stock-runway-1.1.0.html`** from [Releases](https://github.com/usegreymatter/inventory-manager/releases/tag/v1.1.0), or open [`standalone/stock-runway.html`](standalone/stock-runway.html) on GitHub and choose **Download raw file** (not Save Page on the code preview). Open the downloaded `.html` file in any modern browser: double-click it or use **Open with → your browser**. It is one file and needs no server, account, install or internet. A 1,000-product synthetic demo is in [`standalone/stock-runway-demo-1000.html`](standalone/stock-runway-demo-1000.html); download and open it the same way. Every built HTML carries the MIT license and [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Only `option-gm-c` embeds Poppins and Tajawal and includes their OFL notice and full license; keep [LICENSES/OFL-1.1.txt](LICENSES/OFL-1.1.txt) alongside redistributed copies of that variant. The shipped Arctic page and its demos use system fonts.
 
 To keep a local copy:
 
@@ -52,7 +52,15 @@ python3 stock_runway.py samples/synthetic --bundle --today 2026-11-12 -o orders.
 python3 stock_runway.py --help
 ```
 
-The first prints an order list as CSV; the second reads a canonical CSV bundle ([contract](docs/data/CONTRACT.md)) and writes `orders.csv`. Optional read-only Odoo access and the Hermes Desktop plugin are described in [docs/GUIDE.md](docs/GUIDE.md).
+The first reviews the input and prints an order list as CSV if no acknowledgement is needed; the second reads a canonical CSV bundle ([contract](docs/data/CONTRACT.md)) and writes `orders.csv`.
+
+Every single CSV gets an `Input meaning: {…}` report on stderr. Exit **2** can mean input review needs acknowledgement (for example, the latest sales month is still in progress), as well as an argument/file error: check the reported risks, then use `--show-orders-anyway` to acknowledge them, not repair them. `--stock-includes-reserved` subtracts a recognised reserved/allocated column; `--incoming-not-in-file` ignores incoming in this file, retains `incoming_unknown` and counts it as 0, with a warning to check open POs. These interpretation flags are for single CSV files, not `--bundle`; the reserved flag cannot be combined with `--strict`. Full rules, optional read-only Odoo access and the Hermes Desktop plugin: [docs/GUIDE.md](docs/GUIDE.md#planning-and-order-export).
+
+Stock CSV imports also print an **Input meaning** review to stderr. Flagged risks block order output with **exit code 2** until you check the file and explicitly pass `--show-orders-anyway`; acknowledgement does not repair invalid rows. Use `--stock-includes-reserved` only when stock includes allocations and a reserved column should be deducted, or `--incoming-not-in-file` to ignore undated incoming quantities and keep incoming supply explicitly unknown (separate confirmed receipts remain). These two interpretation flags are for a stock CSV, not a canonical bundle; the reserved flag cannot be combined with `--strict`.
+
+Leading blank monthly sales before the first recorded value are counted as **not yet launched**, not missing sales; internal and trailing blanks still need review. A latest sales month still in progress warns that partial sales may lower the forecast and requires fresh acknowledgement. This review does not change the forecast maths or automatically remove the current month.
+
+For a readable quantity explanation, use `--explain` (CSV) or `--json`. Explanation terms normally display to two decimal places, with a **display rounding** ledger term if needed to make the visible sum match the displayed order. This is formatting, not another purchase adjustment; fractional order quantities can retain up to six decimals. JSON also includes the exact `why_breakdown` ledger and `input_warnings`. See [the explanation contract](docs/WHY-THIS-AMOUNT.md).
 
 ## For AI agents
 
@@ -68,4 +76,4 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.
 
 ## License
 
-[MIT](LICENSE) © 2026 Stock Runway contributors. Embedded fonts are under the SIL Open Font License; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+[MIT](LICENSE) © 2026 Stock Runway contributors. Only `option-gm-c` embeds Poppins and Tajawal, under the SIL Open Font License; the other variants use system fonts. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

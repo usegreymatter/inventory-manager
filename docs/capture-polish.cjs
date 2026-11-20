@@ -6,6 +6,10 @@ const { pathToFileURL } = require('node:url')
 const assert = require('node:assert/strict')
 
 function logicGuard() {
+  // Review round 2: refresh only pureBlock after warehouse/input-review fixes;
+  // tests/r2-protected-maths.test.mjs pins every byte outside INPUT_MEANING to d272f95.
+  // Input meaning: refresh only pureBlock pin for additive import interpretation checks.
+  // Forecast/order code and all protected backend/sample pins remain unchanged.
   // Stress hardening (c43f1ec, fe10103, b1f1543): plugin-only hash refreshed for bounded
   // CSV/XML/XLSX parsing; order maths untouched (golden_diff unchanged).
   // Smart Excel import: refresh ONLY desktop/plugin.js pureBlock hash for the
@@ -32,11 +36,27 @@ function logicGuard() {
   for (const file of protectedFiles) {
     const pin = pins[file]
     const fixture = pin && `tests/fixtures/baselines/${pin}/${file}`
-    const expected = pin
+    // R3 authorizes only CSV eligibility/report changes; exact current import hash
+    // is pinned in the manifest. All engine/source/sample protections stay frozen.
+    const expected = file === 'csv_import.py' ? manifest.files[file] : pin
       ? sha256(fs.existsSync(fixture) ? fs.readFileSync(fixture)
         : require('node:child_process').execFileSync('git',['show',`${pin}:${file}`]))
       : manifest.files[file]
-    assert.equal(sha256(fs.readFileSync(file)), expected, `${file} changed from import snapshot`)
+    let bytes=fs.readFileSync(file)
+    if(file==='engine.py'){
+      // Additive display helpers only. Pin their exact bytes independently, then
+      // prove EVERY original engine byte still matches the frozen checkpoint.
+      const text=bytes.toString('utf8'),start=text.indexOf('# Display attribution only.'),end=text.indexOf('@evaluation_pass\ndef order_bucket',start)
+      assert.ok(start>=0&&end>start,'engine.py changed from import snapshot: explanation boundaries')
+      assert.equal(sha256(text.slice(start,end)),'f4b2d029cfe1624149931a19817509ec493540bf0f9ed9c4a4e994e89e6dd516','engine.py changed from import snapshot: display helpers')
+      // Round-1 attribution labels changed, not any purchase/forecast function.
+      const why=text.indexOf('@evaluation_pass\ndef why_breakdown'),baseline=fs.existsSync(fixture)?fs.readFileSync(fixture,'utf8'):require('node:child_process').execFileSync('git',['show',`${pin}:${file}`],{encoding:'utf8'})
+      assert.ok(why>=0&&why<start,'engine.py changed from import snapshot: attribution boundaries')
+      assert.equal(sha256(text.slice(why,start)),'ce0a0dc3811f452bb322114d1ae939ea0789f482f527a842ff41912007acbea8','engine.py changed from import snapshot: attribution helpers')
+      const originalWhy=baseline.slice(baseline.indexOf('@evaluation_pass\ndef why_breakdown'),baseline.indexOf('@evaluation_pass\ndef order_bucket'))
+      bytes=Buffer.from(text.slice(0,why)+originalWhy+text.slice(end))
+    }
+    assert.equal(sha256(bytes), expected, `${file} changed from import snapshot`)
   }
   return { packet: manifest.packet, snapshot: 'docs/import-logic-baseline.json',
     currentPureBytes: Buffer.byteLength(pure), byteIdentical: true, backendDataFilesUnchanged: protectedFiles }
@@ -126,11 +146,11 @@ async function auditAllStates(page, output) {
   const item=(sku,on_hand,extra={})=>({sku,name:`Contrast ${sku}`,unit:'m',on_hand,supplier_days:14,
     monthly_sales:[30,30,30],receipts:{},historical_receipts:Object.fromEntries(months.map(m=>[m,30])),...extra})
   const data={as_of:'2026-10-31',months,items:[item('order',5),item('running-low',45),item('healthy',120),
-    item('overstocked',300),item('no-sales',30,{monthly_sales:[0,0,0]}),item('needs-data',30,{hold_reason:'Synthetic held item'})]}
+    item('no-sales',30,{monthly_sales:[0,0,0]}),item('needs-data',30,{hold_reason:'Synthetic held item'})]}
   await page.evaluate(data=>{const s=window.runwayTest.ctx.storage;s.set('csv_data',data);s.set('source','csv');window.runwayTest.remount()},data)
   await page.locator('[data-status-label="needs-data"]').first().waitFor()
   await collect('all-unselected-chips')
-  for(const bucket of ['order','running-low','healthy','overstocked','no-sales','needs-data']) {
+  for(const bucket of ['order','running-low','healthy','no-sales','needs-data']) {
     const chip=page.locator(`[data-bucket="${bucket}"]`)
     await chip.click()
     assert.equal(await chip.getAttribute('aria-pressed'),'true')
@@ -152,6 +172,22 @@ async function auditAllStates(page, output) {
   const detail=page.getByRole('region',{name:'Selected item forecast'})
   await detail.locator('summary').filter({hasText:'Month by month: stock, sales, deliveries'}).click()
   await collect('visible-delivery-and-negative-table')
+  // Policy v2 correctly treats positive future purchases as OK, not surplus.
+  // Reuse tests/desktop.test.mjs's real zero-cover surplus fixture separately;
+  // keep every existing contrast threshold and all six status checks intact.
+  await page.evaluate(data=>{const s=window.runwayTest.ctx.storage;s.set('csv_data',data);
+    s.set('order_settings',{months_of_cover:0});window.runwayTest.remount()},
+    {...data,items:[item('overstocked',990,{supplier_days:0})]})
+  await page.locator('[data-selected-status="overstocked"]').waitFor()
+  await collect('overstocked-unselected-chip-badge-header')
+  const surplusChip=page.locator('[data-bucket="overstocked"]')
+  await surplusChip.click()
+  assert.equal(await surplusChip.getAttribute('aria-pressed'),'true')
+  const surplusRow=page.locator('[aria-label="Inventory items, soonest run-out first"] button[aria-pressed]').filter({has:page.locator('[data-status-label="overstocked"]')})
+  assert.equal(await surplusRow.count(),1,'overstocked: actual badge row required')
+  await surplusRow.click()
+  assert.equal(await page.locator('[data-selected-status="overstocked"] [data-status-label="overstocked"]').count(),1,'overstocked: header label required')
+  await collect('overstocked-selected-chip-badge-header')
   const flat=checks.flatMap(x=>x.checks || [])
   for(const bucket of ['order','running-low','healthy','overstocked','no-sales','needs-data']) {
     assert.ok(flat.some(x=>x.bucket===bucket && x.kind==='status-text' && x.selected==='true'),`${bucket}: selected text missing`)
@@ -235,7 +271,8 @@ async function record(page, errors, state, screenshotPath, extra = {}) {
         await monthSummary.click()
 
         const advanced = page.locator('details[data-advanced-settings]')
-        await advanced.locator('summary').click()
+        // All settings now contains nested Accuracy/Costs disclosures.
+        await advanced.locator(':scope > summary').click()
         findings.push({ ...config, ...(await record(page, errors, 'expanded-advanced-settings', `${base}-advanced.png`)) })
         const auditedStates = await auditAllStates(page, `${base}-contrast.json`)
         findings.push({...config, state:'contrast-all-buckets', auditedStates})

@@ -2053,7 +2053,17 @@ def why_breakdown(item, today, settings=None, as_of=None):
     minimum = Fraction(str(override.get('minimum_order') or 0))
     if exact > 0 and minimum > exact:
         add('minimum_order', minimum-exact)
-    add('pack_rounding', Fraction(str(target))-exact)
+    delta = Fraction(str(target)) - exact
+    pack = Fraction(str(override.get('pack_size') or 1))
+    if abs(delta) < Fraction(1, 10**9) and delta < 0:
+        add('arithmetic_reconciliation', delta)
+        delta = Fraction(0)
+    if delta < 0 or delta >= pack:
+        # A disabled/no-crossing recommendation is policy, never pack rounding.
+        key = 'no_recent_demand' if target == 0 and guidance.get('monthly_demand') == 0 else 'policy_cap' if delta < 0 else 'policy_adjustment'
+        add(key, delta)
+        delta = Fraction(0)
+    add('pack_rounding', delta)
     # Numeric clients can reduce qty directly with strict equality, even when
     # decimal fractions/cancellation leave a binary64 residue. Never hide it in
     # a forecast/stock component. Two corrections suffice; a bounded reset is a
@@ -2066,6 +2076,89 @@ def why_breakdown(item, today, settings=None, as_of=None):
         add('arithmetic_reconciliation', -running)
         add('arithmetic_reconciliation', target)
     return rows
+
+
+# Display attribution only. Keep labels and precision in sync with whyThisAmount.
+def risk_label(probability):
+    """Display only: Low <10%, Medium 10–40%, High >40%; invalid is withheld."""
+    if isinstance(probability, bool) or not isinstance(probability, (int, float)) or not math.isfinite(probability) or not 0 <= probability <= 1:
+        return None
+    return 'Low' if probability < .1 else 'Medium' if probability <= .4 else 'High'
+
+
+
+_WHY_AMOUNT_LABELS = {
+    'forecast_demand': 'forecast demand', 'stockout_correction': 'stockout correction',
+    'projects_excluded': 'projects excluded', 'manual_change': 'manual demand change',
+    'forecast_alignment': 'forecast alignment', 'committed_orders': 'committed orders',
+    'stock_on_hand': 'stock on hand', 'incoming_supply': 'dated incoming supply',
+    'undated_incoming': 'undated incoming', 'buffer_demand': 'buffer demand',
+    'safety_stock': 'safety stock', 'dated_receipt_netting': 'dated receipt netting',
+    'replenishment_disabled': 'replenishment disabled', 'zero_floor': 'zero floor',
+    'minimum_order': 'MOQ uplift', 'pack_rounding': 'pack rounding',
+    'arithmetic_reconciliation': 'arithmetic reconciliation',
+    'no_recent_demand': 'no recent demand — not ordering',
+    'policy_cap': 'replenishment policy cap', 'policy_adjustment': 'replenishment policy adjustment',
+    'display_rounding': 'display rounding',
+    'late_po_hold': 'Update overdue incoming delivery dates.',
+    'demand_history_hold': 'Check incomplete or invalid demand history.',
+    'committed_orders_hold': 'Check incomplete or invalid committed orders.',
+    'data_hold': 'Check missing or invalid stock, sales, dates or settings.',
+}
+
+
+def human_number(value):
+    """Display-only decimal text; exact quantities remain in why_breakdown."""
+    from decimal import ROUND_HALF_UP
+    return format(Decimal(str(value)).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP), 'f').rstrip('0').rstrip('.') if '.' in format(Decimal(str(value)), 'f') else str(value)
+
+
+@evaluation_pass
+def why_this_amount(item, today, settings=None, as_of=None):
+    """Pure explanation of existing guidance, not a new purchase calculation.
+
+    Signed terms come from why_breakdown in their original order, rounded for
+    humans. Decimal display-rounding reconciles to the displayed quantity;
+    the exact binary64 ledger remains available through why_breakdown.
+    A held recommendation is unknown, never described as a zero-unit order.
+    """
+    from decimal import ROUND_HALF_UP
+    guidance = order_guidance(item, today, settings, as_of)
+    rows = why_breakdown(item, today, settings, as_of)
+    if guidance.get('quantity') is None:
+        # Existing Python/JS forecast reason wording differs; use the shared
+        # ledger's hold marker, retaining detailed source reasons in guidance.
+        text = 'Purchase advice held: ' + _WHY_AMOUNT_LABELS[rows[0]['key']]
+    else:
+        # Round the visible ledger to hundredths (or target precision, up to six).
+        # Integer ticks reconcile without presenting binary64 residue as demand.
+        digits = min(6, max(2, -Decimal(str(guidance['quantity'])).normalize().as_tuple().exponent))
+        scale = 10 ** digits
+        tick = lambda v: int((Decimal(str(v)) * scale).quantize(Decimal(1), rounding=ROUND_HALF_UP))
+        visible = [(r['key'], tick(r['qty'])) for r in rows if r['key'] != 'arithmetic_reconciliation' and abs(r['qty']) >= 1e-9]
+        residue = tick(guidance['quantity']) - sum(v for _, v in visible)
+        if residue:
+            visible.append(('display_rounding', residue))
+        def text_number(ticks):
+            return format(Decimal(ticks) / scale, 'f')
+        terms = [(('+' if i and v >= 0 else '') + text_number(v) + ' [' + _WHY_AMOUNT_LABELS[k] + ']') for i, (k, v) in enumerate((pair for pair in visible if pair[1]))]
+        text = 'Suggested order: ' + text_number(tick(guidance['quantity'])) + ' ' + (item.get('unit') or 'units') + ' = ' + (' '.join(terms) or '0 [no purchase needed]') + '.'
+    if guidance.get('quantity') is not None:
+        values = resolve_order_settings(item, settings or {})['values']
+        text += (' Sells ~' + human_number(guidance.get('monthly_demand', 0)) + '/mo · '
+                 + planning_number(guidance['lead_days']) + '-day delivery · '
+                 + planning_number(normalize_order_settings(settings)['months_of_cover']) + ' months cover'
+                 + (' · pack ' + planning_number(values['pack_size']) if values.get('pack_size') else '')
+                 + (' · MOQ ' + planning_number(values['minimum_order']) if values.get('minimum_order') else '') + '.')
+    if guidance.get('monthly_demand') == 0:
+        text += ' No forecast demand; this does not prove there will be no future sales.'
+    if guidance.get('used_default_lead'):
+        text += ' Assumed lead time: ' + planning_number(guidance['lead_days']) + ' days.'
+    if guidance.get('undated_on_order_assumed_within_lead'):
+        text += ' Undated incoming is assumed within lead time; confirm delivery dates before buying.'
+    if guidance.get('quantity') is not None and 'on_order' not in item:
+        text += ' Unknown incoming is assumed zero; check existing orders before buying.'
+    return text
 
 
 @evaluation_pass

@@ -35,3 +35,17 @@ dialog.smart-import::backdrop{background:var(--backdrop,rgb(0 0 0 / .4))}
 @media(max-width:600px){dialog.smart-import{inset:0;margin:auto;width:calc(100vw - 24px);height:calc(100dvh - 24px);max-height:calc(100dvh - 24px)}.smart-import>header{padding:16px}.smart-import .smart-import-content{padding:16px 16px 40px}.smart-import-actions{padding:12px 16px;gap:8px}.smart-import td,.smart-import th{padding:8px 4px;font-size:12px}.smart-import h2{font-size:22px}.smart-import select{font-size:14px}.smart-import td:nth-child(1){width:26%}.smart-confidence small{font-size:12px}}
 /* Theme follows the host tokens, never the operating-system colour scheme. */
 @media(max-width:600px){.smart-mapping-value{display:block;margin-top:4px;line-height:1.4;font-size:12px;overflow-wrap:anywhere}}
+
+.input-meaning-card,.input-meaning-results{border:1px solid var(--line,#a7b5c7);border-radius:12px;padding:16px;margin:12px 0;background:var(--surface,#f4f7fb);color:var(--ink,#182234)}
+.input-meaning-card label{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:12px 0;font-weight:600}
+.input-meaning-card label select{display:block;width:100%;min-height:44px;max-width:100%;font:inherit}
+.input-meaning-card input[type=checkbox]{width:20px;height:20px;flex-shrink:0}
+.input-meaning-card h3,.input-meaning-results h3{margin:0 0 12px}
+.input-meaning-results li{overflow-wrap:anywhere}
+/* Remains outside collapsed import controls without crowding out the worklist. */
+.worklist>.input-meaning-results{flex:0 0 auto;max-height:28vh;overflow:auto;padding:12px;font-size:13px;overflow-wrap:anywhere}
+.worklist>.input-meaning-results h3{font-size:14px;margin:0 0 8px}
+.worklist>.input-meaning-results p{margin:6px 0}
+.input-warning-marker{margin-inline-start:8px;font-size:11px;font-weight:600;text-decoration:underline;text-decoration-style:dotted}
+.item-input-warnings{margin:8px 0;padding:10px 12px;border-inline-start:3px solid var(--accent,#3f5687);font-size:13px;line-height:1.5;overflow-wrap:anywhere}
+.item-input-warnings p{margin:4px 0}

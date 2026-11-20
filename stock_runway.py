@@ -117,6 +117,9 @@ def _parser():
     parser.add_argument("--strict", action="store_true", help="reject the whole CSV on any invalid row (legacy import rules)")
     parser.add_argument("--max-bytes", type=_max_bytes, default=2 * 1024 * 1024, metavar="N",
                         help="per-file stock/receipts CSV byte limit (default: 2097152 / 2 MiB; not for --bundle)")
+    parser.add_argument("--show-orders-anyway", action="store_true", help="acknowledge flagged input risks after checking missing stock/sales or future dates (all CSV imports)")
+    parser.add_argument("--stock-includes-reserved", action="store_true", help="subtract a reserved/allocated stock column from stock before planning; warn if absent")
+    parser.add_argument("--incoming-not-in-file", action="store_true", help="ignore undated incoming quantities and warn to check open purchase orders")
     parser.add_argument("--receipts", metavar="receipts.csv", help="confirmed receipts CSV (sku,month,quantity)")
     parser.add_argument("--today", type=_iso_date, metavar="YYYY-MM-DD", help="planning date (default: local today)")
     parser.add_argument("--settings", type=Path, help="validated settings JSON (explicit flags override it)")
@@ -145,14 +148,16 @@ def _parser():
     parser.add_argument("--learning-log", type=Path, help="local append-only change log (default: diary path + .learning.jsonl)")
     parser.add_argument("--forecast-diary", type=Path, help="append forecasts to a local JSONL archive (opt-in)")
     parser.add_argument("--all", action="store_true", help="include every item, not only Order now/Order soon")
+    parser.add_argument("--json", action="store_true", help="export a JSON array instead of CSV, including why_this_amount")
+    parser.add_argument("--explain", action="store_true", help="append why_this_amount to CSV (included automatically with --json)")
     return parser
 
 
-def _export_rows(data, engine, today, settings, include_all):
-    return engine.evaluation_pass(_export_rows_pass)(data, engine, today, settings, include_all)
+def _export_rows(data, engine, today, settings, include_all, explain=False):
+    return engine.evaluation_pass(_export_rows_pass)(data, engine, today, settings, include_all, explain)
 
 
-def _export_rows_pass(data, engine, today, settings, include_all):
+def _export_rows_pass(data, engine, today, settings, include_all, explain=False):
     if not all(callable(getattr(engine, name, None)) for name in ("order_guidance", "order_bucket")):
         raise ValueError("This checkout is missing the shared order-guidance engine; use a complete Stock Runway checkout.")
     rows = []
@@ -176,6 +181,10 @@ def _export_rows_pass(data, engine, today, settings, include_all):
                      "safety_stock": guidance.get("safety_stock"),
                      "reorder_point": guidance.get("reorder_point"),
                      "reason": guidance.get("reason", "")})
+        if explain:
+            rows[-1]['input_warnings'] = raw.get('input_warnings', [])
+            rows[-1]['why_breakdown'] = engine.why_breakdown(item, today, settings, data['as_of'])
+            rows[-1]['why_this_amount'] = engine.why_this_amount(item, today, settings, data['as_of'])
     return rows
 
 
@@ -206,11 +215,20 @@ def _csv_cell(value, engine):
     return value
 
 
-def _write_csv(handle, rows):
+def _write_csv(handle, rows, explain=False):
     engine, _ = _load_modules()
-    writer = csv.DictWriter(handle, fieldnames=CSV_FIELDS, lineterminator="\r\n")
+    fields = [*CSV_FIELDS, 'why_this_amount'] if explain else CSV_FIELDS
+    writer = csv.DictWriter(handle, fieldnames=fields, lineterminator="\r\n")
     writer.writeheader()
-    writer.writerows({key: _csv_cell(value, engine) for key, value in row.items()} for row in rows)
+    writer.writerows({key: _csv_cell(value, engine) for key, value in row.items() if key in fields} for row in rows)
+
+
+def _write_rows(handle, rows, as_json=False, explain=False):
+    if as_json:
+        json.dump(rows, handle, ensure_ascii=False, allow_nan=False, indent=2)
+        handle.write('\n')
+    else:
+        _write_csv(handle, rows, explain)
 
 
 def main(argv=None):
@@ -224,6 +242,8 @@ def _main(argv=None):
     args = _parser().parse_args(argv)
     try:
         engine, sources = _load_modules()
+        if args.strict and args.stock_includes_reserved:
+            raise ValueError("--stock-includes-reserved requires preflight import; remove --strict to recognize the reserved column.")
         if args.bundle and args.receipts:
             raise ValueError("Choose a bundle or a receipts path, not both.")
         if args.bundle and args.max_bytes != sources.MAX_CSV_BYTES:
@@ -231,6 +251,14 @@ def _main(argv=None):
         data = (sources.load_bundle(args.stock_csv, today=args.today or date.today().isoformat()) if args.bundle
                 else sources.load_csv(args.stock_csv, args.receipts, max_bytes=args.max_bytes,
                                       **({'strict': True} if args.strict else {})))
+        if args.bundle and (args.stock_includes_reserved or args.incoming_not_in_file):
+            raise ValueError("Input-meaning flags are for a stock CSV, not a canonical bundle.")
+        if not args.bundle:
+            meaning = importlib.import_module(engine.__package__ + ".input_meaning")
+            data = meaning.interpret_csv(args.stock_csv, data, dict(stock_includes_reserved=args.stock_includes_reserved, incoming_not_in_file=args.incoming_not_in_file), args.today or date.today().isoformat(), strict=args.strict, max_bytes=args.max_bytes)
+            print('Input meaning: ' + json.dumps(data['input_meaning'], ensure_ascii=False, separators=(',', ':')), file=sys.stderr)
+            if data['input_meaning']['requires_ack'] and not args.show_orders_anyway:
+                raise ValueError(' '.join(data['input_meaning']['reasons']) + ' Check the file, then use --show-orders-anyway to acknowledge these risks.')
         if 'import_report' in data:
             print('Import check: ' + json.dumps(data['import_report'], ensure_ascii=False, separators=(',', ':')), file=sys.stderr)
         output = Path(args.output).expanduser() if args.output else None
@@ -299,15 +327,15 @@ def _main(argv=None):
         elif args.learn or args.learning_log or args.approve or args.dismiss or args.no_correction or args.enable_correction:
             raise ValueError("Learning controls require --forecast-diary.")
         today = args.today or date.today().isoformat()
-        all_rows = _export_rows(data, engine, today, settings, True)
+        all_rows = _export_rows(data, engine, today, settings, True, args.json or args.explain)
         needs_data = sum(row["status"] == "needs-data" for row in all_rows)
         rows = all_rows if args.all else [row for row in all_rows if row["status"] in ("order", "running-low")]
         if output is None:
-            _write_csv(sys.stdout, rows)
+            _write_rows(sys.stdout, rows, args.json, args.explain)
             sys.stdout.flush()
         else:
-            with output.open("w", newline="", encoding="utf-8-sig") as handle:
-                _write_csv(handle, rows)
+            with output.open("w", newline="", encoding="utf-8" if args.json else "utf-8-sig") as handle:
+                _write_rows(handle, rows, args.json, args.explain)
         summary_handle = sys.stdout if output is not None else sys.stderr
         if args.forecast_diary:
             score = engine.learning_report(data, diary, learn_settings, log)

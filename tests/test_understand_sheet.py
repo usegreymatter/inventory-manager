@@ -246,7 +246,10 @@ class UnderstandSheetTests(unittest.TestCase):
         for path in paths:
             with self.subTest(path=path.name):
                 text = path.read_text(encoding='utf-8-sig')
-                self.assertEqual(json.dumps(preflight(text), ensure_ascii=False),
+                current = preflight(text)
+                # R3 adds only logical contributor identities to valid example reports.
+                self.assertEqual(current['import_report'].pop('accepted_rows'), [1])
+                self.assertEqual(json.dumps(current, ensure_ascii=False),
                                  json.dumps(old.preflight_csv(text), ensure_ascii=False))
 
 

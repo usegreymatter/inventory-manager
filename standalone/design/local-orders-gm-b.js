@@ -51,7 +51,9 @@ function localOrderClear(rows,{received=false,reconcile=false}={}){
  if(localOrderSave(localOrders.records.filter(r=>!skus.has(r.sku))))wlMessage(received?'Local tracking cleared. Import fresh stock counts; no ERP or stock count changed.':'Local order mark removed. File stock and orders unchanged.')
 }
 function localOrderIncoming(i){const r=localOrderFor(i.sku);return i.on_order==null&&!r?null:(i.on_order||0)+(r?.qty||0)}
-function localOrderPill(sku){const r=localOrderFor(sku);if(!r)return null;const p=node('span',(localOrderLate(r)?'Late · ':'')+'Ordered '+shortDate(r.ordered_on),'local-order-pill');p.dataset.late=String(localOrderLate(r));p.title=orderAmount(r.qty)+' '+r.unit+' · expected '+r.expected_on+' · marked on this device — not in your ERP';return p}
+// Display provenance only: local intent keeps the unchanged shared planning input.
+function localOrderDisplay(r){return 'Ordered on this device · expected ~'+shortDate(r.expected_on)+' (lead-time estimate)'}
+function localOrderPill(sku){const r=localOrderFor(sku);if(!r)return null;const p=node('span',(localOrderLate(r)?'Late · ':'')+'Ordered on this device · '+shortDate(r.ordered_on),'local-order-pill');p.dataset.late=String(localOrderLate(r));p.title=orderAmount(r.qty)+' '+r.unit+' · expected ~'+r.expected_on+' (lead-time estimate) · marked on this device — not in your ERP';return p}
 function localOrderActions(rows){
  const wrap=node('div',null,'local-order-actions'),marked=rows.filter(r=>localOrderFor(r.item.sku)),eligible=attentionRows(rows).some(r=>r.guidance.quantity>0&&!localOrderFor(r.item.sku));
  if(eligible)wrap.append(wlBtn('Mark as ordered',()=>localOrderMark(rows)))

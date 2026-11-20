@@ -35,6 +35,8 @@ Open [`../standalone/stock-runway.html`](../standalone/stock-runway.html) direct
 
 **Settings** opens a grouped sheet with ordering, safety stock, alerts and optional EOQ inputs. Settings stay on this device for the current dataset when local storage is available; CSV contents are neither uploaded nor saved. Reload returns to the sample. Forecasts are estimates, not promises.
 
+Only `option-gm-c` embeds Poppins and Tajawal. The shipped Arctic (`option-gm-b`) page, its synthetic demos and all other variants use system fonts. Every built HTML carries the complete MIT license and [third-party notices](../THIRD_PARTY_NOTICES.md); only outputs embedding `@font-face` also carry the font copyright notice and full [SIL Open Font License 1.1](../LICENSES/OFL-1.1.txt). Keep the OFL license and notices alongside redistributed `option-gm-c` HTML or embedded font files; they are not an OFL requirement for the system-font outputs.
+
 ### Worklist
 
 Arctic opens on a replenishment **table worklist**, including the five-product sample. The summary strip labels **Products to order**, **Total units to order**, **Suppliers to contact**, and products already out of stock or running out within the current **urgent_days** window (7 days by default). Each number filters its corresponding products. The data-warning count is explicitly labeled in the header. Units are summed in source product units; review mixed-unit orders per supplier before purchasing. The status tabs are **Order now**, **Soon**, **OK**, and **All**; Overstock, No sales and Needs data appear when present. Counts cover the loaded dataset, not the current search. Default ordering is status urgency, then the engine's order-by date.
@@ -91,6 +93,95 @@ The report shows detected columns, confidence, layout, missing facts, warnings a
 
 ### Planning and order export
 
+#### Input meaning and acknowledgement
+
+Every **single CSV** runs input review, whether or not interpretation flags are
+supplied. Successful `--strict` imports also receive input review. It prints `Input meaning: {…}` JSON on
+**stderr** with warnings, affected SKUs and acknowledgement reasons; it does not
+mix review text into CSV/JSON stdout. Canonical `--bundle` input keeps its own
+validation instead.
+
+- `--show-orders-anyway`: acknowledge the reported input risks **after checking
+  the file**. Without this flag, a review requiring acknowledgement stops before
+  export with exit code **2** (no order output is written). This does not repair
+  invalid rows, bypass row validation or guarantee a safe purchase.
+- `--stock-includes-reserved`: subtract a recognised reserved/allocated quantity
+  column from stock before planning. Contributing warehouse rows are netted at
+  SKU level; only the aggregate available stock is floored at zero. Blank
+  reserved means zero, with a warning; a warehouse with reserved greater than
+  stock gets an oversold warning even when the SKU aggregate is positive. A missing
+  reserved column or blank reserved cell warns that available stock may be overstated,
+  naming the contributing sheet even if another warehouse supplies reserved quantities; invalid reserved
+  quantities set affected rows aside and require acknowledgement. Do not use this
+  flag if stock is already available-to-sell. It cannot be combined with
+  `--strict`, which cannot recognise the extra reserved column.
+- `--incoming-not-in-file`: ignore incoming in this file, retain
+  `incoming_unknown` and count it as 0. Exported incoming remains unknown;
+  separately supplied dated receipts are retained. The warning
+  is **Incoming orders unknown — counted as 0. Check open POs before ordering.**
+
+The two interpretation flags are rejected with `--bundle`. More than 20% of
+source stock rows missing stock or sales, more than 20% of sales-ledger rows
+missing quantity, future sales dates, a latest month still in progress,
+mismatched stock/sales units, conflicting contributor lead times or units,
+identical blank-location rows, or invalid reserved subtraction requires
+acknowledgement. CSV conflicts use the same gate as workbook conflicts.
+
+When compatible stock sheets are added together, Desktop and the offline page require
+**Show orders anyway** after a named-sheet confirmation: **Stock from sheets X, Y was
+added together. Confirm these are separate warehouses — not totals, copies or older
+snapshots.** After import, a **Check before ordering** summary remains beside the
+worklist with the affected-product count. **Dismiss** hides only that summary for
+the current in-memory import; the next accepted import restores it. Affected rows
+retain a text **Input warning** marker, and the product page/side panel keeps each
+warning beside the order advice. Warning text is displayed literally, not as HTML.
+Remove total
+sheets, duplicate exports and older snapshots upstream; acknowledgement does not
+de-duplicate them or change quantities. Exact cell-for-cell identical blank-location
+rows also require acknowledgement: **Identical rows found for SKU … — possible
+duplicate export**. Nonidentical blank-location rows still aggregate as Unspecified.
+
+Exactly 20% does not trigger the missing-row threshold. Leading
+blank sales months before the first nonblank sale count as **not yet launched**
+(`not_yet_launched_cells`), not missing, and need no acknowledgement. All-blank,
+internal and trailing blanks still count as missing. Long-format sales use the
+first nonblank sale month per exact SKU across contributing warehouses too; joined
+wide sales count as evidence, and absent auxiliary sales are guarded. Blank sales
+cells remain zero in the numeric series; the classification is review-only. Affected
+products also show **New product: N months before first sale ignored**. This is
+informational: “ignored” means excluded from the missing-data count, not removed
+from the sales series or forecast window. It does not by itself require
+acknowledgement. All contributing stock/sales unit labels are checked without
+inventing a conversion.
+The current-month warning does not remove or change those sales or the forecast
+maths; automatic exclusion is pending an owner decision.
+
+Input review uses these warnings (`YYYY-MM` is the detected latest month):
+
+- **Incoming partly unknown — known incoming retained; check open POs for every warehouse before ordering.** Known incoming is preserved with `incoming_unknown=true`; only explicit “Not in file” removes `on_order`.
+- **Incoming orders unknown — counted as 0. Check open POs before ordering.**
+- **Oversold: reserved exceeds stock in a warehouse — available stock is netted across contributing warehouses, then floored at 0. Check allocations before ordering.**
+- **Sales and stock units disagree — convert both to the same unit before ordering.**
+- **Latest month (YYYY-MM) is still in progress — partial sales may lower the forecast. Remove it or wait for month end.** This requires acknowledgement, independently of the future-month warning.
+- **Reserved cell is blank — counted as 0; check allocations before ordering.**
+- **Stock is blank but reserved is filled — available stock cannot be calculated.**
+
+```sh
+# Only after reviewing the reported risks:
+python3 stock_runway.py stock.csv --show-orders-anyway --all
+# Only if these descriptions match the export:
+python3 stock_runway.py stock.csv --stock-includes-reserved --incoming-not-in-file --all
+```
+
+Exit **0** means export succeeded; exit **2** means acknowledgement is needed or
+an argument, input or output error occurred. Read stderr to distinguish these
+cases; do not automatically retry with acknowledgement in scripts.
+`--explain` appends a `why_this_amount` CSV column; `--json` exports JSON including
+the explanation and exact `why_breakdown` ledger. See [Why this amount](WHY-THIS-AMOUNT.md)
+for display rounding versus exact quantities.
+
+#### Order settings and output
+
 Advisory stockout detection is separate from the existing exposure correction.
 Use `--stockout-adjust` to opt order guidance into trailing-median replacements;
 it defaults off and never changes the source sales. The exact contract,
@@ -118,6 +209,11 @@ Direct-call edge cases are explicit in the parity corpus: empty array/object `he
 
 Monthly demand stays fractional through the complete calendar demand window.
 Only the final purchase is rounded to whole units or the configured MOQ/pack.
+This is calculation rounding, separate from two-decimal display formatting in
+quantity explanations. A **display rounding** term reconciles the visible ledger
+when needed; it does not change demand or the purchase. Fractional purchase targets
+can retain up to six display decimals. JSON `why_breakdown` keeps the exact ledger;
+see [Pure purchase-quantity explanation](WHY-THIS-AMOUNT.md).
 Display status and order timing use the same calendar inventory-position crossing,
 not snapshot stock divided by just next month's sales. Urgent order checks take
 precedence over Overstocked. Reviewed before/after numbers are in
@@ -148,9 +244,21 @@ The shipped Arctic page previews every CSV before import: **products ready**, so
 
 Python `sources.load_csv(path)` returns the same `import_report` structure as JavaScript `parseCsv(text)`: `matched` (`source` → `field`), `ignored`, `defaulted` (`field`, `value`, `reason`), `rows_imported` (usable source rows, including combined warehouses), `products_ready`, `rows_set_aside` (`row`, `reason`, original `values`), `warnings`, and `source_headers`. Row numbers refer to the original CSV lines, including blank lines. The CLI prints `Import check: {…}` as JSON to **stderr**, even with `-o`; exported CSV remains clean. `--strict` / `load_csv(path, strict=True)` / `parseCsv(text, {strict:true})` retain legacy whole-file row/numeric rejection instead of set-aside/clamping. Encoding and delimiter detection still run in strict mode.
 
+Tolerant preflight also supplies `accepted_rows`: zero-based parsed-record indexes (header is index 0) identifying only the source rows that actually contributed. These are not physical CSV line numbers; quoted multiline cells and blank records must not shift contributor identity. Reserved subtraction and incoming-supply review use these contributors, not rejected rows or a reconstructed range.
+
+#### Joined workbook facts and source evidence
+
+Workbook input review uses the **canonical joined facts** that will be parsed for planning. Separately joined incoming, reserved stock and distinct stock/sales unit fields therefore participate in review; a joined PO total is not reported as absent just because the base stock sheet has no incoming column. Desktop and standalone smart preflight parse the adjusted canonical rows while retaining the original editable mappings and missing-field gates. Rebuilding canonical rows must not turn missing source mappings or unmatched auxiliary sales history into an importable zero-demand product.
+
+Input-meaning warnings are de-duplicated and emitted in a fixed priority order shared by Python and JavaScript (`input-meaning-warning-order.json`), including per-product warnings in exports. Equal-priority messages use the same UTF-16 lexical tie-break in both runtimes, including Unicode sheet/product names. Source-sheet traversal cannot reorder the same risks. An already-available stock header retains its double-subtraction warning even if the reserved column comes from another sheet. When an exact-SKU allocations sheet without a stock column supplies a nonblank reserved quantity (including zero), that joined evidence clears the false “Reserved stock missing” flag for the SKU. Truly absent/blank reserved evidence still warns. A blank base stock value filled from another sheet is described as **filled**, not added together; an actual later warehouse addition is still disclosed.
+
+Canonical arithmetic does **not** replace source-row safety evidence. Completeness counts, leading/internal/trailing blank classification, sales dates and every contributing stock/sales unit label remain source-based, so aggregation cannot hide a blank row or a unit mismatch. Warehouse-level oversold/blank-reserved warnings and invalid-reserved acknowledgement are retained too. When incoming is known for only some stock contributors, keep the known sum and mark incoming partly unknown; **Not in file** is the explicit choice that removes that sum.
+
+Separate non-ledger stock-bearing sheets with compatible quantity columns are treated as warehouse sheets: exact-SKU joins sum **on-hand, reserved, on-order and monthly sales** (and historical receipts where supplied), with **Combined stock from sheets East, West** naming the contributors. Every affected product also retains **Stock from sheets East, West was added together. Confirm these are separate warehouses — not totals, copies or older snapshots.**, and import requires **Show orders anyway**. Identical-looking copies are also summed: remove duplicate exports before import. Incompatible quantity-column schemas are ambiguous, keep the base snapshot and require acknowledgement. Long sales ledgers carrying an on-hand snapshot never become an extra warehouse, in either base-sheet direction. When reserved subtraction is selected, subtract the aggregate reserved quantity from aggregate stock and floor only that SKU-level result at zero. Repeated stock/reserved snapshots in a long sales ledger are not added once per transaction. Conflicting supplier lead times or units keep the first/base value and require acknowledgement before ordering; acknowledgement does not resolve the conflict or convert units. Other metadata differences (including name, supplier, cost, MOQ and pack size) retain the first value and produce one informational summary, counting affected SKUs and showing at most ten shortened examples plus the remaining count. Check those retained values before purchasing. Individual messages are bounded and repeated messages are de-duplicated. Product-wide sales duplicated across warehouse exports must be corrected upstream. See [Review round 3](history/changes/review-round-3.md) for scope and verification status.
+
 - Negative stock is set aside: **negative stock in ERP — fix count**. Blank references, inactive products, invalid numeric cells and malformed row widths are also set aside rather than blocking usable products. `Total`/`Grand Total` footer rows are reported but never treated as products. A file with no usable products is rejected; the page still offers its set-aside download.
-- A negative net-sales month is clamped to zero, with a **returns exceeded sales in YYYY-MM** warning and affected-row count. Blank sales cells remain zero, with a total count warning. Neither is silently cleaned.
-- Repeated SKUs at distinct Warehouse/Location values sum **on-hand, on-order, monthly sales and historical receipts**; sales are explicitly summed even if identical across rows. First-row metadata is retained, mismatched stock units are set aside, and the report says **combined N warehouse rows**. If any warehouse rows are excluded, totals explicitly cover usable rows only. Repeated rows at the same location (including blank locations) and duplicates without a location column are set aside after the first usable row. Review ERP export granularity: product-wide sales repeated on every warehouse row must be de-duplicated in the ERP first.
+- A negative net-sales month is clamped to zero, with a **returns exceeded sales in YYYY-MM** warning and affected-row count. Leading blank monthly sales cells before the first recorded sales value are classified as **not yet launched**, counted in `not_yet_launched_cells`, and excluded from the missing-sales count. Internal or trailing blanks (and rows with no recorded sales value) remain missing sales, not proof of zero demand. This classification is an import-review disclosure, not a new forecasting method or a change to the core maths.
+- Repeated SKUs at distinct Warehouse/Location values sum **on-hand, on-order, monthly sales and historical receipts**; sales are explicitly summed even if identical across rows. First-row metadata is retained, mismatched stock units are set aside, and the report says **combined N warehouse rows**. If any warehouse rows are excluded, totals explicitly cover usable rows only. With a Warehouse/Location column present, blank cells mean **Unspecified**: all otherwise usable blank-location rows aggregate, including repeated blanks, with a warning to check for duplicate exports. Repeated rows at the same **named** location and duplicates with **no location column** are still set aside after the first usable row. A blank cell is not the same as an absent column. Review ERP export granularity: product-wide sales repeated on every warehouse row must be de-duplicated in the ERP first.
 - Comma, semicolon and tab delimiters are detected from the unquoted header. Currency symbols, Western/Indian thousands grouping, space/NBSP/figure-space/narrow-NBSP thousands grouping and accounting parentheses are understood. In semicolon files a single comma means the decimal separator (`1,500` → 1.5); mixed European notation `1.200,50` → 1200.5 also works. Dot-only numbers remain decimal numbers. Lead times such as `2 weeks`, `3 days`, `1 month` become 14, 3, 30 days (a month is explicitly 30 days).
 - UTF-8 (with/without BOM) and BOM-marked UTF-16 LE/BE are accepted. Invalid UTF-8, including cp1256 Arabic exports, fails clearly: **File is not UTF-8; re-export as CSV UTF-8**. The page decodes bytes strictly rather than importing replacement characters/mojibake.
 - Odoo `Product/Vendors/Delivery Lead Time`, `Product/Vendors/Delay` and `Delay` map to supplier lead days. `MinOrdrQty` / `Min Qty`, `Pack` / `Qty per pack`, and `Cost` / `AvgPrice` / `Standard Price` populate the engine's already-supported per-product minimum order, pack size and unit cost. `Min Qty` here means minimum **purchase quantity**, not an ERP min-stock/reorder threshold; export the appropriate purchase field. Purchase UoM stays ignored with a warning: quantities must already use the stock unit. Expected Date is ignored with a warning; it does not establish confirmed incoming supply. `Active=FALSE` or `Inactive=TRUE` sets the product aside.

@@ -2,7 +2,7 @@ Lifecycle: proposed
 
 # Roadmap: connect, automate, learn
 
-## Status today (v1.0.0)
+## Status today (v1.1.0)
 
 Shipped: smart Excel/CSV import with preflight, the canonical CSV bundle, a read-only Odoo source, forecast methods (Current default; Auto experimental), light/dark themes, local order lists kept in the browser, and the Python CLI. **Not built:** the phases below (mapping-file connectors and `sync`, email drafts, auto-reorder, ERP write-back, webhooks, the MCP server). Everything after this section is a plan.
 

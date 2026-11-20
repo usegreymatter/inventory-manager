@@ -38,18 +38,25 @@ def test_every_build_embeds_license_comment(variant):
     else:
         html = builder.build(variant)
         path = ROOT / f"standalone/design/{variant}.html"
-    expected = "<!--\n" + "\n".join((
-        "Stock Runway — MIT License, Copyright (c) 2026 Stock Runway contributors",
-        "Embedded fonts Poppins and Tajawal: SIL Open Font License 1.1, see LICENSES/OFL-1.1.txt and THIRD_PARTY_NOTICES.md",
-        *COPYRIGHTS,
-    )) + "\n-->\n"
+    import re
+    styles = "\n".join(re.findall(r"<style\b[^>]*>(.*?)</style>", html, re.I | re.S))
+    embeds_fonts = bool(re.search(r"@font-face\b", styles, re.I))
+    lines = ["Stock Runway — MIT License, Copyright (c) 2026 Stock Runway contributors"]
+    if embeds_fonts:
+        lines.extend((
+            "Embedded fonts Poppins and Tajawal: SIL Open Font License 1.1, see LICENSES/OFL-1.1.txt and THIRD_PARTY_NOTICES.md",
+            *COPYRIGHTS,
+        ))
+    expected = "<!--\n" + "\n".join(lines) + "\n-->\n"
     assert html.startswith(expected)
     assert html.count(expected) == 1
-    import re
     encoded = re.search(r'<script type="application/json" id="stock-runway-distribution-licenses">(.*?)</SCRIPT>', html)
     assert encoded is not None
     documents = json.loads(encoded.group(1))
-    assert set(documents) == {'LICENSE', 'LICENSES/OFL-1.1.txt', 'THIRD_PARTY_NOTICES.md'}
+    expected_documents = {'LICENSE', 'THIRD_PARTY_NOTICES.md'}
+    if embeds_fonts:
+        expected_documents.add('LICENSES/OFL-1.1.txt')
+    assert set(documents) == expected_documents
     for relative, text in documents.items():
         assert (ROOT / relative).read_text() == text
     assert path.read_text(encoding="utf-8") == html

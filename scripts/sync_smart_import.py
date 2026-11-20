@@ -12,14 +12,15 @@ END = '// SMART_WORKBOOK_END'
 
 def generated():
     module = (ROOT / 'desktop/smart-import.js').read_text()
-    module = re.sub(r'^export\s+', '', module, flags=re.M)
+    # Keep a stable blank-line separator independent of authored EOF formatting.
+    module = re.sub(r'^export\s+', '', module, flags=re.M).rstrip('\n') + '\n\n'
     vocabulary = json.dumps(json.loads((ROOT / 'smart-import-vocabulary.json').read_text()), ensure_ascii=True, separators=(',', ':'))
     return f'''{START}
 const SMART_WORKBOOK = (() => {{
 {module}
 const vocabulary = {vocabulary}
 const aliases = Object.fromEntries([...new Set([...Object.keys(ERP_ALIASES),...Object.keys(vocabulary)])].map(field=>[field,[...(ERP_ALIASES[field]||[]),...(vocabulary[field]||[])]]))
-return {{readWorkbook,understandWorkbook:(sheets,sheet=null,overrides=null)=>understandWorkbook(sheets,sheet,overrides,aliases,PRODUCT_TYPE_ALIASES)}}
+return {{readWorkbook,contributorMetadata,reviewField:source=>Object.entries(REVIEW_ALIASES).find(([,labels])=>labels.includes(key(source)))?.[0]||null,understandWorkbook:(sheets,sheet=null,overrides=null)=>understandWorkbook(sheets,sheet,overrides,aliases,PRODUCT_TYPE_ALIASES)}}
 }})()
 export async function readSmartWorkbook(file) {{
   try {{

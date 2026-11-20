@@ -1,0 +1,15 @@
+[
+  "Stock is blank but reserved is filled",
+  "Reserved stock could not be subtracted",
+  "Stock includes reserved or allocated stock",
+  "Oversold:",
+  "Stock header says already available",
+  "Reserved cell is blank",
+  "Incoming orders unknown",
+  "Incoming partly unknown",
+  "Sales and stock units disagree",
+  "More than 20%",
+  "Sales dates",
+  "Latest month",
+  "New product:"
+]

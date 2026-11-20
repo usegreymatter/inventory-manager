@@ -20,6 +20,15 @@
 - [docs/erp-examples/](docs/erp-examples/): synthetic example exports from eight ERPs
 - [samples/synthetic/](samples/synthetic/): synthetic canonical bundle
 
+## CLI input review
+- Every single-CSV `python3 stock_runway.py stock.csv` invocation prints an `Input meaning: {…}` JSON report to stderr, even without interpretation flags; canonical `--bundle` validation is separate.
+- `--show-orders-anyway` acknowledges reported risks after checking the file; it does not repair invalid data. Do not auto-add it in scripts.
+- `--stock-includes-reserved` subtracts a recognised reserved/allocated column and warns if it is absent; incompatible with `--strict`.
+- `--incoming-not-in-file` ignores incoming in this file, retains `incoming_unknown` and counts it as 0, with a warning to check open POs; separately supplied dated receipts remain.
+- Both interpretation flags are for single CSV files, not `--bundle`. Exit 0 means export succeeded; exit 2 means input review needs acknowledgement (including a latest sales month still in progress) or an argument/input/output error occurred. Read stderr to distinguish them.
+- [docs/GUIDE.md](docs/GUIDE.md#input-review-and-acknowledgement): acknowledgement thresholds, flag rules and output streams.
+- [docs/WHY-THIS-AMOUNT.md](docs/WHY-THIS-AMOUNT.md): `--explain`, `--json`, two-decimal display rounding (up to six places for fractional target precision), explicit `[display rounding]` term, exact JSON ledger.
+
 ## Forecasting
 - [docs/forecast-methods-spec.md](docs/forecast-methods-spec.md): forecast methods (Current = default, Auto = experimental)
 - [docs/forecast-lab/](docs/forecast-lab/): forecast method lab report and integration notes

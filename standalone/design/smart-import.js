@@ -1,4 +1,5 @@
-// Shared, local-only workbook review. No spreadsheet rows are persisted.
+// Shared, local-only workbook review. Mapping rules persist without product rows;
+// accepted standalone datasets remain in page memory, not this mapping store.
 const smartImportUI = (() => {
   const el=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n}
   const dialog=el('dialog',undefined,'settings-sheet smart-import');dialog.id='smart-import';dialog.setAttribute('aria-labelledby','smart-import-title')
@@ -11,13 +12,13 @@ const smartImportUI = (() => {
   const sourceStatus=document.getElementById('source-status'),sourceAnchor=document.createComment('source status home')
   sourceStatus.before(sourceAnchor)
   function resetSourceStatus(){
-    retained=null;sourceStatus.classList.remove('smart-import-source');sourceStatus.querySelector('#smart-import-review')?.remove();sourceAnchor.after(sourceStatus)
+    retained=null;document.getElementById('input-meaning-results')?.remove();sourceStatus.classList.remove('smart-import-source');sourceStatus.querySelector('#smart-import-review')?.remove();sourceAnchor.after(sourceStatus)
   }
   const fields={sku:'Product code (SKU)',name:'Product name',unit:'Unit',on_hand:'Stock on hand',supplier_days:'Lead time (days)',supplier:'Supplier',category:'Category',unit_cost:'Unit cost',date:'Sales date',quantity:'Quantity sold',on_order:'Stock on order',minimum_order:'Minimum order quantity',pack_size:'Pack multiple'}
-  const csv=rows=>rows.map(r=>r.map(v=>'"'+String(v??'').replaceAll('"','""')+'"').join(',')).join('\r\n')+'\r\n'
+  const csv=(rows,delimiter=',')=>rows.map(r=>r.map(v=>'"'+String(v??'').replaceAll('"','""')+'"').join(delimiter)).join('\r\n')+'\r\n'
   function rules(){try{const raw=localStorage.getItem(STORE);if(!raw||raw.length>1000000)return [];const a=JSON.parse(raw);return Array.isArray(a)?a.slice(-20).filter(r=>typeof r.fingerprint==='string'&&r.overrides&&typeof r.overrides==='object'&&!Array.isArray(r.overrides)&&typeof r.warning_fingerprint==='string'):[]}catch{return []}}
   async function warningFingerprint(report,parsed){
-    const bytes=new TextEncoder().encode(JSON.stringify([report.warnings,parsed?.import_report?.warnings||[],parsed?.import_report?.defaulted||[]]))
+    const bytes=new TextEncoder().encode(JSON.stringify([report.warnings,parsed?.import_report?.warnings||[],parsed?.import_report?.defaulted||[],parsed?.input_meaning?.warnings||[],parsed?.input_meaning?.reasons||[]]))
     return Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)),b=>b.toString(16).padStart(2,'0')).join('')
   }
   async function remember(state){
@@ -25,7 +26,7 @@ const smartImportUI = (() => {
       const overrides=Object.create(null)
       for(const sheet of state.report.sheets)for(const m of sheet.mapping)overrides[sheet.name+':'+m.index]=m.field||''
       const confirmed=understandStockWorkbook(state.sheets,state.report.sheet_used,overrides)
-      const entry={fingerprint:state.report.fingerprint,sheet:state.report.sheet_used,overrides,warning_fingerprint:await warningFingerprint(confirmed,state.parsed)}
+      const entry={fingerprint:state.report.fingerprint,sheet:state.report.sheet_used,overrides,choices:inputMeaningChoices(state.choices),warning_fingerprint:await warningFingerprint(confirmed,state.parsed)}
       const entries=rules().filter(r=>r.fingerprint!==entry.fingerprint);entries.push(entry)
       const encoded=JSON.stringify(entries.slice(-20));if(encoded.length<=1000000)localStorage.setItem(STORE,encoded)
     }catch{/* Storage denial means the next upload receives normal review. */}
@@ -33,21 +34,32 @@ const smartImportUI = (() => {
   async function finish(accepted=false){
     if(!pending)return
     const state=pending;pending=null;if(dialog.open)dialog.close()
-    if(accepted&&state.parsed&&state.stillCurrent()){
-      await remember(state);retained={file:state.file};state.resolve(state.stillCurrent()?{parsed:state.parsed,smart:true,remembered:false}:null)
+    if(accepted&&state.parsed&&state.choices.units_confirmed&&(!state.meaning?.requires_ack||state.ack)&&state.stillCurrent()){
+      await remember(state);retained={file:state.file};state.resolve(state.stillCurrent()?{parsed:state.parsed,smart:!state.legacyParsed||state.edit,remembered:false}:null)
     }else state.resolve(null)
     if(state.focus?.isConnected)state.focus.focus()
   }
   function cancelPending(){finish(false);resetSourceStatus();if(typeof finishImportCheck==='function')finishImportCheck(false)}
   cancel.addEventListener('click',()=>finish(false));use.addEventListener('click',()=>{if(!use.disabled)finish(true)})
-  change.addEventListener('click',()=>{if(pending){pending.edit=true;draw(pending);body.querySelector('select')?.focus()}})
+  change.addEventListener('click',()=>{if(pending){pending.edit=true;pending.ack=false;draw(pending);body.querySelector('select')?.focus()}})
   dialog.addEventListener('cancel',event=>{event.preventDefault();finish(false)});dialog.addEventListener('close',()=>{if(!dialog.open)finish(false)})
   function disclosure(parent,label,values){if(!values?.length)return;const d=el('details'),s=el('summary',label+' · '+values.length),list=el('ul');for(const text of values.slice(0,100))list.append(el('li',text));if(values.length>100)list.append(el('li','First 100 shown.'));d.append(s,list);parent.append(d)}
   function preflight(state){
     state.parsed=null;state.error=null
     try{
-      state.report=understandStockWorkbook(state.sheets,state.sheet,state.overrides)
-      if(!state.report.missing.length&&state.report.canonical_rows.length>1){state.parsed=parseStockImport(csv(state.report.canonical_rows));validateDataset(state.parsed)}
+      const original=understandStockWorkbook(state.sheets,state.sheet,state.overrides)
+      if(state.legacyParsed&&!state.edit){
+        // Keep the established CSV row exclusions, warehouse handling and report.
+        state.meaning=reviewCsvInputMeaning(state.sheets,state.legacyParsed,state.choices)
+        state.report=original
+        state.parsed=attachInputMeaning(parseStockImport(csv(state.meaning.sheets[0].rows,state.sheets[0].delimiter||',')),state.meaning);state.report.missing=[];validateDataset(state.parsed)
+      }else{
+        state.meaning=reviewInputMeaning(state.sheets,original,state.choices)
+        // Original mappings remain editable; adjusted canonical joined rows are facts.
+        const adjusted=understandStockWorkbook(state.meaning.sheets)
+        state.report={...original,missing:[...new Set([...original.missing,...adjusted.missing])],canonical_rows:adjusted.canonical_rows}
+        if(!state.report.missing.length&&adjusted.canonical_rows.length>1){state.parsed=attachInputMeaning(parseStockImport(csv(adjusted.canonical_rows)),state.meaning);validateDataset(state.parsed)}
+      }
     }catch(error){state.error=error instanceof CsvError?error:new CsvError(error.message||'Could not read this workbook.')}
   }
   function draw(state){
@@ -55,9 +67,17 @@ const smartImportUI = (() => {
     preflight(state);const r=state.report;body.replaceChildren();if(!r)return
     body.append(el('p',state.file.name,'smart-import-file'))
     const summary=el('p',`${r.sheet_used} · Header row ${r.header_row} · ${r.layout==='long'?'Sales by date':r.layout==='wide'?'Monthly sales columns':'Product list'}`,'smart-import-summary');summary.id='smart-import-summary';body.append(summary)
+    const card=el('section',undefined,'input-meaning-card');card.id='input-meaning-card';card.append(el('h3','Before we suggest orders'))
+    const choose=(id,label,values,current,update)=>{const field=el('label',label),select=el('select');select.id=id;for(const [value,text]of values){const option=el('option',text);option.value=value;select.append(option)}select.value=current;select.addEventListener('change',()=>{update(select.value);state.ack=false;draw(state)});field.append(select);card.append(field)}
+    choose('meaning-stock','Your stock number is',[['available','Available to sell'],['reserved','Includes reserved or allocated stock']],state.choices.stock_includes_reserved?'reserved':'available',value=>state.choices.stock_includes_reserved=value==='reserved')
+    choose('meaning-incoming','Incoming orders',[['included','Included in file'],['unknown','Not in file']],state.choices.incoming_not_in_file?'unknown':'included',value=>state.choices.incoming_not_in_file=value==='unknown')
+    const units=el('label'),confirm=el('input');confirm.type='checkbox';confirm.id='meaning-units';confirm.checked=state.choices.units_confirmed;confirm.addEventListener('change',()=>{state.choices.units_confirmed=confirm.checked;draw(state)});units.append(confirm,document.createTextNode('Units — sales and stock use the same unit'));card.append(units)
+    for(const text of [...(state.meaning?.warnings||[]),...(state.meaning?.reasons||[])])card.append(el('p',text,'smart-import-warning'))
+    if(state.meaning?.requires_ack){const label=el('label'),ack=el('input');ack.type='checkbox';ack.id='meaning-show-anyway';ack.checked=state.ack===true;ack.addEventListener('change',()=>{state.ack=ack.checked;draw(state)});label.append(ack,document.createTextNode('Show orders anyway'));card.append(label)}
+    card.append(el('small','These answers are remembered for this file layout. Imported data stays on this device.'));body.append(card)
     const suggestions=r.sheets.some(sheet=>sheet.mapping.some(m=>['medium','low'].includes(m.confidence)))
     body.append(el('p',(suggestions?'Suggested matches need your review before you use this file. ':'Review the column matches. ')+'Your current products stay unchanged until you choose Use this.','smart-import-note'))
-    if(r.sheets.length>1){const label=el('label','Main stock sheet '),select=el('select');select.id='smart-import-sheet';for(const s of r.sheets){const o=el('option',s.name);o.value=s.name;o.selected=s.name===r.sheet_used;select.append(o)}select.addEventListener('change',()=>{state.sheet=select.value;draw(state)});label.append(select);body.append(label)}
+    if(r.sheets.length>1){const label=el('label','Main stock sheet '),select=el('select');select.id='smart-import-sheet';for(const s of r.sheets){const o=el('option',s.name);o.value=s.name;o.selected=s.name===r.sheet_used;select.append(o)}select.addEventListener('change',()=>{state.sheet=select.value;state.ack=false;draw(state)});label.append(select);body.append(label)}
     for(const sheet of r.sheets){
       const section=el('section',undefined,'smart-import-sheet');section.append(el('h3',sheet.name+' · row '+sheet.header_row))
       const table=el('table'),thead=el('thead'),head=el('tr');for(const text of ['Your column','Use as','Confidence'])head.append(el('th',text));thead.append(head);table.append(thead);const tbody=el('tbody')
@@ -70,7 +90,7 @@ const smartImportUI = (() => {
           const ignored=el('option','Ignore this column');ignored.value='';select.append(ignored)
           for(const f of options){const option=el('option',fields[f]||f);option.value=f;select.append(option)}select.value=m.field||''
           const selectedLabel=fields[m.field]||m.field||'Ignore this column',fullValue=el('small',selectedLabel,'smart-mapping-value');fullValue.setAttribute('aria-hidden','true');select.title=selectedLabel
-          select.addEventListener('change',()=>{state.overrides[sheet.name+':'+m.index]=select.value;draw(state)});target.append(select,fullValue)
+          select.addEventListener('change',()=>{state.overrides[sheet.name+':'+m.index]=select.value;state.ack=false;draw(state)});target.append(select,fullValue)
         }else target.textContent=fields[m.field]||m.field
         const dot=el('span','●','smart-confidence-dot');dot.setAttribute('aria-hidden','true');confidence.title=m.reason;confidence.setAttribute('aria-label',m.confidence+' confidence: '+m.reason);confidence.append(dot,document.createTextNode(' '+({high:'High',medium:'Medium — check',low:'Low — check',none:'Ignored'}[m.confidence]||m.confidence)));if(m.confidence!=='high')confidence.append(el('small',m.reason));row.append(source,target,confidence);tbody.append(row)
       }
@@ -82,34 +102,34 @@ const smartImportUI = (() => {
     if(state.error)body.append(el('p',state.error.message,'smart-import-problem'))
     const parsed=state.parsed,report=parsed?.import_report
     const omitted=r.warnings.filter(w=>w.includes('row omitted')),setAside=[...(report?.rows_set_aside||[]).map(x=>'Row '+x.row+': '+x.reason),...omitted.map(w=>w.replace(/^(.*?): row ([0-9]+) /,'$1: Row $2: '))]
-    const count=el('p',parsed?`${parsed.items.length} products ready${report?' · '+setAside.length+' rows set aside':''}`:'No products ready yet. Check the column matches.','smart-import-ready');count.id='smart-import-ready';count.setAttribute('aria-live','polite');body.append(count)
+    const count=el('p',parsed?`${parsed.items.length} products ready · ${state.meaning.rows_kept} rows kept · ${state.meaning.rows_flagged} rows flagged${report?' · '+setAside.length+' rows set aside':''}`:'No products ready yet. Check the column matches.','smart-import-ready');count.id='smart-import-ready';count.setAttribute('aria-live','polite');body.append(count)
     if(parsed){
       const table=el('table');table.id='smart-import-preview';const head=el('tr');for(const t of ['Product code','Product name','Stock on hand'])head.append(el('th',t));table.append(head)
       for(const product of parsed.items.slice(0,5)){const row=el('tr');for(const value of [product.sku,product.name,product.on_hand])row.append(el('td',String(value??'')));table.append(row)}body.append(el('h3','First products'),table)
       if(report){disclosure(body,'Rows set aside',setAside);disclosure(body,'Defaults',report.defaulted.map(x=>x.field+' → '+(x.value??'unknown')+' ('+x.reason+')'));disclosure(body,'Preflight column matches',report.matched.map(x=>x.source+' → '+x.field))}
     }
-    use.disabled=!parsed?.items.length||!!r.missing.length||!!state.error
+    use.disabled=!parsed?.items.length||!!r.missing.length||!!state.error||!state.choices.units_confirmed||state.meaning?.requires_ack&&!state.ack
     // Rebuilding a mapping must not strand keyboard users on the page behind it.
-    if(focusKey){const replacement=[...body.querySelectorAll('select')].find(select=>focusKey.id?select.id===focusKey.id:select.dataset.sheet===focusKey.sheet&&select.dataset.index===focusKey.index);replacement?.focus({preventScroll:true});body.scrollTop=scrollTop}
+    if(focusKey){const replacement=[...body.querySelectorAll('select,input')].find(select=>focusKey.id?select.id===focusKey.id:select.dataset.sheet===focusKey.sheet&&select.dataset.index===focusKey.index);replacement?.focus({preventScroll:true});body.scrollTop=scrollTop}
   }
   async function load(file,stillCurrent=()=>true){
     const reviewRequested=forceReview;forceReview=false
-    let legacyError
+    let legacyError,legacyText,legacyParsed
     if(!/\.(xlsx|xls|xlsb)$/i.test(file.name)){
       try{
-        const text=await readStockFile(file),parsed=parseStockImport(text)
+        const text=legacyText=await readStockFile(file),parsed=legacyParsed=parseStockImport(text)
         if(file.size>(/\.json$/i.test(file.name)?16:2)*1024*1024)throw new CsvError(/\.json$/i.test(file.name)?'Bundle bridge must be no larger than 16 MiB.':'CSV must be no larger than 2 MiB.')
         if(!stillCurrent())return null
-        return {parsed,smart:false,remembered:false}
+        if(/\.json$/i.test(file.name))return {parsed,smart:false,remembered:false}
       }catch(error){legacyError=error;if(/\.json$/i.test(file.name))throw error}
     }
     let sheets
-    try{sheets=await readSmartWorkbook(file)}catch(error){if(legacyError?.message?.includes('UTF-8'))throw legacyError;throw error}
+    try{sheets=legacyText!=null?[{name:'CSV',rows:importRows(legacyText,importDelimiter(legacyText)),delimiter:importDelimiter(legacyText)}]:await readSmartWorkbook(file)}catch(error){if(legacyError?.message?.includes('UTF-8'))throw legacyError;throw error}
     if(!stillCurrent())return null
     // Canonical first-row CSV keeps the old exclusions, preflight report and errors.
     if(legacyError&&sheets.length===1&&['sku','name','unit','on_hand','supplier_days'].every((v,i)=>sheets[0].rows[0]?.[i]===v))throw legacyError
     const report=understandStockWorkbook(sheets),saved=rules().find(r=>r.fingerprint===report.fingerprint)
-    const state={file,sheets,sheet:saved?.sheet||report.sheet_used,overrides:Object.assign(Object.create(null),saved?.overrides||{}),report,stillCurrent,edit:false,focus:document.activeElement}
+    const state={file,sheets,sheet:saved?.sheet||report.sheet_used,overrides:Object.assign(Object.create(null),saved?.overrides||{}),choices:inputMeaningChoices(saved?.choices),ack:false,legacyParsed,report,stillCurrent,edit:false,focus:document.activeElement}
     preflight(state)
     if(!state.report.mapping.some(m=>m.field==='sku')&&!state.report.canonical_rows.slice(1).length){throw new CsvError('Could not find a product code (SKU). Add a product-code column in your spreadsheet, then choose the file again.')}
     let sameWarnings=false
@@ -117,13 +137,30 @@ const smartImportUI = (() => {
     if(!stillCurrent())return null
     // Remember a layout, never permission to drop products from a later file.
     const noRowsSetAside=state.parsed?.import_report?.rows_set_aside?.length===0&&!state.report.warnings.some(w=>w.includes('row omitted'))
-    if(saved&&!reviewRequested&&state.parsed?.items.length&&!state.report.missing.length&&!state.error&&sameWarnings&&noRowsSetAside){retained={file};return {parsed:state.parsed,smart:true,remembered:true}}
+    if(saved&&state.choices.units_confirmed&&!state.meaning?.requires_ack&&!reviewRequested&&state.parsed?.items.length&&!state.report.missing.length&&!state.error&&sameWarnings&&noRowsSetAside){retained={file};return {parsed:state.parsed,smart:!state.legacyParsed||state.edit,remembered:true}}
     return new Promise(resolve=>{state.resolve=resolve;pending=state;draw(state);dialog.showModal()})
   }
   function status(result,file){
+    showMeaningResults(result.parsed)
     if(!result.smart)return
     const status=document.getElementById('source-status');document.body.append(status);status.classList.add('smart-import-source');status.replaceChildren(document.createTextNode(result.remembered?'Same layout as last time — imported automatically · ':'Using '+file.name+' · '+result.parsed.items.length+' products. File stays on this device. · '))
     const review=el('button','Review');review.type='button';review.id='smart-import-review';review.addEventListener('click',()=>{if(retained){forceReview=true;readCsv(retained.file)}});status.append(review)
+  }
+  function showMeaningResults(parsed){
+    document.getElementById('input-meaning-results')?.remove()
+    const affected=(parsed?.items||[]).filter(i=>i.input_warnings?.length),warnings=[...new Set([...(parsed?.input_meaning?.warnings||[]),...affected.flatMap(i=>i.input_warnings)])]
+    if(!warnings.length)return
+    const banner=el('section',undefined,'input-meaning-results');banner.id='input-meaning-results';banner.setAttribute('aria-label','Check before ordering')
+    banner.append(el('h3','Check before ordering · '+affected.length+' product'+(affected.length===1?'':'s')))
+    for(const text of parsed?.input_meaning?.warnings?.length?parsed.input_meaning.warnings:warnings)banner.append(el('p',text))
+    const list=el('details'),summary=el('summary','Affected products · '+affected.length),rows=el('ul');list.append(summary,rows)
+    for(const entry of affected){const row=el('li',entry.sku+' — '+entry.input_warnings.join(' '));row.dataset.inputWarningSku=entry.sku;rows.append(row)}banner.append(list)
+    const dismiss=el('button','Dismiss');dismiss.type='button';dismiss.setAttribute('aria-label','Dismiss input warning summary');dismiss.addEventListener('click',()=>banner.remove());banner.append(dismiss)
+    // Summary dismissal is DOM/session-only; item warnings survive and every import redraws it.
+    const worklist=document.getElementById('worklist'),layout=document.querySelector('.layout')
+    if(worklist)worklist.prepend(banner)
+    else if(layout)layout.before(banner)
+    else (document.querySelector('main')||document.body).prepend(banner)
   }
   return {load,cancelPending,status}
 })()

@@ -7,7 +7,9 @@ const MAX_ROWS=200000, MAX_COLS=16384, MAX_CELLS=2000000;
 const FIXED=['sku','name','unit','on_hand','supplier_days'];
 const OPTIONAL=['category','supplier','on_order','demand_change_pct','last_count_date'];
 const PER_ITEM=['minimum_order','pack_size','unit_cost'];
-const NUMERIC_FIELDS=new Set(['on_hand','on_order','supplier_days','demand_change_pct','quantity',...PER_ITEM]);
+const REVIEW_FIELDS=['reserved','stock_unit','sales_unit'];
+const REVIEW_ALIASES={reserved:['reserved','reserved qty','reserved quantity','allocated','allocated qty','allocated stock','reserved stock','reserved or allocated stock'],stock_unit:['stock unit','stock uom','inventory unit'],sales_unit:['sales unit','sales uom','sold unit']};
+const NUMERIC_FIELDS=new Set(['reserved','on_hand','on_order','supplier_days','demand_change_pct','quantity',...PER_ITEM]);
 const BALANCE_ERROR='differing on-hand balances; use stock snapshot';
 const AMBIGUOUS_NUMBER='ambiguous number format';
 export const DATE_HEADERS=['date','transaction date','sales date','invoice date','document date','posting date','month','period'];
@@ -369,6 +371,7 @@ function analyse(sheet,overrides,aliases,typeAliases){
   }
   if(!best)best=[{name,header_row:1,score:0,layout:'products',mapping:[],unmapped:[],missing:REQUIRED.map(([,t])=>t),products:0},new Map(),[],2000,false];
   const [report,picked,headers,inferred,hasYear]=best,records=new Map(),warnings=[],locations=new Map();
+  report.accepted_rows=[];report.incoming_evidence=Object.create(null);report.reserved_warnings=Object.create(null);report.input_warnings=Object.create(null);report.reasons=[];
   const [number,style]=sheetNumbers(sheet,picked,report.header_row);
   const percentCells=new Set((sheet.percent_cells||[]).map(([row,col])=>`${row}:${col}`));
   warnings.push(`${name}: Number format: ${style}; review numeric text conventions.`);
@@ -395,15 +398,27 @@ function analyse(sheet,overrides,aliases,typeAliases){
     const location=Array.from(get('location').toLowerCase(),c=>c==='\u0131'?c:c.toUpperCase().toLowerCase()).join('');
     if(records.has(sku)){
       const record=records.get(sku);let reason=null;
-      if((record.get('unit')||'units')!==(get('unit')||'units'))reason='conflicting stock units';
+      if((record.get('unit')||record.get('stock_unit')||'units')!==(get('unit')||get('stock_unit')||'units'))reason='conflicting stock units';
       else if(report.layout!=='long'){
-        if(!location||locations.get(sku).has(''))reason='duplicate sku without warehouse/location';
-        else if(locations.get(sku).has(location))reason='duplicate sku at same warehouse/location';
+        if(!picked.has('location'))reason='duplicate sku without warehouse/location';
+        else if(location&&locations.get(sku).has(location))reason='duplicate sku at same warehouse/location';
         else if(picked.has('on_hand')&&(!record.get('on_hand')||!get('on_hand')))reason='missing on-hand stock for warehouse row';
       }
       if(reason){warnings.push(`${name}: ${sku}: ${reason}; first row kept; row omitted (${rownum}).`);continue;}
-      if(report.layout!=='long')warnings.push(`${name}: ${sku}: combined distinct warehouse/location rows; stock, on order, sales and receipts summed; first-row metadata kept.`);
+      if(report.layout!=='long'){
+        warnings.push(`${name}: ${sku}: combined distinct warehouse/location rows; stock, on order, sales and receipts summed; first-row metadata kept.`);
+        if(!location||locations.get(sku).has(''))warnings.push(`${name}: ${sku}: blank warehouse/location treated as Unspecified; all blank-location rows aggregated, including repeated blanks. Check for duplicate exports.`);
+      }
     }
+    report.accepted_rows.push(rownum-1);
+    if(picked.has('on_hand'))(report.incoming_evidence[sku]??=[]).push(!!get('on_order'));
+    if(picked.has('reserved')&&picked.has('on_hand')){
+      const notes=report.reserved_warnings[sku]??=[],stock=number(get('on_hand')),held=number(get('reserved')||'0');
+      if(NUMERIC.test(stock)&&NUMERIC.test(held)&&+stock>=0&&+stock<=1e12&&+held>+stock)notes.push('Oversold: reserved exceeds stock in a warehouse — available stock is netted across contributing warehouses, then floored at 0. Check allocations before ordering.');
+      if(!get('reserved'))notes.push('Reserved cell is blank — counted as 0; check allocations before ordering.');
+    }
+    // Preserve stock-header provenance even when allocations join later.
+    if(picked.has('on_hand')&&key(headers[picked.get('on_hand')[0]]).includes('available'))(report.reserved_warnings[sku]??=[]).push('Stock header says already available — subtracting reserved again may double-count allocations.');
     if(!records.has(sku))records.set(sku,new Map());const record=records.get(sku);
     if(!locations.has(sku))locations.set(sku,new Set());locations.get(sku).add(location);
     for(const [f,indices] of picked){
@@ -413,24 +428,66 @@ function analyse(sheet,overrides,aliases,typeAliases){
       for(const [j,index] of indices.entries())if(numeric&&percentCells.has(`${rownum-1}:${index}`)&&vals[j])vals[j]=f==='demand_change_pct'?percent(vals[j]):'percentage-formatted quantity; use stock units';
       for(let j=0;j<vals.length;j++)if(monthly&&!f.startsWith('rcv:')&&report.layout!=='long'&&add('0',vals[j]).startsWith('-')){vals[j]='0';warnings.push(`${name}: ${sku}: negative sales in ${f} treated as 0 before warehouse aggregation.`);}
       value=vals[0];
+      if(f==='reserved'&&value&&(!NUMERIC.test(value)||!Number.isFinite(+value)||+value<0||+value>1e12))value='Invalid reserved stock';
       if(monthly)for(const v of vals.slice(1))value=add(value,v);
-      if(['on_hand','on_order'].includes(f)||monthly){
-        if(report.layout==='long'&&['on_hand','on_order'].includes(f)){
+      if(['on_hand','on_order','reserved'].includes(f)||monthly){
+        if(report.layout==='long'&&['on_hand','on_order','reserved'].includes(f)){
           if(value&&!record.get(f))record.set(f,value);
           else if(value&&record.get(f)!==value&&!sameNumber(value,record.get(f))){
             if(f==='on_hand'){record.set(f,BALANCE_ERROR);warnings.push(`${name}: ${sku}: ${BALANCE_ERROR}.`);}
-            else warnings.push(`${name}: differing ${f} for ${sku}; first value kept, not summed across transactions.`);
+            else {const message=`${name}: differing ${f} for ${sku}; first value kept, not summed across transactions.`;warnings.push(message);if(f==='reserved'){report.reasons.push(message);(report.input_warnings[sku]??=[]).push(message);}}
           }
         }else record.set(f,add(record.get(f)||'',value));
-      }else if(value){if(!record.has(f))record.set(f,value);}
+      }else if(value){
+        if(!record.has(f))record.set(f,value);
+      }
     }
     if(report.layout==='long'){const m=month(get('date'),inferred);if(m)record.set(m,add(record.get(m)||'',number(get('quantity'))));else if(get('date'))warnings.push(`${name}: unrecognized transaction date for ${sku}; quantity not imported.`);}
   }
   if(skipped)warnings.push(`${name}: skipped ${skipped} summary or blank-code rows.`);
-  report.products=records.size;return [report,records,warnings,headers];
+  for(const record of records.values())if(!record.get('unit')&&record.get('stock_unit'))record.set('unit',record.get('stock_unit'));
+  // Public JSON-shaped reports keep ordinary prototypes; accumulation above is
+  // null-prototype so product codes such as __proto__ remain literal keys.
+  report.incoming_evidence=Object.fromEntries(Object.entries(report.incoming_evidence));
+  report.reserved_warnings=Object.fromEntries(Object.entries(report.reserved_warnings));
+  const metadata=contributorMetadata(sheet,report);
+  for(const [sku,notes]of Object.entries(metadata.input_warnings))(report.input_warnings[sku]??=[]).push(...notes);
+  report.reserved_missing=metadata.reserved_missing;
+  if(picked.has('on_hand')&&!picked.has('reserved'))report.reserved_missing=Object.fromEntries([...records.keys()].map(sku=>[sku,[name]]));
+  report.informational_skus=metadata.informational_skus;report.reasons=boundedMessages([...report.reasons,...metadata.reasons]);warnings.push(...metadata.reasons);if(metadata.informational_skus.length)warnings.push(metadataSummary(metadata.informational_skus));
+  report.input_warnings=Object.fromEntries(Object.entries(report.input_warnings));
+  report.products=records.size;return [report,records,boundedMessages(warnings),headers];
+}
+
+function shortLabel(value,limit=64){const chars=Array.from(value);return chars.length<=limit?value:chars.slice(0,limit-1).join('')+'…';}
+function boundedMessages(messages){const unique=[...new Set(messages.map(message=>shortLabel(message,512)))];return unique.length<=100?unique:[...unique.slice(0,99),`${unique.length-99} more input warnings omitted; check all source rows before ordering.`];}
+function metadataSummary(skus){skus=[...new Set(skus)];const labels=skus.slice(0,10).map(sku=>shortLabel(sku,24)).join(', '),remaining=skus.length>10?`; ${skus.length-10} more`:'';return `Metadata differences for ${skus.length} SKUs (${labels}${remaining}); first values kept. Informational only.`;}
+function boundedInputWarnings(notes){const keys=Object.keys(notes).sort(),messages=[...new Set(keys.flatMap(sku=>notes[sku].map(note=>shortLabel(note,512))))],keep=new Set(messages.length>100?messages.slice(0,99):messages),omitted='Additional input warnings omitted; check all source rows before ordering.';return Object.fromEntries(Object.entries(notes).map(([sku,entries])=>[sku,[...new Set(entries.map(note=>{const text=shortLabel(note,512);return keep.has(text)?text:omitted;}))]]));}
+
+export function contributorMetadata(sheet,meta){
+  const picked=new Map((meta.mapping||[]).filter(m=>m.field).map(m=>[m.field,[m.index]])),headers=sheet.rows[meta.header_row-1]||[];
+  const reserved=headers.findIndex(h=>REVIEW_ALIASES.reserved.includes(key(h))),[number]=sheetNumbers(sheet,picked,meta.header_row),accepted=new Set(meta.accepted_rows||[]);
+  const warnings=new Map(),missing=new Map(),reasons=[],first=new Map(),identical=new Map(),informational=new Set();
+  const mark=(sku,message)=>{message=shortLabel(message,512);if(!reasons.includes(message)&&reasons.length>=99)message='Additional input warnings omitted; check all source rows before ordering.';if(!warnings.has(sku))warnings.set(sku,[]);if(!warnings.get(sku).includes(message))warnings.get(sku).push(message);if(!reasons.includes(message))reasons.push(message);};
+  for(const [offset,row]of sheet.rows.slice(meta.header_row).entries()){
+    if(!accepted.has(meta.header_row+offset))continue;
+    const get=f=>picked.has(f)?trim(row[picked.get(f)[0]]??''):'',sku=get('sku');if(!sku)continue;
+    if(picked.has('on_hand')&&reserved>=0&&(reserved>=row.length||!trim(row[reserved])))missing.set(sku,[sheet.name]);
+    if(meta.layout!=='long'&&!get('location')){const fingerprint=JSON.stringify(row);if(!identical.has(sku))identical.set(sku,new Set());const seen=identical.get(sku);if(seen.has(fingerprint))mark(sku,`Identical rows found for SKU ${shortLabel(sku)} — possible duplicate export`);seen.add(fingerprint);}
+    if(!first.has(sku))first.set(sku,new Map());const values=first.get(sku);
+    for(const field of picked.keys()){
+      if(['sku','location','active','inactive','date','quantity','on_hand','on_order','reserved'].includes(field)||/^(?:rcv:)?[0-9]{4}-[0-9]{2}$/.test(field))continue;
+      const value=NUMERIC_FIELDS.has(field)?number(get(field),field==='supplier_days'):get(field);
+      if(value){if(values.get(field)&&values.get(field)!==value&&!(NUMERIC_FIELDS.has(field)&&sameNumber(values.get(field),value))){if(['supplier_days','unit','stock_unit','sales_unit'].includes(field))mark(sku,`${shortLabel(sheet.name)}: conflicting ${field} for ${shortLabel(sku)}; first value kept; acknowledge before ordering.`);else informational.add(sku);}if(!values.has(field))values.set(field,value);}
+    }
+  }
+  if(informational.size){const summary=metadataSummary(informational);for(const sku of informational){if(!warnings.has(sku))warnings.set(sku,[]);warnings.get(sku).push(summary);}}
+  return {input_warnings:Object.fromEntries(warnings),reserved_missing:Object.fromEntries(missing),reasons,informational_skus:[...informational]};
 }
 
 export function understandWorkbook(sheets,sheet=null,overrides=null,aliases={},productTypeAliases=[]){
+  // Meaning-specific unit aliases take precedence over generic ERP unit labels.
+  aliases={...REVIEW_ALIASES,...aliases};
   sheets=sheets.map(s=>({name:String(s.name??'Sheet'),delimiter:s.delimiter??null,percent_cells:s.percent_cells||[],rows:(s.rows||[]).map(r=>r.map(v=>String(v??'')))}));limits(sheets);
   if(new Set(sheets.map(s=>s.name)).size!==sheets.length)fail('Sheet names must be unique.');
   const analyses=sheets.map(s=>analyse(s,overrides||{},aliases,productTypeAliases));if(!analyses.length)fail('Workbook has no worksheets.');let base=0;
@@ -439,23 +496,53 @@ export function understandWorkbook(sheets,sheet=null,overrides=null,aliases={},p
     const priority=i=>{const report=analyses[i][0],fields=new Set(report.mapping.map(m=>m.field));return [Number(fields.has('sku')&&fields.has('on_hand')),Number(fields.has('sku')),report.score];};
     for(let i=1;i<sheets.length;i++){const a=priority(i),b=priority(base);for(let j=0;j<a.length;j++){if(a[j]>b[j]){base=i;break;}if(a[j]<b[j])break;}}
   }
-  const report=analyses[base][0],products=new Map([...analyses[base][1]].map(([sku,v])=>[sku,new Map(v)])),warnings=analyses.flatMap(a=>a[2]),matched=new Set(),unmatched=new Set(),available=new Set(report.mapping.filter(m=>m.field).map(m=>m.field));
+  const report=analyses[base][0],products=new Map([...analyses[base][1]].map(([sku,v])=>[sku,new Map(v)])),warnings=analyses.flatMap(a=>a[2]).filter(w=>!w.startsWith('Metadata differences')),matched=new Set(),unmatched=new Set(),available=new Set(report.mapping.filter(m=>m.field).map(m=>m.field)),informational=new Set(analyses.flatMap(([a])=>a.informational_skus).filter(sku=>products.has(sku)));
   const hasSales=values=>[...values].some(([f,v])=>/^[1-9][0-9]{3}-(?:0[1-9]|1[0-2])$/.test(f)&&v);let externalSales=false;
+  const reasons=analyses.flatMap(([a])=>a.reasons),inputWarnings=Object.create(null),reservedMissing=Object.assign(Object.create(null),Object.fromEntries(Object.entries(report.reserved_missing).map(([sku,names])=>[sku,[...names]]))),reservedWarnings=Object.create(null),incomingEvidence=Object.assign(Object.create(null),Object.fromEntries(Object.entries(report.incoming_evidence).map(([sku,e])=>[sku,[...e]]))),baseStock=report.mapping.some(m=>m.field==='on_hand');
+  const quantitySchema=meta=>new Set(meta.mapping.filter(m=>m.field&&isMonth(m.field)).map(m=>m.field)),baseSchema=quantitySchema(report);
+  const stockSheets=baseStock?[report.name]:[],stockSources=new Map(baseStock?[...products.keys()].map(sku=>[sku,[report.name]]):[]),filledSources=new Map(),joinedReserved=new Set(),summedSources=new Set();
+  const flag=(sku,message)=>{message=shortLabel(message,512);if(!reasons.includes(message)&&reasons.length>=99)message='Additional input warnings omitted; check all source rows before ordering.';warnings.push(message);reasons.push(message);(inputWarnings[sku]??=[]).push(message);};
+  for(const [a]of analyses)for(const [sku,notes]of Object.entries(a.input_warnings))if(products.has(sku))(inputWarnings[sku]??=[]).push(...notes.filter(note=>!note.startsWith('Metadata differences')));
+  for(const [a]of analyses)for(const [sku,notes]of Object.entries(a.reserved_warnings))if(products.has(sku))(reservedWarnings[sku]??=[]).push(...notes);
   for(const [i,[other,records]] of analyses.entries()){
     if(i===base)continue;externalSales=externalSales||[...records.values()].some(hasSales);for(const m of other.mapping)if(m.field)available.add(m.field);
     for(const [sku,values] of records){
       if(!products.has(sku)){unmatched.add(sku);continue;}matched.add(sku);const target=products.get(sku);
-      if(target.get('unit')&&values.get('unit')&&target.get('unit')!==values.get('unit')){warnings.push(`${other.name}: conflicting stock units for ${sku}; auxiliary row omitted, base sheet kept.`);continue;}
-      for(const [field,value] of values){if(!target.get(field))target.set(field,value);else if(value&&target.get(field)!==value&&field==='unit')warnings.push(`${other.name}: conflicting stock units for ${sku}; base sheet value kept.`);}
+      if(target.get('unit')&&values.get('unit')&&target.get('unit')!==values.get('unit')){const message=`${other.name}: conflicting stock units for ${sku}; auxiliary row omitted, base sheet kept; acknowledge before ordering.`;flag(sku,message);continue;}
+      const otherStock=other.mapping.some(m=>m.field==='on_hand');
+      if(otherStock&&!target.get('on_hand')&&values.get('on_hand'))filledSources.set(sku,other.name);
+      if(!otherStock&&values.get('reserved')&&!target.get('reserved'))joinedReserved.add(sku);
+      // Transaction balances are snapshots; mismatched period columns may overlap.
+      const otherSchema=quantitySchema(other),combineStock=baseStock&&otherStock&&report.layout!=='long'&&other.layout!=='long'&&baseSchema.size===otherSchema.size&&[...baseSchema].every(f=>otherSchema.has(f));
+      if(combineStock&&target.get('on_hand')&&values.get('on_hand'))summedSources.add(sku);
+      if(baseStock&&otherStock&&report.layout!=='long'&&other.layout!=='long'&&!combineStock){const message=`${other.name}: ambiguous repeated stock for ${sku}: incompatible quantity schema; base sheet values kept where present, not summed; acknowledge before ordering.`;flag(sku,message);}
+      if(combineStock&&!stockSheets.includes(other.name))stockSheets.push(other.name);
+      if(otherStock&&(combineStock||!baseStock))(incomingEvidence[sku]??=[]).push(...(other.incoming_evidence[sku]||[]));
+      else if(values.get('on_order')&&!(incomingEvidence[sku]||[]).some(Boolean)&&(!otherStock||!target.get('on_order')))incomingEvidence[sku]=[true];
+      if(otherStock&&(combineStock||!target.get('on_hand')&&values.get('on_hand'))){if(!stockSources.has(sku))stockSources.set(sku,[]);stockSources.get(sku).push(other.name);for(const name of other.reserved_missing[sku]||[])if(!(reservedMissing[sku]??=[]).includes(name))reservedMissing[sku].push(name);}
+      for(const [field,value] of values){
+        const quantityField=['on_hand','reserved','on_order'].includes(field)||isMonth(field);
+        if(combineStock&&quantityField)target.set(field,add(target.get(field)||'',value));
+        else if(!target.get(field))target.set(field,value);
+        else if(value&&target.get(field)!==value&&!(NUMERIC_FIELDS.has(field)&&sameNumber(value,target.get(field)))){if(!quantityField&&!['supplier_days','unit','stock_unit','sales_unit'].includes(field))informational.add(sku);else{const message=`${shortLabel(other.name)}: conflicting ${field} for ${shortLabel(sku)}; base sheet value kept; acknowledge before ordering.`;flag(sku,message);}}
+      }
     }
   }
+  for(const names of stockSources.values())names.sort((a,b)=>sheets.findIndex(s=>s.name===a)-sheets.findIndex(s=>s.name===b));
+  for(const [sku,names]of stockSources)if(filledSources.has(sku)&&!summedSources.has(sku))flag(sku,`Blank stock in sheet ${shortLabel(report.name)} was filled from sheet ${shortLabel(filledSources.get(sku))}. Check the selected base sheet before ordering.`);else if(names.length>1)flag(sku,'Stock from sheets '+names.join(', ')+' was added together. Confirm these are separate warehouses — not totals, copies or older snapshots.');
+  if(stockSheets.length>1&&summedSources.size)warnings.push('Combined stock from sheets '+stockSheets.join(', '));
   if(unmatched.size)warnings.push(`${unmatched.size} product codes in other sheets did not match ${report.name}; not imported.`);
   const fields=products.size?new Set([...products.values()].flatMap(v=>[...v.keys()])):available;
-  const months=[...fields].filter(f=>/^[1-9][0-9]{3}-(?:0[1-9]|1[0-2])$/.test(f)).sort(),receipts=[...fields].filter(f=>/^rcv:[1-9][0-9]{3}-(?:0[1-9]|1[0-2])$/.test(f)).sort(),headers=[...FIXED,...[...OPTIONAL,...PER_ITEM].filter(f=>fields.has(f)),...months,...receipts],canonical=[headers];
+  for(const sku of joinedReserved){delete reservedMissing[sku];reservedWarnings[sku]=(reservedWarnings[sku]||[]).filter(note=>!note.startsWith('Reserved cell is blank'));if(!reservedWarnings[sku].length)delete reservedWarnings[sku];}
+  if(!fields.has('reserved'))for(const sku of Object.keys(reservedMissing))delete reservedMissing[sku];
+  if(informational.size){const summary=metadataSummary(informational);warnings.push(summary);for(const sku of informational)(inputWarnings[sku]??=[]).push(summary);}
+  const months=[...fields].filter(f=>/^[1-9][0-9]{3}-(?:0[1-9]|1[0-2])$/.test(f)).sort(),receipts=[...fields].filter(f=>/^rcv:[1-9][0-9]{3}-(?:0[1-9]|1[0-2])$/.test(f)).sort(),headers=[...FIXED,...[...OPTIONAL,...PER_ITEM,...REVIEW_FIELDS].filter(f=>fields.has(f)),...months,...receipts],canonical=[headers];
   for(const [sku,values] of products)canonical.push(headers.map(f=>f==='sku'?sku:values.get(f)||(f==='unit'?'units':'')));
   const missing=REQUIRED.filter(([f])=>!products.size&&!available.has(f)||[...products].some(([sku,values])=>f==='sku'?!sku:!values.get(f)||f==='on_hand'&&values.get(f)===BALANCE_ERROR)).map(([,title])=>title);
   const noHistory=externalSales?[...products.values()].filter(v=>!hasSales(v)).length:0;
   if(noHistory){const message=`Sales history for ${noHistory} products (exact SKU match required)`;missing.push(message);warnings.push(message+'; unmatched history is not zero demand; cannot import.');}
   if(analyses.some(([a])=>a.mapping.some(m=>['medium','low'].includes(m.confidence))))warnings.push('Some mappings are suggestions; review medium/low-confidence columns before import.');
-  return {sheets:analyses.map(a=>a[0]),sheet_used:report.name,header_row:report.header_row,layout:report.layout,mapping:report.mapping,unmapped:report.unmapped,missing,warnings:[...new Set(warnings)],match_report:{matched:matched.size,unmatched:unmatched.size},fingerprint:JSON.stringify(analyses.map(([a,,,h])=>[a.name,h])),canonical_rows:canonical};
+  const reviewName='Canonical review',reviewMeta={name:reviewName,header_row:1,mapping:headers.map((f,index)=>({index,source:f,field:f})),accepted_rows:canonical.slice(1).map((_,i)=>i+1)};
+  const review_sheets=[{name:reviewName,rows:canonical}],review_report={sheet_used:reviewName,sheets:[reviewMeta],incoming_evidence:Object.fromEntries(Object.entries(incomingEvidence)),requires_ack:!!reasons.length,reasons:boundedMessages(reasons),input_warnings:boundedInputWarnings(inputWarnings),reserved_missing:Object.fromEntries(Object.entries(reservedMissing)),reserved_warnings:Object.fromEntries(Object.entries(reservedWarnings).map(([sku,notes])=>[sku,[...new Set(notes)]]))};
+  return {review_sheets,review_report,input_warnings:review_report.input_warnings,reserved_missing:review_report.reserved_missing,sheets:analyses.map(a=>a[0]),sheet_used:report.name,header_row:report.header_row,layout:report.layout,mapping:report.mapping,unmapped:report.unmapped,missing,warnings:boundedMessages(warnings),match_report:{matched:matched.size,unmatched:unmatched.size},fingerprint:JSON.stringify(analyses.map(([a,,,h])=>[a.name,h])),canonical_rows:canonical};
 }

@@ -222,7 +222,7 @@ def test_cli_owner_decisions_persist_and_reject_unknown(tmp_path, monkeypatch, c
     from types import SimpleNamespace
     cli=load_cli(); loaded_engine,_=cli._load_modules()
     data=dataset(raw([100+i*10 for i in range(60)])); diary=diary_rows(data,600)
-    stock=tmp_path/'stock.csv';stock.write_text('synthetic')
+    stock=tmp_path/'stock.csv';stock.write_text('sku,name,unit,on_hand,supplier_days,2026-08,2026-09,2026-10\nA,Synthetic,ea,0,14,3,3,3\n')
     archive=tmp_path/'diary.jsonl'; log_path=tmp_path/'log.jsonl'
     learning.append_jsonl(archive,diary)
     def load_csv(path, receipts, *, max_bytes):

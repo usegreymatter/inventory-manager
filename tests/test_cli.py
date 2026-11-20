@@ -148,7 +148,8 @@ def test_all_writes_output_file_and_unknown_incoming_stays_blank(cli_boundary, l
     assert cli.main([str(stock), "--all", "-o", str(output)]) == 0
     captured = capsys.readouterr()
     assert "2 items exported (of 2)" in captured.out
-    assert captured.err.startswith('Import check: ')
+    assert 'Import check: ' in captured.err
+    assert captured.err.startswith('Input meaning: ')
     with output.open(newline="", encoding="utf-8-sig") as handle:
         rows = list(csv.DictReader(handle))
     assert len(rows) == 2

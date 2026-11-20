@@ -11,12 +11,11 @@ START = "import { jsx, jsxs } from 'react/jsx-runtime'\n"
 END = "const pageStyle ="
 DEFAULT_TEMPLATE = "option-gm-b"
 TEMPLATES = ("baseline", "option-a", "option-b", "option-a2", "option-a3", "option-gm-a", "option-gm-b", "option-gm-c")
-LICENSE_NOTICE = """<!--
-Stock Runway — MIT License, Copyright (c) 2026 Stock Runway contributors
-Embedded fonts Poppins and Tajawal: SIL Open Font License 1.1, see LICENSES/OFL-1.1.txt and THIRD_PARTY_NOTICES.md
+LICENSE_NOTICE = """Stock Runway — MIT License, Copyright (c) 2026 Stock Runway contributors
+"""
+FONT_LICENSE_NOTICE = """Embedded fonts Poppins and Tajawal: SIL Open Font License 1.1, see LICENSES/OFL-1.1.txt and THIRD_PARTY_NOTICES.md
 Copyright 2020 The Poppins Project Authors (https://github.com/itfoundry/Poppins)
 (c) 2017 by Boutros International. All rights reserved.
--->
 """
 
 
@@ -151,6 +150,8 @@ def build(template=DEFAULT_TEMPLATE, data=None):
                 presentation += "\n" + (design / "product-page-gm-b.js").read_text(encoding="utf-8")
                 css += "\n" + (design / "product-page-gm-b.css").read_text(encoding="utf-8")
                 presentation += "\n" + (design / "risk-gm-b.js").read_text(encoding="utf-8")
+                presentation += "\n" + (design / "decision-simple-gm-b.js").read_text(encoding="utf-8")
+                css += "\n" + (design / "decision-simple-gm-b.css").read_text(encoding="utf-8")
                 css += "\n" + (design / "risk-gm-b.css").read_text(encoding="utf-8")
                 presentation += "\n" + (design / "import-gm-b.js").read_text(encoding="utf-8")
                 css += "\n" + (design / "import-gm-b.css").read_text(encoding="utf-8")
@@ -188,10 +189,18 @@ def build(template=DEFAULT_TEMPLATE, data=None):
         raise ValueError("Template must contain exactly one core placeholder.")
     if data is not None:
         html = inject_demo(html, data)
+    html = html.replace("__STOCK_RUNWAY_CORE__", core, 1)
+    styles = "\n".join(re.findall(r"<style\b[^>]*>(.*?)</style>", html, re.I | re.S))
+    embeds_fonts = bool(re.search(r"@font-face\b", styles, re.I))
     # Single-file downloads carry the complete license texts, not only links
     # which would be broken when an HTML asset is copied on its own.
+    license_files = ['LICENSE', 'THIRD_PARTY_NOTICES.md']
+    notice = LICENSE_NOTICE
+    if embeds_fonts:
+        license_files.append('LICENSES/OFL-1.1.txt')
+        notice += FONT_LICENSE_NOTICE
     documents = {name: (ROOT / name).read_text(encoding='utf-8')
-                 for name in ('LICENSE', 'LICENSES/OFL-1.1.txt', 'THIRD_PARTY_NOTICES.md')}
+                 for name in license_files}
     # Non-executable JSON preserves exact license bytes, including double
     # hyphens forbidden inside HTML comments. Escape HTML delimiters and keep
     # the uppercase terminator used by other early metadata/script blocks.
@@ -203,7 +212,7 @@ def build(template=DEFAULT_TEMPLATE, data=None):
     if not 0 <= head < 512:
         raise ValueError('Standalone template needs an early document head for license metadata.')
     html = html.replace('<head>', '<head>\n' + full_notices, 1)
-    return LICENSE_NOTICE + html.replace("__STOCK_RUNWAY_CORE__", core, 1)
+    return '<!--\n' + notice + '-->\n' + html
 
 
 def main():

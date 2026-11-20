@@ -23,23 +23,15 @@ test('safety UI persists skips, reveals and restores them without nested control
   assert.ok(writes.every(k=>k==='order_settings'))
 })
 
-test('newer CSV clears persisted skips while same-date reload keeps them',async()=>{
-  const data=clarityData({on_hand:0}), sku=data.items[0].sku
-  let saved={skipped_items:{[sku]:{reason:'Already ordered',skipped_on:'2026-11-01',as_of:data.as_of}}}
-  const persisted={}
-  const ctx={storage:{get:(key,fallback)=>key==='order_settings'?saved:fallback,set:(key,value)=>{persisted[key]=plain(value);if(key==='order_settings')saved=plain(value)}}}
-  const upload=async(lastMonth)=>{
-    const all=nodes(renderComponent('Page',{ctx},{1:'csv',2:data}))
-    const csv=`sku,name,unit,on_hand,supplier_days,2026-09,2026-10,${lastMonth}\n${sku},Test,pcs,0,14,30,30,30\n`
-    await all.find(n=>n.type==='input' && n.props.type==='file').props.onChange({target:{files:[{size:csv.length,arrayBuffer:async()=>new TextEncoder().encode(csv).buffer}]}})
-  }
-  const same='sku,name,unit,on_hand,supplier_days,2026-08,2026-09,2026-10\n'+`${sku},Test,pcs,0,14,30,30,30\n`
-  let all=nodes(renderComponent('Page',{ctx},{1:'csv',2:data}))
-  await all.find(n=>n.type==='input' && n.props.type==='file').props.onChange({target:{files:[{size:same.length,arrayBuffer:async()=>new TextEncoder().encode(same).buffer}]}})
-  assert.equal(saved.skipped_items[sku].reason,'Already ordered')
-  await upload('2026-11')
-  assert.deepEqual(saved.skipped_items,{})
-  assert.equal(persisted.csv_data.as_of,'2026-11-30')
+test('newer reviewed CSV clears persisted skips while same-date reload keeps them',async()=>{
+  const data=clarityData({on_hand:0}),sku=data.items[0].sku
+  const h=smartDesktopHarness({csv_data:data,order_settings:{skipped_items:{[sku]:{reason:'Already ordered',skipped_on:'2026-11-01',as_of:data.as_of}}}})
+  const upload=async months=>{await h.upload(smartTextFile(`sku,name,unit,on_hand,supplier_days,${months}\n${sku},Test,pcs,0,14,30,30,30\n`));h.accept()}
+  await upload('2026-08,2026-09,2026-10')
+  assert.equal(h.values.get('order_settings').skipped_items[sku].reason,'Already ordered')
+  await upload('2026-09,2026-10,2026-11')
+  assert.deepEqual(h.values.get('order_settings').skipped_items,{})
+  assert.equal(h.values.get('csv_data').as_of,'2026-11-30')
 })
 
 test('safety UI shows old-data warning, dismissible missing-incoming tip, incoming and big-order detail',()=>{
@@ -248,6 +240,48 @@ test('minimal empty and zero-quantity attention states cannot imply a supported 
 
 // Inspect the real component props without requiring a desktop/React installation.
 // Browser harness checks remain separate: these mocks do not prove pixel layout.
+test('F1 Desktop input warnings remain by advice and rows after session dismissal; fresh imports reset', async () => {
+  const text='<img src=x onerror="globalThis.warningXss=1"> & <script>bad()</script>'
+  const data=clarityData({on_hand:0,on_order:0}),sku=data.items[0].sku
+  data.items[0].input_warnings=[text]
+  data.input_meaning={warnings:[text],affected:[{sku,warnings:[text]}]}
+  const writes=[],updates=[],ctx={storage:{get:(_,fallback)=>fallback,set:(...args)=>writes.push(args)}}
+  const render=(states={})=>nodes(renderComponent('Page',{ctx},{1:'csv',2:data,...states},updates))
+  let all=render(),banner=all.find(n=>n.props?.['data-input-meaning-results'])
+  assert.ok(banner,'banner visible outside import controls')
+  assert.ok(textValues(nodes(banner)).some(t=>t.includes('1 product')),'affected product count')
+  assert.ok(textValues(nodes(banner)).includes(text),'warning is React text')
+  assert.ok(all.some(n=>n.props?.['data-input-warning-marker']===sku),'row marker')
+  const warningRow=all.find(n=>n.props?.['data-runway-product']&&nodes(n).some(child=>child.props?.['data-input-warning-marker']===sku))
+  assert.match(warningRow.props['aria-label'],/Input warnings?/,'row marker is included in accessible button name')
+  const advice=all.find(n=>n.props?.['data-selected-status'])
+  assert.ok(nodes(advice).some(n=>n.props?.['data-item-input-warnings']===sku),'warning next to selected order advice')
+  assert.ok(textValues(nodes(advice)).includes(text))
+  const dismiss=nodes(banner).find(n=>n.props?.['data-dismiss-input-warnings'])
+  assert.ok(dismiss,'session dismiss control');dismiss.props.onClick()
+  const update=updates.at(-1),dismissed={ [update.index]:update.value }
+  all=render(dismissed)
+  assert.ok(!all.some(n=>n.props?.['data-input-meaning-results']))
+  assert.ok(all.some(n=>n.props?.['data-input-warning-marker']===sku))
+  assert.ok(all.some(n=>n.props?.['data-item-input-warnings']===sku))
+  assert.deepEqual(writes,[],'dismiss never persists storage')
+  const fresh=structuredClone(data)
+  all=nodes(renderComponent('Page',{ctx},{1:'csv',2:fresh,...dismissed}))
+  assert.ok(all.some(n=>n.props?.['data-input-meaning-results']),'new data/import resets warning visibility')
+  for(const n of all)assert.equal(n.props?.dangerouslySetInnerHTML,undefined,'warnings never rendered as HTML')
+  for(const clean of [clarityData({on_order:0}),{...clarityData({on_order:0}),input_meaning:{warnings:[],affected:[]}}]){
+    const cleanNodes=nodes(renderComponent('Page',{ctx},{1:'csv',2:clean}))
+    assert.ok(!cleanNodes.some(n=>n.props?.['data-input-meaning-results']||n.props?.['data-input-warning-marker']||n.props?.['data-item-input-warnings']))
+  }
+  const h=smartDesktopHarness({csv_data:data})
+  const initial=h.render(),summary=initial.find(n=>n.props?.['data-input-meaning-results'])
+  nodes(summary).find(n=>n.props?.['data-dismiss-input-warnings']).props.onClick()
+  assert.ok(!h.render().some(n=>n.props?.['data-input-meaning-results']))
+  await h.upload(smartTextFile('sku,name,unit,on_hand,supplier_days,2026-07,2026-08,2026-09\nA,New import,pcs,0,14,30,30,30\n'))
+  h.accept()
+  assert.ok(h.render().some(n=>n.props?.['data-input-meaning-results']),'accepted import resets dismissal')
+})
+
 function renderComponent(name, props, states = {}, updates = []) {
   let hook = 0
   const element = (type, props, key) => ({ type, props, key })
@@ -1335,6 +1369,8 @@ test('page source and CSV persistence feeds the popup, with no network upload', 
   const csvTree = page.type(page.props)
   const file = nodes(csvTree).find(node => node.type === 'input')
   await file.props.onChange({ target: { files: [{ size: csv.length, arrayBuffer:async()=>new TextEncoder().encode(csv).buffer }] } })
+  assert.equal(values.has('csv_data'),false,'no persistence before review')
+  const h=smartDesktopHarness();await h.upload(smartTextFile(csv));h.accept();values.set('csv_data',h.values.get('csv_data'))
   assert.equal(ui.quickData(ctx).rows[0].sku, 'A')
   const horizon = nodes(csvTree).find(node => node.type?.name === 'Horizon')
   horizon.props.onChange(4)
@@ -2901,7 +2937,9 @@ function smartDesktopHarness(initial = {}) {
   vm.runInContext(source.slice(source.indexOf('const SAMPLE ='), source.indexOf('export default')).replaceAll('export ', '') + '\nglobalThis.smartTest = { Page, smartPreflight, understandStockWorkbook, smartWarningChecksum, rememberSmartMapping, smartRules }', ui)
   const render = () => { stateIndex = 0; refIndex = 0; return nodes(ui.smartTest.Page({ ctx })) }
   const upload = async file => { const target = { files: [file], value: 'local-file' }; await render().find(n => n.props?.id === 'runway-csv').props.onChange({ target }); return render() }
-  return { ctx, values, writes, ui, render, upload }
+  const confirm = () => { let all=render();const unit=all.find(n=>n.props?.['aria-label']==='Units — sales and stock use the same unit');if(unit&&!unit.props.checked)unit.props.onChange({target:{checked:true}});all=render();const ack=all.find(n=>n.props?.['aria-label']==='Show orders anyway');if(ack&&!ack.props.checked)ack.props.onChange({target:{checked:true}});return render() }
+  const accept = () => { const all=confirm();const button=smartButton(all,'Use this');assert.equal(button.props.disabled,false);button.props.onClick();return render() }
+  return { ctx, values, writes, ui, render, upload, confirm, accept }
 }
 const smartTextFile = (text, name = 'messy.csv', size = undefined) => ({ name, size: size ?? new TextEncoder().encode(text).byteLength, arrayBuffer: async () => new TextEncoder().encode(text).buffer })
 const smartMessyCsv = (extra = '') => 'Stock report\nItem Code,Name,On Hand,Jan 2026,Feb 2026,Mar 2026\nA,Private Widget,5,1,2,3\n' + extra
@@ -2910,10 +2948,12 @@ const smartButton = (all, label) => all.find(n => n.type === 'button' && n.props
 test('Smart Desktop XLSX reviews the actual workbook before any csv_data write; Cancel preserves data', async () => {
   const h = smartDesktopHarness(), before = JSON.stringify(h.values.get('csv_data'))
   const bytes = fs.readFileSync(new URL('./fixtures/smart-import/stored_mixed_cells.xlsx', import.meta.url))
-  const all = await h.upload({ name: 'stock.xlsx', size: bytes.length, arrayBuffer: async () => Uint8Array.from(bytes).buffer })
+  let all = await h.upload({ name: 'stock.xlsx', size: bytes.length, arrayBuffer: async () => Uint8Array.from(bytes).buffer })
   assert.ok(all.some(n => n.props?.role === 'dialog' && n.props['aria-labelledby'] === 'smart-import-title'))
   assert.match(textValues(all).join(' '), /We understood your file.*Header row.*Monthly sales columns/s)
-  assert.equal(smartButton(all, 'Use this').props.disabled, false)
+  assert.equal(smartButton(all, 'Use this').props.disabled, true,'unit confirmation required')
+  all=h.confirm()
+  assert.equal(smartButton(all, 'Use this').props.disabled,false)
   assert.equal(h.writes.includes('csv_data'), false)
   assert.equal(JSON.stringify(h.values.get('csv_data')), before)
   smartButton(all, 'Cancel').props.onClick()
@@ -2927,12 +2967,12 @@ test('Smart Desktop messy CSV accepts through preflight, retains Review and reme
   assert.equal(h.writes.includes('csv_data'), false)
   const preview = all.find(n => n.props?.['aria-label'] === 'First five products')
   assert.equal(nodes(preview).filter(n => n.type === 'tbody').flatMap(n => nodes(n).filter(x => x.type === 'tr')).length, 1)
-  smartButton(all, 'Use this').props.onClick()
+  h.accept()
   assert.equal(h.values.get('csv_data').items[0].sku, 'A')
   assert.equal(Object.hasOwn(h.values.get('csv_data'), 'import_report'), false)
   const saved = h.values.get('stock-runway-smart-mappings-v1')
   assert.equal(saved.length, 1)
-  assert.deepEqual(Object.keys(saved[0]).sort(), ['fingerprint', 'overrides', 'sheet', 'warning_checksum'])
+  assert.deepEqual(Object.keys(saved[0]).sort(), ['choices','fingerprint', 'overrides', 'sheet', 'warning_checksum'])
   assert.doesNotMatch(JSON.stringify(saved), /Private Widget|Number format|rows_set_aside|canonical_rows/)
   all = await h.upload(file)
   assert.equal(all.some(n => n.props?.role === 'dialog'), false)
@@ -2957,8 +2997,10 @@ test('Smart Desktop unknown required mapping blocks Use this until Change repair
   all = h.render()
   all.find(n => n.type === 'select' && n.props['aria-label']?.endsWith(': Odd field')).props.onChange({ target: { value: 'sku' } })
   all = h.render()
-  assert.equal(smartButton(all, 'Use this').props.disabled, false)
-  smartButton(all, 'Use this').props.onClick()
+  assert.equal(smartButton(all, 'Use this').props.disabled, true,'unit confirmation required')
+  all=h.confirm()
+  assert.equal(smartButton(all, 'Use this').props.disabled,false)
+  h.accept()
   assert.equal(h.values.get('csv_data').items[0].sku, 'AAA')
   const suggested = await h.upload(smartTextFile('Stock report\nItem Code,Name,Qty On Hand Value,Jan 2026,Feb 2026,Mar 2026\nA,Widget,5,1,2,3\n'))
   assert.ok(suggested.some(n => n.type === 'select' && n.props['aria-label']?.endsWith(': Qty On Hand Value')))
@@ -2967,7 +3009,7 @@ test('Smart Desktop unknown required mapping blocks Use this until Change repair
 test('Smart Desktop same-layout uploads with omitted rows, changed defaults or invalid preflight require review', async () => {
   const h = smartDesktopHarness()
   let all = await h.upload(smartTextFile(smartMessyCsv()))
-  smartButton(all, 'Use this').props.onClick()
+  h.accept()
   const before = JSON.stringify(h.values.get('csv_data'))
   for (const text of [smartMessyCsv('B,Negative,-1,1,2,3\n'), smartMessyCsv().replace('5,1,2,3','5,,2,3'), smartMessyCsv('B,Broken,not-a-number,1,2,3\n')]) {
     all = await h.upload(smartTextFile(text))
@@ -2981,6 +3023,7 @@ test('Smart Desktop stale Use this and deferred read cannot replace a newer uplo
   const old = await h.upload(smartTextFile(smartMessyCsv()))
   const strict = smartTextFile('sku,name,unit,on_hand,supplier_days,2026-01,2026-02,2026-03\nNEW,New,pcs,8,14,1,2,3\n')
   await h.upload(strict)
+  h.accept()
   smartButton(old, 'Use this').props.onClick()
   assert.equal(h.values.get('csv_data').items[0].sku, 'NEW')
   let release
@@ -3009,7 +3052,7 @@ test('Smart Desktop strict CSV stays strict, smart cap is 20 MiB, JSON cap is 16
   assert.match(textValues(all).join(' '), /16 MiB/)
   for (let i = 0; i < 23; i++) {
     all = await h.upload(smartTextFile(smartMessyCsv().replace('Stock report', 'Stock report ' + i).replace('Item Code,Name', 'Item Code,Name,Ignored ' + i).replace('A,Private Widget,5', 'A,Private Widget,,5')))
-    smartButton(all, 'Use this').props.onClick()
+    h.accept()
   }
   assert.equal(h.values.get('stock-runway-smart-mappings-v1').length, 20)
 })
@@ -3018,8 +3061,10 @@ test('Smart Desktop remembered identical warnings never grant permission to omit
   for (const extra of ['B,Negative,-1,1,2,3\n', 'B,Broken,not-a-number,1,2,3\n']) {
     const h = smartDesktopHarness(), file = smartTextFile(smartMessyCsv(extra))
     let all = await h.upload(file)
-    assert.equal(smartButton(all, 'Use this').props.disabled, false)
-    smartButton(all, 'Use this').props.onClick()
+    assert.equal(smartButton(all, 'Use this').props.disabled, true,'unit confirmation required')
+  all=h.confirm()
+  assert.equal(smartButton(all, 'Use this').props.disabled,false)
+    h.accept()
     assert.equal(h.values.get('csv_data').items.length, 1)
     assert.equal(h.values.get('stock-runway-smart-mappings-v1').length, 1)
     all = await h.upload(file)

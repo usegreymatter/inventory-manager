@@ -43,7 +43,7 @@ console.log(JSON.stringify(core.understandWorkbook(p.sheets,p.sheet,p.overrides,
     def test_duplicate_rows_only_combine_distinct_locations_in_same_unit(self):
         header=['SKU','Name','Unit','On hand','2026-01','Warehouse']
         for suffix, stock, sales, warning in [
-            (['A','Widget','pcs','7','3',''], '10','2','without warehouse/location'),
+            (['A','Widget','pcs','7','3',''], '17','5','Unspecified'),
             (['A','Widget','pcs','7','3','north'], '10','2','same warehouse/location'),
             (['A','Widget','boxes','7','3','South'], '10','2','conflicting stock units'),
             (['A','Widget','pcs','7','3','South'], '17','5','combined')]:
@@ -53,7 +53,7 @@ console.log(JSON.stringify(core.understandWorkbook(p.sheets,p.sheet,p.overrides,
                 self.assertEqual(report['canonical_rows'][1][3],stock)
                 self.assertEqual(report['canonical_rows'][1][-1],sales)
                 self.assertIn(warning,' '.join(report['warnings']))
-                if warning!='combined':self.assertIn('row omitted',' '.join(report['warnings']))
+                if warning not in ('combined','Unspecified'):self.assertIn('row omitted',' '.join(report['warnings']))
 
     def test_inactive_and_summary_rows_omitted_before_aggregation(self):
         for field, values in [('Active',['false','0','no']),('Inactive',['true','1','yes'])]:

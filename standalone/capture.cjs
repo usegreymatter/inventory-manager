@@ -1,3 +1,4 @@
+const {acceptMeaning}=require('./qa-input-meaning.cjs')
 // Lifecycle: living. Optional offline browser proof; uses existing Playwright/Chrome.
 // PLAYWRIGHT_MODULE=/absolute/path/playwright/index.js CHROMIUM_EXECUTABLE=... node standalone/capture.cjs
 // Add --design for option-a/option-b only (390x844 + 1440x900, light/dark, .scratch/design).
@@ -55,7 +56,7 @@ async function geometry(page, label, minimum = 40) {
   return m
 }
 async function loadCsv(page, text, name = 'synthetic.csv') {
-  await page.locator('#csv-file').setInputFiles({ name, mimeType:'text/csv', buffer:Buffer.from(text) })
+  await page.locator('#csv-file').setInputFiles({ name, mimeType:'text/csv', buffer:Buffer.from(text) });await acceptMeaning(page)
   await page.waitForFunction(() => !document.getElementById('source-status').textContent.startsWith('Reading'))
 }
 async function designReadability(page, label) {
@@ -273,6 +274,9 @@ async function captureDesigns(browser) {
         check('bad file retains previous dataset', await page.locator('#file-error').isVisible() && await page.locator('#order-count').textContent() === before)
         const csv = 'sku,name,unit,on_hand,supplier_days,on_order,2026-06,2026-07,2026-08\nGAP,<img src=x onerror=alert(1)>,l,0,14,1000,30,30,30\n'
         await page.locator('#dropzone').evaluate((el,text) => { const dt = new DataTransfer(); dt.items.add(new File([text],'dropped.csv',{type:'text/csv'})); el.dispatchEvent(new DragEvent('drop',{bubbles:true,cancelable:true,dataTransfer:dt})) },csv)
+        await page.getByRole('heading',{name:'Before we suggest orders',exact:true}).waitFor({state:'visible'})
+        check('drag and drop waits for meaning review', !(await page.locator('#source-status').textContent()).startsWith('Using dropped.csv'))
+        await acceptMeaning(page)
         await page.waitForFunction(() => document.getElementById('source-status').textContent.startsWith('Using dropped.csv'))
         check('drag and drop parses safely', await page.locator('#orders .product').textContent() === '<img src=x onerror=alert(1)>' && await page.locator('#orders img').count() === 0)
         check('stale-data warning', await page.locator('#stale-warning').isVisible() && (await page.locator('#stale-warning').textContent()).includes('72 days ago'))
@@ -291,7 +295,17 @@ async function captureDesigns(browser) {
         await page.reload(); await page.locator('#order-count').waitFor()
         check('CSV not persisted; reload returns to sample', (await page.locator('#snapshot').textContent()).startsWith('Sample data'))
         const storedKeys = await page.evaluate(() => Object.keys(localStorage))
-        check('only settings persisted', storedKeys.length === 1 && storedKeys[0] === 'stock-runway.standalone.order-settings.v1')
+        check('only settings and reviewed layout defaults persisted', JSON.stringify(storedKeys.sort()) === JSON.stringify(['stock-runway-smart-mappings-v1','stock-runway.standalone.order-settings.v1'].sort()))
+        const rules = await page.evaluate(() => JSON.parse(localStorage.getItem('stock-runway-smart-mappings-v1')))
+        check('remembered layouts contain only mappings and explicit meaning choices', Array.isArray(rules) && rules.length > 0 && rules.every(rule =>
+          JSON.stringify(Object.keys(rule).sort()) === JSON.stringify(['fingerprint','sheet','overrides','choices','warning_fingerprint'].sort()) &&
+          typeof rule.fingerprint === 'string' && JSON.parse(rule.fingerprint).every(layout =>
+            Array.isArray(layout) && layout.length === 2 && layout[0] === 'CSV' && Array.isArray(layout[1]) && layout[1].every(header => typeof header === 'string')) &&
+          /^[a-f0-9]{64}$/.test(rule.warning_fingerprint) && rule.sheet === 'CSV' &&
+          Object.keys(rule.overrides).every(key => /^CSV:\d+$/.test(key)) &&
+          JSON.stringify(Object.keys(rule.choices).sort()) === JSON.stringify(['stock_includes_reserved','incoming_not_in_file','units_confirmed'].sort()) &&
+          Object.values(rule.choices).every(value => typeof value === 'boolean') && rule.choices.units_confirmed))
+        check('uploaded product values and filenames never persisted', !/GAP|ZERO|<img|Out of stock|synthetic\.csv|dropped\.csv/.test(JSON.stringify(rules)))
         // Simulate storage failure at cold load, without changing the browser profile.
         const blocked = await context.newPage(); await setup(blocked)
         await blocked.addInitScript(() => Object.defineProperty(window,'localStorage',{get(){throw Error('blocked')}}))

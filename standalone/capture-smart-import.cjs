@@ -1,3 +1,4 @@
+const {confirmMeaning}=require('./qa-input-meaning.cjs')
 // Lifecycle: living. Offline synthetic workbook UI acceptance, no live data.
 // Run after integration/build:
 // TMPDIR=$PWD/.scratch PLAYWRIGHT_MODULE=/path/to/playwright/index.js \
@@ -76,9 +77,14 @@ async function modalContract(page, entry, label, previous) {
   const intended = baseMapping(entry)
   check(label + ' selected sheet has independent fixture mapping', Boolean(intended), entry.report.sheet_used)
   equal(label + ' physical header matches fixture intent', entry.report.header_row, intended.header_row)
+  // The workbook reader preserves physical blank rows; the established CSV
+  // fallback drops them and names its single sheet CSV. Assert both contracts.
+  const uiReport = entry.uiReport
   equal(label + ' summary sheet/header/layout', await page.locator('#smart-import-summary').textContent(),
-    `${entry.report.sheet_used} · Header row ${intended.header_row} · ${layoutLabel(entry.report.layout)}`)
+    `${uiReport.sheet_used} · Header row ${uiReport.header_row} · ${layoutLabel(uiReport.layout)}`)
   check(label + ' ready count', new RegExp('^' + entry.fixture.expected_product_count + ' products ready(?:\\b| ·)').test(await page.locator('#smart-import-ready').textContent()))
+  if (!await page.locator('#meaning-units').isChecked()) check(label + ' units require explicit review', await page.locator('#smart-import-use').isDisabled())
+  await confirmMeaning(page)
   check(label + ' confirmation enabled', await page.locator('#smart-import-use').isEnabled())
   const expectedPreview = entry.report.canonical_rows.slice(1, 6).map(row => [row[0], row[1], String(Number(row[3]))])
   const preview = await page.locator('#smart-import-preview tr').evaluateAll(rows => rows.filter(row => row.querySelector('td')).map(row => [...row.querySelectorAll('td')].map(cell => cell.textContent)))
@@ -125,6 +131,7 @@ async function mappingCorrection(page, entry, label, previous) {
   check(label + ' missing stock disables Use this', await page.locator('#smart-import-use').isDisabled())
   await unchanged(page, previous, label + ' broken mapping preserves existing dataset')
   await mapping.selectOption('on_hand')
+  await confirmMeaning(page)
   check(label + ' corrected stock enables Use this', await page.locator('#smart-import-use').isEnabled())
   check(label + ' missing warning clears after correction', !await page.locator('#smart-import-missing').isVisible())
   equal(label + ' redundant manual mapping preserves physical header', await page.locator('#smart-import-summary').textContent(),
@@ -158,25 +165,29 @@ async function repeatSafety(page, entry, label, previous) {
   await upload(page, payload(original.replace('units,8,21,', 'units,-8,21,')))
   await page.waitForFunction(() => document.getElementById('smart-import').open || !document.getElementById('source-status').textContent.includes('Reading'))
   check(label + ' changed rows never bypass review', await page.locator('#smart-import').isVisible())
-  equal(label + ' exact rejected/ready counts', await page.locator('#smart-import-ready').textContent(), '1 products ready · 1 rows set aside')
+  equal(label + ' exact rejected/ready counts', await page.locator('#smart-import-ready').textContent(), '1 products ready · 1 rows kept · 1 rows flagged · 1 rows set aside')
   await unchanged(page, previous, label + ' rejected repeat preserves prior products before confirmation')
   const rejects = page.locator('#smart-import details').filter({ has: page.locator('summary', { hasText: /^Rows set aside · 1$/ }) })
   await rejects.locator('summary').click()
   check(label + ' rejected row reason is readable', /Row \d+:.*(?:on.hand|negative|stock)/i.test(await rejects.innerText()), await rejects.innerText())
   equal(label + ' review does not rewrite mapping storage', await savedRules(), saved)
+  await confirmMeaning(page)
   await page.locator('#smart-import-use').click()
   await page.waitForFunction(() => !document.getElementById('smart-import').open && window.smartImportQA.state().count === 1)
   equal(label + ' explicit Use this accepts usable products only', (await state(page)).items.map(item => item.sku), ['A-001'])
   const accepted = await state(page)
   await upload(page, payload(original.replace('units,8,21,', 'units,-8,21,')))
   await dialog(page)
-  equal(label + ' previously accepted exclusions still require review', await page.locator('#smart-import-ready').textContent(), '1 products ready · 1 rows set aside')
+  equal(label + ' previously accepted exclusions still require review', await page.locator('#smart-import-ready').textContent(), '1 products ready · 1 rows kept · 1 rows flagged · 1 rows set aside')
   await page.locator('#smart-import-cancel').click()
   await unchanged(page, accepted, label + ' cancel repeat with exclusions keeps prior data')
   // Restore a clean confirmation before checking changed defaults and warnings.
   await upload(page, payload(original))
   await page.waitForFunction(() => document.getElementById('smart-import').open || !document.getElementById('source-status').textContent.includes('Reading'))
-  if (await page.locator('#smart-import').isVisible()) await page.locator('#smart-import-use').click()
+  if (await page.locator('#smart-import').isVisible()) {
+    await confirmMeaning(page)
+    await page.locator('#smart-import-use').click()
+  }
   await page.waitForFunction(() => window.smartImportQA.state().count === 2 && !document.getElementById('smart-import').open)
   const clean = await state(page)
   await upload(page, payload(original.replace('units,8,21,', 'units,8,,')))
@@ -195,13 +206,21 @@ async function repeatSafety(page, entry, label, previous) {
 }
 async function sourceStatusReset(page, entry, label) {
   const canonical = 'sku,name,unit,on_hand,supplier_days,2026-01,2026-02,2026-03\nLEGACY-001,Synthetic legacy product,units,7,12,1,2,3\n'
+  const previous = await state(page)
   await upload(page, { name: 'legacy-reset.csv', mimeType: 'text/csv', buffer: Buffer.from(canonical) })
-  const confirm = page.locator('#import-check')
-  if (await confirm.count()) {
-    await page.waitForFunction(() => document.getElementById('import-check')?.open || window.smartImportQA.state().source === 'legacy-reset.csv')
-    if (await confirm.isVisible()) await confirm.getByRole('button', { name: /Use|Import/, exact: false }).click()
-  }
+  // Legacy parsing is not permission to bypass the shared meaning review.
+  await dialog(page)
+  await unchanged(page, previous, label + ' legacy parser waits for meaning review')
+  check(label + ' legacy parser requires unit confirmation', await page.locator('#smart-import-use').isDisabled())
+  await confirmMeaning(page)
+  await page.locator('#smart-import-use').click()
+  // Canonical CSV keeps its legacy preflight after the shared meaning gate.
+  await page.locator('#import-check').waitFor({ state: 'visible' })
+  await unchanged(page, previous, label + ' legacy preflight still preserves current data')
+  equal(label + ' legacy preflight count', await page.locator('#import-check-summary').textContent(), '1 product ready · 0 set aside · 0 columns ignored')
+  await page.locator('#import-check-confirm').click()
   await page.waitForFunction(() => window.smartImportQA.state().source === 'legacy-reset.csv')
+  equal(label + ' legacy parser imports the exact product', (await state(page)).items.map(item => item.sku), ['LEGACY-001'])
   check(label + ' legacy import clears fixed smart source bar', !await page.locator('#source-status').evaluate(element => element.classList.contains('smart-import-source')))
   check(label + ' legacy import restores status to import panel', await page.locator('#source-status').evaluate(element => element.parentElement.id === 'dropzone'))
   check(label + ' legacy import removes stale Review', await page.locator('#smart-import-review').count() === 0)
@@ -228,6 +247,8 @@ async function loadMatrix() {
   check('manifest explicitly contains 15 fixtures', manifest.fixture_count === 15 && manifest.fixtures.length === 15)
   check('manifest filenames are unique', new Set(manifest.fixtures.map(fixture => fixture.filename)).size === 15)
   const source = fs.readFileSync(path.join(root, 'desktop/plugin.js'), 'utf8')
+  const csvContext = require('node:vm').createContext({ TextEncoder, TextDecoder, atob, btoa })
+  require('node:vm').runInContext(source.slice(source.indexOf('const SAMPLE ='), source.indexOf('const pageStyle =')).replaceAll('export ', '') + '\nglobalThis.csvQA={importRows,importDelimiter}', csvContext)
   const erp = source.match(/(?:export\s+)?const ERP_ALIASES\s*=\s*(\{[^\n]+\})/)
   assert.ok(erp, 'production ERP_ALIASES literal missing')
   const vocabulary = JSON.parse(fs.readFileSync(path.join(root, 'smart-import-vocabulary.json'), 'utf8'))
@@ -241,6 +262,15 @@ async function loadMatrix() {
     equal(fixture.filename + ' checksum', createHash('sha256').update(bytes).digest('hex'), fixture.sha256)
     const sheets = await core.readWorkbook(bytes, fixture.filename)
     const understanding = core.understandWorkbook(sheets, null, null, aliases, types)
+    // Match loadStockImport's production fallback, without changing the independent
+    // workbook/physical-header oracle or canonical product/math assertions.
+    let uiReport = understanding
+    if (fixture.filename.endsWith('.csv')) {
+      const text = bytes.toString('utf8'), delimiter = csvContext.csvQA.importDelimiter(text)
+      const rows = JSON.parse(JSON.stringify(csvContext.csvQA.importRows(text, delimiter)))
+      uiReport = core.understandWorkbook([{ name: 'CSV', rows, delimiter }], null, null, aliases, types)
+      equal(fixture.filename + ' CSV fallback canonical products match workbook reader', uiReport.canonical_rows, understanding.canonical_rows)
+    }
     const expected = JSON.parse(fs.readFileSync(path.join(fixtureRoot, fixture.expected_file), 'utf8'))
     equal(fixture.filename + ' independent expected count', expected.expected_product_count, fixture.expected_product_count)
     equal(fixture.filename + ' canonical product count', understanding.canonical_rows.length - 1, fixture.expected_product_count)
@@ -248,7 +278,7 @@ async function loadMatrix() {
       equal(fixture.filename + ' independent scenario count', expected.expected_scenario.items.length, fixture.expected_product_count)
       equal(fixture.filename + ' required mappings automatic', understanding.missing, [])
     } else check(fixture.filename + ' missing product code blocks', understanding.missing.includes('Product code (SKU)'))
-    return { fixture, expected, report: understanding }
+    return { fixture, expected, report: understanding, uiReport }
   }))
 }
 async function main() {

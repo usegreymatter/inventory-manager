@@ -11,13 +11,13 @@
   "pureBlock": {
     "start": "const SAMPLE =",
     "end": "const pageStyle =",
-    "sha256": "7637d41955230464af03246937497b4f57e2c6838adbe97d6e9c5d28df410ecc",
-    "comment": "Performance-only per-evaluation calendar and exact-input guidance memoization; Current/import outputs frozen. No forecast or order arithmetic changed."
+    "sha256": "02e370af7058a318533e34bcef5230381ddfeacde6777d507c5bc00853e57ecb",
+    "comment": "Final-polish warning/gating/provenance-only refresh (joined allocations, narrow metadata gate, bounded messages); authored smart-import.js and generated mirror synchronized. Protected-maths guard passed before fingerprint refresh. Round-3 re-check (A1/A2/O1/O2/O3): canonical joined review, warehouse joins, CSV accepted identities and Unspecified eligibility. tests/r2-protected-maths.test.mjs verifies every byte outside the three exact import/review spans against c54b645; engine.py stays byte-identical. No purchase or forecast maths changed. csv_import.py hash refresh covers only import eligibility/report code; historical pins retained for provenance."
   },
   "files": {
     "engine.py": "0d57278d36910a92de0cc65db70196ce6e85c7cf04c044f638969af11df7a86e",
     "sources.py": "2da814a6a1d1a34ce24985fefce99253c626dee96098f3f2f2d23b25074479bb",
-    "csv_import.py": "c1f3146ba65742f0b0f058ca3440ba75d40a515b263475be82cae3004523afcb",
+    "csv_import.py": "3500576741e2b09ecbac4d88146a9f73f9c7980759d6b13bab1e7a6b252a68fd",
     "tools.py": "524526fcd1217a55213a699ceac219515d06c0736008605af6571b4b9409e23e",
     "data/sample.json": "25ee9f210b24f3b7862be8b6b95044438af3b141cec5bc06a7735348473c2677"
   },

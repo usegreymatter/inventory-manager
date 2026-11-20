@@ -22,7 +22,7 @@ def test_cli_undo_survives_next_invocation_until_explicit_enable(tmp_path,monkey
     from tests.test_cli import load_cli
     cli=load_cli(); loaded,_=cli._load_modules()
     data=dataset(raw([100*1.01**i for i in range(48)]))
-    archive=tmp_path/'diary.jsonl'; log=tmp_path/'learning.jsonl';stock=tmp_path/'stock.csv';stock.write_text('synthetic')
+    archive=tmp_path/'diary.jsonl'; log=tmp_path/'learning.jsonl';stock=tmp_path/'stock.csv';stock.write_text('sku,name,unit,on_hand,supplier_days,2026-08,2026-09,2026-10\nA,Synthetic,ea,0,14,3,3,3\n')
     learning.append_jsonl(archive,diary_rows(data,120))
     def load_csv(path, receipts, *, max_bytes):
         assert path == str(stock) and receipts is None

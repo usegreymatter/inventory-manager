@@ -12,6 +12,7 @@ function orderBreakdown(item, guidance, settings = {}, today, asOf = item.as_of)
     stockout_correction:STRINGS.soldOutFixed,projects_excluded:STRINGS.projectsRemoved,
     manual_change:STRINGS.manualChange,committed_orders:STRINGS.customerOrders,
     forecast_alignment:STRINGS.forecastAlignment,arithmetic_reconciliation:STRINGS.arithmeticAdjustment,
+    no_recent_demand:STRINGS.noRecentDemand,policy_cap:STRINGS.policyCap,policy_adjustment:STRINGS.policyAdjustment,
     late_po_hold:STRINGS.latePoHold,demand_history_hold:STRINGS.historyHold,
     committed_orders_hold:STRINGS.ordersHold,data_hold:STRINGS.dataHold}
   const steps=whyBreakdown(item,today,settings,asOf)

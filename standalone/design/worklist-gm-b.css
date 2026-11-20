@@ -232,8 +232,10 @@ body[data-table-detail=simple] .work-sku .assumed-delivery { display:none; }
 #work-view .work-options { max-height:180px; }
 #work-view .work-save { padding:0; color:var(--accent); background:transparent; }
 .work-lead-note { margin:0; padding:10px 0; font-size:12px; line-height:20px; color:var(--muted); flex-shrink:0; }
-.work-lead-note button { padding:0; min-height:24px; font-size:12px; color:var(--accent); background:transparent; }
+.work-lead-note button { padding:8px 4px; min-height:44px; font-size:12px; color:var(--accent); background:transparent; }
 .work-lead-note button:hover { text-decoration:underline; }
+/* Short/reflow screens keep at least one virtual row usable without shrinking targets. */
+@media(max-height:500px){ .table-mode .work-lead-note { padding-block:0; } .table-mode .work-summary { padding-block:16px; } }
 .work-active { padding:8px 0; }
 .work-active button { min-height:32px; }
 .work-extra-actions { border-top:1px solid var(--line); padding-top:8px; display:grid; }

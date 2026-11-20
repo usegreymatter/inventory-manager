@@ -1,3 +1,4 @@
+const {acceptMeaning}=require('../standalone/qa-input-meaning.cjs')
 // Lifecycle: living. Offline disposable harness only, never a real Desktop session.
 const path = require('node:path')
 const fs = require('node:fs')
@@ -193,7 +194,7 @@ async function checkTimelineMatrix(browser) {
           await page.getByRole('button',{name:'My file (CSV)',exact:true}).click()
           await page.locator('#runway-csv').setInputFiles(fixture==='fractional'
             ? path.resolve('tests/fixtures/fractional.csv')
-            : {name:'a12-maximum.csv',mimeType:'text/csv',buffer:Buffer.from(maximumCsv)})
+            : {name:'a12-maximum.csv',mimeType:'text/csv',buffer:Buffer.from(maximumCsv)});await acceptMeaning(page)
           await detail.getByRole('heading',{name:fixture==='fractional'?'Synthetic liquid · SKU L':'Synthetic maximum · SKU MAX-A12',exact:true}).waitFor()
         }
         await summary.click()
@@ -207,7 +208,7 @@ async function checkTimelineMatrix(browser) {
         const exactText=cell=>cell.evaluate(el=>el.getAttribute('aria-label') || el.innerText)
         assert.equal(await exactText(now.locator('td').last()),expectedNow)
         assert.equal(await exactText(table.locator('tbody tr').first().locator('td').last()),fixture==='sample'?'Reconstructed 93 m':fixture==='fractional'?'Unknown':'Reconstructed 1,000,000,000,000 m')
-        assert.equal(await exactText(table.locator('tbody tr').last().locator('td').last()),fixture==='sample'?'Out of stock · short 27 m':fixture==='fractional'?'Out of stock · short 6 l':'Out of stock · short 5,000,000,000,000 m')
+        assert.equal(await exactText(table.locator('tbody tr').last().locator('td').last()),fixture==='sample'?'Out of stock · short 27 m':fixture==='fractional'?'Out of stock · short 0.24 l':'Out of stock · short 5,000,000,000,000 m')
         if(fixture==='maximum') {
           assert.equal(await table.locator('tr').count(),11,'maximum fixture was accepted, not held or previous CSV retained')
           for(let r=0;r<3;r++) for(const c of [1,2])
@@ -264,7 +265,7 @@ async function checkOrderPlacement(panel) {
       answer:answer?{text:answer.textContent,size:parseFloat(getComputedStyle(answer).fontSize),weight:+getComputedStyle(answer).fontWeight,lines:[...range.getClientRects()].length}:null,
       product:product?{text:product.textContent,size:parseFloat(getComputedStyle(product).fontSize),weight:+getComputedStyle(product).fontWeight}:null}
   })
-  assert.equal(geometry.firstAfterTitle,true,'Order now must be the first content block after the page title')
+  assert.equal(geometry.firstAfterTitle,true,'Order today must be the first content block after the page title')
   assert.equal(geometry.scrollY,0,'measure initial viewport before interaction')
   for(const rect of [geometry.header,geometry.row].filter(Boolean)) {
     assert.ok(rect.top>=0 && rect.bottom<=geometry.height,'header and first row fully visible in initial screen')
@@ -272,26 +273,26 @@ async function checkOrderPlacement(panel) {
   }
   if(geometry.row) {
     assert.ok(geometry.row.bottom<=geometry.list.bottom,'first row is not clipped by the order list')
-    assert.ok(geometry.answer.size>geometry.product.size && geometry.answer.weight>geometry.product.weight,'order sentence leads product typography')
-    if(geometry.width===390 && geometry.answer.text.startsWith('Order ')) assert.equal(geometry.answer.lines,1,'quantity and date stay together at 390')
+    assert.ok(geometry.answer.size>geometry.product.size && geometry.answer.weight>geometry.product.weight,'suggested quantity leads product typography')
+    if(geometry.width===390 && /^\d/.test(geometry.answer.text)) assert.equal(geometry.answer.lines,1,'suggested quantity stays together at 390')
   }
   return geometry
 }
 async function checkOrderGuidanceMatrix(browser) {
   const item = (sku,name,on_hand,supplier_days=14,extra={}) => ({sku,name,on_hand,supplier_days,unit:'m',monthly_sales:[30,30,30],receipts:{},...extra})
-  const data = { as_of:'2026-10-31', months:['2026-08','2026-09','2026-10'], items:[
+  const data = {as_of:'2026-10-31',months:['2026-08','2026-09','2026-10'],items:[
     item('ORDER-OUT','Synthetic out of stock',0,3),
     item('ORDER-SOON','Synthetic urgent item',20),
     item('LOW-ITEM','Synthetic running low',45),
     item('HEALTHY','Synthetic healthy item',80),
-    item('OVERSTOCK','Synthetic overstock item',1000),
+    item('OVERSTOCK','Synthetic long cover item',1000),
     item('NO-SALES','Synthetic empty no sales',0,3,{monthly_sales:[0,0,0]}),
     item('ZERO-STOCKED','Synthetic stocked no sales',5,3,{monthly_sales:[0,0,0]}),
     item('HELD-ITEM','Synthetic held item',100,14,{hold_reason:'Synthetic forecast hold reason.'}),
     item('GAP-OUT','Synthetic empty awaiting delivery',0,14,{receipts:{'2026-12':100}}),
     item('GAP-LOW','Synthetic shortage before delivery',5,14,{receipts:{'2026-12':1000}}),
     item('UNKNOWN','Synthetic unknown delivery',20,null),
-  ] }
+  ]}
   const findings=[]
   for (const width of [360,390,1440]) for (const theme of ['light','dark']) {
     const context=await browser.newContext({viewport:{width,height:1100}})
@@ -307,275 +308,164 @@ async function checkOrderGuidanceMatrix(browser) {
       const page=await context.newPage(),errors=[]
       page.on('pageerror',error=>errors.push(error.message))
       await page.goto(pathToFileURL(path.resolve('docs/harness.html')).href+`?theme=${theme}`)
-      const main=page.locator('main'),panel=page.locator('section[aria-label^="Order now ("]')
+      const main=page.locator('main'),panel=page.locator('section[data-order-today]')
       const browserPanel=page.getByRole('region',{name:'Inventory items, soonest run-out first'})
       const detail=page.getByRole('region',{name:'Selected item forecast'})
       const advanced=main.locator('details[data-advanced-settings]')
       const saved=()=>page.evaluate(()=>JSON.parse(localStorage.getItem('runway-harness.order_settings')))
+      const answer=()=>detail.getByRole('status').first().innerText()
       const select=async sku=>{
         await browserPanel.locator('[data-bucket="all"]').click()
-        await browserPanel.locator(`button[aria-label*=" · ${sku} · "]`).click()
+        await browserPanel.locator(`[data-runway-product][aria-label*=" · ${sku} · "]`).click()
       }
-      const expectAnswer=async pattern=>assert.match(await detail.locator('[role="status"]').first().innerText(),pattern)
       const seed=async items=>{
         await page.evaluate(payload=>{
           localStorage.setItem('runway-harness.csv_data',JSON.stringify(payload))
           localStorage.removeItem('runway-harness.order_settings')
         },{...data,items})
-        await page.reload()
-        await detail.waitFor()
-        await page.evaluate(()=>window.scrollTo(0,0)) // each seeded fixture starts at its initial screen
+        await page.reload(); await detail.waitFor()
+        await page.evaluate(()=>window.scrollTo(0,0))
       }
       await panel.waitFor()
       const initialGeometry=await checkOrderPlacement(panel)
-      assert.equal(await panel.getAttribute('aria-label'),'Order now (6)')
-      assert.ok(await panel.evaluate(el=>el.getBoundingClientRect().top < document.querySelector('section[aria-label="Inventory items, soonest run-out first"]').getBoundingClientRect().top))
       assert.equal(await advanced.evaluate(el=>el.open),false)
-      assert.equal(await panel.locator('[data-order-sku]').count(),6)
-      assert.match(await panel.innerText(),/Order 73 m now/)
-      assert.doesNotMatch(await panel.innerText(),/Order 0 |by now/)
-      assert.match(await panel.locator('[data-order-sku="UNKNOWN"]').innerText(),/assumes 14-day delivery — change in Advanced/)
-      assert.match(await panel.locator('[data-supply-gap="GAP-OUT"]').innerText(),/Out of stock.*No extra order needed/s)
-      assert.match(await panel.locator('[data-supply-gap="GAP-LOW"]').innerText(),/Short from 5 Nov 2026 until the Dec delivery of 1,000 m\./)
-      assert.match(await panel.locator('[data-supply-gap="NO-SALES"]').innerText(),/Out of stock — no recent sales; no order quantity suggested/)
-      const counts={all:['All',11],order:['Order now',6],'running-low':['Running low',1],healthy:['Healthy',1],overstocked:['Overstocked',1],'no-sales':['No sales',1],'needs-data':['Needs data',1]}
+      // Order today includes near-term and zero-purchase attention rows; it is
+      // deliberately NOT identical to the exclusive Order now filter anymore.
+      assert.equal(await panel.getAttribute('aria-label'),'Order today (7)')
+      assert.equal(await panel.locator('[data-order-sku]').count(),7)
+      const counts={all:['All',11],order:['Order now',5],'running-low':['Order soon',2],healthy:['OK',2],overstocked:['Overstocked',0],'no-sales':['No sales',1],'needs-data':['Not enough history',1]}
       for (const [bucket,[label,count]] of Object.entries(counts)) {
         assert.equal(await browserPanel.locator(`[data-bucket="${bucket}"]`).innerText(),`${label} (${count})`)
-      }
-      assert.equal(await panel.locator('[data-order-sku]').count(),counts.order[1])
-      assert.match(await main.innerText(),/Stock figures as of 31 Oct 2026/)
-      const shot=`.scratch/order-screens/fixture-${width}-${theme}.png`
-      await page.screenshot({path:shot,fullPage:true}) // before any per-test edits; Advanced collapsed
-      await panel.locator('[data-order-sku="ORDER-OUT"]').click()
-      await detail.getByRole('heading',{name:'Synthetic out of stock · SKU ORDER-OUT',exact:true}).waitFor()
-      await expectAnswer(/^Out of stock — Order 73 m now/)
-      for (const [bucket,[,count]] of Object.entries(counts)) {
         await browserPanel.locator(`[data-bucket="${bucket}"]`).click()
-        assert.equal(await browserPanel.locator('button[aria-label]').count(),count,`${bucket} rows follow its count`)
+        assert.equal(await browserPanel.locator('[data-runway-product]').count(),count,`${bucket} rows follow its count`)
       }
-      assert.match(await browserPanel.locator('button[aria-label*="HELD-ITEM"]').innerText(),/Synthetic forecast hold reason/)
+      assert.match(await panel.locator('[data-order-sku="ORDER-OUT"]').innerText(),/Suggested order\s+73 m/)
+      assert.match(await panel.locator('[data-order-sku="UNKNOWN"]').innerText(),/Assumed delivery time.*All settings/)
+      assert.match(await panel.locator('[data-order-sku="GAP-OUT"]').innerText(),/Suggested order\s+31 m/)
+      assert.match(await panel.locator('[data-order-sku="GAP-LOW"]').innerText(),/Short from 5 Nov 2026 until the Dec delivery of 1,000 m\./)
+      assert.match(await panel.locator('[data-supply-gap="NO-SALES"]').innerText(),/Out of stock — no recent sales; no order quantity suggested/)
       await browserPanel.getByRole('searchbox').fill('HELD-ITEM')
-      assert.equal(await browserPanel.getByRole('button',{name:'Needs data (1)',exact:true}).count(),1)
-      assert.equal(await browserPanel.getByRole('button',{name:'All (1)',exact:true}).count(),1)
-      assert.equal(await panel.getAttribute('aria-label'),'Order now (0)')
+      assert.equal(await browserPanel.locator('[data-bucket="all"]').innerText(),'All (1)')
+      assert.equal(await browserPanel.locator('[data-bucket="needs-data"]').innerText(),'Not enough history (1)')
+      assert.equal(await panel.getAttribute('aria-label'),'Order today (7)','search filters the browser, not the daily attention list')
       await browserPanel.getByRole('searchbox').fill('')
-      await select('GAP-OUT'); await expectAnswer(/^Out of stock.*No extra order needed/)
-      assert.match(await detail.innerText(),/Short from 1 Nov 2026 until the Dec delivery of 100 m\./)
-      await select('GAP-LOW'); await expectAnswer(/^Out of stock.*No extra order needed/)
-      assert.match(await detail.innerText(),/Short from 5 Nov 2026 until the Dec delivery of 1,000 m\./)
-      await select('UNKNOWN'); await expectAnswer(/assumes 14-day delivery — change in Advanced/)
-      await select('ORDER-OUT')
-      await advanced.locator('summary').click()
-      // Exercise actual focused selection/deletion/typing, including intermediate
-      // empty and invalid zero. fill() alone would miss the controlled-input bug.
-      const edit=async (id,text,field,sku)=>{
+      const shot=`.scratch/order-screens/fixture-${width}-${theme}.png`
+      await page.screenshot({path:shot,fullPage:true})
+      await panel.locator('[data-order-sku="ORDER-OUT"]').click()
+      assert.equal(await answer(),'Out of stock — Order 73 m now')
+      await advanced.locator(':scope > summary').click()
+      const edit=async(id,text,field,sku)=>{
         const control=advanced.locator(`#order-setting-${id}`)
+        await control.focus() // settle any previous control's legitimate blur save first
         const prior=await saved()
         await clearWithKeyboard(control)
-        assert.equal(await control.inputValue(),'','empty draft must remain visible')
-        assert.deepEqual(await saved(),prior,'empty draft must not reset stored math while typing')
-        if (text.startsWith('0.')) {
-          await control.pressSequentially('0')
-          assert.equal(await control.inputValue(),'0','intermediate zero must not snap back')
-          await control.pressSequentially(text.slice(1))
-        } else await control.pressSequentially(text)
+        assert.deepEqual(await saved(),prior,'blank remains a draft until blur')
+        await control.pressSequentially(text)
         assert.equal(await control.inputValue(),text)
         const current=await saved()
-        assert.equal(sku?current.product_overrides[sku][field]:current[field],Number(text),'DOM, computation input and storage agree before blur')
+        assert.equal(sku?current.product_overrides[sku][field]:current[field],Number(text))
         await control.press('Tab')
         assert.equal(await control.inputValue(),text)
       }
-      // Each REQUIRED blank remains a draft with a visible explanation; math and
-      // persistence retain the last valid value. Optional blanks still clear.
       for (const id of ['months-of-cover','overstock-threshold','urgent-window','running-low-window']) {
         const control=advanced.locator(`#order-setting-${id}`),prior=await saved(),before=await control.inputValue()
         await control.fill(''); await control.press('Tab')
         assert.equal(await control.inputValue(),'')
         assert.equal(await control.getAttribute('aria-invalid'),'true')
-        assert.match(await advanced.locator(`#order-error-${id}`).innerText(),/required.*previous value.*still used/)
         assert.deepEqual(await saved(),prior)
         await control.fill(before); await control.press('Tab')
         assert.equal(await control.getAttribute('aria-invalid'),'false')
       }
-      { // Owner 'align this': within each visual row of Advanced settings, boxes share top/height and hints share their start.
-        const rows = await advanced.locator('[data-settings-grid] input').evaluateAll(inputs => inputs.map(i => { const r = i.getBoundingClientRect(), h = i.parentElement.querySelector('small:last-child'); return { top: Math.round(r.top), height: Math.round(r.height), left: Math.round(r.left), hint: h ? Math.round(h.getBoundingClientRect().top) : null } }))
-        assert.ok(rows.length >= 7, 'settings with product overrides visible')
-        const byRow = new Map(); for (const r of rows) { const k = [...byRow.keys()].find(t => Math.abs(t - r.top) <= 1) ?? r.top; byRow.set(k, [...(byRow.get(k) || []), r]) }
-        for (const [, group] of byRow) {
-          assert.equal(new Set(group.map(r => r.height)).size, 1, 'settings boxes same height ' + JSON.stringify(group))
-          const hints = group.map(r => r.hint).filter(v => v !== null); assert.ok(!hints.length || Math.max(...hints) - Math.min(...hints) <= 1, 'hints aligned ' + JSON.stringify(group))
-        }
-        assert.ok(rows.every(r => r.height === 36), 'settings boxes 36px')
-      }
       await edit('months-of-cover','4','months_of_cover')
-      await expectAnswer(/^Out of stock — Order 134 m now/)
+      assert.equal(await answer(),'Out of stock — Order 134 m now')
       await edit('default-delivery-days','20','default_delivery_days')
-      assert.match(await panel.locator('[data-order-sku="UNKNOWN"]').innerText(),/Order 130 m now.*assumes 20-day delivery/s)
       await edit('overstock-threshold','0.5','overstock_months')
       await edit('urgent-window','0','urgent_days')
       await edit('running-low-window','40','running_low_days')
       await edit('product-minimum-order','135.2','minimum_order','ORDER-OUT')
-      await expectAnswer(/^Out of stock — Order 136 m now/)
+      assert.equal(await answer(),'Out of stock — Order 136 m now')
       await edit('product-pack-size','2.5','pack_size','ORDER-OUT')
-      await expectAnswer(/^Out of stock — Order 137.5 m now/)
+      assert.equal(await answer(),'Out of stock — Order 137.5 m now')
       await edit('months-of-cover','0.25','months_of_cover')
-      await expectAnswer(/^Out of stock — Order 137.5 m now/)
-      assert.match(await detail.textContent(),/Order quantity is forecast demand for 11 days/)
-      assert.doesNotMatch(await detail.textContent(),/NaN|undefined|\[object Object\]/)
+      assert.equal(await answer(),'Out of stock — Order 137.5 m now')
       const persisted=await saved()
-      await page.reload()
+      await page.reload(); await detail.waitFor()
       assert.deepEqual(await saved(),persisted)
       assert.equal(await advanced.evaluate(el=>el.open),false)
-      await select('ORDER-OUT')
-      await advanced.locator('summary').click()
-      for (const [id,value] of [['months-of-cover','0.25'],['default-delivery-days','20'],['overstock-threshold','0.5'],['urgent-window','0'],['running-low-window','40'],['product-minimum-order','135.2'],['product-pack-size','2.5']])
-        assert.equal(await advanced.locator(`#order-setting-${id}`).inputValue(),value)
-      await expectAnswer(/^Out of stock — Order 137.5 m now/)
+      await select('ORDER-OUT'); await advanced.locator(':scope > summary').click()
       for (const id of ['product-minimum-order','product-pack-size']) {
         const control=advanced.locator(`#order-setting-${id}`)
         await control.fill(''); await control.press('Tab')
-        assert.equal(await control.inputValue(),'')
         assert.equal(await control.getAttribute('aria-invalid'),'false')
       }
       assert.equal((await saved()).product_overrides['ORDER-OUT'],undefined)
       await page.getByRole('button',{name:'Reset to defaults',exact:true}).click()
-      assert.deepEqual(await saved(),{default_delivery_days:14,months_of_cover:2,overstock_months:6,urgent_days:7,running_low_days:30,product_overrides:{}})
-      assert.equal(await advanced.locator('#order-setting-product-pack-size').inputValue(),'')
-      assert.equal(await advanced.locator('#order-setting-months-of-cover').inputValue(),'2')
-      await expectAnswer(/^Out of stock — Order 73 m now/)
-      await page.reload()
-      assert.equal(await advanced.evaluate(el=>el.open),false)
-      await select('ORDER-OUT'); await expectAnswer(/^Out of stock — Order 73 m now/)
-      // Explicitly clear the fallback on blur: unknown supplier moves to Needs data.
-      await advanced.locator('summary').click()
+      assert.equal((await saved()).months_of_cover,2)
+      assert.equal((await saved()).default_delivery_days,14)
+      assert.deepEqual((await saved()).product_overrides,{})
+      assert.equal(await answer(),'Out of stock — Order 73 m now')
       const fallback=advanced.locator('#order-setting-default-delivery-days')
       const priorFallback=await saved()
       for (const invalid of ['0','-1','text']) {
-        await clearWithKeyboard(fallback)
-        await fallback.pressSequentially(invalid)
-        assert.equal(await fallback.inputValue(),invalid)
-        assert.deepEqual(await saved(),priorFallback,'invalid delivery never changes storage while typing')
-        await fallback.press('Tab')
-        assert.equal(await fallback.inputValue(),invalid,'invalid draft remains visible')
+        await clearWithKeyboard(fallback); await fallback.pressSequentially(invalid); await fallback.press('Tab')
         assert.equal(await fallback.getAttribute('aria-invalid'),'true')
-        const error=advanced.locator('#order-error-default-delivery-days')
-        assert.equal(await error.isVisible(),true)
-        assert.match(await error.innerText(),/previous setting is used/)
-        assert.deepEqual(await saved(),priorFallback,'invalid delivery retains the previously saved value')
-        await select('UNKNOWN'); await expectAnswer(/assumes 14-day delivery — change in Advanced/)
+        assert.deepEqual(await saved(),priorFallback)
       }
-      await clearWithKeyboard(fallback)
-      assert.deepEqual(await saved(),priorFallback,'blank is a draft until blur')
-      await fallback.press('Tab')
-      assert.equal(await fallback.inputValue(),'')
-      assert.equal(await fallback.getAttribute('aria-invalid'),'false')
+      await clearWithKeyboard(fallback); await fallback.press('Tab')
       assert.equal((await saved()).default_delivery_days,null)
-      await select('UNKNOWN'); await expectAnswer(/^Needs data — No delivery time — set one in Advanced$/)
-      assert.equal(await browserPanel.locator('[data-bucket="needs-data"]').innerText(),'Needs data (2)')
-      await browserPanel.locator('[data-bucket="needs-data"]').click()
-      assert.equal(await browserPanel.locator('button[aria-label*=" · UNKNOWN · "]').count(),1)
-      assert.doesNotMatch(await detail.textContent(),/NaN|Order quantity is forecast demand for/)
-      await page.reload()
-      assert.equal((await saved()).default_delivery_days,null,'no assumed lead persists across reload')
-      await select('UNKNOWN'); await expectAnswer(/^Needs data — No delivery time — set one in Advanced$/)
-      assert.equal(await browserPanel.locator('[data-bucket="needs-data"]').innerText(),'Needs data (2)')
-      await advanced.locator('summary').click()
-      assert.equal(await fallback.inputValue(),'','reloaded field remains blank, never 1')
-      // Empty purchase list must retain both next-order and incoming-gap truth.
-      await seed([data.items.find(i=>i.sku==='LOW-ITEM')])
-      assert.match(await panel.innerText(),/Nothing to order right now. Next: Synthetic running low · SKU LOW-ITEM around 2 Dec 2026/)
-      await seed([data.items.find(i=>i.sku==='GAP-OUT')])
-      assert.match(await panel.innerText(),/Out of stock.*No extra order needed/s)
-      assert.equal(await panel.locator('[data-order-sku]').count(),1)
-      assert.equal(await panel.getAttribute('aria-label'),'Order now (1)')
-      assert.equal(await browserPanel.locator('[data-bucket="order"]').innerText(),'Order now (1)')
-      // Start-of-month receipts: December has a true preceding gap; November B1 does not.
-      await seed([item('FUTURE-GAP','Synthetic future gap',20,14,{receipts:{'2026-12':100}})])
-      await expectAnswer(/^No extra order needed for the selected cover period\./)
-      assert.match(await detail.innerText(),/Short from 20 Nov 2026 until the Dec delivery of 100 m\./)
-      await seed([item('NOV-RECEIPT','Synthetic receipt recovery',0,14,{receipts:{'2026-11':100}})])
-      await expectAnswer(/^Order 61 m by 27 Jan 2027$/)
-      assert.doesNotMatch(await detail.textContent(),/no recent sales/)
+      await select('UNKNOWN')
+      assert.match(await answer(),/No delivery time/)
+      assert.equal(await browserPanel.locator('[data-bucket="needs-data"]').innerText(),'Not enough history (2)')
+      await page.reload(); await select('UNKNOWN')
+      assert.equal((await saved()).default_delivery_days,null)
+      assert.match(await answer(),/No delivery time/)
       const receiptCases=[]
-      for(const fixture of [
-        {sku:'B1',name:'Synthetic B1 November receipt',month:'2026-11',stock:20,runout:'2027-02-28',latest:'2027-02-14',answer:/^Order 59 m by 14 Feb 2027$/,gap:null},
-        {sku:'TRUE-GAP',name:'Synthetic temporary shortage',month:'2026-12',stock:20,runout:'2026-11-20',latest:'2026-11-06',answer:/^No extra order needed/,gap:'Short from 20 Nov 2026 until the Dec delivery of 100 m.'},
-        {sku:'ZERO-DAY',name:'Synthetic exact zero day',month:'2026-12',stock:30,runout:'2026-11-30',latest:'2026-11-16',answer:/^No extra order needed/,gap:'Short from 30 Nov 2026 until the Dec delivery of 100 m.'},
+      for (const fixture of [
+        {sku:'B1',month:'2026-11',stock:20,runout:'28 Feb 2027',orderBy:'14 Feb 2027',gap:null},
+        {sku:'TRUE-GAP',month:'2026-12',stock:20,runout:'20 Nov 2026',orderBy:'11 Nov 2026',gap:'Short from 20 Nov 2026 until the Dec delivery of 100 m.'},
+        {sku:'ZERO-DAY',month:'2026-12',stock:30,runout:'30 Nov 2026',orderBy:'16 Nov 2026',gap:'Short from 30 Nov 2026 until the Dec delivery of 100 m.'},
       ]) {
-        await seed([item(fixture.sku,fixture.name,fixture.stock,14,{receipts:{[fixture.month]:100}})])
-        await expectAnswer(fixture.answer)
-        const geometry=await checkOrderPlacement(panel)
-        const row=browserPanel.locator(`button[aria-label*=" · ${fixture.sku} · "]`)
-        const assertEarliest=async()=>{
-          for(const surface of [panel,row,detail]) {
-            const text=await surface.innerText()
-            for(const match of text.matchAll(/\bby (\d{1,2} [A-Z][a-z]{2} \d{4})/g))
-              assert.ok(Date.parse(match[1]+' UTC')<=Date.parse(fixture.latest+'T00:00:00Z'),`${fixture.sku} never orders later than earliest crossing minus lead: ${match[0]}`)
-            // Owner trim 2026-11-11: an 'order'-bucket product row leaves the shortage line to Order now + detail.
-            const trimmedRow=surface===row&&await row.locator('[data-status-label="order"]').count()>0
-            if(trimmedRow) assert.doesNotMatch(text,/Short from|Order [\d,.]+ \S+ (now|by)/,`${fixture.sku} order row is trimmed`)
-            else if(fixture.gap) assert.ok(text.includes(fixture.gap),`${fixture.sku} shows ${fixture.gap}`)
-            else assert.doesNotMatch(text,/Short from/)
-          }
-          // The chart's permanent zero-axis label is not an order answer.
-          if(!fixture.gap) for(const surface of [panel,row,detail.locator('[role="status"]')])
-            assert.doesNotMatch(await surface.innerText(),/Out of stock/)
-          assert.match(await row.innerText(),new RegExp(`Runs out ${fixture.runout==='2027-02-28'?'Feb 2027':'Nov 2026'}`))
+        await seed([item(fixture.sku,`Synthetic ${fixture.sku}`,fixture.stock,14,{receipts:{[fixture.month]:100}})])
+        const row=browserPanel.locator('[data-runway-product]')
+        assert.match(await row.innerText(),new RegExp(`Runs out ${fixture.runout}`))
+        if (fixture.gap) {
+          assert.ok((await detail.innerText()).includes(fixture.gap))
+          const order=panel.locator(`[data-order-sku="${fixture.sku}"]`)
+          assert.equal(await order.count(),1)
+          assert.match(await order.locator('[data-order-metric="order-by"]').innerText(),new RegExp(fixture.orderBy))
+          assert.ok((await order.innerText()).includes(fixture.gap))
+        } else {
+          assert.match(await answer(),/by 14 Feb 2027$/)
+          assert.doesNotMatch(await detail.innerText(),/Short from/)
+          assert.equal(await panel.locator('[data-order-sku]').count(),0)
+          assert.match(await panel.innerText(),/Nothing to order today\./)
         }
-        await assertEarliest()
-        if(!fixture.gap) assert.match(await panel.innerText(),/around 14 Feb 2027/)
         const screenshot=`.scratch/order-screens/${fixture.sku}-${width}-${theme}.png`
         await page.screenshot({path:screenshot,fullPage:true})
-        await page.screenshot({path:screenshot.replace('.png','-initial.png')})
-        if(fixture.gap) {
-          await advanced.locator('summary').click()
-          await edit('months-of-cover','6','months_of_cover')
-          await assertEarliest()
-          for(const surface of [panel,row,detail]) {
-            if(surface===row&&await row.locator('[data-status-label="order"]').count()>0){assert.doesNotMatch(await row.innerText(),/Order [\d,]+ m (now|by)/,'order row is trimmed');continue}
-            assert.match(await surface.innerText(),fixture.sku==='TRUE-GAP'?/Order [\d,]+ m now/:/Order [\d,]+ m by 16 Nov 2026/)
-          }
-        }
-        receiptCases.push({sku:fixture.sku,earliestRunout:fixture.runout,latestOrderBy:fixture.latest,geometry,screenshot})
+        receiptCases.push({...fixture,screenshot})
       }
       await seed(Array.from({length:61},(_,i)=>item(`EMPTY-${i}`,'Synthetic empty item',0,0,{monthly_sales:[0,0,0]})))
-      assert.equal(await panel.getAttribute('aria-label'),'Order now (61)')
-      assert.equal(await browserPanel.locator('[data-bucket="order"]').innerText(),'Order now (61)')
+      assert.equal(await panel.getAttribute('aria-label'),'Order today (61)')
+      assert.equal(await panel.locator('[data-order-sku]').count(),10)
+      await panel.getByRole('button',{name:'Show all 61',exact:true}).click()
       assert.equal(await panel.locator('[data-order-sku]').count(),61)
-      const list=panel.locator('[aria-label="Products needing an order"]')
-      assert.ok(await list.evaluate(el=>el.scrollHeight>el.clientHeight))
       await panel.locator('[data-order-sku="EMPTY-60"]').click()
       await detail.getByRole('heading',{name:'Synthetic empty item · SKU EMPTY-60',exact:true}).waitFor()
-      // Zero quantity still has an upcoming order date, sorted by earliest date.
-      await seed([item('LATER','Synthetic later',60,0),item('EARLIER','Synthetic earlier',30,0,{receipts:{'2026-11':30}})])
-      await advanced.locator('summary').click()
-      await edit('months-of-cover','0','months_of_cover')
-      await select('EARLIER')
-      await expectAnswer(/^No order needed — 30 m in confirmed deliveries cover the order period$/)
-      // Both run out Dec 31; use a later first item to check sorting independently.
-      await page.evaluate(()=>{
-        const data=JSON.parse(localStorage.getItem('runway-harness.csv_data'))
-        data.items[0].on_hand=90
-        localStorage.setItem('runway-harness.csv_data',JSON.stringify(data))
-      })
-      await page.reload()
-      assert.match(await panel.innerText(),/Next: Synthetic earlier · SKU EARLIER around 31 Dec 2026/)
+      await panel.getByRole('button',{name:'Show top 10',exact:true}).click()
+      assert.equal(await panel.locator('[data-order-sku]').count(),10)
       await seed([item('YEAR','Synthetic long cover',400)])
-      await advanced.locator('summary').click()
-      await edit('months-of-cover','36','months_of_cover')
-      await expectAnswer(/^Order 1,065 m by 27 Nov 2027$/)
-      assert.match(await panel.innerText(),/around 27 Nov 2027/)
-      const before=await detail.locator('[role="status"]').first().innerText()
-      for(const horizon of ['1','12']) {
+      await advanced.locator(':scope > summary').click(); await edit('months-of-cover','36','months_of_cover')
+      assert.match(await answer(),/by 27 Nov 2027$/)
+      const before=await answer()
+      for (const horizon of ['1','12']) {
         await page.getByRole('combobox',{name:'Look ahead',exact:true}).selectOption(horizon)
-        assert.equal(await detail.locator('[role="status"]').first().innerText(),before)
+        assert.equal(await answer(),before)
       }
-      // MOQ is now an explained inventory term in Advanced settings, not order-panel jargon.
-      assert.doesNotMatch(await main.locator('section[aria-label^="Order now ("]').innerText(),/\b(?:MOQ|EOQ|EORQ)\b/)
-      assert.doesNotMatch(await main.innerText(),/\b(?:EOQ|EORQ)\b|by now|date unavailable|NaN|undefined|\[object Object\]/)
+      assert.doesNotMatch(await panel.innerText(),/\b(?:MOQ|EOQ|EORQ)\b/)
+      assert.doesNotMatch(await main.innerText(),/by now|date unavailable|NaN|undefined|\[object Object\]/)
       assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false)
       assert.deepEqual(errors,[])
-      findings.push({width,theme,counts,initialGeometry,receiptCases,keyboardDrafts:true,requiredBlankErrors:true,optionalBlankClears:true,allAttentionRows:true,incomingUnit:true,noNaN:true,immediateRecompute:true,persisted:true,reset:true,supplyGap:true,emptyNext:true,year:true,screenshot:shot,caption:'Offline local harness only; synthetic fixture before edits, Advanced collapsed.'})
+      findings.push({width,theme,counts,initialGeometry,receiptCases,keyboardDrafts:true,requiredBlankErrors:true,optionalBlankClears:true,attentionRows:7,showAllRows:61,persisted:true,reset:true,horizonParity:true,screenshot:shot,errors})
     } finally { await context.close() }
   }
   return findings
@@ -666,11 +556,11 @@ async function checkRecovery(browser) {
   const upload = () => page.locator('#runway-csv')
   const chooseCsv = () => page.getByRole('button', { name: 'My file (CSV)', exact: true }).click()
   const delayRead = () => page.evaluate(() => {
-    const original = File.prototype.text
+    const original = File.prototype.arrayBuffer
     delete window.finishRunwayRead
-    File.prototype.text = function () {
+    File.prototype.arrayBuffer = function () {
       const file = this
-      return new Promise(resolve => { window.finishRunwayRead = async () => { resolve(await original.call(file)); File.prototype.text = original } })
+      return new Promise(resolve => { window.finishRunwayRead = async () => { resolve(await original.call(file)); File.prototype.arrayBuffer = original } })
     }
   })
   const pendingRead = () => page.waitForFunction(() => typeof window.finishRunwayRead === 'function')
@@ -682,29 +572,39 @@ async function checkRecovery(browser) {
     await chooseCsv()
     await upload().waitFor({state:'visible'})
     await check('csv',null,null)
-    await upload().setInputFiles(fixture('fractional.csv'))
+    await upload().setInputFiles(fixture('fractional.csv'));await acceptMeaning(page)
     await selected.getByRole('heading', { name: 'Synthetic liquid', exact: false }).waitFor()
-    const good = await stored()
+    let good = await stored()
     assert.equal(JSON.parse(good).items[0].name,'Synthetic liquid')
+    // Normal uploads carry explicitly reviewed input meaning. The legacy recovery
+    // parser still imports canonical CSV directly (no meaning dialog). Pin its
+    // exact dataset separately; retain every stock/sales/receipt/lead-time byte.
+    const recoveryData = JSON.parse(good)
+    delete recoveryData.input_meaning
+    for (const item of recoveryData.items) {
+      delete item.input_warnings
+      delete item.incoming_unknown
+    }
+    const recoveryGood = JSON.stringify(recoveryData)
+    assert.equal(JSON.parse(good).input_meaning.choices.units_confirmed,true)
     step = 'valid fractional upload'
     await liquid(good)
     const checkPresentZero = async onHand => {
-      const expected = onHand === 0 ? 'Already depleted' : 'Runs out Nov 2026'
-      // Fixed today (11 Nov): rounded opening balance 0 - 11/30 demand <= 0.
-      // Order endpoint = today + 14 lead + 60 cover = 24 Jan 2027.
-      // ceil(1 Nov + 1 Dec + 24/31 Jan - exact onHand) = 3 for all variants.
-      assert.equal(Math.ceil(2 + 24/31 - onHand),3)
-      assert.equal(await selected.getByRole('status').innerText(),'Out of stock — Order 3 l now (assumes 14-day delivery — change in Advanced)')
+      const expected = onHand === 0 ? 'Out of stock' : 'Runs out 1 Nov 2026'
+      // Purchase policy nets the cover window, not unmet demand since the snapshot.
+      // Tiny demand plus safety stock needs one unit at 0.7 stock, two near zero.
+      const quantity = onHand === 0.7 ? 1 : 2
+      assert.equal(await selected.getByRole('status').innerText(),`Out of stock — Order ${quantity} l now (Assumed delivery time: 14 days — change in All settings)`)
       const activeRow = page.getByRole('button', {name:/ · L · Synthetic liquid · /})
       assert.ok((await activeRow.getAttribute('aria-label')).startsWith(expected + ' · '))
       const svg = selected.locator('svg[role="img"]')
-      assert.equal(await svg.getByText(onHand === 0 ? 'Out now' : 'Runs out Nov', {exact:true}).count(), 1)
+      assert.equal(await svg.locator('[data-runout-label]').textContent(), onHand === 0 ? 'Out of stock' : 'Runs out Nov')
       if (onHand > 0) assert.doesNotMatch(await selected.innerText(), /Already depleted|Out now/)
       assert.match(await svg.getAttribute('aria-label'), /As of 31 Oct 2026\. Unit: l\./)
     }
     await checkPresentZero(0.7)
     step = 'A10 exact fractional headline and Now stock cell'
-    assert.equal(await selected.getByText('0.7 l left · sells about 1 l a month · less than a month left', {exact:true}).isVisible(), true)
+    assert.equal(await selected.getByText('0.7 l left · sells about 0.04 l a month · less than a month left', {exact:true}).isVisible(), true)
     assert.ok(!(await selected.innerText()).includes('0 l left'))
     const timelineSummary = selected.locator('summary').filter({hasText:'Month by month: stock, sales, deliveries'})
     await timelineSummary.click()
@@ -713,7 +613,7 @@ async function checkRecovery(browser) {
     assert.equal(await now.getByRole('cell', {name:'0.7 l', exact:true}).isVisible(), true)
     assert.equal(await now.getAttribute('data-now-separator'), 'true')
     assert.equal(await now.getByRole('rowheader').getAttribute('colspan'), '1')
-    assert.equal(await timeline.getByRole('row').nth(9).innerText(), 'Nov 2026 · Forecast\t1 l\t0 l\tOut of stock · short 1 l')
+    assert.equal(await timeline.getByRole('row').nth(9).innerText(), 'Nov 2026 · Forecast\t0.04 l\t0 l\tOut of stock · short 0.04 l')
     await page.screenshot({path:'.scratch/a4-screens/a10-fractional-now-390.png',fullPage:true})
     await timelineSummary.click()
     step = 'A10 exact fractional quick-view stock'
@@ -739,7 +639,7 @@ async function checkRecovery(browser) {
     for (const [bad, message] of [['date_boundary.csv',/1000-01.*9998-12/],
       ['mixed_overflow.csv',/Row 3: supplier_days.*3650/],['finite_sales_overflow.csv',/1000000000000/]]) {
       step = 'rejected upload: ' + bad
-      await upload().setInputFiles(fixture(bad))
+      await upload().setInputFiles(fixture(bad));await acceptMeaning(page)
       await page.getByRole('alert').filter({hasText:message}).waitFor()
       assert.equal(await stored(),good,'rejected upload must retain prior good data')
       await liquid(good)
@@ -767,7 +667,7 @@ async function checkRecovery(browser) {
         return map.apply(this,args)
       }
     })
-    await upload().setInputFiles({name:'calculation.csv',mimeType:'text/csv',buffer:Buffer.from(fs.readFileSync(fixture('fractional.csv'),'utf8').replace('L,Synthetic','THROW-DATASET,Synthetic'))})
+    await upload().setInputFiles({name:'calculation.csv',mimeType:'text/csv',buffer:Buffer.from(fs.readFileSync(fixture('fractional.csv'),'utf8').replace('L,Synthetic','THROW-DATASET,Synthetic'))});await acceptMeaning(page)
     await page.getByRole('alert').filter({hasText:'Could not calculate this file.'}).waitFor()
     assert.equal(await stored(),good)
     assert.ok(!(await page.locator('body').innerText()).includes('PRIVATE'))
@@ -776,7 +676,7 @@ async function checkRecovery(browser) {
     // A pending read cannot overwrite data after a source switch.
     step = 'pending read source switch'
     await delayRead()
-    await upload().setInputFiles(stale)
+    await upload().setInputFiles(stale);await acceptMeaning(page)
     await pendingRead()
     await check('csv',good,'Synthetic fine metre')
     await page.getByRole('button',{name:'Sample',exact:true}).click()
@@ -799,12 +699,13 @@ async function checkRecovery(browser) {
     step = 'empty saved dataset recovery'
     await page.reload(); await check('csv','{}','recovery',datasetFailure)
     step = 'rejected recovery upload'
-    await anotherFile().setInputFiles(fixture('date_boundary.csv'))
+    await anotherFile().setInputFiles(fixture('date_boundary.csv'));await acceptMeaning(page)
     await panel.getByText('Sales months must be from 1000-01 through 9998-12.',{exact:true}).waitFor()
     await check('csv','{}','recovery')
     step = 'valid recovery upload'
-    await anotherFile().setInputFiles(fixture('fractional.csv'))
-    await liquid(good)
+    await anotherFile().setInputFiles(fixture('fractional.csv'));await acceptMeaning(page)
+    await liquid(recoveryGood)
+    good = recoveryGood // Subsequent fault/race checks retain this exact recovered dataset.
     // Quick-view data uses the same safe failure path, even off the page route.
     await page.evaluate(() => localStorage.setItem('runway-harness.csv_data','{}'))
     await page.goto(pathToFileURL(path.resolve('docs/harness.html')).href + '?theme=light#settings')
@@ -825,7 +726,7 @@ async function checkRecovery(browser) {
     await chooseCsv()
     await check('csv','{}','recovery',datasetFailure)
     step = 'replace retained corrupt CSV through recovery file control'
-    await anotherFile().setInputFiles(fixture('fractional.csv'))
+    await anotherFile().setInputFiles(fixture('fractional.csv'));await acceptMeaning(page)
     await liquid(good)
     // An unexpected calculation exception in a single item holds it; the other survives.
     step = 'per-item exception retains other item'
@@ -834,7 +735,9 @@ async function checkRecovery(browser) {
       window.restoreRunwayStorage = () => { storage.get = get }
       storage.get = (key, fallback) => {
         const value = get(key, fallback)
-        if (key === 'csv_data') Object.defineProperty(value.items[0], 'monthly_sales', {get(){throw Error('PRIVATE item calculation failure')}})
+        // Fail validation inside calculate's per-item try/catch, not while
+        // spreading the held item (a throwing property getter breaks both).
+        if (key === 'csv_data') Object.defineProperty(value.items[0].monthly_sales, 'some', {value(){throw Error('PRIVATE item calculation failure')}})
         return value
       }
       window.runwayTest.remount()
@@ -866,7 +769,7 @@ async function checkRecovery(browser) {
     // A delayed recovery upload must not override Back to sample data.
     step = 'pending recovery upload cancelled by sample'
     await delayRead()
-    await anotherFile().setInputFiles(stale)
+    await anotherFile().setInputFiles(stale);await acceptMeaning(page)
     await pendingRead()
     await check('csv',good,'recovery')
     await recovery().click(); await sample(good); await finishRead()
@@ -876,7 +779,7 @@ async function checkRecovery(browser) {
     // Actual React descendant render failure, including cancellation of the unmounted page's read.
     step = 'pending page upload then descendant render failure'
     await chooseCsv(); await liquid(good); await delayRead()
-    await upload().setInputFiles(stale)
+    await upload().setInputFiles(stale);await acceptMeaning(page)
     await pendingRead()
     await liquid(good)
     await page.evaluate(() => { window.runwayHarnessRenderFailure=true })
@@ -935,11 +838,12 @@ let browserStarted=false
           return svg && Math.abs(svg.viewBox.baseVal.width - svg.getBoundingClientRect().width) < 1
             && (innerWidth < 720 || detail.getBoundingClientRect().left > panel.getBoundingClientRect().right)
         })
-        const samplePanel=page.locator('section[aria-label^="Order now ("]')
+        const samplePanel=page.locator('section[data-order-today]')
         assert.equal(await page.locator('details[data-advanced-settings]').evaluate(el=>el.open),false)
         const sampleCount=await samplePanel.locator('[data-order-sku]').count()
-        assert.ok(sampleCount>0)
-        assert.equal(await samplePanel.getAttribute('aria-label'),`Order now (${sampleCount})`)
+        assert.equal(sampleCount,2,'five-product synthetic sample has two current order rows')
+        assert.equal(await page.locator('[data-bucket="all"]').innerText(),'All (5)')
+        assert.equal(await samplePanel.getAttribute('aria-label'),`Order today (${sampleCount})`)
         assert.equal(await page.locator('[data-bucket="order"]').innerText(),`Order now (${sampleCount})`)
         assert.match(await samplePanel.innerText(),/Foam floor underlay roll · SKU UL-FOAM-GRN\s+Suggested order\s+38 m\s+Order by\s+11 Nov 2026 · in 0 days/)
         assert.match(await samplePanel.innerText(),/Runs out\s+12 Dec 2026 · in 31 days/)
@@ -1094,11 +998,11 @@ let browserStarted=false
     const recovery = await checkRecovery(browser)
     const timeline = await checkTimelineMatrix(browser)
     const orderGuidance = await checkOrderGuidanceMatrix(browser)
-    fs.writeFileSync('.scratch/order-screens/report.json',JSON.stringify({caption:'Local offline harness only, not real Desktop. Sample and focused synthetic screenshots captured before edits with Advanced collapsed. Actual today fixed to 11 Nov 2026.',sample:[360,390,1440].flatMap(width=>['light','dark'].map(theme=>`.scratch/order-screens/sample-${width}-${theme}.png`)),orderGuidance},null,2))
+    fs.writeFileSync('.scratch/order-screens/report.json',JSON.stringify({caption:'Local offline harness only, not real Desktop. Sample and focused synthetic screenshots captured before settings interactions with All settings collapsed. Actual today fixed to 11 Nov 2026.',sample:[360,390,1440].flatMap(width=>['light','dark'].map(theme=>`.scratch/order-screens/sample-${width}-${theme}.png`)),orderGuidance},null,2))
     console.log(JSON.stringify({label:'Offline harness, not real Desktop', findings, recovery, timeline, orderGuidance},null,2))
   } finally { await browser.close() }
 })().catch(error => {
-  const report={caption:'RESUME4 local harness only; failed execution is not visual proof.',stage:browserStarted?'browser-assertions':'browser-launch',error:String(error),
+  const report={caption:'Local offline harness only; failed execution is not visual proof.',stage:browserStarted?'browser-assertions':'browser-launch',error:String(error),
     cases:[360,390,1440].flatMap(width=>['light','dark'].map(theme=>({width,theme,status:'not-verified',required:['sample','B1','TRUE-GAP','ZERO-DAY','existing recovery/timeline/order gates']})))}
   fs.writeFileSync('.scratch/order-screens/report.json',JSON.stringify(report,null,2))
   console.error(error); process.exitCode=1

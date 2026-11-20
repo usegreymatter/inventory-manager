@@ -48,7 +48,7 @@ async function main(){
   await open();await p.locator('#reset-settings').click();check('reset restores Current and None',(await state()).settings.forecast_method==='current'&&(await state()).settings.industry_preset==='none')
   await p.locator('#settings-file').setInputFiles(exportPath);await p.waitForFunction(()=>document.querySelector('#import-settings-status').textContent==='Settings imported.')
   assert.deepEqual((await state()).settings,saved.settings);check('settings import round trip',true)
-  await p.getByRole('button',{name:'Close',exact:true}).click();await p.evaluate(()=>methodsQA.open())
+  await p.getByRole('button',{name:'Close',exact:true}).click();await p.evaluate(()=>methodsQA.open());await p.locator('#product-show-detail').click();check('Show detail reveals product inputs',await p.locator('.product-inputs').isVisible())
   const selected=(await state()).rows.find(r=>r.sku===(saved.selected)),label=selected.method?.label
   check('engine supplies plain forecast label',typeof label==='string'&&label.length>0)
   check('product page names safety stock basis',(await p.locator('.product-inputs').textContent()).includes('Past forecast misses')||(await p.locator('.product-inputs').textContent()).includes('Sales variation (fallback)'))

@@ -60,11 +60,11 @@ function productRiskPanel(row){
 const riskDrawProductBase=drawProductPage
 drawProductPage=function(row){riskDrawProductBase(row);const chart=productPage.overlay?.querySelector('.product-page-chart');if(chart){const panel=productRiskPanel(row);if(panel)chart.before(panel)}}
 
-// Optional worklist column. Never in Simple; never run 1,000 simulations inside
+// Risk is a chip in Simple and a percentage in detail; never run simulations inside
 // layout, row painting or a sort comparator. Idle batches measure active work
 // separately from intentional idle time and stop when their snapshot changes.
-wlColumns.push(['risk','Run-out risk',124]);WL_NUMERIC.push('risk')
-if(wl.mode==='detailed')wl.columns.push('risk')
+WL_NUMERIC.push('risk')
+if(!wl.columns.includes('risk')&&['simple','detailed'].includes(wl.mode))wl.columns.push('risk')
 // Earlier adapters normalize saved views before this late-loaded column exists.
 // Recover only this column's preferences, never reset filters or product state.
 try{
@@ -76,10 +76,10 @@ try{
 const riskWlValueBase=wlValue
 wlValue=function(row,key){return key==='risk'?(riskReady(row)?riskCached(row)?.before??null:null):riskWlValueBase(row,key)}
 const riskWlRowBase=wlRow
-wlRow=function(row,...args){const element=riskWlRowBase(row,...args),cell=element.querySelector('[data-column=risk]');if(cell){const value=wlValue(row,'risk');cell.classList.add('numeric');cell.textContent=value==null?(riskReady(row)?'…':'—'):riskPercent(value);cell.title=riskReady(row)?'Modelled chance of running out before the suggested order arrives. Not a guarantee.':'Risk withheld: check product data.'}return element}
+wlRow=function(row,...args){const element=riskWlRowBase(row,...args),cell=element.querySelector('[data-column=risk]');if(cell){const value=wlValue(row,'risk');cell.classList.add('numeric');paintRiskCell(cell,row,value);cell.title=riskReady(row)?'Modelled chance of running out before the suggested order arrives. Not a guarantee.':'Risk withheld: check product data.'}return element}
 let riskColumnJob=null,riskColumnToken=0
 function riskScheduleColumns(){
- const enabled=wl.mode!=='simple'&&wl.columns.includes('risk')&&typeof StockRunwayRisk!=='undefined'
+ const enabled=wl.columns.includes('risk')&&typeof StockRunwayRisk!=='undefined'
  if(!enabled){if(riskColumnJob){riskColumnJob=null;riskColumnToken++}return}
  const context=[currentRows,data,settings,currentToday,typeof localOrders==='undefined'?null:localOrders.records]
  if(riskColumnJob&&context.every((v,k)=>riskColumnJob.context[k]===v))return
@@ -96,7 +96,7 @@ function riskScheduleColumns(){
   // or pointer-targeted product row while the user is interacting with it.
   for(const element of wlScroll.querySelectorAll('.work-row[data-sku]')){
    const row=rowMap.get(element.dataset.sku),cell=element.querySelector('[data-column=risk]');if(!row||!cell)continue
-   const value=wlValue(row,'risk');cell.textContent=value==null?(riskReady(row)?'…':'—'):riskPercent(value)
+   const value=wlValue(row,'risk');paintRiskCell(cell,row,value)
   }
   if(job.index<job.rows.length)defer(batch)
   else{metrics.complete=true;if(wl.sort==='risk')buildList({controls:false})}

@@ -1,0 +1,19 @@
+/* Lifecycle: living. One decision first, evidence on request. */
+.decision-risk-chip {display:inline-block;border:1px solid var(--line);border-radius:4px;padding:3px 8px;font-size:13px;line-height:18px;font-weight:500;white-space:nowrap;color:var(--ink);background:var(--subtle)}
+.decision-risk-chip[data-risk=high] {border-color:var(--warn);color:var(--warn)}
+.decision-product-risk {display:flex;align-items:center;gap:8px;font-size:14px;margin:16px 0 0}
+.decision-why {font-size:14px;line-height:1.65;color:var(--muted);overflow-wrap:anywhere;margin:0 0 20px;max-width:90ch}
+.decision-detail-toggle {min-height:44px;border:1px solid var(--line);border-radius:6px;padding:8px 12px;white-space:nowrap}
+.product-page [hidden],#hero .chart-section[hidden] {display:none!important}
+.product-page-figures {grid-template-columns:repeat(4,minmax(0,1fr))}
+.product-page[data-decision-detail=false] .product-page-figures {grid-template-columns:repeat(3,minmax(0,1fr))}
+.product-page .decision-detail-toggle {margin-bottom:24px}
+.product-page .product-order-action {margin:0 0 24px}
+.product-page .product-page-figures>div:first-child strong{font-size:28px;color:var(--ink)}
+.product-page .product-page-figures>div:nth-child(2) strong{font-size:40px}
+[data-design=option-gm-b] .product-page .product-order-action .local-order-actions button{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.work-phone-summary small {display:flex;gap:12px;align-items:center}
+.work-phone-summary .decision-risk-chip {padding:0 6px;line-height:18px;font-size:11px}
+body[data-table-detail=simple] .work-header-tools {visibility:hidden}
+@media(max-width:1023px){.work-views{flex-wrap:wrap}.work-tabs{flex:1 0 100%;width:100%}.work-saved{width:100%;justify-content:flex-end}.work-saved .decision-detail-toggle{margin-right:auto}}
+@media(max-width:600px){.product-page-figures,.product-page[data-decision-detail=false] .product-page-figures {gap:16px;grid-template-columns:repeat(2,minmax(0,1fr))}.decision-why{font-size:14px}.work-saved .decision-detail-toggle{flex-shrink:0}}

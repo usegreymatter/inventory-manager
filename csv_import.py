@@ -215,7 +215,7 @@ def preflight_csv(text, strict=False, *, max_bytes=MAX_CSV_BYTES):
     fields.update({idx: field for field,idx in months + receipts})
     report: dict[str, Any] = dict(matched=[dict(source=h,field=fields[i]) for i,h in enumerate(headers) if i in fields],
                   ignored=[h for i,h in enumerate(headers) if i not in fields], defaulted=[],
-                  rows_imported=0, products_ready=0, rows_set_aside=[], warnings=[], source_headers=headers)
+                  rows_imported=0, products_ready=0, rows_set_aside=[], accepted_rows=[], warnings=[], source_headers=headers)
     report['warnings'].append('Number format: ' + style + (' (comma decimal; dot thousands)' if style == 'decimal-comma' else ' (dot decimal; comma thousands)'))
     if dropped_order is not None: report['warnings'].append(f'{dropped_order} ignored: no numeric on_order values parsed; no incoming stock counted')
     if 'unit' not in picked: report['defaulted'].append(dict(field='unit', value='units', reason='unit column missing'))
@@ -232,7 +232,7 @@ def preflight_csv(text, strict=False, *, max_bytes=MAX_CSV_BYTES):
     blanks = 0
     returns = {}
     missing_lead = 0
-    for rownum, values in zip(row_numbers[1:], rows[1:]):
+    for row_index, (rownum, values) in enumerate(zip(row_numbers[1:], rows[1:]), 1):
         if not any(import_trim(v) for v in values): continue
         get = lambda field: import_trim(values[picked[field]]) if field in picked and picked[field] < len(values) else ''
         def aside(reason): report['rows_set_aside'].append(dict(row=rownum,reason=reason,values=values))
@@ -271,7 +271,7 @@ def preflight_csv(text, strict=False, *, max_bytes=MAX_CSV_BYTES):
             sku=item['sku']
             if sku in by_sku:
                 if 'location' not in picked: raise SourceError('duplicate sku without warehouse/location — first row kept')
-                if get('location').casefold().lower() in locations[sku]: raise SourceError('duplicate sku at same warehouse/location — first row kept')
+                if get('location') and get('location').casefold().lower() in locations[sku]: raise SourceError('duplicate sku at same warehouse/location — first row kept')
                 first=by_sku[sku]
                 if first['unit'] != item['unit']: raise SourceError('warehouse units differ — convert to one stock unit')
                 aggregate = {**first,'on_hand':first['on_hand']+item['on_hand'], 'monthly_sales':[a+b for a,b in zip(first['monthly_sales'],item['monthly_sales'])]}
@@ -282,12 +282,15 @@ def preflight_csv(text, strict=False, *, max_bytes=MAX_CSV_BYTES):
                 first.update(aggregate); combined[sku]=combined.get(sku,1)+1
             else: items.append(item); by_sku[sku]=item
             locations.setdefault(sku, {})[get('location').casefold().lower()] = get('location')
+            report['accepted_rows'].append(row_index)
             report['rows_imported']+=1; blanks+=local_blanks; missing_lead += item['supplier_days'] is None; 
             for month in row_returns: returns[month] = returns.get(month, 0) + 1
         except SourceError as error:
             aside(str(error).replace('Row 2:',f'Row {rownum}:') if rownum != 2 else str(error))
     for month,n in returns.items(): report['warnings'].append(f'returns exceeded sales in {month} ({n} rows)')
-    for sku,n in combined.items(): report['warnings'].append(f'{sku}: combined {n} warehouse rows ({", ".join(label or "(blank)" for label in locations[sku].values())}); stock, on order, sales and receipts summed; first-row metadata kept')
+    for sku,n in combined.items(): report['warnings'].append(f'{sku}: combined {n} warehouse rows ({", ".join(label or "Unspecified" for label in locations[sku].values())}); stock, on order, sales and receipts summed; first-row metadata kept')
+    if 'location' in picked and any('' in labels for labels in locations.values()):
+        report['warnings'].append('Blank warehouse/location treated as Unspecified; all blank-location rows aggregated, including repeated blanks. Check for duplicate exports.')
     if missing_lead and 'supplier_days' in picked: report['defaulted'].append(dict(field='supplier_days',value=None,reason=f'lead time blank in {missing_lead} imported rows'))
     if 'location' in picked:
         partial = dict.fromkeys(import_trim(r['values'][picked['sku']]) for r in report['rows_set_aside'] if picked['sku'] < len(r['values']) and import_trim(r['values'][picked['sku']]) in by_sku)

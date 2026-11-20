@@ -50,7 +50,7 @@ async function main(){
    await ctx.addInitScript(()=>{const D=Date;globalThis.Date=class extends D{constructor(...args){super(...(args.length?args:['2026-11-17T09:00:00Z']))}static now(){return new D('2026-11-17T09:00:00Z').getTime()}};localStorage.setItem('stock-runway.product-view','page')})
    await ctx.route(/^https?:/,r=>{report.network.push(r.request().url());return r.abort()});const page=await ctx.newPage();page.on('pageerror',e=>report.errors.push(viewport.width+': '+e.message))
    await page.goto(pathToFileURL(probe).href);await page.waitForFunction(()=>window.riskCapture);const opened=await page.evaluate(()=>window.riskCapture.open());report.products=report.products||[];report.products.push({width:viewport.width,...opened})
-   check(viewport.width+' cold product risk under 100ms',opened.ms<100);check(viewport.width+' real 1000 paths',opened.result.paths===1000)
+   check(viewport.width+' cold product risk under 100ms',opened.ms<100);check(viewport.width+' real 1000 paths',opened.result.paths===1000);await page.locator('#product-show-detail').click()
    const line=page.locator('#product-page .product-risk-line'),slider=page.getByRole('slider',{name:'Order amount',exact:true})
    check(viewport.width+' quiet risk line',/^Chance of running out: \d+% before the order arrives · \d+% after ordering$/.test(await line.textContent()))
    check(viewport.width+' slider range and default',await slider.getAttribute('min')==='-50'&&await slider.getAttribute('max')==='100'&&await slider.inputValue()==='0')
@@ -87,7 +87,7 @@ async function main(){
     report.scale=await page.evaluate(()=>window.riskCapture.scale());await page.waitForFunction(()=>window.riskMetrics.columns.total===1000&&window.riskMetrics.columns.complete,{},{timeout:60000});report.scale.metrics=await page.evaluate(()=>window.riskMetrics.columns);report.scale.simulationCalls=await page.evaluate(()=>window.riskMetrics.computed)-report.scale.callsBefore
     check('all 1000 real column simulations completed',report.scale.metrics.computed===1000&&report.scale.metrics.withheld===0&&report.scale.simulationCalls===1000);check('1000 column risk active computation under 1500ms',report.scale.metrics.active_ms<1500)
     check('Run-out risk column available',await page.locator('.work-head [data-column=risk]').count()===1)
-    await page.locator('#work-view>summary').click();await page.locator('[data-density=simple]').click();check('Simple excludes risk column',await page.locator('.work-head [data-column=risk]').count()===0)
+    await page.locator('#work-view>summary').click();await page.locator('[data-density=simple]').click();check('Simple includes risk chip column',await page.locator('.work-head [data-column=risk]').count()===1&&await page.locator('.work-row [data-column=risk] .decision-risk-chip').count()>0);check('Simple risk chips use Low/Medium/High labels',await page.locator('.work-row [data-column=risk] .decision-risk-chip').evaluateAll(es=>es.every(e=>['Low','Medium','High'].includes(e.textContent)&&e.getAttribute('aria-label')===e.textContent+' risk')))
    }
    await ctx.close()
   }

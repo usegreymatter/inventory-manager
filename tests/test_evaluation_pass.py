@@ -14,8 +14,10 @@ def test_cli_selects_once_per_sku(tmp_path, monkeypatch, capsys, learning):
     cli = load_cli()
     engine, sources = cli._load_modules()
     data = synthetic_data(3)
+    stock = tmp_path / 'synthetic.csv'
+    stock.write_text('sku,name,unit,on_hand,supplier_days,2025-10,2025-11,2025-12\nA,Synthetic,ea,0,14,3,3,3\n')
     def load_csv(path, receipts, *, max_bytes):
-        assert path == 'unused.csv' and receipts is None
+        assert path == str(stock) and receipts is None
         assert max_bytes == sources.MAX_CSV_BYTES
         return data
 
@@ -29,7 +31,7 @@ def test_cli_selects_once_per_sku(tmp_path, monkeypatch, capsys, learning):
         return original(item, last, *args)
 
     monkeypatch.setattr(engine, 'forecast_selection', engine._memo_history(counted))
-    args = ['unused.csv', '--all', '--today', '2026-01-01']
+    args = [str(stock), '--all', '--today', '2026-01-01']
     if learning:
         diary = tmp_path / 'diary.jsonl'
         diary.write_text(''.join(json.dumps(r) + '\n' for r in synthetic_diary(data)))

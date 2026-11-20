@@ -137,13 +137,16 @@ async function bulkReachEvidence(page, key) {
     assert.equal(await rows.count(),count,`${kind}: preserve complete order list / capped browser`)
     const row=rows.nth(index)
     const sku=await row.evaluate(el=>el.dataset.orderSku || el.querySelector('small').textContent)
-    const measure=()=>row.evaluate(el=>{
+    const measure=()=>row.evaluate((el,current)=>{
       const rect=el=>{const r=el.getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom}}
       let scroller=el.parentElement
       while(scroller && !(scroller.scrollHeight>scroller.clientHeight && ['auto','scroll'].includes(getComputedStyle(scroller).overflowY))) scroller=scroller.parentElement
+      // Current layout uses native document scrolling, not a nested order scroller.
+      if(!scroller&&current)scroller=document.scrollingElement
       if(!scroller) throw Error('Bulk row has no native scroll container')
-      return {row:rect(el),scroller:rect(scroller),scrollTop:scroller.scrollTop,scrollHeight:scroller.scrollHeight,clientHeight:scroller.clientHeight,width:innerWidth,height:innerHeight,focused:el===document.activeElement}
-    })
+      return {row:rect(el),scroller:scroller===document.scrollingElement?{left:0,right:innerWidth,top:0,bottom:innerHeight}:rect(scroller),scrollTop:scroller.scrollTop,scrollHeight:scroller.scrollHeight,clientHeight:scroller.clientHeight,width:innerWidth,height:innerHeight,focused:el===document.activeElement}
+    },process.argv.includes('--current'))
+    if(process.argv.includes('--current'))await page.evaluate(()=>window.scrollTo(0,0))
     const before=await measure()
     // Native scrolling only: no layout, data or style substitutions.
     await row.evaluate(el=>el.scrollIntoView({block:'center',inline:'nearest'}))
@@ -183,9 +186,21 @@ async function main() {
   const fixtures=expandStressFixtures(JSON.parse(fs.readFileSync('tests/fixtures/visual-stress.json','utf8')))
   if(process.argv.includes('--prepare-baseline')) prepareBaseline()
   if(process.argv.includes('--prepare-only')) { console.log('Prepared immutable 6dcda30 baseline bundle; no browser launched.'); return }
+  if(process.argv.includes('--current')){
+    // v1.1 capture mode uses the reviewed import-policy + additive display pins,
+    // not the pre-seasonal 6dcda30 maths. Historical replay stays frozen below.
+    // Reuse the exact-byte guard: no computation pin is silently refreshed here.
+    report.base='docs/import-logic-baseline.json';report.currentLogic=JSON.parse(execFileSync(process.execPath,['docs/capture-polish.cjs','--label','after','--guard-only'],{encoding:'utf8'}))
+  }else{
   const current=fs.readFileSync('desktop/plugin.js','utf8'), base=execFileSync('git',['show','6dcda30:desktop/plugin.js'],{encoding:'utf8'})
-  assert.equal(current.slice(0,current.indexOf('const pageStyle =')),base.slice(0,base.indexOf('const pageStyle =')))
+  // This historical replay predates the reviewed seasonal/import/order-policy
+  // baselines. Keep 6dcda30 immutable: compare exact-byte digests (not a giant
+  // source/sample diff), and fail closed rather than silently repinning maths.
+  const pureHash = source => createHash('sha256').update(source.slice(0,source.indexOf('const pageStyle ='))).digest('hex')
+  assert.ok(current.indexOf('const pageStyle =')>0 && base.indexOf('const pageStyle =')>0,'historical pure-block boundaries must exist')
+  assert.equal(pureHash(current),pureHash(base),'Historical stress replay requires unchanged 6dcda30 calculation bytes; current reviewed logic differs. No pin refresh authorized by this capture repair.')
   for(const file of ['engine.py','sources.py','tools.py','data/sample.json','AGENTS.md']) execFileSync('git',['diff','--exit-code','6dcda30','--',file],{stdio:'pipe'})
+  }
   report.protectedBytesUnchanged=true
   if(process.argv.includes('--check-only')) {
     const evidence={status:'SOURCE_ONLY',protectedBytesUnchanged:true,browserRun:false,
@@ -230,13 +245,19 @@ async function main() {
           const toolbar=document.querySelector('.stress-controls')
           return parseFloat(getComputedStyle(document.body).paddingBottom)>=toolbar.getBoundingClientRect().height
         })
-        const advanced=page.locator('[data-advanced-settings]');await advanced.locator('summary').click()
-        item.developerChrome=await advanced.locator('summary').evaluate(summary=>{
+        const advanced=page.locator('[data-advanced-settings]');await advanced.locator(':scope > summary').click()
+        item.developerChrome=await advanced.locator(':scope > summary').evaluate(summary=>{
           const toolbar=document.querySelector('.stress-controls').getBoundingClientRect(),target=summary.getBoundingClientRect()
           const hit=document.elementFromPoint(target.left+target.width/2,target.top+target.height/2)
           return {toolbarHeight:toolbar.height,toolbarTop:toolbar.top,reservedBottom:parseFloat(getComputedStyle(document.body).paddingBottom),summaryBottom:target.bottom,unobstructed:!!hit && summary.contains(hit)}
         })
         check(item.developerChrome.reservedBottom>=item.developerChrome.toolbarHeight && item.developerChrome.summaryBottom<=item.developerChrome.toolbarTop && item.developerChrome.unobstructed,'developer toolbar does not cover Advanced', {key,...item.developerChrome})
+        if(config.data==='thousand'&&process.argv.includes('--current')){
+          // The current UI intentionally previews ten orders; exercise its real
+          // disclosure before asserting all 1,000 are available and reachable.
+          assert.equal(await page.locator('[data-order-sku]').count(),10)
+          await page.getByRole('button',{name:'Show all 1000',exact:true}).click()
+        }
         item.geometry=await geometry(page)
         check(item.geometry.pageWidth<=item.geometry.width+1,'page-overflow',{key,...item.geometry})
         check(!item.geometry.overflowing.length,'text-overflow',{key,elements:item.geometry.overflowing})

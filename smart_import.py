@@ -26,7 +26,13 @@ MAX_COLS = 16384
 MAX_CELLS = 2000000
 FIXED = ['sku', 'name', 'unit', 'on_hand', 'supplier_days']
 OPTIONAL = ['category', 'supplier', 'on_order', 'demand_change_pct', 'last_count_date']
-NUMERIC_FIELDS = {'on_hand', 'on_order', 'supplier_days', 'demand_change_pct', 'quantity', *PER_ITEM}
+REVIEW_FIELDS = ['reserved', 'stock_unit', 'sales_unit']
+REVIEW_ALIASES = {
+    'reserved': ['reserved', 'reserved qty', 'reserved quantity', 'allocated', 'allocated qty', 'allocated stock', 'reserved stock', 'reserved or allocated stock'],
+    'stock_unit': ['stock unit', 'stock uom', 'inventory unit'],
+    'sales_unit': ['sales unit', 'sales uom', 'sold unit'],
+}
+NUMERIC_FIELDS = {'reserved', 'on_hand', 'on_order', 'supplier_days', 'demand_change_pct', 'quantity', *PER_ITEM}
 BALANCE_ERROR = 'differing on-hand balances; use stock snapshot'
 DATE_HEADERS = ['date', 'transaction date', 'sales date', 'invoice date', 'document date', 'posting date', 'month', 'period']
 QUANTITY_HEADERS = ['quantity', 'qty', 'sales quantity', 'qty sold', 'quantity sold', 'units sold', 'sales', 'sold', 'demand', 'sales qty', 'quantity invoiced']
@@ -383,7 +389,7 @@ def _analyse(sheet, overrides, aliases, type_aliases):
             override_key=f'{name}:{i}'
             if override_key in overrides:
                 field = overrides[override_key] or None; reason='Manual mapping'; rank=-1000
-                if field is not None and field not in {*aliases,*FIXED,*OPTIONAL,*PER_ITEM,'date','quantity'} and not re.fullmatch(r'(?:rcv:)?[1-9][0-9]{3}-(?:0[1-9]|1[0-2])',field):
+                if field is not None and field not in {*aliases,*FIXED,*OPTIONAL,*PER_ITEM,*REVIEW_FIELDS,'date','quantity'} and not re.fullmatch(r'(?:rcv:)?[1-9][0-9]{3}-(?:0[1-9]|1[0-2])',field):
                     field=None; reason='Unknown manual mapping ignored'
             else:
                 low=_trim(source).lower(); receipt=low.startswith('rcv:')
@@ -462,6 +468,11 @@ def _analyse(sheet, overrides, aliases, type_aliases):
     if best is None: best=(dict(name=name,header_row=1,score=0,layout='products',mapping=[],unmapped=[],missing=[t for _,t in REQUIRED],products=0),{},[],2000,False)
     report,picked,headers,inferred,has_year=best
     records={}; warnings=[]; locations={}
+    report['accepted_rows'] = []
+    report['incoming_evidence'] = {}
+    report['reserved_warnings'] = {}
+    report['input_warnings'] = {}
+    report['reasons'] = []
     number, style = _sheet_numbers(sheet, picked, report['header_row'])
     percent_cells = {tuple(cell) for cell in sheet.get('percent_cells', [])}
     warnings.append(f'{name}: Number format: {style}; review numeric text conventions.')
@@ -499,16 +510,31 @@ def _analyse(sheet, overrides, aliases, type_aliases):
         if sku in records:
             record = records[sku]
             reason = None
-            if (record.get('unit') or 'units') != (get('unit') or 'units'):
+            if (record.get('unit') or record.get('stock_unit') or 'units') != (get('unit') or get('stock_unit') or 'units'):
                 reason = 'conflicting stock units'
             elif report['layout'] != 'long':
-                if not location or '' in locations[sku]: reason = 'duplicate sku without warehouse/location'
-                elif location in locations[sku]: reason = 'duplicate sku at same warehouse/location'
+                if 'location' not in picked: reason = 'duplicate sku without warehouse/location'
+                elif location and location in locations[sku]: reason = 'duplicate sku at same warehouse/location'
                 elif 'on_hand' in picked and (not record.get('on_hand') or not get('on_hand')): reason = 'missing on-hand stock for warehouse row'
             if reason:
                 warnings.append(f'{name}: {sku}: {reason}; first row kept; row omitted ({rownum}).'); continue
             if report['layout'] != 'long':
                 warnings.append(f'{name}: {sku}: combined distinct warehouse/location rows; stock, on order, sales and receipts summed; first-row metadata kept.')
+                if not location or '' in locations[sku]:
+                    warnings.append(f'{name}: {sku}: blank warehouse/location treated as Unspecified; all blank-location rows aggregated, including repeated blanks. Check for duplicate exports.')
+        report['accepted_rows'].append(rownum - 1)
+        if 'on_hand' in picked:
+            report['incoming_evidence'].setdefault(sku, []).append(bool(get('on_order')))
+        if 'reserved' in picked and 'on_hand' in picked:
+            notes = report['reserved_warnings'].setdefault(sku, [])
+            stock, held = number(get('on_hand')), number(get('reserved') or '0')
+            if NUMERIC.fullmatch(stock) and NUMERIC.fullmatch(held) and 0 <= float(stock) <= 1e12 and float(held) > float(stock):
+                notes.append('Oversold: reserved exceeds stock in a warehouse — available stock is netted across contributing warehouses, then floored at 0. Check allocations before ordering.')
+            if not get('reserved'):
+                notes.append('Reserved cell is blank — counted as 0; check allocations before ordering.')
+        # Preserve stock-header provenance even when allocations join later.
+        if 'on_hand' in picked and 'available' in _key(headers[picked['on_hand'][0]]):
+            report['reserved_warnings'].setdefault(sku, []).append('Stock header says already available — subtracting reserved again may double-count allocations.')
         record=records.setdefault(sku,{})
         locations.setdefault(sku,set()).add(location)
         for f in picked:
@@ -523,16 +549,23 @@ def _analyse(sheet, overrides, aliases, type_aliases):
                     vals[j] = '0'
                     warnings.append(f'{name}: {sku}: negative sales in {f} treated as 0 before warehouse aggregation.')
             value=vals[0]
+            if f == 'reserved' and value and (not NUMERIC.fullmatch(value) or not math.isfinite(float(value)) or not 0 <= float(value) <= 1e12):
+                value = 'Invalid reserved stock'
             if is_month:
                 for v in vals[1:]: value=_add(value,v)
-            if f in ('on_hand','on_order') or is_month:
-                if report['layout']=='long' and f in ('on_hand','on_order'):
+            if f in ('on_hand','on_order','reserved') or is_month:
+                if report['layout']=='long' and f in ('on_hand','on_order','reserved'):
                     if value and not record.get(f): record[f]=value
                     elif value and record.get(f)!=value and not _same_number(value, record[f]):
                         if f == 'on_hand':
                             record[f] = BALANCE_ERROR
                             warnings.append(f'{name}: {sku}: {BALANCE_ERROR}.')
-                        else: warnings.append(f'{name}: differing {f} for {sku}; first value kept, not summed across transactions.')
+                        else:
+                            message = f'{name}: differing {f} for {sku}; first value kept, not summed across transactions.'
+                            warnings.append(message)
+                            if f == 'reserved':
+                                report['reasons'].append(message)
+                                report['input_warnings'].setdefault(sku, []).append(message)
                 else: record[f]=_add(record.get(f,''),value)
             elif value:
                 record.setdefault(f,value)
@@ -541,8 +574,100 @@ def _analyse(sheet, overrides, aliases, type_aliases):
             if month: record[month]=_add(record.get(month,''),number(get('quantity')))
             elif get('date'): warnings.append(f'{name}: unrecognized transaction date for {sku}; quantity not imported.')
     if skipped: warnings.append(f'{name}: skipped {skipped} summary or blank-code rows.')
+    for record in records.values():
+        if not record.get('unit') and record.get('stock_unit'):
+            record['unit'] = record['stock_unit']
     report['products']=len(records)
-    return report,records,warnings,headers
+    metadata = contributor_metadata(sheet, report)
+    for sku, notes in metadata['input_warnings'].items():
+        report['input_warnings'].setdefault(sku, []).extend(notes)
+    report['reserved_missing'] = metadata['reserved_missing']
+    if 'on_hand' in picked and 'reserved' not in picked:
+        report['reserved_missing'] = {sku: [name] for sku in records}
+    report['informational_skus'] = metadata['informational_skus']
+    report['reasons'] = list(dict.fromkeys([*report['reasons'], *metadata['reasons']]))
+    warnings.extend(metadata['reasons'])
+    if metadata['informational_skus']:
+        warnings.append(_metadata_summary(metadata['informational_skus']))
+    report['reasons'] = _bounded_messages(report['reasons'])
+    return report,records,_bounded_messages(warnings),headers
+
+
+def _short_label(value, limit=64):
+    return value if len(value) <= limit else value[:limit - 1] + '…'
+
+
+def _bounded_messages(messages):
+    unique = list(dict.fromkeys(_short_label(message, 512) for message in messages))
+    return unique if len(unique) <= 100 else unique[:99] + [f'{len(unique) - 99} more input warnings omitted; check all source rows before ordering.']
+
+
+def _metadata_summary(skus):
+    skus = list(dict.fromkeys(skus))
+    labels = ', '.join(_short_label(sku, 24) for sku in skus[:10])
+    remaining = f'; {len(skus) - 10} more' if len(skus) > 10 else ''
+    return f'Metadata differences for {len(skus)} SKUs ({labels}{remaining}); first values kept. Informational only.'
+
+
+def _bounded_input_warnings(notes):
+    # Sort only the budget allocation; keep SKU identities and warning order.
+    keys = sorted(notes, key=lambda sku: sku.encode('utf-16-be', errors='surrogatepass'))
+    messages = list(dict.fromkeys(_short_label(note, 512) for sku in keys for note in notes[sku]))
+    keep = set(messages[:99]) if len(messages) > 100 else set(messages)
+    omitted = 'Additional input warnings omitted; check all source rows before ordering.'
+    return {sku: list(dict.fromkeys(text if text in keep else omitted for text in (_short_label(note, 512) for note in entries))) for sku, entries in notes.items()}
+
+
+def contributor_metadata(sheet, meta):
+    """Review only actual source contributors; never alter their quantities."""
+    picked = {m['field']: [m['index']] for m in meta.get('mapping', []) if m.get('field')}
+    headers = sheet['rows'][meta['header_row'] - 1] if sheet['rows'] else []
+    reserved = next((i for i, h in enumerate(headers) if _key(h) in REVIEW_ALIASES['reserved']), None)
+    number, _ = _sheet_numbers(sheet, picked, meta['header_row'])
+    accepted = set(meta.get('accepted_rows', []))
+    warnings, missing, reasons, first, identical, informational = {}, {}, [], {}, {}, {}
+    def mark(sku, message):
+        message = _short_label(message, 512)
+        if message not in reasons and len(reasons) >= 99:
+            message = 'Additional input warnings omitted; check all source rows before ordering.'
+        if message not in warnings.setdefault(sku, []):
+            warnings[sku].append(message)
+        if message not in reasons:
+            reasons.append(message)
+    for index, row in enumerate(sheet['rows'][meta['header_row']:], meta['header_row']):
+        if index not in accepted:
+            continue
+        def get(field):
+            hits = picked.get(field, [])
+            return _trim(row[hits[0]]) if hits and hits[0] < len(row) else ''
+        sku = get('sku')
+        if not sku:
+            continue
+        if 'on_hand' in picked and reserved is not None and (reserved >= len(row) or not _trim(row[reserved])):
+            missing.setdefault(sku, [sheet['name']])
+        if meta.get('layout') != 'long' and not get('location'):
+            fingerprint = tuple(row)
+            seen = identical.setdefault(sku, set())
+            if fingerprint in seen:
+                mark(sku, f'Identical rows found for SKU {_short_label(sku)} — possible duplicate export')
+            seen.add(fingerprint)
+        values = first.setdefault(sku, {})
+        for field in picked:
+            if field in ('sku', 'location', 'active', 'inactive', 'date', 'quantity', 'on_hand', 'on_order', 'reserved') or re.fullmatch(r'(?:rcv:)?[0-9]{4}-[0-9]{2}', field):
+                continue
+            value = number(get(field), field == 'supplier_days') if field in NUMERIC_FIELDS else get(field)
+            if value:
+                if values.get(field) and values[field] != value and not (field in NUMERIC_FIELDS and _same_number(values[field], value)):
+                    if field in ('supplier_days', 'unit', 'stock_unit', 'sales_unit'):
+                        mark(sku, f'{_short_label(sheet["name"])}: conflicting {field} for {_short_label(sku)}; first value kept; acknowledge before ordering.')
+                    else:
+                        informational[sku] = None
+                values.setdefault(field, value)
+    if informational:
+        summary = _metadata_summary(informational)
+        for sku in informational:
+            warnings.setdefault(sku, []).append(summary)
+    return dict(input_warnings=warnings, reserved_missing=missing, reasons=reasons, informational_skus=list(informational))
 
 
 def understand_workbook(sheets, sheet=None, overrides=None):
@@ -557,7 +682,8 @@ def understand_workbook(sheets, sheet=None, overrides=None):
     _limits(sheets)
     if len({s['name'] for s in sheets}) != len(sheets): raise ValueError('Sheet names must be unique.')
     vocabulary = json.loads(Path(__file__).with_name('smart-import-vocabulary.json').read_text(encoding='utf-8'))
-    aliases = {field: [*labels, *vocabulary.get(field, [])] for field, labels in ERP_ALIASES.items()}
+    # Meaning-specific unit headers must win over generic ERP unit aliases.
+    aliases = {**REVIEW_ALIASES, **{field: [*labels, *vocabulary.get(field, [])] for field, labels in ERP_ALIASES.items()}}
     analyses=[_analyse(s,overrides or {},aliases,PRODUCT_TYPE_ALIASES) for s in sheets]
     if not analyses: raise ValueError('Workbook has no worksheets.')
     if sheet is not None:
@@ -575,6 +701,35 @@ def understand_workbook(sheets, sheet=None, overrides=None):
     matched=set(); unmatched=set(); available={m['field'] for m in report['mapping'] if m['field']}
     has_sales = lambda values: any(re.fullmatch(r'[1-9][0-9]{3}-(?:0[1-9]|1[0-2])', f) and v for f,v in values.items())
     external_sales = False
+    reasons = [reason for a, _, _, _ in analyses for reason in a['reasons']]
+    input_warnings, reserved_missing = {}, {}
+    informational = dict.fromkeys(sku for a, _, _, _ in analyses for sku in a['informational_skus'] if sku in products)
+    warnings = [w for w in warnings if not w.startswith('Metadata differences')]
+    reserved_warnings = {}
+    for a, records, _, _ in analyses:
+        for sku, notes in a['input_warnings'].items():
+            if sku in products:
+                input_warnings.setdefault(sku, []).extend(note for note in notes if not note.startswith('Metadata differences'))
+        for sku, notes in a['reserved_warnings'].items():
+            if sku in products:
+                reserved_warnings.setdefault(sku, []).extend(notes)
+    incoming_evidence = {sku: list(e) for sku, e in report['incoming_evidence'].items()}
+    base_stock = any(m['field'] == 'on_hand' for m in report['mapping'])
+    def quantity_schema(meta):
+        return {m['field'] for m in meta['mapping'] if m['field'] and re.fullmatch(r'(?:rcv:)?[0-9]{4}-[0-9]{2}', m['field'])}
+    base_schema = quantity_schema(report)
+    stock_sheets = [report['name']] if base_stock else []
+    stock_sources = {sku: [report['name']] for sku in products} if base_stock else {}
+    filled_sources, joined_reserved, summed_sources = {}, set(), set()
+    for sku, names in report['reserved_missing'].items():
+        reserved_missing[sku] = list(names)
+    def flag(sku, message):
+        message = _short_label(message, 512)
+        if message not in reasons and len(reasons) >= 99:
+            message = 'Additional input warnings omitted; check all source rows before ordering.'
+        warnings.append(message)
+        reasons.append(message)
+        input_warnings.setdefault(sku, []).append(message)
     for i,(other,records,_,_) in enumerate(analyses):
         if i==base: continue
         external_sales = external_sales or any(has_sales(v) for v in records.values())
@@ -584,16 +739,70 @@ def understand_workbook(sheets, sheet=None, overrides=None):
             matched.add(sku)
             target=products[sku]
             if target.get('unit') and values.get('unit') and target['unit'] != values['unit']:
-                warnings.append(f'{other["name"]}: conflicting stock units for {sku}; auxiliary row omitted, base sheet kept.')
+                message = f'{other["name"]}: conflicting stock units for {sku}; auxiliary row omitted, base sheet kept; acknowledge before ordering.'
+                flag(sku, message)
                 continue
+            other_stock = any(m['field'] == 'on_hand' for m in other['mapping'])
+            if other_stock and not target.get('on_hand') and values.get('on_hand'):
+                filled_sources[sku] = other['name']
+            if not other_stock and values.get('reserved') and not target.get('reserved'):
+                joined_reserved.add(sku)
+            # Transaction balances are snapshots, not additional warehouses.
+            # Different monthly/receipt columns may be overlapping exports.
+            combine_stock = base_stock and other_stock and report['layout'] != 'long' and other['layout'] != 'long' and base_schema == quantity_schema(other)
+            if combine_stock and target.get('on_hand') and values.get('on_hand'):
+                summed_sources.add(sku)
+            if base_stock and other_stock and report['layout'] != 'long' and other['layout'] != 'long' and not combine_stock:
+                message = f'{other["name"]}: ambiguous repeated stock for {sku}: incompatible quantity schema; base sheet values kept where present, not summed; acknowledge before ordering.'
+                flag(sku, message)
+            if combine_stock and other['name'] not in stock_sheets:
+                stock_sheets.append(other['name'])
+            if other_stock and (combine_stock or not base_stock):
+                incoming_evidence.setdefault(sku, []).extend(other['incoming_evidence'].get(sku, []))
+            elif values.get('on_order') and not any(incoming_evidence.get(sku, [])) and (not other_stock or not target.get('on_order')):
+                # A separately joined PO total replaces absent stock-sheet evidence.
+                incoming_evidence[sku] = [True]
+            if other_stock and (combine_stock or not target.get('on_hand') and values.get('on_hand')):
+                stock_sources.setdefault(sku, []).append(other['name'])
+                for name in other['reserved_missing'].get(sku, []):
+                    if name not in reserved_missing.setdefault(sku, []):
+                        reserved_missing[sku].append(name)
             for field,value in values.items():
-                if not target.get(field): target[field]=value
-                elif value and target[field]!=value and field=='unit': warnings.append(f'{other["name"]}: conflicting stock units for {sku}; base sheet value kept.')
+                quantity_field = field in ('on_hand', 'reserved', 'on_order') or bool(re.fullmatch(r'(?:rcv:)?[0-9]{4}-[0-9]{2}', field))
+                if combine_stock and quantity_field:
+                    target[field] = _add(target.get(field, ''), value)
+                elif not target.get(field): target[field]=value
+                elif value and target[field]!=value and not (field in NUMERIC_FIELDS and _same_number(value, target[field])):
+                    if not quantity_field and field not in ('supplier_days', 'unit', 'stock_unit', 'sales_unit'):
+                        informational[sku] = None
+                    else:
+                        message = f'{_short_label(other["name"])}: conflicting {field} for {_short_label(sku)}; base sheet value kept; acknowledge before ordering.'
+                        flag(sku, message)
+    for sku, names in stock_sources.items():
+        names.sort(key=lambda name: next(i for i, source in enumerate(sheets) if source['name'] == name))
+        if sku in filled_sources and sku not in summed_sources:
+            flag(sku, f'Blank stock in sheet {_short_label(report["name"])} was filled from sheet {_short_label(filled_sources[sku])}. Check the selected base sheet before ordering.')
+        elif len(names) > 1:
+            flag(sku, 'Stock from sheets ' + ', '.join(names) + ' was added together. Confirm these are separate warehouses — not totals, copies or older snapshots.')
+    if len(stock_sheets) > 1 and summed_sources:
+        warnings.append('Combined stock from sheets ' + ', '.join(stock_sheets))
     if unmatched: warnings.append(f'{len(unmatched)} product codes in other sheets did not match {report["name"]}; not imported.')
     fields=set().union(*(set(v) for v in products.values())) if products else available
+    for sku in joined_reserved:
+        reserved_missing.pop(sku, None)
+        reserved_warnings[sku] = [note for note in reserved_warnings.get(sku, []) if not note.startswith('Reserved cell is blank')]
+        if not reserved_warnings[sku]:
+            reserved_warnings.pop(sku)
+    if 'reserved' not in fields:
+        reserved_missing = {}  # The no-column disclosure already covers every SKU.
+    if informational:
+        summary = _metadata_summary(informational)
+        warnings.append(summary)
+        for sku in informational:
+            input_warnings.setdefault(sku, []).append(summary)
     months=sorted(f for f in fields if re.fullmatch(r'[1-9][0-9]{3}-(?:0[1-9]|1[0-2])',f))
     receipts=sorted(f for f in fields if re.fullmatch(r'rcv:[1-9][0-9]{3}-(?:0[1-9]|1[0-2])',f))
-    headers=FIXED+[f for f in OPTIONAL+PER_ITEM if f in fields]+months+receipts
+    headers=FIXED+[f for f in OPTIONAL+PER_ITEM+REVIEW_FIELDS if f in fields]+months+receipts
     canonical=[headers]
     for sku,values in products.items():
         canonical.append([sku if f=='sku' else values.get(f,'') or ('units' if f=='unit' else '') for f in headers])
@@ -605,4 +814,15 @@ def understand_workbook(sheets, sheet=None, overrides=None):
         missing.append(message)
         warnings.append(message + '; unmatched history is not zero demand; cannot import.')
     if any(m['confidence'] in ('medium','low') for a,_,_,_ in analyses for m in a['mapping']): warnings.append('Some mappings are suggestions; review medium/low-confidence columns before import.')
-    return dict(sheets=[a for a,_,_,_ in analyses],sheet_used=report['name'],header_row=report['header_row'],layout=report['layout'],mapping=report['mapping'],unmapped=report['unmapped'],missing=missing,warnings=list(dict.fromkeys(warnings)),match_report={'matched':len(matched),'unmatched':len(unmatched)},fingerprint=json.dumps([[a['name'],h] for a,_,_,h in analyses],ensure_ascii=False,separators=(',',':')),canonical_rows=canonical)
+    review_name = 'Canonical review'
+    review_meta = dict(name=review_name, header_row=1,
+                       mapping=[dict(index=i, source=f, field=f) for i, f in enumerate(headers)],
+                       accepted_rows=list(range(1, len(canonical))))
+    review_sheets = [dict(name=review_name, rows=canonical)]
+    input_warnings = _bounded_input_warnings(input_warnings)
+    review_report = dict(sheet_used=review_name, sheets=[review_meta], incoming_evidence=incoming_evidence,
+                         requires_ack=bool(reasons), reasons=_bounded_messages(reasons),
+                         input_warnings={sku: list(dict.fromkeys(notes)) for sku, notes in input_warnings.items()},
+                         reserved_missing=reserved_missing,
+                         reserved_warnings={sku: list(dict.fromkeys(notes)) for sku, notes in reserved_warnings.items()})
+    return dict(review_sheets=review_sheets, review_report=review_report, input_warnings=review_report['input_warnings'], reserved_missing=reserved_missing, sheets=[a for a,_,_,_ in analyses],sheet_used=report['name'],header_row=report['header_row'],layout=report['layout'],mapping=report['mapping'],unmapped=report['unmapped'],missing=missing,warnings=_bounded_messages(warnings),match_report={'matched':len(matched),'unmatched':len(unmatched)},fingerprint=json.dumps([[a['name'],h] for a,_,_,h in analyses],ensure_ascii=False,separators=(',',':')),canonical_rows=canonical)

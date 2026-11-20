@@ -37,6 +37,13 @@ function seriesFor(item){if(!seriesCache.has(item))seriesCache.set(item,a2Series
 function hashSku(){return new URLSearchParams(location.hash.slice(1)).get('sku')}
 function groupFor(row){return ['order','running-low','needs-data'].includes(row.bucket)?row.bucket:'ok'}
 function warning(label,text){const d=node('details',null,'warning-detail');const s=node('summary',STRINGS.copy+label);s.title=text;d.append(s,node('p',text));return d}
+function itemInputWarnings(item){
+  if(!item.input_warnings?.length)return null
+  const section=node('section',null,'item-input-warnings');section.dataset.itemInputWarnings=item.sku;section.setAttribute('aria-label',S('inputWarningsFor',{sku:item.sku}))
+  section.append(node('strong',STRINGS.checkBeforeOrdering))
+  for(const text of item.input_warnings)section.append(node('p',text))
+  return section
+}
 function stat(label,value){const e=node('div',null,'date-stat');e.append(node('span',label),node('strong',value));return e}
 function chartPanel(row){
   const {item,guidance:g}=row,panel=node('div');panel.dataset.sku=item.sku
@@ -46,7 +53,7 @@ function chartPanel(row){
   big.dataset.long=String((big.textContent||'').length>10)
   big.append(node('small',g.status==='needs-data'?'':item.unit));amount.append(node('p',STRINGS.suggested_order,'quantity-label'),big)
   const pill=node('span',null,'pill');pill.dataset.bucket=row.bucket;pill.append(node('i',null,'dot'),node('span',g.out_of_stock?STRINGS.out_of_stock:g.quantity===0&&g.supply_gap?STRINGS.check_delivery:bucketNames[row.bucket]));amount.append(pill)
-  const dates=node('div',null,'dates');dates.append(stat(STRINGS.runs_out,item.runout_day?shortDate(item.runout_day):g.status==='needs-data'?STRINGS.unknown:'6M+'),stat(STRINGS.arrives,g.delivery_date?label(g.delivery_date.slice(0,7)):STRINGS.unknown));decision.append(amount,dates);panel.append(decision)
+  const dates=node('div',null,'dates');dates.append(stat(STRINGS.runs_out,item.runout_day?shortDate(item.runout_day):g.status==='needs-data'?STRINGS.unknown:'6M+'),stat(STRINGS.arrives,g.delivery_date?label(g.delivery_date.slice(0,7)):STRINGS.unknown));decision.append(amount,dates);panel.append(decision);const inputWarnings=itemInputWarnings(item);if(inputWarnings)panel.append(inputWarnings)
   const section=node('div',null,'chart-section'),card=node('div',null,'chart-card')
   if(item.held||g.status==='needs-data')card.append(node('p',STRINGS.needs_data,'empty'))
   else card.append(fullChart(row))

@@ -1,3 +1,4 @@
+const {acceptMeaning}=require('../standalone/qa-input-meaning.cjs')
 // Lifecycle: living. Offline SDK-shim proof, not a real Desktop integration test.
 const path = require('node:path')
 const fs = require('node:fs')
@@ -46,7 +47,9 @@ assert.equal(largeData.rows.length + largeData.more, 100)
       await page.getByRole('table').waitFor()
       assert.equal(await page.getByRole('row').count(), 6)
       assert.ok((await page.getByRole('row').nth(1).innerText()).includes('UL-FOAM-GRN'))
-      assert.ok((await page.getByRole('row').nth(1).innerText()).includes('Nov 2026'))
+      // Fully synthetic sample (seed 731209), not the retired real-derived sample:
+      // Python card runout is 2026-12 for UL-FOAM-GRN; no computation pin changes.
+      assert.ok((await page.getByRole('row').nth(1).innerText()).includes('Dec 2026'))
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false)
       await page.screenshot({ path: `.scratch/quick-view-screens/card-${width}-${theme}.png`, fullPage: true })
       // Same registered shortcut works with no plugin page mounted.
@@ -70,7 +73,7 @@ assert.equal(largeData.rows.length + largeData.more, 100)
       await page.getByRole('heading', { name: 'Stock Runway', exact: true }).waitFor()
       await page.getByRole('button', { name: 'My file (CSV)', exact: true }).click()
       await page.locator('input[type=file]').setInputFiles({ name: 'fake.csv', mimeType: 'text/csv',
-        buffer: Buffer.from('sku,name,unit,on_hand,supplier_days,2026-08,2026-09,2026-10\nFAKE,Fake item,ea,5,3,10,10,10\n') })
+        buffer: Buffer.from('sku,name,unit,on_hand,supplier_days,2026-08,2026-09,2026-10\nFAKE,Fake item,ea,5,3,10,10,10\n') });await acceptMeaning(page)
       await page.getByRole('heading', { name: 'Fake item · SKU FAKE', exact: true }).waitFor()
       await page.getByRole('combobox', { name: 'Look ahead', exact: true }).selectOption('4')
       await page.getByRole('link', { name: 'Settings', exact: true }).click()

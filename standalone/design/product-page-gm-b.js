@@ -1,10 +1,16 @@
 // Lifecycle: living. Read-only full product report using existing evaluated rows.
-const productPage={overlay:null,returnHash:'',trigger:null,inert:[],fromPush:false}
+const productPage={overlay:null,returnHash:'',trigger:null,inert:[],fromPush:false,queue:[]}
+// Freeze navigation IDs for this report session, but always read fresh evaluated rows.
+function productNavigationRows(){return productPage.queue.map(sku=>rowMap.get(sku)).filter(Boolean)}
 function productHash(sku){return '#product='+encodeURIComponent(sku)}
 function productSource(source){return ({'from file':'File','supplier setting':'Supplier','product setting':'Product',default:'Default'})[source]||source}
 function productCurrentMethod(item){
  const c=globalThis.StockRunwayForecastMethods.classify(item.monthly_sales||[])
  return c.class[0].toUpperCase()+c.class.slice(1)+' demand — using Current ('+(item.forecast_explanation||'existing forecast')+')'
+}
+function productArrivalLabel(row){
+ const local=localOrderFor(row.item.sku),supplied=data.items.find(i=>i.sku===row.item.sku),confirmed=supplied?.planning_facts?.incoming_pos?.some(p=>p.status==='confirmed'&&p.due_date===row.guidance.delivery_date)
+ return local&&!confirmed&&row.guidance.delivery_date===local.expected_on?'Expected (lead-time estimate)':'Confirmed arrival'
 }
 function productInputs(row){
  const {item:i,guidance:g}=row,{values:v,sources:s}=resolveOrderSettings(i,settings),section=node('section',null,'product-inputs'),grid=node('div',null,'product-input-grid')
@@ -31,7 +37,7 @@ function productLedger(row){
  if(i.held||g.status==='needs-data'){section.append(node('p','Check product data to see the monthly ledger.'));return section}
  const series=seriesFor(i),orderDate=g.order_by==='now'?currentToday:g.order_by
  series.timeline.forEach((r,index)=>{const past=index<series.n,stock=past?series.history.rows[index]?.stock:series.rows[index-series.n].stock,line=node('tr');line.dataset.period=past?'actual':'forecast'
-  const markers=[];for(const [date,name]of [[orderDate,'Order by'],[g.delivery_date,'Confirmed arrival'],[g.runout_date,'Runs out']])if(date?.slice(0,7)===r.month)markers.push(name+' '+shortDate(date))
+  const markers=[];for(const [date,name]of [[orderDate,'Order by'],[g.delivery_date,productArrivalLabel(row)],[g.runout_date,'Runs out']])if(date?.slice(0,7)===r.month)markers.push(name+' '+shortDate(date))
   line.append(node('th',label(r.month)+(past?'':' · forecast')),node('td',orderAmount(Math.abs(r.demand)>=100?Math.round(r.demand):Math.round(r.demand*10)/10)),node('td',past||!forecastCloud(i)?'—':cloudRange(forecastCloud(i).bands[index-series.n])),node('td',r.receipts?orderAmount(r.receipts):'—'),node('td',stock==null?'Unknown':stockCell(past?stock:Math.max(0,stock))),node('td',markers.join(' · ')||'—'));body.append(line)
  });scroll.tabIndex=0;scroll.setAttribute('role','region');scroll.setAttribute('aria-label','Monthly stock ledger, scroll horizontally');scroll.append(table);section.append(scroll);return section
 }
@@ -45,14 +51,14 @@ function drawProductPage(row){
  const overlay=productPage.overlay;if(!overlay||!row)return
  if(chartFocus.overlay)closeChartFocus({restore:false})
  const oldScroll=overlay.dataset.sku===row.item.sku?overlay.scrollTop:0;overlay.dataset.sku=row.item.sku
- const {item:i,guidance:g}=row,wrap=node('div',null,'product-page-content'),nav=node('nav',null,'product-page-nav'),pager=node('div'),index=filteredRows.indexOf(row)
+ const {item:i,guidance:g}=row,wrap=node('div',null,'product-page-content'),nav=node('nav',null,'product-page-nav'),pager=node('div'),navigation=productNavigationRows(),index=navigation.findIndex(r=>r.item.sku===i.sku)
  const close=wlBtn('← All products',()=>closeProductPage());close.id='product-page-close'
- const prev=wlBtn('‹',()=>navigateSku(-1)),next=wlBtn('›',()=>navigateSku(1));prev.setAttribute('aria-label','Previous product');next.setAttribute('aria-label','Next product');prev.disabled=index<=0;next.disabled=index<0||index>=filteredRows.length-1
- pager.append(prev,node('span',`${index+1} / ${filteredRows.length}`),next)
+ const prev=wlBtn('‹',()=>navigateSku(-1)),next=wlBtn('›',()=>navigateSku(1));prev.setAttribute('aria-label','Previous product');next.setAttribute('aria-label','Next product');prev.disabled=index<=0;next.disabled=index<0||index>=navigation.length-1
+ pager.append(prev,node('span',`${index+1} / ${navigation.length}`),next)
  const panel=wlBtn('Side panel view',()=>showProductAsPanel(row),'product-view-toggle');panel.title='Open products in a side panel next to the list';const tools=node('div',null,'product-page-tools');tools.append(panel,pager);nav.append(close,tools)
  const header=node('header',null,'product-page-heading'),meta=node('p',null,'product-page-meta'),status=wlStatusCell(row);header.append(node('h1',i.name));meta.append(status,node('span',[i.sku,i.category||'No product type',i.supplier||'Supplier not assigned'].join(' · ')));const ordered=localOrderPill(i.sku);if(ordered)meta.append(ordered);header.append(meta)
  const methodNote=node('p',g.forecast_method?.label||i.forecast_method?.label||productCurrentMethod(i),'product-note');methodNote.dataset.forecastMethod='true';header.append(methodNote);if(i._method_model)header.append(node('small','Experimental · method selected explicitly. Forecast ranges and run-out probabilities withheld: Current calibration does not apply.','product-note'))
- const figures=node('div',null,'product-page-figures');for(const [title,value,unit]of [['Order qty',g.quantity==null?'—':orderAmount(g.quantity),i.unit],['Order by',g.order_by==='now'?'Today':g.order_by?gmDate(g.order_by):'Not needed',''],['Runs out',g.runout_date?gmDate(g.runout_date):'Not forecast','']]){const figure=node('div');figure.append(node('span',title),node('strong',value),node('small',unit));figures.append(figure)}
+ const figures=node('div',null,'product-page-figures');for(const [title,value,unit]of [[localOrderFor(i.sku)?'Additional order':'Order qty',g.quantity==null?'—':orderAmount(g.quantity),i.unit],[localOrderFor(i.sku)&&!(g.quantity>0)?'Expected arrival':'Order by',localOrderFor(i.sku)&&!(g.quantity>0)?'~'+gmDate(localOrderFor(i.sku).expected_on):g.order_by==='now'?'Today':g.order_by?gmDate(g.order_by):'Not needed',localOrderFor(i.sku)&&!(g.quantity>0)?'Lead-time estimate':''],['Runs out',g.runout_date?gmDate(g.runout_date):'Not forecast','']]){const figure=node('div');figure.append(node('span',title),node('strong',value),node('small',unit));figures.append(figure)}
  const chart=node('section',null,'product-page-chart');if(i.held||g.status==='needs-data')chart.append(node('p',g.reason||'Check product data'));else chart.append(fullChart(row))
  const capped=detectStockoutMonths(i,data.as_of.slice(0,7))
  if(capped.flagged.length){
@@ -63,17 +69,18 @@ function drawProductPage(row){
   chart.prepend(note)
  }else if(settings.stockout_adjust){const note=node('p','Stock-out correction ON · no capped months detected.','product-note');note.dataset.stockoutNote=i.sku;chart.prepend(note)}
 
- if(wl.status!=='all')status.append(node('span',wlStatus.find(c=>c[0]===row.bucket)?.[1]||bucketNames[row.bucket]));
+ if(wl.status!=='all'&&wl.mode!=='simple')status.append(node('span',wlStatus.find(c=>c[0]===row.bucket)?.[1]||bucketNames[row.bucket]));
  const action=node('div',null,'product-order-action'),copy=wlBtn('Copy order',async()=>{
   const text=wlOrderText([row]);let message=action.querySelector('[role=status]');if(!message){message=node('span');message.setAttribute('role','status');action.append(message)}
   try{await navigator.clipboard.writeText(text);message.textContent='Order copied.'}catch{let input=action.querySelector('textarea');if(!input){input=node('textarea');input.readOnly=true;input.setAttribute('aria-label','Order text — select and copy');action.append(input)}input.value=text;input.focus();input.select();message.textContent='Select and copy the order text below.'}
- });const draft=wlBtn('Draft email',()=>wlDraftEmail([row]),'product-draft-email');draft.disabled=!wlEmailGroups([row]).length;copy.disabled=!(g.quantity>0);action.append(copy,draft,localOrderActions([row]),node('p',g.reason||chartKeyline(row),'product-note'))
- if(localOrderFor(i.sku)){const order=localOrderFor(i.sku);action.append(node('p',orderAmount(order.qty)+' '+order.unit+' ordered '+order.ordered_on+' · expected '+order.expected_on+' · marked on this device — not in your ERP.','product-note'));if((i.on_order||0)>0||Object.values(i.receipts||{}).some(v=>v>0))action.append(node('p','Existing incoming stock has no exact PO dates. The shared planner holds mixed incoming data for review; no file stock was replaced.','product-note'))}
+ });const draft=wlBtn('Draft email',()=>wlDraftEmail([row]),'product-draft-email');draft.disabled=!wlEmailGroups([row]).length;copy.disabled=!(g.quantity>0);action.append(copy,draft,localOrderActions([row]),node('p',localOrderFor(i.sku)?localOrderDisplay(localOrderFor(i.sku))+' · '+orderAmount(localOrderFor(i.sku).qty)+' '+i.unit+' · not in your ERP.':g.reason||chartKeyline(row),'product-note'))
+ const inputWarnings=itemInputWarnings(i);if(inputWarnings)action.append(inputWarnings)
+ if(localOrderFor(i.sku)){if((i.on_order||0)>0||Object.values(i.receipts||{}).some(v=>v>0))action.append(node('p','Existing incoming stock has no exact PO dates. The shared planner holds mixed incoming data for review; no file stock was replaced.','product-note'))}
  wrap.append(nav,header,figures,chart,productLedger(row),productInputs(row),action);overlay.replaceChildren(wrap);overlay.scrollTop=oldScroll;chart.querySelector('figure')?.drawChart();cleanupCharts();syncProductSettingSources()
 }
 function openProductPage(row,{push=true}={}){
  if(!row)return
- if(!productPage.overlay){productPage.returnHash=location.hash.includes('product=')?'':location.hash;productPage.trigger=document.activeElement;const overlay=node('section',null,'product-page');overlay.id='product-page';overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-label','Full product page');productPage.overlay=overlay
+ if(!productPage.overlay){productPage.queue=filteredRows.map(r=>r.item.sku);if(!productPage.queue.includes(row.item.sku))productPage.queue.push(row.item.sku);productPage.returnHash=location.hash.includes('product=')?'':location.hash;productPage.trigger=document.activeElement;const overlay=node('section',null,'product-page');overlay.id='product-page';overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-label','Full product page');productPage.overlay=overlay
   productPage.inert=[...document.body.children].filter(e=>!['SCRIPT','DIALOG'].includes(e.tagName)).map(e=>[e,e.inert]);for(const [e]of productPage.inert)e.inert=true;document.body.append(overlay)
  }
  selectedSku=row.item.sku;selectItem(row,{hash:false})
@@ -82,7 +89,7 @@ function openProductPage(row,{push=true}={}){
 }
 function removeProductPage(){
  if(!productPage.overlay)return
- closeChartFocus({restore:false});productPage.overlay.remove();productPage.overlay=null;for(const [e,value]of productPage.inert)e.inert=value;productPage.inert=[];cleanupCharts()
+ closeChartFocus({restore:false});productPage.overlay.remove();productPage.overlay=null;productPage.queue=[];for(const [e,value]of productPage.inert)e.inert=value;productPage.inert=[];cleanupCharts()
 }
 function closeProductPage(){
  const returnHash=productPage.returnHash,pushed=productPage.fromPush;productPage.fromPush=false
@@ -91,7 +98,7 @@ function closeProductPage(){
 const productNavigateBase=navigateSku
 navigateSku=function(delta){
  if(!productPage.overlay)return productNavigateBase(delta)
- const row=filteredRows[filteredRows.findIndex(r=>r.item.sku===selectedSku)+delta];if(!row)return
+ const rows=productNavigationRows(),row=rows[rows.findIndex(r=>r.item.sku===selectedSku)+delta];if(!row)return
  const focused=!!chartFocus.overlay;openProductPage(row,{push:false});if(focused)openChartFocus(productPage.overlay.querySelector('figure'))
 }
 const productSelectBase=selectItem
