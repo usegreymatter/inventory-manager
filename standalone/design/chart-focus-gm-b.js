@@ -211,7 +211,7 @@ navigateSku=function(delta){
 function openChartFocus(figure){
  if(chartFocus.overlay||document.querySelector('dialog[open]')||!figure?.isConnected)return
  const row=figure.chartRow,overlay=node('section',null,'chart-focus'),head=node('header',null,'focus-header'),names=node('div'),nav=node('nav')
- overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-label','Stock Runway chart focus')
+ overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-label','Inventory Manager chart focus')
  names.append(node('h2',row.item.name),node('p',chartKeyline(row),'focus-keyline'))
  const move=delta=>{closeChartFocus({restore:false});navigateSku(delta);openChartFocus(document.querySelector('.product-page figure')||$('hero').querySelector('figure'))}
  const prev=wlBtn('‹',()=>move(-1)),next=wlBtn('›',()=>move(1)),close=wlBtn('Close',()=>closeChartFocus())

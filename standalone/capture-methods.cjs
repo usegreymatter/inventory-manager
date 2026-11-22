@@ -3,7 +3,7 @@
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),{pathToFileURL}=require('node:url')
 const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright')
 const root=path.resolve(__dirname,'..'),out=path.join(root,'.scratch/methods');fs.mkdirSync(out,{recursive:true})
-const source=process.env.FORECAST_PAGE||path.join(__dirname,'stock-runway.html')
+const source=process.env.FORECAST_PAGE||path.join(__dirname,'inventory-manager.html')
 const hooks=`\nwindow.methodsQA={state:()=>({settings:gmPortableSettings(),key:gmDatasetSettingsKey,rows:currentRows.map(r=>({sku:r.item.sku,demand:r.item.monthly_demand,qty:r.guidance.quantity,method:r.guidance.forecast_method||r.item.forecast_method})),selected:selectedSku}),open:()=>wlOpen(rowMap.get(selectedSku)),presets:globalThis.StockRunwayForecastMethods.PRESETS};\n`
 const probe=path.join(out,'probe.html');fs.writeFileSync(probe,fs.readFileSync(source,'utf8').replace('</script>',hooks+'</script>'))
 const report={checks:[],errors:[],network:[],screenshots:[]}
@@ -24,7 +24,7 @@ async function main(){
   check('opt-in defaults',baseline.settings.forecast_method==='current'&&baseline.settings.industry_preset==='none')
   const basis=p.locator('#setting-safety_stock_basis');check('default safety basis stays Sales variation',(await state()).settings.safety_stock_basis==='sales_variation');await basis.selectOption('forecast_misses');check('forecast-miss safety basis opt-in',(await state()).settings.safety_stock_basis==='forecast_misses')
   const methods=await method.locator('option').evaluateAll(es=>es.map(e=>e.value))
-  assert.deepEqual(methods,['current','auto','naive','seasonal_naive','ma3','ma6','ma12','ses','holt_damped','hw_additive','hw_multiplicative','theta','croston','sba','tsb','adida','combination']);check('all 17 method choices',true)
+  assert.deepEqual(methods,['current','recommended','auto','naive','seasonal_naive','ma3','ma6','ma12','ses','holt_damped','hw_additive','hw_multiplicative','theta','croston','sba','tsb','adida','combination']);check('all 18 method choices including opt-in Recommended',true)
   check('seven optional industry presets',await preset.locator('option').count()===8)
   await p.screenshot({path:path.join(out,'desktop-settings.png')});report.screenshots.push('desktop-settings.png')
   for(const value of methods){await method.selectOption(value);check('method selection '+value,(await state()).settings.forecast_method===value)}

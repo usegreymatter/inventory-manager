@@ -1,0 +1,459 @@
+{
+  "lifecycle": "review",
+  "scope": "offline synthetic local candidate; no publication or production proof",
+  "base": "8161314",
+  "commit_a": "058f794d258e9ed5679fbc3b8d6904baa1a101cf",
+  "integration": {
+    "node": {
+      "passed": 3711,
+      "failed": 0,
+      "exit": 0
+    },
+    "pytest": {
+      "passed": 2221,
+      "exit": 0
+    },
+    "unittest": {
+      "tests": 364,
+      "exit": 0
+    }
+  },
+  "renamed_candidate": {
+    "node": {
+      "passed": 3713,
+      "failed": 0,
+      "exit": 0,
+      "runtime": "Node 26.12.1",
+      "heap_mib": 1024
+    },
+    "pytest": {
+      "passed": 2221,
+      "exit": 0
+    },
+    "unittest": {
+      "tests": 364,
+      "exit": 0
+    },
+    "golden_changed_fields": 0,
+    "import_examples": 8,
+    "r3": {
+      "cases": 562,
+      "assertions": 9063,
+      "failed": 0,
+      "exit": 0
+    },
+    "sync_scripts": 6,
+    "builds": 10,
+    "default_equals_option_gm_b": true,
+    "import_reproducer_files": 13,
+    "import_export_cases": 12,
+    "standalone_capture_scripts": 33,
+    "standalone_capture_failures": 0,
+    "preset_browser_checks": 36,
+    "preset_browser_widths": [
+      390,
+      1440
+    ],
+    "preset_browser_themes": [
+      "light",
+      "dark"
+    ],
+    "rendered_rename_surfaces": 13,
+    "browser_media_commands": 37,
+    "browser_media_failed": 0
+  },
+  "rename": {
+    "before": {
+      "files": 90,
+      "matching_lines": 280
+    },
+    "after": {
+      "files": 53,
+      "matching_lines": 166
+    },
+    "after_per_file": {
+      "LICENSE": 1,
+      "README.md": 1,
+      "docs/history/VALIDATION-LOG.md": 1,
+      "engine.py": 1,
+      "sources.py": 1,
+      "standalone/build.py": 1,
+      "standalone/design/baseline.html": 2,
+      "standalone/design/option-a.html": 2,
+      "standalone/design/option-a2.html": 2,
+      "standalone/design/option-a3.html": 2,
+      "standalone/design/option-b.html": 2,
+      "standalone/design/option-gm-a.html": 2,
+      "standalone/design/option-gm-b.html": 2,
+      "standalone/design/option-gm-c.html": 2,
+      "standalone/stock-runway-demo-1000.html": 2,
+      "standalone/stock-runway.html": 2,
+      "tests/display-name-browser.cjs": 2,
+      "tests/display-name.test.mjs": 3,
+      "tests/fixtures/baselines/04d15a9/engine.py": 1,
+      "tests/fixtures/baselines/17759b9/engine.py": 1,
+      "tests/fixtures/baselines/24d8e3a/engine.py": 1,
+      "tests/fixtures/baselines/50e8117/engine.py": 1,
+      "tests/fixtures/baselines/55284fe/engine.py": 1,
+      "tests/fixtures/baselines/6fca685/engine.py": 1,
+      "tests/fixtures/baselines/6fca685/sources.py": 1,
+      "tests/fixtures/baselines/74572d6/sources.py": 1,
+      "tests/fixtures/baselines/7ef3619/engine.py": 1,
+      "tests/fixtures/baselines/897acde/desktop/plugin.js": 10,
+      "tests/fixtures/baselines/a0b3264/desktop/plugin.js": 10,
+      "tests/fixtures/baselines/a0b3264/engine.py": 1,
+      "tests/fixtures/baselines/aeecfd7/desktop/plugin.js": 10,
+      "tests/fixtures/baselines/aeecfd7/engine.py": 1,
+      "tests/fixtures/baselines/af2b1c7/desktop/plugin.js": 10,
+      "tests/fixtures/baselines/af2b1c7/engine.py": 1,
+      "tests/fixtures/baselines/af2b1c7/sources.py": 1,
+      "tests/fixtures/baselines/afea1c3/desktop/plugin.js": 10,
+      "tests/fixtures/baselines/afea1c3/engine.py": 1,
+      "tests/fixtures/baselines/ce72870/desktop/plugin.js": 10,
+      "tests/fixtures/baselines/cee2550/engine.py": 1,
+      "tests/fixtures/baselines/cee2550/sources.py": 1,
+      "tests/fixtures/baselines/de6ded8/sources.py": 1,
+      "tests/fixtures/baselines/e8cdcfd/engine.py": 1,
+      "tests/fixtures/baselines/e92becb/engine.py": 1,
+      "tests/fixtures/baselines/f0417de/desktop/plugin.js": 10,
+      "tests/fixtures/baselines/f2509b4/engine.py": 1,
+      "tests/fixtures/baselines/fa027ad/desktop/plugin.js": 10,
+      "tests/fixtures/baselines/fa2da9e/desktop/plugin.js": 10,
+      "tests/fixtures/baselines/fa2da9e/engine.py": 1,
+      "tests/fixtures/baselines/fa2da9e/sources.py": 1,
+      "tests/fixtures/baselines/fa2da9e/tools.py": 1,
+      "tests/fixtures/baselines/faa26db/desktop/plugin.js": 10,
+      "tests/fixtures/v12-rename-approved-delta.json": 11,
+      "tests/test_owner_requirements.py": 1
+    },
+    "interpretation": "Counts include immutable historical fixtures, exact-delta before images, legal attribution, descriptive internal comments and the required former-name notice; current rendered UI and CLI have zero former-brand labels."
+  },
+  "immutable_composition": {
+    "tests/fixtures/import-safety-approved-delta.json": {
+      "matches": true,
+      "sha256": "086573da22589146173f4010752ebd77cfe3dce7534511367dfa29cc5b80338f",
+      "reference": "1eb2fde"
+    },
+    "tests/fixtures/preset-approved-delta.json": {
+      "matches": true,
+      "sha256": "a1286b842b5d2ea318c257af0c5c4d5276d2b7c33c3b84315ebcc584113b0dfa",
+      "reference": "8161314"
+    },
+    "tests/fixtures/v12-feature-approved-delta.json": {
+      "matches": true,
+      "sha256": "001604801eab89af6b013a6298adaa8e171f48823220943f1be48eefe386893b",
+      "reference": "ca978a2"
+    },
+    "tests/fixtures/v12-display-approved-delta.json": {
+      "matches": true,
+      "sha256": "f5cce9e9de3ad2108054c4b464870ea0d423816ec8646a9714384429e6d65181",
+      "reference": "ca978a2"
+    },
+    "docs/forecast-methods-baseline.json": {
+      "matches": true,
+      "sha256": "8052293e99d407cf7ab53f005944416c23cfa7c8f7418c6a82c30ff1e29dc236",
+      "reference": "8161314"
+    },
+    "engine.py": {
+      "matches": true,
+      "sha256": "b25dc40b6a92b1f76d3ed842f8014ecc82fc189db7032626f368aeac21b74dd2",
+      "reference": "ca978a2"
+    },
+    "sources.py": {
+      "matches": true,
+      "sha256": "eaafe613441d8496ee2c9a5459d20b2208e58a008af1d3d8f4edee45d4be696e",
+      "reference": "1eb2fde"
+    },
+    "csv_import.py": {
+      "matches": true,
+      "sha256": "1cc216fc77a4295b40618804ac865bbce0870be8e69d7b601cad57992957f76b",
+      "reference": "1eb2fde"
+    }
+  },
+  "module_composition": {
+    "csv_import.py": {
+      "reference": "1eb2fde",
+      "matches": true,
+      "sha256": "1cc216fc77a4295b40618804ac865bbce0870be8e69d7b601cad57992957f76b"
+    },
+    "desktop/input-meaning.js": {
+      "reference": "1eb2fde",
+      "matches": true,
+      "sha256": "f25f4091668245d4374ca5157a3bd6a98ba392ae80c075e8d8a7d6ebbd811b52"
+    },
+    "desktop/smart-import.js": {
+      "reference": "1eb2fde",
+      "matches": true,
+      "sha256": "24ec4dc1de3a76dffa171373b69318132c2146d1c204708d25921d470f65356a"
+    },
+    "input_meaning.py": {
+      "reference": "1eb2fde",
+      "matches": true,
+      "sha256": "1d1faab1b7e97f21875f6282f6740a7df7bf422276ab87772cb6cf22a0e2745d"
+    },
+    "scripts/understand_sheet.py": {
+      "reference": "1eb2fde",
+      "matches": true,
+      "sha256": "12c990cf80f567c71d6af2e11e05a6eea2083f68b29329da7ae2ab9e301372b7"
+    },
+    "smart_import.py": {
+      "reference": "1eb2fde",
+      "matches": true,
+      "sha256": "ab3ebd0996b91715b69c4cb559511e4125e022843eb212a9cd3ba6432405a2f6"
+    },
+    "sources.py": {
+      "reference": "1eb2fde",
+      "matches": true,
+      "sha256": "eaafe613441d8496ee2c9a5459d20b2208e58a008af1d3d8f4edee45d4be696e"
+    },
+    "desktop/profit-warnings.js": {
+      "reference": "1eb2fde",
+      "matches": true,
+      "sha256": "11ecbcc9c3f5f8c72f1c9a4dfc7d73430846b611ee699650417ce7065f99e478"
+    },
+    "profit_warnings.py": {
+      "reference": "1eb2fde",
+      "matches": true,
+      "sha256": "82b90a0143944508cd40fab7831b5c8b406e1466d5e05e6eec9b83b0c208d845"
+    },
+    "desktop/profit-order.js": {
+      "reference": "ca978a2",
+      "matches": true,
+      "sha256": "dfaf56012dd2340877295bf90c38b5a52dfcf3d03828fbfc8956674cd9553fa8"
+    },
+    "profit_order.py": {
+      "reference": "ca978a2",
+      "matches": true,
+      "sha256": "cb57b301e35ddb0b502cdfd0a650091b8aa2e4151374d9637bf36fe3b41773e1"
+    },
+    "standalone/design/risk-gm-b.js": {
+      "reference": "ca978a2",
+      "matches": true,
+      "sha256": "feab03672ffc4bc509a7d2f8efc090f9348f9e7b9f0837a350ab0986fa3995b2"
+    },
+    "standalone/design/product-page-gm-b.js": {
+      "reference": "ca978a2",
+      "matches": true,
+      "sha256": "0af4476093e1699981c436c313b0382f66a28cdea69e20c95bd0a4f8007beb9d"
+    },
+    "standalone/design/worklist-gm-b.css": {
+      "reference": "ca978a2",
+      "matches": true,
+      "sha256": "dca38b7ec7e059c25955c2a42b988bff5a08b36be85073640814d48a6d26db9f"
+    }
+  },
+  "three_way_composition": {
+    "desktop/plugin.js": {
+      "automatic_three_way_merge_identity": true,
+      "sha256": "43e46a82fcd8a4cd2b6174f08650227a51d8cf0f386be075fd9913c4d5aeb5c9"
+    },
+    "standalone/design/worklist-gm-b.js": {
+      "automatic_three_way_merge_identity": true,
+      "sha256": "85b3a76ac1c824032137889c597b68959b6ebf2855999a1f8439c7b59b89c0b8"
+    }
+  },
+  "standalone_captures": [
+    {
+      "name": "capture-a2",
+      "rc": 0,
+      "seconds": 65.63,
+      "command": "node standalone/capture-a2.cjs"
+    },
+    {
+      "name": "capture-a3",
+      "rc": 0,
+      "seconds": 27.19,
+      "command": "node standalone/capture-a3.cjs"
+    },
+    {
+      "name": "capture-arctic",
+      "rc": 0,
+      "seconds": 15.63,
+      "command": "node standalone/capture-arctic.cjs"
+    },
+    {
+      "name": "capture-browse",
+      "rc": 0,
+      "seconds": 3.56,
+      "command": "node standalone/capture-browse.cjs"
+    },
+    {
+      "name": "capture-chart",
+      "rc": 0,
+      "seconds": 108.23,
+      "command": "node standalone/capture-chart.cjs"
+    },
+    {
+      "name": "capture-clean",
+      "rc": 0,
+      "seconds": 10.48,
+      "command": "node standalone/capture-clean.cjs"
+    },
+    {
+      "name": "capture-columns",
+      "rc": 0,
+      "seconds": 6.95,
+      "command": "node standalone/capture-columns.cjs"
+    },
+    {
+      "name": "capture-costs",
+      "rc": 0,
+      "seconds": 4.63,
+      "command": "node standalone/capture-costs.cjs"
+    },
+    {
+      "name": "capture-demo",
+      "rc": 0,
+      "seconds": 76.79,
+      "command": "node standalone/capture-demo.cjs"
+    },
+    {
+      "name": "capture-gm",
+      "rc": 0,
+      "seconds": 58.05,
+      "command": "node standalone/capture-gm.cjs"
+    },
+    {
+      "name": "capture-import",
+      "rc": 0,
+      "seconds": 14.4,
+      "command": "node standalone/capture-import.cjs"
+    },
+    {
+      "name": "capture-input-meaning",
+      "rc": 0,
+      "seconds": 2.84,
+      "command": "node standalone/capture-input-meaning.cjs"
+    },
+    {
+      "name": "capture-layout-regression",
+      "rc": 0,
+      "seconds": 91.16,
+      "command": "node standalone/capture-layout-regression.cjs"
+    },
+    {
+      "name": "capture-local-orders",
+      "rc": 0,
+      "seconds": 9.66,
+      "command": "node standalone/capture-local-orders.cjs"
+    },
+    {
+      "name": "capture-methods-scale",
+      "rc": 0,
+      "seconds": 165.78,
+      "command": "node standalone/capture-methods-scale.cjs"
+    },
+    {
+      "name": "capture-methods",
+      "rc": 0,
+      "seconds": 3.61,
+      "command": "node standalone/capture-methods.cjs"
+    },
+    {
+      "name": "capture-orders",
+      "rc": 0,
+      "seconds": 16.04,
+      "command": "node standalone/capture-orders.cjs"
+    },
+    {
+      "name": "capture-oss-firstrun",
+      "rc": 0,
+      "seconds": 9.02,
+      "command": "node standalone/capture-oss-firstrun.cjs"
+    },
+    {
+      "name": "capture-product-page",
+      "rc": 0,
+      "seconds": 11.65,
+      "command": "node standalone/capture-product-page.cjs"
+    },
+    {
+      "name": "capture-progressive-safety",
+      "rc": 0,
+      "seconds": 215.04,
+      "command": "node standalone/capture-progressive-safety.cjs"
+    },
+    {
+      "name": "capture-risk",
+      "rc": 0,
+      "seconds": 3.94,
+      "command": "node standalone/capture-risk.cjs"
+    },
+    {
+      "name": "capture-round3",
+      "rc": 0,
+      "seconds": 5.62,
+      "command": "node standalone/capture-round3.cjs"
+    },
+    {
+      "name": "capture-safari-qa",
+      "rc": 0,
+      "seconds": 9.68,
+      "command": "node standalone/capture-safari-qa.cjs"
+    },
+    {
+      "name": "capture-settings",
+      "rc": 0,
+      "seconds": 8.61,
+      "command": "node standalone/capture-settings.cjs"
+    },
+    {
+      "name": "capture-shelf-v12",
+      "rc": 0,
+      "seconds": 3.14,
+      "command": "node standalone/capture-shelf-v12.cjs"
+    },
+    {
+      "name": "capture-simple",
+      "rc": 0,
+      "seconds": 3.94,
+      "command": "node standalone/capture-simple.cjs"
+    },
+    {
+      "name": "capture-smart-import",
+      "rc": 0,
+      "seconds": 17.47,
+      "command": "node standalone/capture-smart-import.cjs"
+    },
+    {
+      "name": "capture-stockout",
+      "rc": 0,
+      "seconds": 8.78,
+      "command": "node standalone/capture-stockout.cjs"
+    },
+    {
+      "name": "capture-stress-ui",
+      "rc": 0,
+      "seconds": 7.6,
+      "command": "node standalone/capture-stress-ui.cjs"
+    },
+    {
+      "name": "capture-table",
+      "rc": 0,
+      "seconds": 22.49,
+      "command": "node standalone/capture-table.cjs"
+    },
+    {
+      "name": "capture-theme",
+      "rc": 0,
+      "seconds": 15.74,
+      "command": "node standalone/capture-theme.cjs"
+    },
+    {
+      "name": "capture-warning-visibility",
+      "rc": 0,
+      "seconds": 10.4,
+      "command": "node standalone/capture-warning-visibility.cjs"
+    },
+    {
+      "name": "capture",
+      "rc": 0,
+      "seconds": 8.12,
+      "command": "node standalone/capture.cjs"
+    }
+  ],
+  "limits": [
+    "No installed Desktop, live inventory/ERP, hosted release, physical Safari/iPhone, or real-business outcome verification."
+  ],
+  "review": {"verdict":"GO","reviewed_revision":"4903c973061b30db2b5c71ac470b5edc5e2422b3","provider":"anthropic","model":"claude-opus-5-5","reasoning_effort":"high","exit_reason":"completed","truncated":false,"focused_node_checks":21,"blockers":0,"acceptance":"ACCEPT","followup":"Documentation-only restoration of two original CHANGELOG bullets; production/tests/fixtures/HTML/media remain identical to the reviewed revision."}
+}

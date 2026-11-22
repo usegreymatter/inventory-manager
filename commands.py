@@ -44,14 +44,14 @@ def build_args(raw: str) -> dict:
 
 def format_result(payload: dict) -> str:
     if "error" in payload:
-        return f"Stock Runway: {payload['error']}\n{USAGE}"
+        return f"Inventory Manager: {payload['error']}\n{USAGE}"
     items = payload.get("items", [])
     order = sorted(items, key=lambda i: (bool(i.get("held")), i.get("runout_day") or "9999-12-31"))
     by_sku = {}
     for line in payload.get("summary", []):
         sku, _, rest = line.partition(": ")
         by_sku[sku] = rest
-    lines = [f"Stock runway (stock as of {payload.get('as_of')}, next {payload.get('horizon')} months)"]
+    lines = [f"Inventory Manager (stock as of {payload.get('as_of')}, next {payload.get('horizon')} months)"]
     for item in order:
         sku = item.get("sku", "?")
         lines.append(f"• {sku}: {by_sku.get(sku, item.get('reason', 'held'))}")
@@ -81,6 +81,6 @@ def make_command(tool_handler):
         try:
             payload = json.loads(tool_handler(args))
         except Exception:  # never break the chat over a display command
-            return "Stock Runway could not run. " + USAGE
+            return "Inventory Manager could not run. " + USAGE
         return format_result(payload)
     return stock

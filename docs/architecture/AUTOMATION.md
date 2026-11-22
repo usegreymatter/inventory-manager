@@ -4,9 +4,9 @@ Lifecycle: proposed (design only, nothing here is implemented yet)
 
 ## In plain words
 
-Stock Runway can do four levels of work for you. You pick the level, per supplier if you like. It starts at **L1**: it writes the purchase order and the supplier email, and you send them yourself.
+Inventory Manager can do four levels of work for you. You pick the level, per supplier if you like. It starts at **L1**: it writes the purchase order and the supplier email, and you send them yourself.
 
-| Level | What Stock Runway does | What you do |
+| Level | What Inventory Manager does | What you do |
 |---|---|---|
 | **L0 Suggest** | Shows what to order and why (today's behaviour) | Everything else |
 | **L1 Draft** *(default)* | Prepares the PO and an email draft (a file, or a draft in your mailbox) | Read, edit, send |
@@ -56,7 +56,7 @@ drafted → pending_approval → approved → scheduled → sent
 
 - **Scheduled → sent** waits a cancel window: default **10 minutes at L2** and **60 minutes at L3**, configurable from 0 to 24 h. The window is never 0 at L3. Cancel works from the queue, the CLI (`stock_runway.py automation cancel DRAFT_ID`) or the kill switch.
 - Email can't be unsent. After `sent`, "rollback" means a prepared **correction/cancellation email draft** to the same supplier. It is always created at L1, so a human sends it.
-- ERP writeback (when enabled) creates only a **draft/RFQ** PO and never confirms it. Rollback cancels that ERP draft if it is still draft. If someone has confirmed it in the ERP since, Stock Runway does nothing and tells the owner.
+- ERP writeback (when enabled) creates only a **draft/RFQ** PO and never confirms it. Rollback cancels that ERP draft if it is still draft. If someone has confirmed it in the ERP since, Inventory Manager does nothing and tells the owner.
 
 ## 4. Guardrails (all must pass for L3; the first four also gate L2)
 

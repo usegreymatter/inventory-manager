@@ -69,7 +69,7 @@ function Harness() {
       } }, title))),
   h('div', { className: 'title-bar' }, titlebarVisible && ctx.entries.filter(e => e.area === 'titleBar.center')
     .map(e => h(React.Fragment, { key: e.id }, e.render()))),
-  h('div', { className: 'harness-actions' }, h('button', { onClick: quick.data.run }, 'Stock Runway: quick view')),
+  h('div', { className: 'harness-actions' }, h('button', { onClick: quick.data.run }, 'Inventory Manager: quick view')),
   location.hash === '#card' ? h('article', { className: 'chat-card', 'aria-label': 'Assistant message' },
     h('p', null, 'Underlay runs out first, in Nov 2026; this is sample data.'), card())
     : location.hash === '#settings' ? ctx.settings[0].render() : ctx.entries.find(e => e.area === 'routes').render(),

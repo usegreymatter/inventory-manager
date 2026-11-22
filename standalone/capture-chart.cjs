@@ -11,7 +11,7 @@ const root = path.resolve(__dirname, '..')
 const out = path.join(root, '.scratch/chart')
 const args = process.argv.slice(2)
 if (args.length && !(args.length === 2 && args[0] === '--target')) throw Error('Usage: node standalone/capture-chart.cjs [--target local-html]')
-const target = path.resolve(root, args[1] || 'standalone/stock-runway.html')
+const target = path.resolve(root, args[1] || 'standalone/inventory-manager.html')
 if (!target.startsWith(root + path.sep) || !target.endsWith('.html')) throw Error('Target must be repo-local HTML')
 const frozenDate = '2026-11-15T12:00:00Z'
 const activeRoot = 'body:not(:has(#product-page)) #main, body:not(.chart-focused) #product-page, .chart-focus'

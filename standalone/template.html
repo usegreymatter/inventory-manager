@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
 <meta name="description" content="Plan what to order from a local stock CSV. Private, offline inventory forecasts; no upload or account needed.">
-<title>Stock Runway — Order today</title>
+<title>Inventory Manager — Order today</title>
 <style>
 :root { color-scheme: light dark; --bg:#f8f9f7; --surface:#fff; --ink:#1e2924; --muted:#526159; --line:#d9e0da; --accent:#245f46; --on-accent:#fff; --warning:#815009; --warning-bg:#fff3dc; --soon:#765314; --focus:#2469c7; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
 @media(prefers-color-scheme:dark) { :root { --bg:#151b18; --surface:#1b231e; --ink:#edf3ee; --muted:#b1c1b5; --line:#3b493f; --accent:#9cdbb6; --on-accent:#13291c; --warning:#ffd18a; --warning-bg:#372b19; --soon:#e5c385; --focus:#8fbaff; } }
@@ -68,7 +68,7 @@ footer { font-size:12px; color:var(--muted); padding:28px 0 0; }
 </head>
 <body>
 <main>
-<header><p class="eyebrow">Stock Runway · Offline</p><h1>Know what to order next.</h1><p class="muted">A stock list in. A clear buying list out. No account, no upload.</p></header>
+<header><p class="eyebrow">Inventory Manager · Offline</p><h1>Know what to order next.</h1><p class="muted">A stock list in. A clear buying list out. No account, no upload.</p></header>
 <section aria-labelledby="order-title">
   <div class="section-head"><div><h2 id="order-title">Order today</h2><p id="order-count" class="meta"></p></div><button id="copy-po" class="primary" type="button">Copy purchase order</button></div>
   <p id="snapshot" class="meta"></p>
@@ -101,7 +101,7 @@ footer { font-size:12px; color:var(--muted); padding:28px 0 0; }
 <dt>Safety stock</dt><dd>Extra kept for delays or surprise demand.</dd>
 <dt>Reorder point</dt><dd>Order when stock drops to this amount.</dd>
 </dl><p class="muted">The standalone page uses the same forecast and order calculations as the Desktop plugin. Purchase quantities deduct stock and incoming, and use snapshot-anchored calendar demand. It does not contact an ERP or send orders.</p></div></details>
-<footer>Free and open source · Stock Runway · runs entirely in your browser, your file never leaves this device</footer>
+<footer>Free and open source · Inventory Manager · runs entirely in your browser, your file never leaves this device</footer>
 <noscript><p class="warning">Enable JavaScript to calculate forecasts. Your CSV stays on this device.</p></noscript>
 </main>
 <script type="module" id="runway-app">
@@ -142,7 +142,7 @@ function purchaseOrderText(rows, today) {
   const oneLine = value => String(value ?? '').replace(/[\r\n\u2028\u2029]+/g, ' ')
   const items = rows.filter(row => (row.bucket === 'order' || row.bucket === 'running-low') && row.guidance.quantity > 0)
   const lines = items.map(({ item, guidance }) => `• ${oneLine(item.name)} (${oneLine(item.sku)}) — ${orderAmount(guidance.quantity)} ${oneLine(item.unit)}`)
-  return `Purchase order · Stock Runway\nDate: ${today}\n\n${lines.join('\n') || 'No items to order.'}\n\n${items.length} ${items.length === 1 ? 'item' : 'items'}`
+  return `Purchase order · Inventory Manager\nDate: ${today}\n\n${lines.join('\n') || 'No items to order.'}\n\n${items.length} ${items.length === 1 ? 'item' : 'items'}`
 }
 /* STOCK_RUNWAY_HELPERS_END */
 const $ = id => document.getElementById(id)

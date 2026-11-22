@@ -16,7 +16,7 @@ Owner selected **B · Status-led, Arctic ice-white, official GreyMatter logo** o
 
 `styles-gm-b.css` scopes the Arctic palette to B: canvas `#F5F8FD`, selection/control fill `#E6ECF7`, line `#D9E1EE`, rule `#C1CBDC`, ink `#0B1020`, muted `#5B6274`, accent `#3F5687`, status red `#B42318`, OK marker `#2F7D6E`. The stock chart is SVG (no canvas/clear-colour runtime); its wrapper and SVG background match the page exactly. White inputs use the Arctic hairline. A3/A/C sources and generated files remain byte-identical.
 
-`logo-gm.svg` is the cleaned official `LOGO SVG-01.svg`, with st0 converted to `#0B1020`, styles/IDs removed. The source defines st1 but applies it to **zero shapes**, so no `#8A8F98` path is fabricated. The builder inlines it in B only, after “Stock Runway by”; height is 14px desktop / 12px phone with accessible GreyMatter name. No text-only wordmark remains in B.
+`logo-gm.svg` is the cleaned official `LOGO SVG-01.svg`, with st0 converted to `#0B1020`, styles/IDs removed. The source defines st1 but applies it to **zero shapes**, so no `#8A8F98` path is fabricated. The builder inlines it in B only, after “Inventory Manager by”; height is 14px desktop / 12px phone with accessible GreyMatter name. No text-only wordmark remains in B.
 
 `presentation-gm-b.js` retains all calculations/dates/quantities and adapts presentation only:
 - Relative dates count from `data.as_of`, the physical forecast snapshot, explicitly saying e.g. **in 20 days from 31 Oct**. The actual decision date still drives the unchanged purchase guidance and chart Today line; the header identifies the stock snapshot, not the wall clock. CLI/Python calculation policy is unchanged, verified by full parity and golden suites.

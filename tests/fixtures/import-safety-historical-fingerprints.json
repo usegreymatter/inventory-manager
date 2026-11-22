@@ -1,0 +1,143 @@
+{
+  "status": "PASS",
+  "baseline": "1a7d3df",
+  "fixture_count": 34,
+  "unchanged": [
+    {
+      "file": "tests/fixtures/date_boundary.csv",
+      "sha256": "7c8579b4088dadf2c3759072e7f539b8713a07d14cbf38253befa59445eb1383"
+    },
+    {
+      "file": "tests/fixtures/finite_sales_overflow.csv",
+      "sha256": "7341d6c16432293574ca7927efed186c340fff298739dfafbb2e30278e99e660"
+    },
+    {
+      "file": "tests/fixtures/fractional.csv",
+      "sha256": "cbcc13530fceda0500c8a94b0fa4d514deabe1288a2ed7a02db4b4ef363961d3"
+    },
+    {
+      "file": "tests/fixtures/import-probes/b1_minorder_cost.csv",
+      "sha256": "05b472f5b3e30b5f15590dc1533e463b69670667fc514b544b2120cc429ba907"
+    },
+    {
+      "file": "tests/fixtures/import-probes/blank_sales_cell.csv",
+      "sha256": "58953a509f04e3e3e68a09d4adeefef2a8061890b860d99dd1d84cab0f293763"
+    },
+    {
+      "file": "tests/fixtures/import-probes/cp1256_arabic.csv",
+      "sha256": "f1da8cc7c65dd114247d102c98d72823769cacce832e8d7d5aa2a3356fc648e4"
+    },
+    {
+      "file": "tests/fixtures/import-probes/currency_symbol_onhand.csv",
+      "sha256": "a96b650ea3ba3121818dcd51bc8c652b621f070cfbe4277b351f32ffe540784d"
+    },
+    {
+      "file": "tests/fixtures/import-probes/daily_date_cols.csv",
+      "sha256": "8980ecfca2f4cd18ab080bbc448d9e54131cfeee9723e18cc587243c5500a65f"
+    },
+    {
+      "file": "tests/fixtures/import-probes/decimal_lead.csv",
+      "sha256": "03894147a410f509cb6a0412ba755131c147c6324a747f70aa4fa67bebb30589"
+    },
+    {
+      "file": "tests/fixtures/import-probes/expected_dates_only.csv",
+      "sha256": "8980ecfca2f4cd18ab080bbc448d9e54131cfeee9723e18cc587243c5500a65f"
+    },
+    {
+      "file": "tests/fixtures/import-probes/fiscal_period_cols.csv",
+      "sha256": "97e3257b1efa0696a4bb9f02c1cc72e5336271304eb23c6e3992ae51867dde5b"
+    },
+    {
+      "file": "tests/fixtures/import-probes/gap_months.csv",
+      "sha256": "86f1e19cb374203b97548b2f8798a0bce61f33528cd634e28679afbcc56fcf3c"
+    },
+    {
+      "file": "tests/fixtures/import-probes/inactive_item.csv",
+      "sha256": "c93ad07a7822f7e2eca39458a84697967eb329488239b51922efeba6ddf09194"
+    },
+    {
+      "file": "tests/fixtures/import-probes/indian_grouping.csv",
+      "sha256": "8f4f73266d182d358f1f27b56de8ed832c8be1d05a71681b64d1ba1813c09576"
+    },
+    {
+      "file": "tests/fixtures/import-probes/multiwh_dup_sku.csv",
+      "sha256": "a96b650ea3ba3121818dcd51bc8c652b621f070cfbe4277b351f32ffe540784d"
+    },
+    {
+      "file": "tests/fixtures/import-probes/negative_onhand.csv",
+      "sha256": "bae0d91c95e9098c9de49fee2bfabb73e791198a97d1378859ece735763d9739"
+    },
+    {
+      "file": "tests/fixtures/import-probes/net_negative_sales_month.csv",
+      "sha256": "58953a509f04e3e3e68a09d4adeefef2a8061890b860d99dd1d84cab0f293763"
+    },
+    {
+      "file": "tests/fixtures/import-probes/netsuite_reorder.csv",
+      "sha256": "8980ecfca2f4cd18ab080bbc448d9e54131cfeee9723e18cc587243c5500a65f"
+    },
+    {
+      "file": "tests/fixtures/import-probes/odoo_vendor_delay.csv",
+      "sha256": "03894147a410f509cb6a0412ba755131c147c6324a747f70aa4fa67bebb30589"
+    },
+    {
+      "file": "tests/fixtures/import-probes/odoo_vendor_delay2.csv",
+      "sha256": "03894147a410f509cb6a0412ba755131c147c6324a747f70aa4fa67bebb30589"
+    },
+    {
+      "file": "tests/fixtures/import-probes/onhand_and_available.csv",
+      "sha256": "8980ecfca2f4cd18ab080bbc448d9e54131cfeee9723e18cc587243c5500a65f"
+    },
+    {
+      "file": "tests/fixtures/import-probes/open_po_dates.csv",
+      "sha256": "4e65071a29a71060724463e70b3a6eabe447ae898e806c3808aada1109d2d72c"
+    },
+    {
+      "file": "tests/fixtures/import-probes/paren_negative.csv",
+      "sha256": "bae0d91c95e9098c9de49fee2bfabb73e791198a97d1378859ece735763d9739"
+    },
+    {
+      "file": "tests/fixtures/import-probes/per_warehouse_cols.csv",
+      "sha256": "e9b80164fe40ce6c8be5bd74abbd937821bb35f5caf1c6fda301a160af6e48e2"
+    },
+    {
+      "file": "tests/fixtures/import-probes/purchase_uom_only.csv",
+      "sha256": "8748ae32c923946a5340c22e1bbec10820b0e870afd970ee4dc35b09ac17ccbc"
+    },
+    {
+      "file": "tests/fixtures/import-probes/sales_unit_only.csv",
+      "sha256": "c7d8426f14a544a3861230c84eef20c721b640dfcd6ebb9591a35eee74983bb0"
+    },
+    {
+      "file": "tests/fixtures/import-probes/semicolon_euro.csv",
+      "sha256": "6361147b4c136bc3b577c8ef206395fcbc604e37218448760c1f0d68d2aee6a0"
+    },
+    {
+      "file": "tests/fixtures/import-probes/supplier_alias_dup.csv",
+      "sha256": "a06356178014939530f860fdcf742171f46ee9a81e724259a97d70e746309130"
+    },
+    {
+      "file": "tests/fixtures/import-probes/total_row.csv",
+      "sha256": "8980ecfca2f4cd18ab080bbc448d9e54131cfeee9723e18cc587243c5500a65f"
+    },
+    {
+      "file": "tests/fixtures/import-probes/two_months_only.csv",
+      "sha256": "97e3257b1efa0696a4bb9f02c1cc72e5336271304eb23c6e3992ae51867dde5b"
+    },
+    {
+      "file": "tests/fixtures/import-probes/uppercase_dmy_months.csv",
+      "sha256": "97e3257b1efa0696a4bb9f02c1cc72e5336271304eb23c6e3992ae51867dde5b"
+    },
+    {
+      "file": "tests/fixtures/import-probes/utf16.csv",
+      "sha256": "8980ecfca2f4cd18ab080bbc448d9e54131cfeee9723e18cc587243c5500a65f"
+    },
+    {
+      "file": "tests/fixtures/import-probes/variant_barcode.csv",
+      "sha256": "1c8813800f045efbf3ba9d0e502f80426f1db5b6d99aca79fe3be9a531615ee9"
+    },
+    {
+      "file": "tests/fixtures/mixed_overflow.csv",
+      "sha256": "5b6515d9b641419cc3963c4507fd1893a3bd58515c3c683508a295a7351aa216"
+    }
+  ]
+}

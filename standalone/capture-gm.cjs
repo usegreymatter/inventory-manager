@@ -52,7 +52,7 @@ async function main(){
  const baselineNumeric=new Map(),baselineSemantic=new Map(),baselineSeries=new Map()
  try{
  for(const variant of variants){
-  const sourcePath=variant==='option-gm-b'?path.join(__dirname,'stock-runway.html'):path.join(__dirname,'design',variant+'.html'),html=fs.readFileSync(sourcePath,'utf8')
+  const sourcePath=variant==='option-gm-b'?path.join(__dirname,'inventory-manager.html'):path.join(__dirname,'design',variant+'.html'),html=fs.readFileSync(sourcePath,'utf8')
   report.sources.push({variant,path:sourcePath,sha256:hash(html),bytes:Buffer.byteLength(html)})
   for(const viewport of [{width:1440,height:900},{width:390,height:844}]){
    const size=`${viewport.width}x${viewport.height}`,context=await browser.newContext({offline:true,serviceWorkers:'block',viewport,deviceScaleFactor:1,reducedMotion:'reduce',colorScheme:'light',isMobile:viewport.width===390,hasTouch:viewport.width===390})

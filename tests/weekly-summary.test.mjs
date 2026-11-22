@@ -123,7 +123,7 @@ test('dialog opens once, keeps read-only source state, copies with fallback and 
  const text=d.querySelector('textarea');assert.equal(text.hidden,false);assert.equal(text.readOnly,true);assert.equal(text.selected,true)
  assert.match(text.value,/WEEKLY STOCK SUMMARY/)
  buttons(d).find(b=>b.textContent==='Download Excel').handlers.click();assert.equal(u.download.length,1)
- assert.equal(u.download[0][1],'stock-runway-weekly-2026-10-31.xlsx')
+ assert.equal(u.download[0][1],'inventory-manager-weekly-2026-10-31.xlsx')
  buttons(d).find(b=>b.textContent==='Close').handlers.click();assert.equal(u.body.children.length,0);assert.equal(u.trigger.focused,true)
  assert.equal(JSON.stringify([u.rows,u.orders]),before)
 })

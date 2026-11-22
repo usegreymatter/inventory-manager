@@ -31,17 +31,17 @@ def test_every_build_embeds_license_comment(variant):
     if variant == "demo-1000":
         data = json.loads((ROOT / "data/demo-1000.json").read_text())
         html = builder.build(data=data)
-        path = ROOT / "standalone/stock-runway-demo-1000.html"
+        path = ROOT / "standalone/inventory-manager-demo-1000.html"
     elif variant == "default":
         html = builder.build()
-        path = ROOT / "standalone/stock-runway.html"
+        path = ROOT / "standalone/inventory-manager.html"
     else:
         html = builder.build(variant)
         path = ROOT / f"standalone/design/{variant}.html"
     import re
     styles = "\n".join(re.findall(r"<style\b[^>]*>(.*?)</style>", html, re.I | re.S))
     embeds_fonts = bool(re.search(r"@font-face\b", styles, re.I))
-    lines = ["Stock Runway — MIT License, Copyright (c) 2026 Stock Runway contributors"]
+    lines = ["Inventory Manager — MIT License, Copyright (c) 2026 GreyMatter and Stock Runway contributors"]
     if embeds_fonts:
         lines.extend((
             "Embedded fonts Poppins and Tajawal: SIL Open Font License 1.1, see LICENSES/OFL-1.1.txt and THIRD_PARTY_NOTICES.md",
@@ -162,6 +162,6 @@ def test_root_pages_entry_redirects_to_the_shipped_offline_planner():
                 self.links.append(attributes['href'])
     entry = Entry()
     entry.feed((ROOT / 'index.html').read_text())
-    assert entry.refresh == ['0; url=standalone/stock-runway.html']
-    assert 'standalone/stock-runway.html' in entry.links
+    assert entry.refresh == ['0; url=standalone/inventory-manager.html']
+    assert 'standalone/inventory-manager.html' in entry.links
     assert all((ROOT / path).is_file() for path in entry.links)

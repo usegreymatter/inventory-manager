@@ -19,7 +19,10 @@ const vocabulary = JSON.parse(fs.readFileSync(path.join(root, 'smart-import-voca
 // Read production literals, not a hand-maintained approximation of ERP vocabulary.
 const aliasLiteral = plugin.match(/(?:export\s+)?const ERP_ALIASES\s*=\s*(\{[^\n]+\})/)
 assert.ok(aliasLiteral, 'production ERP_ALIASES JSON literal exists')
-const erpAliases = JSON.parse(aliasLiteral[1])
+// Import-only metadata may extend the literal in the generated workbook span.
+const aliasContext=vm.createContext({TextEncoder,TextDecoder,Uint8Array,atob,btoa})
+vm.runInContext(plugin.slice(plugin.indexOf('const SAMPLE ='),plugin.indexOf('const pageStyle =')).replaceAll('export ','')+'\nglobalThis.resolvedAliases=ERP_ALIASES',aliasContext)
+const erpAliases = JSON.parse(JSON.stringify(aliasContext.resolvedAliases))
 const typeLiteral = plugin.match(/const PRODUCT_TYPE_ALIASES\s*=\s*(\[[^\n]+\])/)
 assert.ok(typeLiteral, 'production PRODUCT_TYPE_ALIASES literal exists')
 const typeAliases = JSON.parse(JSON.stringify(vm.runInNewContext(typeLiteral[1], {}, { timeout: 1000 })))

@@ -1,0 +1,106 @@
+{
+  "redesigned-gate-both": {
+    "grocery@7": {
+      "pairs": 260,
+      "changed_order_quantity_sequences": 0,
+      "different_non_timing_scenarios": 0
+    },
+    "grocery@30": {
+      "pairs": 260,
+      "changed_order_quantity_sequences": 0,
+      "different_non_timing_scenarios": 0
+    },
+    "pharmacy@7": {
+      "pairs": 100,
+      "changed_order_quantity_sequences": 100,
+      "different_non_timing_scenarios": 100
+    },
+    "pharmacy@30": {
+      "pairs": 100,
+      "changed_order_quantity_sequences": 100,
+      "different_non_timing_scenarios": 100
+    },
+    "fashion@7": {
+      "pairs": 20,
+      "changed_order_quantity_sequences": 0,
+      "different_non_timing_scenarios": 0
+    },
+    "fashion@30": {
+      "pairs": 20,
+      "changed_order_quantity_sequences": 0,
+      "different_non_timing_scenarios": 0
+    },
+    "spare-parts@7": {
+      "pairs": 20,
+      "changed_order_quantity_sequences": 0,
+      "different_non_timing_scenarios": 0
+    },
+    "spare-parts@30": {
+      "pairs": 20,
+      "changed_order_quantity_sequences": 0,
+      "different_non_timing_scenarios": 0
+    },
+    "electronics@7": {
+      "pairs": 20,
+      "changed_order_quantity_sequences": 0,
+      "different_non_timing_scenarios": 0
+    },
+    "electronics@30": {
+      "pairs": 20,
+      "changed_order_quantity_sequences": 0,
+      "different_non_timing_scenarios": 0
+    }
+  },
+  "redesigned-gate-no99": {
+    "grocery@7": {
+      "pairs": 260,
+      "changed_order_quantity_sequences": 0,
+      "different_non_timing_scenarios": 0
+    },
+    "grocery@30": {
+      "pairs": 260,
+      "changed_order_quantity_sequences": 0,
+      "different_non_timing_scenarios": 0
+    },
+    "pharmacy@7": {
+      "pairs": 100,
+      "changed_order_quantity_sequences": 0,
+      "different_non_timing_scenarios": 0
+    },
+    "pharmacy@30": {
+      "pairs": 100,
+      "changed_order_quantity_sequences": 0,
+      "different_non_timing_scenarios": 0
+    },
+    "fashion@7": {
+      "pairs": 20,
+      "changed_order_quantity_sequences": 0,
+      "different_non_timing_scenarios": 0
+    },
+    "fashion@30": {
+      "pairs": 20,
+      "changed_order_quantity_sequences": 0,
+      "different_non_timing_scenarios": 0
+    },
+    "spare-parts@7": {
+      "pairs": 20,
+      "changed_order_quantity_sequences": 0,
+      "different_non_timing_scenarios": 0
+    },
+    "spare-parts@30": {
+      "pairs": 20,
+      "changed_order_quantity_sequences": 0,
+      "different_non_timing_scenarios": 0
+    },
+    "electronics@7": {
+      "pairs": 20,
+      "changed_order_quantity_sequences": 0,
+      "different_non_timing_scenarios": 0
+    },
+    "electronics@30": {
+      "pairs": 20,
+      "changed_order_quantity_sequences": 0,
+      "different_non_timing_scenarios": 0
+    }
+  }
+}

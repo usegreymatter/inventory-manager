@@ -29,7 +29,7 @@ def test_stock_command_sample_sorted_by_runout():
     commands, tools = _load()
     out = commands.make_command(tools.make_handler())("")
     lines = out.splitlines()
-    assert lines[0].startswith("Stock runway (stock as of 2026-10-31")
+    assert lines[0].startswith("Inventory Manager (stock as of 2026-10-31")
     assert lines[1] == "• UL-FOAM-GRN: runs out Dec 2026; Too far off to plan on; Sales pattern: Very uneven, Safety stock — extra kept for delays or surprise demand: 28, Reorder point — order when stock drops to 30"
     assert lines[2] == "• GRT-GRY-5: runs out Dec 2026; Too far off to plan on; Sales pattern: Very uneven, Safety stock — extra kept for delays or surprise demand: 83, Reorder point — order when stock drops to 145"
     assert "• SEAL-CLR-300: runs out Mar 2027; Usable for planning; Sales pattern: Steady, Safety stock — extra kept for delays or surprise demand: 16, Reorder point — order when stock drops to 67" in lines
@@ -39,9 +39,9 @@ def test_stock_command_sample_sorted_by_runout():
 def test_stock_command_errors_are_plain():
     commands, tools = _load()
     out = commands.make_command(tools.make_handler())("NOPE-1")
-    assert out.startswith("Stock Runway: ") and "Usage: /stock" in out
+    assert out.startswith("Inventory Manager: ") and "Usage: /stock" in out
     broken = commands.make_command(lambda args: "not json")("")
-    assert broken.startswith("Stock Runway could not run.")
+    assert broken.startswith("Inventory Manager could not run.")
 
 
 def test_register_adds_command():

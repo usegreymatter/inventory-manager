@@ -1,0 +1,440 @@
+{
+  "synthetic_only": true,
+  "series": 400,
+  "bootstrap": 1000,
+  "ci": "paired series bootstrap 90%; exploratory, no multiplicity correction",
+  "evaluation_seeds": [
+    10000,
+    10079
+  ],
+  "development_seeds": [
+    0,
+    999
+  ],
+  "limitations": [
+    "Self-authored synthetic families; not independent Stress evidence",
+    "Order proxy is one 3-month replenishment, not fill rate, expiry or equal inventory",
+    "Adjustment ON uses known synthetic exposure, not production detector"
+  ],
+  "modes": {
+    "off": {
+      "metrics": {
+        "recommended": {
+          "scaled_error": 0.6355326644478297,
+          "order_proxy": 0.5214073524528763
+        },
+        "current": {
+          "scaled_error": 1.6516056653261189,
+          "order_proxy": 0.7695293182111591
+        },
+        "auto": {
+          "scaled_error": 0.6574678180450784,
+          "order_proxy": 0.5551091079001406
+        },
+        "combination": {
+          "scaled_error": 2.1255618779695027,
+          "order_proxy": 0.7624247944381084
+        },
+        "ses": {
+          "scaled_error": 2.121766978077894,
+          "order_proxy": 0.7606608984716375
+        }
+      },
+      "paired_deltas": {
+        "current": {
+          "scaled_error": {
+            "mean": -1.0160730008782919,
+            "ci90": [
+              -1.309188766126662,
+              -0.7680081423150944
+            ]
+          },
+          "order_proxy": {
+            "mean": -0.24812196575828263,
+            "ci90": [
+              -0.3033093352109459,
+              -0.19262627000382315
+            ]
+          }
+        },
+        "auto": {
+          "scaled_error": {
+            "mean": -0.021935153597248836,
+            "ci90": [
+              -0.05445036319010104,
+              0.008067150181517218
+            ]
+          },
+          "order_proxy": {
+            "mean": -0.033701755447264434,
+            "ci90": [
+              -0.067237681195625,
+              -0.0019280696451187639
+            ]
+          }
+        },
+        "combination": {
+          "scaled_error": {
+            "mean": -1.4900292135216722,
+            "ci90": [
+              -1.8387552598653538,
+              -1.1831589574440882
+            ]
+          },
+          "order_proxy": {
+            "mean": -0.24101744198523167,
+            "ci90": [
+              -0.29021088707841614,
+              -0.19389436300437995
+            ]
+          }
+        },
+        "ses": {
+          "scaled_error": {
+            "mean": -1.486234313630064,
+            "ci90": [
+              -1.8335885363022806,
+              -1.1788741037443056
+            ]
+          },
+          "order_proxy": {
+            "mean": -0.23925354601876062,
+            "ci90": [
+              -0.2876171236070103,
+              -0.192020672121641
+            ]
+          }
+        }
+      },
+      "choices": {
+        "current": 172,
+        "sba": 54,
+        "seasonal_naive": 90,
+        "combination": 78,
+        "ses": 6
+      },
+      "families": {
+        "level_jitter": {
+          "recommended": {
+            "scaled_error": 0.7115438865619413,
+            "order_proxy": 0.0625490567169498
+          },
+          "current": {
+            "scaled_error": 0.7058230615018425,
+            "order_proxy": 0.0598250872009367
+          },
+          "auto": {
+            "scaled_error": 0.7063664886984548,
+            "order_proxy": 0.06013873311025628
+          },
+          "combination": {
+            "scaled_error": 0.7049768346050076,
+            "order_proxy": 0.06088087905866109
+          },
+          "ses": {
+            "scaled_error": 0.7044356028638455,
+            "order_proxy": 0.060805338548725364
+          }
+        },
+        "ramp": {
+          "recommended": {
+            "scaled_error": 0.4173931940486667,
+            "order_proxy": 0.14089385455934847
+          },
+          "current": {
+            "scaled_error": 0.4272371975846084,
+            "order_proxy": 0.14337378795872557
+          },
+          "auto": {
+            "scaled_error": 0.4409488782487115,
+            "order_proxy": 0.16467796564859621
+          },
+          "combination": {
+            "scaled_error": 0.41317580494359796,
+            "order_proxy": 0.1380577183125766
+          },
+          "ses": {
+            "scaled_error": 0.4381032706405403,
+            "order_proxy": 0.16262832171446087
+          }
+        },
+        "two_peak_cycle": {
+          "recommended": {
+            "scaled_error": 0.8691900553165715,
+            "order_proxy": 0.11906270002825987
+          },
+          "current": {
+            "scaled_error": 5.940558087318497,
+            "order_proxy": 1.1129010589877266
+          },
+          "auto": {
+            "scaled_error": 0.9463095598459688,
+            "order_proxy": 0.16471795981783702
+          },
+          "combination": {
+            "scaled_error": 8.29202005848224,
+            "order_proxy": 1.2385012976713012
+          },
+          "ses": {
+            "scaled_error": 8.259507415374006,
+            "order_proxy": 1.2250405945925165
+          }
+        },
+        "random_lots": {
+          "recommended": {
+            "scaled_error": 0.6392322978711223,
+            "order_proxy": 1.6612757471684954
+          },
+          "current": {
+            "scaled_error": 0.6487971582171893,
+            "order_proxy": 1.9084973066538449
+          },
+          "auto": {
+            "scaled_error": 0.6799101938247484,
+            "order_proxy": 1.7884036727361594
+          },
+          "combination": {
+            "scaled_error": 0.6939806710420072,
+            "order_proxy": 1.7643180936227831
+          },
+          "ses": {
+            "scaled_error": 0.6929846319035708,
+            "order_proxy": 1.7572230293146276
+          }
+        },
+        "restricted_supply": {
+          "recommended": {
+            "scaled_error": 0.5403038884408456,
+            "order_proxy": 0.6232554037913289
+          },
+          "current": {
+            "scaled_error": 0.5356128220084654,
+            "order_proxy": 0.623049350254562
+          },
+          "auto": {
+            "scaled_error": 0.5138039696075085,
+            "order_proxy": 0.5976072081878562
+          },
+          "combination": {
+            "scaled_error": 0.5236560207746578,
+            "order_proxy": 0.610365983525218
+          },
+          "ses": {
+            "scaled_error": 0.5138039696075085,
+            "order_proxy": 0.5976072081878562
+          }
+        }
+      }
+    },
+    "on": {
+      "metrics": {
+        "recommended": {
+          "scaled_error": 0.6662362454316488,
+          "order_proxy": 0.40850373631886305
+        },
+        "current": {
+          "scaled_error": 1.6801824963003855,
+          "order_proxy": 0.6558242416481953
+        },
+        "auto": {
+          "scaled_error": 0.689861663220185,
+          "order_proxy": 0.4462823820838392
+        },
+        "combination": {
+          "scaled_error": 2.1560815302197534,
+          "order_proxy": 0.6510756247786076
+        },
+        "ses": {
+          "scaled_error": 2.154160823253001,
+          "order_proxy": 0.6518341726553355
+        }
+      },
+      "paired_deltas": {
+        "current": {
+          "scaled_error": {
+            "mean": -1.01394625086874,
+            "ci90": [
+              -1.3081262758613315,
+              -0.7651168197352082
+            ]
+          },
+          "order_proxy": {
+            "mean": -0.24732050532933225,
+            "ci90": [
+              -0.3021099499381422,
+              -0.19166028948963515
+            ]
+          }
+        },
+        "auto": {
+          "scaled_error": {
+            "mean": -0.023625417788536482,
+            "ci90": [
+              -0.05508503859691828,
+              0.005798257844677515
+            ]
+          },
+          "order_proxy": {
+            "mean": -0.03777864576497597,
+            "ci90": [
+              -0.07028210333962046,
+              -0.00684420469874096
+            ]
+          }
+        },
+        "combination": {
+          "scaled_error": {
+            "mean": -1.4898452847881034,
+            "ci90": [
+              -1.8361281853371751,
+              -1.1810212144895438
+            ]
+          },
+          "order_proxy": {
+            "mean": -0.2425718884597441,
+            "ci90": [
+              -0.2917542449928125,
+              -0.19481368634938098
+            ]
+          }
+        },
+        "ses": {
+          "scaled_error": {
+            "mean": -1.4879245778213523,
+            "ci90": [
+              -1.8336335767159349,
+              -1.1800044623488548
+            ]
+          },
+          "order_proxy": {
+            "mean": -0.24333043633647228,
+            "ci90": [
+              -0.29146809633995785,
+              -0.19657406626202947
+            ]
+          }
+        }
+      },
+      "choices": {
+        "current": 170,
+        "sba": 55,
+        "seasonal_naive": 90,
+        "combination": 78,
+        "ses": 7
+      },
+      "families": {
+        "level_jitter": {
+          "recommended": {
+            "scaled_error": 0.7115438865619413,
+            "order_proxy": 0.0625490567169498
+          },
+          "current": {
+            "scaled_error": 0.7058230615018425,
+            "order_proxy": 0.0598250872009367
+          },
+          "auto": {
+            "scaled_error": 0.7063664886984548,
+            "order_proxy": 0.06013873311025628
+          },
+          "combination": {
+            "scaled_error": 0.7049768346050076,
+            "order_proxy": 0.06088087905866109
+          },
+          "ses": {
+            "scaled_error": 0.7044356028638455,
+            "order_proxy": 0.060805338548725364
+          }
+        },
+        "ramp": {
+          "recommended": {
+            "scaled_error": 0.4173931940486667,
+            "order_proxy": 0.14089385455934847
+          },
+          "current": {
+            "scaled_error": 0.4272371975846084,
+            "order_proxy": 0.14337378795872557
+          },
+          "auto": {
+            "scaled_error": 0.4409488782487115,
+            "order_proxy": 0.16467796564859621
+          },
+          "combination": {
+            "scaled_error": 0.41317580494359796,
+            "order_proxy": 0.1380577183125766
+          },
+          "ses": {
+            "scaled_error": 0.4381032706405403,
+            "order_proxy": 0.16262832171446087
+          }
+        },
+        "two_peak_cycle": {
+          "recommended": {
+            "scaled_error": 0.8691900553165715,
+            "order_proxy": 0.11906270002825987
+          },
+          "current": {
+            "scaled_error": 5.940558087318497,
+            "order_proxy": 1.1129010589877266
+          },
+          "auto": {
+            "scaled_error": 0.9463095598459688,
+            "order_proxy": 0.16471795981783702
+          },
+          "combination": {
+            "scaled_error": 8.29202005848224,
+            "order_proxy": 1.2385012976713012
+          },
+          "ses": {
+            "scaled_error": 8.259507415374006,
+            "order_proxy": 1.2250405945925165
+          }
+        },
+        "random_lots": {
+          "recommended": {
+            "scaled_error": 0.6392322978711223,
+            "order_proxy": 1.6612757471684954
+          },
+          "current": {
+            "scaled_error": 0.6487971582171893,
+            "order_proxy": 1.9084973066538449
+          },
+          "auto": {
+            "scaled_error": 0.6799101938247484,
+            "order_proxy": 1.7884036727361594
+          },
+          "combination": {
+            "scaled_error": 0.6939806710420072,
+            "order_proxy": 1.7643180936227831
+          },
+          "ses": {
+            "scaled_error": 0.6929846319035708,
+            "order_proxy": 1.7572230293146276
+          }
+        },
+        "restricted_supply": {
+          "recommended": {
+            "scaled_error": 0.6938217933599393,
+            "order_proxy": 0.05873732312126169
+          },
+          "current": {
+            "scaled_error": 0.6784969768798012,
+            "order_proxy": 0.05452396743974328
+          },
+          "auto": {
+            "scaled_error": 0.6757731954830405,
+            "order_proxy": 0.053473579106346626
+          },
+          "combination": {
+            "scaled_error": 0.6762542820259053,
+            "order_proxy": 0.05362013522771314
+          },
+          "ses": {
+            "scaled_error": 0.6757731954830405,
+            "order_proxy": 0.053473579106346626
+          }
+        }
+      }
+    }
+  },
+  "implementation_commit": "0e260d2"
+}

@@ -88,6 +88,6 @@ function wlExcel(rows){
  // visible column sequence and current sort, regardless of order selection.
  const columns=wlVisible(),products=[columns.map(c=>c[1]),...[...currentRows].sort(wlCompare).map(row=>columns.map(([key])=>wlXlsxProductsValue(row,key)))]
  const bytes=wlXlsxWorkbook([{name:'Purchase order',rows:purchase},{name:'All products',rows:products}])
- wlDownload(bytes,'stock-runway-order.xlsx','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+ wlDownload(bytes,'inventory-manager-order.xlsx','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
  return bytes
 }

@@ -7,3 +7,13 @@ Python (`tests/baseline.py`) and Node (`tests/baseline.mjs`) prefer fixtures and
 The former `connect-design` schema reference is pinned to `342cd4a76d63dcd4b8d7abe12118287cc7b2314b`.
 Backend guard checkpoints: engine `f2509b4`; authorized CLI byte-cap loader/source `74572d6`.
 Regenerate only with explicit authorization; compare engine code with its original Git object and data-bearing payloads with the seeded generator.
+
+`v1.1-freeze-cli.tar.gz` is a separate, exact 34-file CLI-dependency snapshot from
+`v1.1-freeze` (`c3109d5c4ac7137d5c875db44c3e3a685ad1e82f`), added for the v1.2
+history-free archive gate. It contains root Python/JSON sources, the sample,
+forecast-lab/data-contract Python dependencies and architecture schemas, not a
+replacement current engine. Every member's bytes were read from the named Git
+object; tar metadata is deterministic and gzip mtime is zero. Its SHA-256 is
+`4802d55bb7b854a3e80db2292f8963276afbd76c75db5766e65efc189d01b7bf`,
+pinned in `tests/test_v12_cli_review.py`. All original CLI default-output byte
+comparisons remain active without Git or tags; no tests are skipped.

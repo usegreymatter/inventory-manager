@@ -5,7 +5,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE)
 const root=path.resolve(__dirname,'..'),out=path.join(root,'.scratch/warning-visibility');fs.mkdirSync(out,{recursive:true})
 const fixture=path.join(root,'tests/fixtures/review-import/v_reserved_one_sheet.xlsx')
 const report={checks:[],errors:[],network:[]},malicious='<img src=x onerror="window.warningXss=1"> & <script>window.warningXss=2</script>'
-const html=fs.readFileSync(process.env.STOCK_RUNWAY_HTML||path.join(root,'standalone/stock-runway.html'),'utf8'),probe=path.join(out,'probe.html')
+const html=fs.readFileSync(process.env.STOCK_RUNWAY_HTML||path.join(root,'standalone/inventory-manager.html'),'utf8'),probe=path.join(out,'probe.html')
 // Test-only seam for adversarial warning strings and warning-free source controls.
 fs.writeFileSync(probe,html.replace('</script>',`\nwindow.warningQA={get:()=>data,show:parsed=>{data=parsed;render();stockImportStatus({parsed,smart:false},{name:'synthetic.json'})}};\n</script>`))
 function check(label,value){report.checks.push({label,pass:!!value});assert.ok(value,label)}

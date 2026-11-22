@@ -280,6 +280,17 @@ def review_input_meaning(sheets, report, raw_choices=None, today=None):
 
 def attach_input_meaning(data, review):
     for item in data['items']:
+        for note in item.get('expiry_warnings', []):
+            if 'lot total does not match' not in note and 'missing lot quantity' not in note: continue
+            message = item['sku'] + ': ' + note
+            if message not in review['reasons']: review['reasons'].append(message)
+            if message not in review['warnings']: review['warnings'].append(message)
+            row = next((r for r in review['affected'] if r['sku'] == item['sku']), None)
+            if row is None:
+                row = dict(sku=item['sku'], warnings=[])
+                review['affected'].append(row)
+            if message not in row['warnings']: row['warnings'].append(message)
+            review['requires_ack'] = True
         if (review['choices']['incoming_not_in_file'] or item.get('on_order') is None) and item['sku'] not in review['incoming_unknown']:
             review['incoming_unknown'].append(item['sku'])
             if INCOMING_UNKNOWN not in review['warnings']:
@@ -329,7 +340,7 @@ def interpret_csv(path, data, choices, today, strict=False, max_bytes=2 * 1024 *
         raise SourceError('CSV exceeds the configured byte limit.')
     text = decode_csv(raw)
     delimiter = delimiter_for(text)
-    rows = list(csv.reader(io.StringIO(text), delimiter=delimiter))
+    rows = list(csv.reader(io.StringIO(text, newline=''), delimiter=delimiter))
     # Match preflight's logical-record indexing, including multi-cell blank rows.
     rows = [r for r in rows if len(r) > 1 or r and r[0] != '']
     preflight = preflight_csv(text, max_bytes=max_bytes)
@@ -344,7 +355,7 @@ def interpret_csv(path, data, choices, today, strict=False, max_bytes=2 * 1024 *
     sheet = dict(name='CSV', rows=rows, delimiter=delimiter)
     def serialize(source_rows):
         out = io.StringIO(newline='')
-        csv.writer(out, delimiter=delimiter, lineterminator='\n').writerows(source_rows)
+        csv.writer(out, delimiter=delimiter, lineterminator='\r\n').writerows(source_rows)
         return out.getvalue()
     def parse_internal(generated, strict=False):
         # The user's byte budget was already enforced on the original file.

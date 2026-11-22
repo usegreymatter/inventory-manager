@@ -213,6 +213,7 @@ def simulate_risk(spec, order_multiplier=1):
     n = len(factors)
     seed = state = _seed(spec['sku'], as_of)
     before = after = 0
+    shortfall_before = 0.0
     for _ in range(PATHS):
         state = _next(state)
         arrival = max(today, order).toordinal()+math.ceil(lead*leads[state % len(leads)])
@@ -228,10 +229,15 @@ def simulate_risk(spec, order_multiplier=1):
             left += added
             amount = demand*draws[month]
             missed = amount-left > max(1, amount, left)*1e-12
+            if pre:
+                shortfall_before += max(0, amount-left)
             if missed:
                 missed_before = missed_before or pre
                 missed_after = missed_after or post
             left = max(0, left-amount)
         before += missed_before
         after += missed_after
-    return dict(before=before/PATHS, after=after/PATHS, paths=PATHS, seed=seed, thin_history=len(history) < 8)
+    result = dict(before=before/PATHS, after=after/PATHS, paths=PATHS, seed=seed, thin_history=len(history) < 8)
+    if spec.get('include_shortfall') is True:
+        result['expected_shortfall_before'] = shortfall_before/PATHS
+    return result

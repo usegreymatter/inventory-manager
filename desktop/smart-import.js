@@ -6,10 +6,11 @@ const MAX_INPUT=20*1024*1024, MAX_EXPANDED=80*1024*1024;
 const MAX_ROWS=200000, MAX_COLS=16384, MAX_CELLS=2000000;
 const FIXED=['sku','name','unit','on_hand','supplier_days'];
 const OPTIONAL=['category','supplier','on_order','demand_change_pct','last_count_date'];
-const PER_ITEM=['minimum_order','pack_size','unit_cost'];
+const PER_ITEM=['minimum_order','pack_size','unit_cost','sale_price','shelf_life_days'];
+const LOT_FIELDS=['lots','lot','expiry','lot_qty'];
 const REVIEW_FIELDS=['reserved','stock_unit','sales_unit'];
 const REVIEW_ALIASES={reserved:['reserved','reserved qty','reserved quantity','allocated','allocated qty','allocated stock','reserved stock','reserved or allocated stock'],stock_unit:['stock unit','stock uom','inventory unit'],sales_unit:['sales unit','sales uom','sold unit']};
-const NUMERIC_FIELDS=new Set(['reserved','on_hand','on_order','supplier_days','demand_change_pct','quantity',...PER_ITEM]);
+const NUMERIC_FIELDS=new Set(['reserved','on_hand','on_order','supplier_days','demand_change_pct','quantity','lot_qty',...PER_ITEM]);
 const BALANCE_ERROR='differing on-hand balances; use stock snapshot';
 const AMBIGUOUS_NUMBER='ambiguous number format';
 export const DATE_HEADERS=['date','transaction date','sales date','invoice date','document date','posting date','month','period'];
@@ -24,6 +25,35 @@ const trim=v=>String(v??'').replace(/^[\s\u001c-\u001f\u0085\ufeff]+|[\s\u001c-\
 const fail=message=>{throw new Error(message);};
 const own=(o,k)=>Object.prototype.hasOwnProperty.call(o,k);
 const isMonth=f=>/^(?:rcv:)?[0-9]{4}-[0-9]{2}$/.test(f);
+
+export function expiryDate(raw){
+  raw=trim(raw);if(raw.length>256)fail('invalid expiry date');
+  const notes=[];let ambiguous=false,parsed;
+  const valid=(y,m,d)=>{const value=new Date(Date.UTC(y,m-1,d));if(y<1000||y>9999||value.getUTCFullYear()!==y||value.getUTCMonth()!==m-1||value.getUTCDate()!==d)fail('invalid expiry date');return value;};
+  if(/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(raw)){const [y,m,d]=raw.split('-').map(Number);parsed=valid(y,m,d);}
+  else if(/^(?:[0-9]{4}-[0-9]{2}|[0-9]{1,2}[-/.][0-9]{4}|[A-Za-z]{3,9}[\s\-/.,']*[0-9]{4})$/.test(raw)){const normalized=month(raw);if(!normalized)fail('invalid expiry date');const [y,m]=normalized.split('-').map(Number);if(m<1||m>12)fail('invalid expiry date');parsed=valid(y,m,new Date(Date.UTC(y,m,0)).getUTCDate());notes.push('month-only expiry interpreted as end of month');}
+  else if(/^[0-9]+(?:\.[0-9]+)?$/.test(raw)){const serial=+raw;if(!(serial>=1&&serial<=2958465))fail('invalid expiry date');const days=Math.floor(serial);parsed=new Date(Date.UTC(1899,11,31)+(days<60?days:days-1)*86400000);if(parsed.getUTCFullYear()<1000)fail('invalid expiry date');notes.push('Excel serial expiry interpreted using 1900 date system');}
+  else{const match=raw.match(/^([0-9]{1,2})([/.\-])([0-9]{1,2})\2([0-9]{4})$/);if(!match)fail('invalid expiry date');const first=+match[1],second=+match[3],year=+match[4];ambiguous=first>=1&&first<=12&&second>=1&&second<=12&&first!==second;parsed=valid(year,first<=12?first:second,first<=12?second:first);if(ambiguous)notes.push('ambiguous expiry date interpreted month/day/year; acknowledge before ordering');}
+  return [parsed.toISOString().slice(0,10),notes,ambiguous];
+}
+export function mergeLots(lots){
+  const result=[],seen=new Map();for(const lot of lots){const key=JSON.stringify([lot.lot,lot.expiry]);if(!seen.has(key)){const copy={...lot};seen.set(key,copy);result.push(copy);}else{seen.get(key).qty+=lot.qty;if(lot.expiry_acknowledged===false)seen.get(key).expiry_acknowledged=false;}if(seen.get(key).qty>1e12)fail('combined lot quantity exceeds 1000000000000');}return result;
+}
+export function lotFields(get,number,rownum=2,hasLotQty=false){
+  const raw=get('lots');let source;
+  if(raw){try{source=JSON.parse(raw);}catch{fail('lots must be a JSON list');}if(!Array.isArray(source)||source.length>10000)fail('lots must be a JSON list of at most 10000 lots');}
+  else if(['lot','expiry','lot_qty'].some(f=>get(f))){
+    if(hasLotQty&&!get('lot_qty')){if(!get('expiry'))fail('each lot requires an expiry date');const [,notes]=expiryDate(get('expiry'));return [[],[...notes,'missing lot quantity; lot stock unknown; acknowledge before ordering']];}
+    source=[{lot:get('lot'),expiry:get('expiry'),qty:number(get('lot_qty')||get('on_hand'))}];
+  }
+  else return [[],[]];
+  const lots=[],warnings=[];for(const entry of source){
+    if(!entry||typeof entry!=='object'||typeof entry.lot!=='string'||typeof entry.expiry!=='string')fail('each lot requires lot, expiry and qty');if(!entry.expiry)fail('each lot requires an expiry date');
+    if(!['string','number'].includes(typeof entry.qty))fail('each lot requires a numeric qty');const rawQty=String(entry.qty),value=+rawQty;
+    if(!NUMERIC.test(trim(rawQty)))fail(`Row ${rownum}: lot_qty must be a number.`);if(!Number.isFinite(value)||value<0)fail(`Row ${rownum}: lot_qty must be a non-negative number.`);if(value>1e12)fail(`Row ${rownum}: lot_qty must be no greater than 1000000000000.`);
+    const [expiry,notes,ambiguous]=expiryDate(entry.expiry),lot={lot:trim(entry.lot),expiry,qty:value};if(ambiguous||entry.expiry_acknowledged===false){lot.expiry_acknowledged=false;if(!ambiguous)notes.push('ambiguous expiry date requires acknowledgement before ordering');}warnings.push(...notes);lots.push(lot);
+  }return [mergeLots(lots),[...new Set(warnings)]];
+}
 
 function limits(sheets){
   let rows=0,cells=0;
@@ -215,10 +245,12 @@ async function readXlsx(raw){
         else if(!['str','e','d'].includes(typ)&&value){
           const styleIndex=uint(cell.attrs.s??0),fmtId=styleIds[styleIndex]||0,fmt=formats.get(fmtId)||'';
           if([9,10].includes(fmtId)||fmt.replace(/"[^"]*"|\\./g,'').includes('%'))percentCells.push([rowIndex,col]);
-          if(fmtId>=14&&fmtId<=22||dateFormat(fmt)){
+          if(fmtId>=14&&fmtId<=22||dateFormat(fmt)||value.length<=256&&NUMERIC.test(value)&&Number.isFinite(Number(value))&&+value>=0&&+value<=2958465&&rows.slice(0,Math.min(rowIndex,30)).some(previous=>col<previous.length&&['expiry','expiry date','expiration date','best before','use by','lot expiry'].includes(key(previous[col])))){
             const serial=Number(value);if(value.length>256||!NUMERIC.test(value)||!Number.isFinite(serial)||serial<0||serial>2958465)fail('Invalid Excel date value.');
             const days=Math.floor(serial),epoch=epoch1904?Date.UTC(1904,0,1):Date.UTC(1899,11,31);
             const d=new Date(epoch+(epoch1904||days<60?days:days-1)*86400000);value=d.toISOString().slice(0,10);if(value.length!==10)fail('Invalid Excel date value.');
+            const cleanFormat=(fmt||(fmtId===17?'mmm-yy':'')).replace(/"[^"]*"|\\.|\[[^\]]*\]/g,'').toLowerCase();
+            if(cleanFormat.includes('m')&&!/[dhs]/.test(cleanFormat)&&rows.slice(0,Math.min(rowIndex,30)).some(previous=>col<previous.length&&['expiry','expiry date','expiration date','best before','use by','lot expiry'].includes(key(previous[col]))))value=value.slice(0,7);
           }else if(/^0+$/.test(fmt)&&/^[0-9]+$/.test(value)){
             // ZIP byte limits do not bound amplification by numeric formatting.
             paddingSize+=Math.max(0,fmt.length-value.length);
@@ -279,6 +311,16 @@ function erpNumber(raw,delimiter=',',lead=false,style='decimal-dot',mixed=false)
   }
   return negative?'-'+t:t;
 }
+function transactionDatesNeedAck(sheet,picked,start){
+  if(!picked.has('date'))return false;
+  const index=picked.get('date')[0],separators=new Set(),orders=new Set();let numericDates=false;
+  for(const row of sheet.rows.slice(start)){
+    const text=trim(row[index]??''),m=/^([0-9]{1,2})([-/.])([0-9]{1,2})([-/.])([1-9][0-9]{3})$/.exec(text);
+    if(m){numericDates=true;if(m[2]!==m[4])return true;separators.add(m[2]);if(+m[1]>12)orders.add('dmy');if(+m[3]>12)orders.add('mdy');}
+    else{const iso=/^[1-9][0-9]{3}([-/.])[0-9]{1,2}([-/.])[0-9]{1,2}(?:[ T].*)?$/.exec(text);if(iso&&iso[1]!==iso[2])return true;}
+  }
+  return numericDates&&(separators.size>1||orders.size!==1);
+}
 function sheetNumbers(sheet,picked,start){
   const rows=sheet.rows.slice(start),indices=[...picked].filter(([f])=>NUMERIC_FIELDS.has(f)||isMonth(f)).flatMap(([,hits])=>hits),values=[];
   for(const row of rows)for(const i of indices)if(i<row.length&&row[i].length<=256)values.push(row[i]);
@@ -287,11 +329,15 @@ function sheetNumbers(sheet,picked,start){
   const style=effective===';'&&values.some(v=>/^[+-]?(?:[0-9]+|[0-9]{1,3}(?:\.[0-9]{3})+),[0-9]+$/.test(numberParts(v)[0]))?'decimal-comma':'decimal-dot';
   const leadIndex=picked.get('supplier_days')?.[0];
   const mixed=style==='decimal-comma'&&rows.some(row=>indices.some(i=>i<row.length&&row[i].length<=256&&row[i].includes('.')&&NUMERIC.test(erpNumber(row[i],',',i===leadIndex))&&erpNumber(row[i],effective,i===leadIndex,style)===AMBIGUOUS_NUMBER));
-  const number=(raw,lead=false)=>{
-    const t=trim(raw);if(delimiter===null&&style==='decimal-dot'&&t.includes(',')&&!/^[+-]?[0-9]{1,3}(?:,[0-9]{3})+\.[0-9]+$/.test(t))return AMBIGUOUS_NUMBER;
-    const result=erpNumber(t,effective,lead,style,mixed);return lead&&NUMERIC.test(result)?add('0',result):result;
+  const quantityIndices=indices.filter(i=>!(picked.get('sale_price')||[]).includes(i)),quantityValues=rows.flatMap(row=>quantityIndices.filter(i=>i<row.length&&row[i].length<=256).map(i=>row[i]));
+  const quantityStyle=effective===';'&&quantityValues.some(v=>/^[+-]?(?:[0-9]+|[0-9]{1,3}(?:\.[0-9]{3})+),[0-9]+$/.test(numberParts(v)[0]))?'decimal-comma':'decimal-dot';
+  const quantityMixed=quantityStyle==='decimal-comma'&&rows.some(row=>quantityIndices.some(i=>i<row.length&&row[i].length<=256&&row[i].includes('.')&&NUMERIC.test(erpNumber(row[i],',',i===leadIndex))&&erpNumber(row[i],effective,i===leadIndex,quantityStyle)===AMBIGUOUS_NUMBER));
+  const number=(raw,lead=false,price=false)=>{
+    const convention=price?style:quantityStyle,mixedStyle=price?mixed:quantityMixed;
+    const t=trim(raw);if(delimiter===null&&convention==='decimal-dot'&&t.includes(',')&&!/^[+-]?[0-9]{1,3}(?:,[0-9]{3})+\.[0-9]+$/.test(t))return AMBIGUOUS_NUMBER;
+    const result=erpNumber(t,effective,lead,convention,mixedStyle);return lead&&NUMERIC.test(result)?add('0',result):result;
   };
-  return [number,style];
+  return [number,quantityStyle];
 }
 function add(left,right){
   if(!left)return right;if(!right)return left;
@@ -307,6 +353,9 @@ function percent(raw){
   const value=add('0',raw);if(!NUMERIC.test(value))return value;
   // add() normalized the bounded input to fixed decimal notation already.
   return add('0',value+'e2');
+}
+function lotsText(lots){
+  return '['+lots.map(lot=>'{'+'"lot":'+JSON.stringify(lot.lot)+',"expiry":'+JSON.stringify(lot.expiry)+',"qty":'+add('0',String(lot.qty))+(lot.expiry_acknowledged===false?',"expiry_acknowledged":false':'')+'}').join(',')+']';
 }
 function analyse(sheet,overrides,aliases,typeAliases){
   const {rows,name}=sheet,lookup=new Map();
@@ -371,7 +420,7 @@ function analyse(sheet,overrides,aliases,typeAliases){
   }
   if(!best)best=[{name,header_row:1,score:0,layout:'products',mapping:[],unmapped:[],missing:REQUIRED.map(([,t])=>t),products:0},new Map(),[],2000,false];
   const [report,picked,headers,inferred,hasYear]=best,records=new Map(),warnings=[],locations=new Map();
-  report.accepted_rows=[];report.incoming_evidence=Object.create(null);report.reserved_warnings=Object.create(null);report.input_warnings=Object.create(null);report.reasons=[];
+  report.accepted_rows=[];report.rows_set_aside=[];report.incoming_evidence=Object.create(null);report.reserved_warnings=Object.create(null);report.input_warnings=Object.create(null);report.reasons=[];
   const [number,style]=sheetNumbers(sheet,picked,report.header_row);
   const percentCells=new Set((sheet.percent_cells||[]).map(([row,col])=>`${row}:${col}`));
   warnings.push(`${name}: Number format: ${style}; review numeric text conventions.`);
@@ -396,16 +445,18 @@ function analyse(sheet,overrides,aliases,typeAliases){
     const negativeFields=['on_hand','on_order'].filter(f=>report.layout!=='long'&&add('0',number(get(f))).startsWith('-'));
     if(negativeFields.length){warnings.push(`${name}: row ${rownum} negative ${negativeFields[0]} in ERP; row omitted.`);continue;}
     const location=Array.from(get('location').toLowerCase(),c=>c==='\u0131'?c:c.toUpperCase().toLowerCase()).join('');
+    let lots,lotNotes;try{[lots,lotNotes]=lotFields(get,number,rownum,picked.has('lot_qty'));}catch(error){report.rows_set_aside.push({row:rownum,reason:error.message,values:row});warnings.push(`${name}: row ${rownum}: ${error.message}; row omitted.`);continue;}
+    const lotRow=!!lots.length||picked.has('lot_qty')&&['lot','expiry'].some(f=>get(f)),snapshotRepeat=lotRow&&records.has(sku)&&locations.get(sku).has(location);
     if(records.has(sku)){
       const record=records.get(sku);let reason=null;
       if((record.get('unit')||record.get('stock_unit')||'units')!==(get('unit')||get('stock_unit')||'units'))reason='conflicting stock units';
-      else if(report.layout!=='long'){
+      else if(report.layout!=='long'&&!lotRow){
         if(!picked.has('location'))reason='duplicate sku without warehouse/location';
         else if(location&&locations.get(sku).has(location))reason='duplicate sku at same warehouse/location';
         else if(picked.has('on_hand')&&(!record.get('on_hand')||!get('on_hand')))reason='missing on-hand stock for warehouse row';
       }
       if(reason){warnings.push(`${name}: ${sku}: ${reason}; first row kept; row omitted (${rownum}).`);continue;}
-      if(report.layout!=='long'){
+      if(report.layout!=='long'&&!lotRow){
         warnings.push(`${name}: ${sku}: combined distinct warehouse/location rows; stock, on order, sales and receipts summed; first-row metadata kept.`);
         if(!location||locations.get(sku).has(''))warnings.push(`${name}: ${sku}: blank warehouse/location treated as Unspecified; all blank-location rows aggregated, including repeated blanks. Check for duplicate exports.`);
       }
@@ -420,11 +471,14 @@ function analyse(sheet,overrides,aliases,typeAliases){
     // Preserve stock-header provenance even when allocations join later.
     if(picked.has('on_hand')&&key(headers[picked.get('on_hand')[0]]).includes('available'))(report.reserved_warnings[sku]??=[]).push('Stock header says already available — subtracting reserved again may double-count allocations.');
     if(!records.has(sku))records.set(sku,new Map());const record=records.get(sku);
+    if(lots.length)record.set('lots',lotsText(mergeLots([...JSON.parse(record.get('lots')||'[]'),...lots])));
+    for(const note of lotNotes){const message=`${name}: ${sku}: ${note}`;warnings.push(message);if((note.includes('ambiguous expiry date')||note.includes('missing lot quantity'))){report.reasons.push(message);(report.input_warnings[sku]??=[]).push(message);}}
     if(!locations.has(sku))locations.set(sku,new Set());locations.get(sku).add(location);
     for(const [f,indices] of picked){
-      if(['date','quantity','sku','location','active','inactive'].includes(f))continue;
+      if(['date','quantity','sku','location','active','inactive',...LOT_FIELDS].includes(f))continue;
       const monthly=isMonth(f),numeric=monthly||NUMERIC_FIELDS.has(f);
-      const vals=indices.map(i=>i<row.length?(numeric?number(row[i],f==='supplier_days'):trim(row[i])):'');let value=vals[0];
+      if(snapshotRepeat&&(monthly||['on_order','reserved'].includes(f)||(f==='on_hand'&&(picked.has('lot_qty')||!!get('lots')))))continue;
+      const vals=indices.map(i=>i<row.length?(numeric?number(row[i],f==='supplier_days',f==='sale_price'):trim(row[i])):'');let value=vals[0];
       for(const [j,index] of indices.entries())if(numeric&&percentCells.has(`${rownum-1}:${index}`)&&vals[j])vals[j]=f==='demand_change_pct'?percent(vals[j]):'percentage-formatted quantity; use stock units';
       for(let j=0;j<vals.length;j++)if(monthly&&!f.startsWith('rcv:')&&report.layout!=='long'&&add('0',vals[j]).startsWith('-')){vals[j]='0';warnings.push(`${name}: ${sku}: negative sales in ${f} treated as 0 before warehouse aggregation.`);}
       value=vals[0];
@@ -467,18 +521,26 @@ function boundedInputWarnings(notes){const keys=Object.keys(notes).sort(),messag
 export function contributorMetadata(sheet,meta){
   const picked=new Map((meta.mapping||[]).filter(m=>m.field).map(m=>[m.field,[m.index]])),headers=sheet.rows[meta.header_row-1]||[];
   const reserved=headers.findIndex(h=>REVIEW_ALIASES.reserved.includes(key(h))),[number]=sheetNumbers(sheet,picked,meta.header_row),accepted=new Set(meta.accepted_rows||[]);
-  const warnings=new Map(),missing=new Map(),reasons=[],first=new Map(),identical=new Map(),informational=new Set();
+  const warnings=new Map(),missing=new Map(),reasons=[],first=new Map(),identical=new Map(),informational=new Set(),lotSnapshots=new Map();
   const mark=(sku,message)=>{message=shortLabel(message,512);if(!reasons.includes(message)&&reasons.length>=99)message='Additional input warnings omitted; check all source rows before ordering.';if(!warnings.has(sku))warnings.set(sku,[]);if(!warnings.get(sku).includes(message))warnings.get(sku).push(message);if(!reasons.includes(message))reasons.push(message);};
+  const ambiguousDates=transactionDatesNeedAck(sheet,picked,meta.header_row);
   for(const [offset,row]of sheet.rows.slice(meta.header_row).entries()){
     if(!accepted.has(meta.header_row+offset))continue;
     const get=f=>picked.has(f)?trim(row[picked.get(f)[0]]??''):'',sku=get('sku');if(!sku)continue;
+    if(ambiguousDates&&get('date'))mark(sku,`${sheet.name}: ${sku}: ambiguous transaction date order or mixed separators; check month assignments; acknowledge before ordering.`);
     if(picked.has('on_hand')&&reserved>=0&&(reserved>=row.length||!trim(row[reserved])))missing.set(sku,[sheet.name]);
-    if(meta.layout!=='long'&&!get('location')){const fingerprint=JSON.stringify(row);if(!identical.has(sku))identical.set(sku,new Set());const seen=identical.get(sku);if(seen.has(fingerprint))mark(sku,`Identical rows found for SKU ${shortLabel(sku)} — possible duplicate export`);seen.add(fingerprint);}
+    if(LOT_FIELDS.some(f=>get(f))){
+      const [,notes]=lotFields(get,number,meta.header_row+offset+1,picked.has('lot_qty'));for(const note of notes)if((note.includes('ambiguous expiry date')||note.includes('missing lot quantity')))mark(sku,`${sheet.name}: ${sku}: ${note}`);
+      if(LOT_FIELDS.some(f=>get(f))){const location=Array.from(get('location').toLowerCase(),c=>c==='\u0131'?c:c.toUpperCase().toLowerCase()).join(''),k=JSON.stringify([sku,location]);if(!lotSnapshots.has(k))lotSnapshots.set(k,new Map());const snapshot=lotSnapshots.get(k);
+        for(const field of picked.keys()){if(field==='on_hand'&&!(picked.has('lot_qty')||get('lots')))continue;if(!['on_hand','on_order','reserved'].includes(field)&&!isMonth(field))continue;const value=number(get(field));if(snapshot.has(field)&&snapshot.get(field)!==value&&!sameNumber(snapshot.get(field),value))mark(sku,`${sheet.name}: conflicting ${field} for ${sku} across lot rows; first snapshot kept; acknowledge before ordering.`);if(!snapshot.has(field))snapshot.set(field,value);}
+      }
+    }
+    if(meta.layout!=='long'&&!get('location')&&!LOT_FIELDS.some(f=>get(f))){const fingerprint=JSON.stringify(row);if(!identical.has(sku))identical.set(sku,new Set());const seen=identical.get(sku);if(seen.has(fingerprint))mark(sku,`Identical rows found for SKU ${shortLabel(sku)} — possible duplicate export`);seen.add(fingerprint);}
     if(!first.has(sku))first.set(sku,new Map());const values=first.get(sku);
     for(const field of picked.keys()){
-      if(['sku','location','active','inactive','date','quantity','on_hand','on_order','reserved'].includes(field)||/^(?:rcv:)?[0-9]{4}-[0-9]{2}$/.test(field))continue;
-      const value=NUMERIC_FIELDS.has(field)?number(get(field),field==='supplier_days'):get(field);
-      if(value){if(values.get(field)&&values.get(field)!==value&&!(NUMERIC_FIELDS.has(field)&&sameNumber(values.get(field),value))){if(['supplier_days','unit','stock_unit','sales_unit'].includes(field))mark(sku,`${shortLabel(sheet.name)}: conflicting ${field} for ${shortLabel(sku)}; first value kept; acknowledge before ordering.`);else informational.add(sku);}if(!values.has(field))values.set(field,value);}
+      if(['sku','location','active','inactive','date','quantity','on_hand','on_order','reserved',...LOT_FIELDS].includes(field)||/^(?:rcv:)?[0-9]{4}-[0-9]{2}$/.test(field))continue;
+      const value=NUMERIC_FIELDS.has(field)?number(get(field),field==='supplier_days',field==='sale_price'):get(field);
+      if(value){if(values.get(field)&&values.get(field)!==value&&!(NUMERIC_FIELDS.has(field)&&sameNumber(values.get(field),value))){if(['supplier_days','shelf_life_days','unit','stock_unit','sales_unit'].includes(field))mark(sku,`${shortLabel(sheet.name)}: conflicting ${field} for ${shortLabel(sku)}; first value kept; acknowledge before ordering.`);else informational.add(sku);}if(!values.has(field))values.set(field,value);}
     }
   }
   if(informational.size){const summary=metadataSummary(informational);for(const sku of informational){if(!warnings.has(sku))warnings.set(sku,[]);warnings.get(sku).push(summary);}}
@@ -521,10 +583,11 @@ export function understandWorkbook(sheets,sheet=null,overrides=null,aliases={},p
       else if(values.get('on_order')&&!(incomingEvidence[sku]||[]).some(Boolean)&&(!otherStock||!target.get('on_order')))incomingEvidence[sku]=[true];
       if(otherStock&&(combineStock||!target.get('on_hand')&&values.get('on_hand'))){if(!stockSources.has(sku))stockSources.set(sku,[]);stockSources.get(sku).push(other.name);for(const name of other.reserved_missing[sku]||[])if(!(reservedMissing[sku]??=[]).includes(name))reservedMissing[sku].push(name);}
       for(const [field,value] of values){
+        if(field==='lots'){target.set(field,lotsText(mergeLots([...JSON.parse(target.get(field)||'[]'),...JSON.parse(value)])));continue;}
         const quantityField=['on_hand','reserved','on_order'].includes(field)||isMonth(field);
         if(combineStock&&quantityField)target.set(field,add(target.get(field)||'',value));
         else if(!target.get(field))target.set(field,value);
-        else if(value&&target.get(field)!==value&&!(NUMERIC_FIELDS.has(field)&&sameNumber(value,target.get(field)))){if(!quantityField&&!['supplier_days','unit','stock_unit','sales_unit'].includes(field))informational.add(sku);else{const message=`${shortLabel(other.name)}: conflicting ${field} for ${shortLabel(sku)}; base sheet value kept; acknowledge before ordering.`;flag(sku,message);}}
+        else if(value&&target.get(field)!==value&&!(NUMERIC_FIELDS.has(field)&&sameNumber(value,target.get(field)))){if(!quantityField&&!['supplier_days','shelf_life_days','unit','stock_unit','sales_unit'].includes(field))informational.add(sku);else{const message=`${shortLabel(other.name)}: conflicting ${field} for ${shortLabel(sku)}; base sheet value kept; acknowledge before ordering.`;flag(sku,message);}}
       }
     }
   }
@@ -532,11 +595,12 @@ export function understandWorkbook(sheets,sheet=null,overrides=null,aliases={},p
   for(const [sku,names]of stockSources)if(filledSources.has(sku)&&!summedSources.has(sku))flag(sku,`Blank stock in sheet ${shortLabel(report.name)} was filled from sheet ${shortLabel(filledSources.get(sku))}. Check the selected base sheet before ordering.`);else if(names.length>1)flag(sku,'Stock from sheets '+names.join(', ')+' was added together. Confirm these are separate warehouses — not totals, copies or older snapshots.');
   if(stockSheets.length>1&&summedSources.size)warnings.push('Combined stock from sheets '+stockSheets.join(', '));
   if(unmatched.size)warnings.push(`${unmatched.size} product codes in other sheets did not match ${report.name}; not imported.`);
+  for(const [sku,values]of products)if(values.get('lots')&&NUMERIC.test(values.get('on_hand')||'')){const total=JSON.parse(values.get('lots')).reduce((n,lot)=>n+lot.qty,0),stock=+values.get('on_hand');if(Math.abs(total-stock)>Math.max(1e-9,1e-12*Math.max(Math.abs(total),Math.abs(stock))))flag(sku,`${sku}: lot total does not match on-hand stock; check lot quantities; acknowledge before ordering.`);}
   const fields=products.size?new Set([...products.values()].flatMap(v=>[...v.keys()])):available;
   for(const sku of joinedReserved){delete reservedMissing[sku];reservedWarnings[sku]=(reservedWarnings[sku]||[]).filter(note=>!note.startsWith('Reserved cell is blank'));if(!reservedWarnings[sku].length)delete reservedWarnings[sku];}
   if(!fields.has('reserved'))for(const sku of Object.keys(reservedMissing))delete reservedMissing[sku];
   if(informational.size){const summary=metadataSummary(informational);warnings.push(summary);for(const sku of informational)(inputWarnings[sku]??=[]).push(summary);}
-  const months=[...fields].filter(f=>/^[1-9][0-9]{3}-(?:0[1-9]|1[0-2])$/.test(f)).sort(),receipts=[...fields].filter(f=>/^rcv:[1-9][0-9]{3}-(?:0[1-9]|1[0-2])$/.test(f)).sort(),headers=[...FIXED,...[...OPTIONAL,...PER_ITEM,...REVIEW_FIELDS].filter(f=>fields.has(f)),...months,...receipts],canonical=[headers];
+  const months=[...fields].filter(f=>/^[1-9][0-9]{3}-(?:0[1-9]|1[0-2])$/.test(f)).sort(),receipts=[...fields].filter(f=>/^rcv:[1-9][0-9]{3}-(?:0[1-9]|1[0-2])$/.test(f)).sort(),headers=[...FIXED,...[...OPTIONAL,...PER_ITEM,...REVIEW_FIELDS,'lots'].filter(f=>fields.has(f)),...months,...receipts],canonical=[headers];
   for(const [sku,values] of products)canonical.push(headers.map(f=>f==='sku'?sku:values.get(f)||(f==='unit'?'units':'')));
   const missing=REQUIRED.filter(([f])=>!products.size&&!available.has(f)||[...products].some(([sku,values])=>f==='sku'?!sku:!values.get(f)||f==='on_hand'&&values.get(f)===BALANCE_ERROR)).map(([,title])=>title);
   const noHistory=externalSales?[...products.values()].filter(v=>!hasSales(v)).length:0;

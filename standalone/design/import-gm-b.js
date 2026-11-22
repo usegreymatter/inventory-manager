@@ -31,20 +31,26 @@ function importSection(title,values,format){
   more.addEventListener('click',append);details.addEventListener('toggle',()=>{if(details.open&&!shown)append()});append();details.append(more);importLists.append(details)
 }
 function importSetAsideCsv(report){
-  const safe=value=>{const s=String(value??'');return /^[=+\-@\t\r]/.test(s)?"'"+s:s}
   const rows=[['Source row','Reason',...report.source_headers],...report.rows_set_aside.map(r=>[String(r.row),r.reason,...r.values])]
-  return '\uFEFF'+rows.map(r=>r.map(v=>'"'+safe(v).replaceAll('"','""')+'"').join(',')).join('\r\n')+'\r\n'
+  return '\uFEFF'+rows.map(r=>r.map(wlCsvCell).join(',')).join('\r\n')+'\r\n'
 }
 importDownload.addEventListener('click',()=>{
   if(!importPending)return
-  const blob=new Blob([importSetAsideCsv(importPending.report)],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=node('a');a.href=url;a.download='stock-runway-set-aside.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)
+  const blob=new Blob([importSetAsideCsv(importPending.report)],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=node('a');a.href=url;a.download='inventory-manager-set-aside.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)
 })
-function finishImportCheck(accepted=false){if(!importPending)return;const pending=importPending;importPending=null;if(importCheck.open)importCheck.close();pending.resolve(accepted);if(pending.focus?.isConnected)pending.focus.focus()}
+function finishImportCheck(accepted=false){
+  if(!importPending)return
+  const pending=importPending
+  if(accepted&&(importConfirm.disabled||pending.expiryLots.length&&!pending.expiryAck.checked))return
+  if(accepted)for(const {lot} of pending.expiryLots)lot.expiry_acknowledged=true
+  importPending=null;if(importCheck.open)importCheck.close();pending.resolve(accepted);if(pending.focus?.isConnected)pending.focus.focus()
+}
 importClose.addEventListener('click',()=>finishImportCheck(false));importCancel.addEventListener('click',()=>finishImportCheck(false));importConfirm.addEventListener('click',()=>finishImportCheck(true));importCheck.addEventListener('cancel',event=>{event.preventDefault();finishImportCheck(false)});importCheck.addEventListener('close',()=>{if(!importCheck.open)finishImportCheck(false)})
 function confirmStockImport(parsed,file){
-  if(!parsed.import_report)return Promise.resolve(true)
+  const expiryLots=(parsed.items||[]).flatMap(item=>(item.lots||[]).filter(lot=>lot.expiry_acknowledged===false).map(lot=>({sku:item.sku,lot})))
+  if(!parsed.import_report&&!expiryLots.length)return Promise.resolve(true)
   finishImportCheck(false)
-  const report=parsed.import_report,n=report.products_ready,productWord=n===1?'product':'products'
+  const report=parsed.import_report||{products_ready:parsed.items.length,rows_set_aside:[],ignored:[],matched:[],defaulted:[],warnings:[]},n=report.products_ready,productWord=n===1?'product':'products'
   importFile.textContent=file.name
   importSummary.textContent=`${importCount(n)} ${productWord} ready · ${importCount(report.rows_set_aside.length)} set aside · ${importCount(report.ignored.length)} columns ignored`
   importConfirm.textContent=`Import ${importCount(n)} ${productWord}`;importConfirm.disabled=!n
@@ -54,5 +60,12 @@ function confirmStockImport(parsed,file){
   importSection('Defaults',report.defaulted,r=>`${r.field} → ${r.value===null?'unknown':r.value} (${r.reason})`)
   importSection('Rows set aside',report.rows_set_aside,r=>`Row ${r.row}: ${r.reason}`)
   importSection('Warnings',report.warnings,x=>x)
-  return new Promise(resolve=>{importPending={resolve,report,focus:document.activeElement};openSheet(importCheck,document.activeElement)})
+  let expiryAck=null
+  if(expiryLots.length){
+    importSection('Interpreted expiry dates',expiryLots,({sku,lot})=>`${sku} · lot ${lot.lot} → ${lot.expiry} (year-month-day)`)
+    const label=node('label',null,'import-expiry-review');expiryAck=node('input');expiryAck.type='checkbox';expiryAck.id='import-expiry-ack'
+    label.append(expiryAck,document.createTextNode('I checked the interpreted expiry dates. Show orders anyway.'));importLists.append(label)
+    importConfirm.disabled=true;expiryAck.addEventListener('change',()=>{importConfirm.disabled=!n||!expiryAck.checked})
+  }
+  return new Promise(resolve=>{importPending={resolve,report,expiryLots,expiryAck,focus:document.activeElement};openSheet(importCheck,document.activeElement)})
 }

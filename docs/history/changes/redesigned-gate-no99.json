@@ -1,0 +1,1749 @@
+{
+  "manifest": {
+    "presets_sha256": "03b909804b7ccfcc77eaaa724b2948511b832c2d4bf0cd2153fbd61e35d593a7",
+    "python": "3.15.2",
+    "python_executable": "/opt/homebrew/opt/python@3.15/bin/python3.15",
+    "source_sha256": "a6279a673ae0b7d0388ee881dfa151d9f84e66ef29320b5304c37853bdc9d021",
+    "harness_fingerprints": {
+      "simulator.py": "01a57bcd86e45c692bfaf3d6981d03dc2ec1257f8d0763c21ee0743c1f14d9de",
+      "adapter.py": "266428625a8f6edfbc825e843ca872bc3c79ad4d903cf1d1888ea0ef65319bcb",
+      "evaluate.py": "1533316ff9cd182d04d2938e567bf95a1d12a47880e7a6989421c826137a7630",
+      "compare.py": "43c24e2fdd1b7042480ef587960d2792649107376962d11a6220f86a15d76798"
+    },
+    "gate_sha256": "b32c93c32e673ddf7b0a5b8279f8a1b528ee64649e7ac839c74bea6c448a88fd",
+    "seeds": 20,
+    "recipes": {
+      "general": {
+        "settings": {
+          "forecast_method": "current",
+          "months_of_cover": 2,
+          "service_level": 0.95,
+          "buffer_days": 0
+        }
+      },
+      "grocery": {
+        "settings": {
+          "months_of_cover": 2
+        }
+      },
+      "pharmacy": {
+        "settings": {
+          "months_of_cover": 2
+        }
+      },
+      "fashion": {
+        "settings": {
+          "months_of_cover": 2
+        }
+      },
+      "spare-parts": {
+        "settings": {
+          "months_of_cover": 2
+        }
+      },
+      "electronics": {
+        "settings": {
+          "months_of_cover": 2
+        }
+      }
+    },
+    "preserve_review_days": true,
+    "explicit_cadences": [
+      7,
+      30
+    ],
+    "monthly_max_fill_loss_pp": 2.0,
+    "monthly_max_profit_loss_pct": 5.0,
+    "plans": [
+      [
+        "grocery",
+        7,
+        [
+          "perishable_14_fefo",
+          "perishable_14_freshest",
+          "perishable_30_fefo",
+          "perishable_30_freshest",
+          "perishable_365_fefo",
+          "perishable_365_freshest",
+          "perishable_7_fefo",
+          "perishable_7_freshest",
+          "perishable_90_fefo",
+          "perishable_90_freshest",
+          "ramadan_moving",
+          "shortdated_fefo",
+          "shortdated_freshest"
+        ]
+      ],
+      [
+        "grocery",
+        30,
+        [
+          "perishable_14_fefo",
+          "perishable_14_freshest",
+          "perishable_30_fefo",
+          "perishable_30_freshest",
+          "perishable_365_fefo",
+          "perishable_365_freshest",
+          "perishable_7_fefo",
+          "perishable_7_freshest",
+          "perishable_90_fefo",
+          "perishable_90_freshest",
+          "ramadan_moving",
+          "shortdated_fefo",
+          "shortdated_freshest"
+        ]
+      ],
+      [
+        "pharmacy",
+        7,
+        [
+          "perishable_365_fefo",
+          "perishable_365_freshest",
+          "perishable_90_fefo",
+          "perishable_90_freshest",
+          "pharmacy_dated"
+        ]
+      ],
+      [
+        "pharmacy",
+        30,
+        [
+          "perishable_365_fefo",
+          "perishable_365_freshest",
+          "perishable_90_fefo",
+          "perishable_90_freshest",
+          "pharmacy_dated"
+        ]
+      ],
+      [
+        "fashion",
+        7,
+        [
+          "fashion_end_season"
+        ]
+      ],
+      [
+        "fashion",
+        30,
+        [
+          "fashion_end_season"
+        ]
+      ],
+      [
+        "spare-parts",
+        7,
+        [
+          "intermittent_parts"
+        ]
+      ],
+      [
+        "spare-parts",
+        30,
+        [
+          "intermittent_parts"
+        ]
+      ],
+      [
+        "electronics",
+        7,
+        [
+          "electronics_obsolete"
+        ]
+      ],
+      [
+        "electronics",
+        30,
+        [
+          "electronics_obsolete"
+        ]
+      ]
+    ],
+    "lots": "withheld to isolate exact recipe; recipe shelf placeholders still active",
+    "comparison": "same controller cadence in both arms; recipe settings retained even at monthly cadence",
+    "note": "zero-margin no-harm at stated cadence; monthly noninferiority margins explicit; every family and aggregate must qualify"
+  },
+  "completed_runs": 1680,
+  "expected_runs": 1680,
+  "gates": {
+    "grocery@7": {
+      "status": "PASS_NONINFERIOR",
+      "aggregate": {
+        "status": "PASS_NONINFERIOR",
+        "failure_metrics": [],
+        "inconclusive_metrics": [],
+        "paired_runs": 260,
+        "seed_clusters": 20,
+        "metrics": {
+          "net_profit": {
+            "mean": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ],
+            "general_mean": -8179.053781875658,
+            "preset_mean": -8179.053781875658,
+            "noninferiority_margin": 0.0
+          },
+          "fill_rate": {
+            "mean": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ],
+            "general_mean": 0.7406217645276859,
+            "preset_mean": 0.7406217645276859,
+            "noninferiority_margin": 0.0
+          }
+        }
+      },
+      "families": {
+        "perishable_14_fefo": {
+          "status": "PASS_NONINFERIOR",
+          "failure_metrics": [],
+          "inconclusive_metrics": [],
+          "paired_runs": 20,
+          "seed_clusters": 20,
+          "metrics": {
+            "net_profit": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": -8904.545643835616,
+              "preset_mean": -8904.545643835616,
+              "noninferiority_margin": 0.0
+            },
+            "fill_rate": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 0.6714066491024053,
+              "preset_mean": 0.6714066491024053,
+              "noninferiority_margin": 0.0
+            }
+          }
+        },
+        "perishable_14_freshest": {
+          "status": "PASS_NONINFERIOR",
+          "failure_metrics": [],
+          "inconclusive_metrics": [],
+          "paired_runs": 20,
+          "seed_clusters": 20,
+          "metrics": {
+            "net_profit": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": -9515.958315068494,
+              "preset_mean": -9515.958315068494,
+              "noninferiority_margin": 0.0
+            },
+            "fill_rate": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 0.6767549527504969,
+              "preset_mean": 0.6767549527504969,
+              "noninferiority_margin": 0.0
+            }
+          }
+        },
+        "perishable_30_fefo": {
+          "status": "PASS_NONINFERIOR",
+          "failure_metrics": [],
+          "inconclusive_metrics": [],
+          "paired_runs": 20,
+          "seed_clusters": 20,
+          "metrics": {
+            "net_profit": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": -1792.6619726027398,
+              "preset_mean": -1792.6619726027398,
+              "noninferiority_margin": 0.0
+            },
+            "fill_rate": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 0.734607597874196,
+              "preset_mean": 0.734607597874196,
+              "noninferiority_margin": 0.0
+            }
+          }
+        },
+        "perishable_30_freshest": {
+          "status": "PASS_NONINFERIOR",
+          "failure_metrics": [],
+          "inconclusive_metrics": [],
+          "paired_runs": 20,
+          "seed_clusters": 20,
+          "metrics": {
+            "net_profit": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": -1680.0897808219179,
+              "preset_mean": -1680.0897808219179,
+              "noninferiority_margin": 0.0
+            },
+            "fill_rate": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 0.7355444219117707,
+              "preset_mean": 0.7355444219117707,
+              "noninferiority_margin": 0.0
+            }
+          }
+        },
+        "perishable_365_fefo": {
+          "status": "PASS_NONINFERIOR",
+          "failure_metrics": [],
+          "inconclusive_metrics": [],
+          "paired_runs": 20,
+          "seed_clusters": 20,
+          "metrics": {
+            "net_profit": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 3938.386205479452,
+              "preset_mean": 3938.386205479452,
+              "noninferiority_margin": 0.0
+            },
+            "fill_rate": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 0.9980060467063848,
+              "preset_mean": 0.9980060467063848,
+              "noninferiority_margin": 0.0
+            }
+          }
+        },
+        "perishable_365_freshest": {
+          "status": "PASS_NONINFERIOR",
+          "failure_metrics": [],
+          "inconclusive_metrics": [],
+          "paired_runs": 20,
+          "seed_clusters": 20,
+          "metrics": {
+            "net_profit": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 4573.681191780822,
+              "preset_mean": 4573.681191780822,
+              "noninferiority_margin": 0.0
+            },
+            "fill_rate": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 0.9978724339952912,
+              "preset_mean": 0.9978724339952912,
+              "noninferiority_margin": 0.0
+            }
+          }
+        },
+        "perishable_7_fefo": {
+          "status": "PASS_NONINFERIOR",
+          "failure_metrics": [],
+          "inconclusive_metrics": [],
+          "paired_runs": 20,
+          "seed_clusters": 20,
+          "metrics": {
+            "net_profit": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": -18029.251438356165,
+              "preset_mean": -18029.251438356165,
+              "noninferiority_margin": 0.0
+            },
+            "fill_rate": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 0.4945489061209293,
+              "preset_mean": 0.4945489061209293,
+              "noninferiority_margin": 0.0
+            }
+          }
+        },
+        "perishable_7_freshest": {
+          "status": "PASS_NONINFERIOR",
+          "failure_metrics": [],
+          "inconclusive_metrics": [],
+          "paired_runs": 20,
+          "seed_clusters": 20,
+          "metrics": {
+            "net_profit": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": -18583.704479452055,
+              "preset_mean": -18583.704479452055,
+              "noninferiority_margin": 0.0
+            },
+            "fill_rate": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 0.498604521381684,
+              "preset_mean": 0.498604521381684,
+              "noninferiority_margin": 0.0
+            }
+          }
+        },
+        "perishable_90_fefo": {
+          "status": "PASS_NONINFERIOR",
+          "failure_metrics": [],
+          "inconclusive_metrics": [],
+          "paired_runs": 20,
+          "seed_clusters": 20,
+          "metrics": {
+            "net_profit": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 4302.447835616438,
+              "preset_mean": 4302.447835616438,
+              "noninferiority_margin": 0.0
+            },
+            "fill_rate": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 0.9973689517879621,
+              "preset_mean": 0.9973689517879621,
+              "noninferiority_margin": 0.0
+            }
+          }
+        },
+        "perishable_90_freshest": {
+          "status": "PASS_NONINFERIOR",
+          "failure_metrics": [],
+          "inconclusive_metrics": [],
+          "paired_runs": 20,
+          "seed_clusters": 20,
+          "metrics": {
+            "net_profit": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 4077.4114794520547,
+              "preset_mean": 4077.4114794520547,
+              "noninferiority_margin": 0.0
+            },
+            "fill_rate": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 0.9978679474319296,
+              "preset_mean": 0.9978679474319296,
+              "noninferiority_margin": 0.0
+            }
+          }
+        },
+        "ramadan_moving": {
+          "status": "PASS_NONINFERIOR",
+          "failure_metrics": [],
+          "inconclusive_metrics": [],
+          "paired_runs": 20,
+          "seed_clusters": 20,
+          "metrics": {
+            "net_profit": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 9550.391452054795,
+              "preset_mean": 9550.391452054795,
+              "noninferiority_margin": 0.0
+            },
+            "fill_rate": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 0.9833497932839143,
+              "preset_mean": 0.9833497932839143,
+              "noninferiority_margin": 0.0
+            }
+          }
+        },
+        "shortdated_fefo": {
+          "status": "PASS_NONINFERIOR",
+          "failure_metrics": [],
+          "inconclusive_metrics": [],
+          "paired_runs": 20,
+          "seed_clusters": 20,
+          "metrics": {
+            "net_profit": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": -37577.95671232877,
+              "preset_mean": -37577.95671232877,
+              "noninferiority_margin": 0.0
+            },
+            "fill_rate": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 0.4237730933678164,
+              "preset_mean": 0.4237730933678164,
+              "noninferiority_margin": 0.0
+            }
+          }
+        },
+        "shortdated_freshest": {
+          "status": "PASS_NONINFERIOR",
+          "failure_metrics": [],
+          "inconclusive_metrics": [],
+          "paired_runs": 20,
+          "seed_clusters": 20,
+          "metrics": {
+            "net_profit": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": -36685.84898630137,
+              "preset_mean": -36685.84898630137,
+              "noninferiority_margin": 0.0
+            },
+            "fill_rate": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 0.41837762314513577,
+              "preset_mean": 0.41837762314513577,
+              "noninferiority_margin": 0.0
+            }
+          }
+        }
+      },
+      "stated_cadence": 30,
+      "controller_cadence": 7
+    },
+    "grocery@30": {
+      "status": "PASS_NONINFERIOR",
+      "aggregate": {
+        "status": "PASS_NONINFERIOR",
+        "failure_metrics": [],
+        "inconclusive_metrics": [],
+        "paired_runs": 260,
+        "seed_clusters": 20,
+        "metrics": {
+          "net_profit": {
+            "mean": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ],
+            "general_mean": -3265.590402528978,
+            "preset_mean": -3265.590402528978,
+            "noninferiority_margin": 0.0
+          },
+          "fill_rate": {
+            "mean": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ],
+            "general_mean": 0.6066147012404858,
+            "preset_mean": 0.6066147012404858,
+            "noninferiority_margin": 0.0
+          }
+        }
+      },
+      "families": {
+        "perishable_14_fefo": {
+          "status": "PASS_NONINFERIOR",
+          "failure_metrics": [],
+          "inconclusive_metrics": [],
+          "paired_runs": 20,
+          "seed_clusters": 20,
+          "metrics": {
+            "net_profit": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": -6567.443547945206,
+              "preset_mean": -6567.443547945206,
+              "noninferiority_margin": 0.0
+            },
+            "fill_rate": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 0.47870670808200444,
+              "preset_mean": 0.47870670808200444,
+              "noninferiority_margin": 0.0
+            }
+          }
+        },
+        "perishable_14_freshest": {
+          "status": "PASS_NONINFERIOR",
+          "failure_metrics": [],
+          "inconclusive_metrics": [],
+          "paired_runs": 20,
+          "seed_clusters": 20,
+          "metrics": {
+            "net_profit": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": -7098.447616438356,
+              "preset_mean": -7098.447616438356,
+              "noninferiority_margin": 0.0
+            },
+            "fill_rate": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 0.4763935952063459,
+              "preset_mean": 0.4763935952063459,
+              "noninferiority_margin": 0.0
+            }
+          }
+        },
+        "perishable_30_fefo": {
+          "status": "PASS_NONINFERIOR",
+          "failure_metrics": [],
+          "inconclusive_metrics": [],
+          "paired_runs": 20,
+          "seed_clusters": 20,
+          "metrics": {
+            "net_profit": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": -1130.2083424657535,
+              "preset_mean": -1130.2083424657535,
+              "noninferiority_margin": 0.0
+            },
+            "fill_rate": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 0.5943959859513759,
+              "preset_mean": 0.5943959859513759,
+              "noninferiority_margin": 0.0
+            }
+          }
+        },
+        "perishable_30_freshest": {
+          "status": "PASS_NONINFERIOR",
+          "failure_metrics": [],
+          "inconclusive_metrics": [],
+          "paired_runs": 20,
+          "seed_clusters": 20,
+          "metrics": {
+            "net_profit": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": -948.4494931506849,
+              "preset_mean": -948.4494931506849,
+              "noninferiority_margin": 0.0
+            },
+            "fill_rate": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 0.6087207933567256,
+              "preset_mean": 0.6087207933567256,
+              "noninferiority_margin": 0.0
+            }
+          }
+        },
+        "perishable_365_fefo": {
+          "status": "PASS_NONINFERIOR",
+          "failure_metrics": [],
+          "inconclusive_metrics": [],
+          "paired_runs": 20,
+          "seed_clusters": 20,
+          "metrics": {
+            "net_profit": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 3940.293191780822,
+              "preset_mean": 3940.293191780822,
+              "noninferiority_margin": 0.0
+            },
+            "fill_rate": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 0.999480520546561,
+              "preset_mean": 0.999480520546561,
+              "noninferiority_margin": 0.0
+            }
+          }
+        },
+        "perishable_365_freshest": {
+          "status": "PASS_NONINFERIOR",
+          "failure_metrics": [],
+          "inconclusive_metrics": [],
+          "paired_runs": 20,
+          "seed_clusters": 20,
+          "metrics": {
+            "net_profit": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 4571.4440273972605,
+              "preset_mean": 4571.4440273972605,
+              "noninferiority_margin": 0.0
+            },
+            "fill_rate": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 0.9977606878629925,
+              "preset_mean": 0.9977606878629925,
+              "noninferiority_margin": 0.0
+            }
+          }
+        },
+        "perishable_7_fefo": {
+          "status": "PASS_NONINFERIOR",
+          "failure_metrics": [],
+          "inconclusive_metrics": [],
+          "paired_runs": 20,
+          "seed_clusters": 20,
+          "metrics": {
+            "net_profit": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": -8740.187356164384,
+              "preset_mean": -8740.187356164384,
+              "noninferiority_margin": 0.0
+            },
+            "fill_rate": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 0.22681853453792422,
+              "preset_mean": 0.22681853453792422,
+              "noninferiority_margin": 0.0
+            }
+          }
+        },
+        "perishable_7_freshest": {
+          "status": "PASS_NONINFERIOR",
+          "failure_metrics": [],
+          "inconclusive_metrics": [],
+          "paired_runs": 20,
+          "seed_clusters": 20,
+          "metrics": {
+            "net_profit": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": -8998.021342465754,
+              "preset_mean": -8998.021342465754,
+              "noninferiority_margin": 0.0
+            },
+            "fill_rate": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 0.23383347048926553,
+              "preset_mean": 0.23383347048926553,
+              "noninferiority_margin": 0.0
+            }
+          }
+        },
+        "perishable_90_fefo": {
+          "status": "PASS_NONINFERIOR",
+          "failure_metrics": [],
+          "inconclusive_metrics": [],
+          "paired_runs": 20,
+          "seed_clusters": 20,
+          "metrics": {
+            "net_profit": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 4304.432698630137,
+              "preset_mean": 4304.432698630137,
+              "noninferiority_margin": 0.0
+            },
+            "fill_rate": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 0.9986797362489492,
+              "preset_mean": 0.9986797362489492,
+              "noninferiority_margin": 0.0
+            }
+          }
+        },
+        "perishable_90_freshest": {
+          "status": "PASS_NONINFERIOR",
+          "failure_metrics": [],
+          "inconclusive_metrics": [],
+          "paired_runs": 20,
+          "seed_clusters": 20,
+          "metrics": {
+            "net_profit": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 4037.670904109589,
+              "preset_mean": 4037.670904109589,
+              "noninferiority_margin": 0.0
+            },
+            "fill_rate": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 0.9943020794403529,
+              "preset_mean": 0.9943020794403529,
+              "noninferiority_margin": 0.0
+            }
+          }
+        },
+        "ramadan_moving": {
+          "status": "PASS_NONINFERIOR",
+          "failure_metrics": [],
+          "inconclusive_metrics": [],
+          "paired_runs": 20,
+          "seed_clusters": 20,
+          "metrics": {
+            "net_profit": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 8055.159342465753,
+              "preset_mean": 8055.159342465753,
+              "noninferiority_margin": 0.0
+            },
+            "fill_rate": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 0.9169482267351723,
+              "preset_mean": 0.9169482267351723,
+              "noninferiority_margin": 0.0
+            }
+          }
+        },
+        "shortdated_fefo": {
+          "status": "PASS_NONINFERIOR",
+          "failure_metrics": [],
+          "inconclusive_metrics": [],
+          "paired_runs": 20,
+          "seed_clusters": 20,
+          "metrics": {
+            "net_profit": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": -16991.85117808219,
+              "preset_mean": -16991.85117808219,
+              "noninferiority_margin": 0.0
+            },
+            "fill_rate": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 0.17730038293821815,
+              "preset_mean": 0.17730038293821815,
+              "noninferiority_margin": 0.0
+            }
+          }
+        },
+        "shortdated_freshest": {
+          "status": "PASS_NONINFERIOR",
+          "failure_metrics": [],
+          "inconclusive_metrics": [],
+          "paired_runs": 20,
+          "seed_clusters": 20,
+          "metrics": {
+            "net_profit": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": -16887.066520547945,
+              "preset_mean": -16887.066520547945,
+              "noninferiority_margin": 0.0
+            },
+            "fill_rate": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 0.1826503947304281,
+              "preset_mean": 0.1826503947304281,
+              "noninferiority_margin": 0.0
+            }
+          }
+        }
+      },
+      "stated_cadence": 30,
+      "controller_cadence": 30
+    },
+    "pharmacy@7": {
+      "status": "PASS_NONINFERIOR",
+      "aggregate": {
+        "status": "PASS_NONINFERIOR",
+        "failure_metrics": [],
+        "inconclusive_metrics": [],
+        "paired_runs": 100,
+        "seed_clusters": 20,
+        "metrics": {
+          "net_profit": {
+            "mean": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ],
+            "general_mean": 3842.8910410958906,
+            "preset_mean": 3842.8910410958906,
+            "noninferiority_margin": 0.0
+          },
+          "fill_rate": {
+            "mean": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ],
+            "general_mean": 0.960034195156001,
+            "preset_mean": 0.960034195156001,
+            "noninferiority_margin": 0.0
+          }
+        }
+      },
+      "families": {
+        "perishable_365_fefo": {
+          "status": "PASS_NONINFERIOR",
+          "failure_metrics": [],
+          "inconclusive_metrics": [],
+          "paired_runs": 20,
+          "seed_clusters": 20,
+          "metrics": {
+            "net_profit": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 3938.386205479452,
+              "preset_mean": 3938.386205479452,
+              "noninferiority_margin": 0.0
+            },
+            "fill_rate": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 0.9980060467063848,
+              "preset_mean": 0.9980060467063848,
+              "noninferiority_margin": 0.0
+            }
+          }
+        },
+        "perishable_365_freshest": {
+          "status": "PASS_NONINFERIOR",
+          "failure_metrics": [],
+          "inconclusive_metrics": [],
+          "paired_runs": 20,
+          "seed_clusters": 20,
+          "metrics": {
+            "net_profit": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 4573.681191780822,
+              "preset_mean": 4573.681191780822,
+              "noninferiority_margin": 0.0
+            },
+            "fill_rate": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 0.9978724339952912,
+              "preset_mean": 0.9978724339952912,
+              "noninferiority_margin": 0.0
+            }
+          }
+        },
+        "perishable_90_fefo": {
+          "status": "PASS_NONINFERIOR",
+          "failure_metrics": [],
+          "inconclusive_metrics": [],
+          "paired_runs": 20,
+          "seed_clusters": 20,
+          "metrics": {
+            "net_profit": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 4302.447835616438,
+              "preset_mean": 4302.447835616438,
+              "noninferiority_margin": 0.0
+            },
+            "fill_rate": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 0.9973689517879621,
+              "preset_mean": 0.9973689517879621,
+              "noninferiority_margin": 0.0
+            }
+          }
+        },
+        "perishable_90_freshest": {
+          "status": "PASS_NONINFERIOR",
+          "failure_metrics": [],
+          "inconclusive_metrics": [],
+          "paired_runs": 20,
+          "seed_clusters": 20,
+          "metrics": {
+            "net_profit": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 4077.4114794520547,
+              "preset_mean": 4077.4114794520547,
+              "noninferiority_margin": 0.0
+            },
+            "fill_rate": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 0.9978679474319296,
+              "preset_mean": 0.9978679474319296,
+              "noninferiority_margin": 0.0
+            }
+          }
+        },
+        "pharmacy_dated": {
+          "status": "PASS_NONINFERIOR",
+          "failure_metrics": [],
+          "inconclusive_metrics": [],
+          "paired_runs": 20,
+          "seed_clusters": 20,
+          "metrics": {
+            "net_profit": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 2322.528493150685,
+              "preset_mean": 2322.528493150685,
+              "noninferiority_margin": 0.0
+            },
+            "fill_rate": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 0.8090555958584369,
+              "preset_mean": 0.8090555958584369,
+              "noninferiority_margin": 0.0
+            }
+          }
+        }
+      },
+      "stated_cadence": 30,
+      "controller_cadence": 7
+    },
+    "pharmacy@30": {
+      "status": "PASS_NONINFERIOR",
+      "aggregate": {
+        "status": "PASS_NONINFERIOR",
+        "failure_metrics": [],
+        "inconclusive_metrics": [],
+        "paired_runs": 100,
+        "seed_clusters": 20,
+        "metrics": {
+          "net_profit": {
+            "mean": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ],
+            "general_mean": 3879.9166301369864,
+            "preset_mean": 3879.9166301369864,
+            "noninferiority_margin": 0.0
+          },
+          "fill_rate": {
+            "mean": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ],
+            "general_mean": 0.9502519935620363,
+            "preset_mean": 0.9502519935620363,
+            "noninferiority_margin": 0.0
+          }
+        }
+      },
+      "families": {
+        "perishable_365_fefo": {
+          "status": "PASS_NONINFERIOR",
+          "failure_metrics": [],
+          "inconclusive_metrics": [],
+          "paired_runs": 20,
+          "seed_clusters": 20,
+          "metrics": {
+            "net_profit": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 3940.293191780822,
+              "preset_mean": 3940.293191780822,
+              "noninferiority_margin": 0.0
+            },
+            "fill_rate": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 0.999480520546561,
+              "preset_mean": 0.999480520546561,
+              "noninferiority_margin": 0.0
+            }
+          }
+        },
+        "perishable_365_freshest": {
+          "status": "PASS_NONINFERIOR",
+          "failure_metrics": [],
+          "inconclusive_metrics": [],
+          "paired_runs": 20,
+          "seed_clusters": 20,
+          "metrics": {
+            "net_profit": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 4571.4440273972605,
+              "preset_mean": 4571.4440273972605,
+              "noninferiority_margin": 0.0
+            },
+            "fill_rate": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 0.9977606878629925,
+              "preset_mean": 0.9977606878629925,
+              "noninferiority_margin": 0.0
+            }
+          }
+        },
+        "perishable_90_fefo": {
+          "status": "PASS_NONINFERIOR",
+          "failure_metrics": [],
+          "inconclusive_metrics": [],
+          "paired_runs": 20,
+          "seed_clusters": 20,
+          "metrics": {
+            "net_profit": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 4304.432698630137,
+              "preset_mean": 4304.432698630137,
+              "noninferiority_margin": 0.0
+            },
+            "fill_rate": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 0.9986797362489492,
+              "preset_mean": 0.9986797362489492,
+              "noninferiority_margin": 0.0
+            }
+          }
+        },
+        "perishable_90_freshest": {
+          "status": "PASS_NONINFERIOR",
+          "failure_metrics": [],
+          "inconclusive_metrics": [],
+          "paired_runs": 20,
+          "seed_clusters": 20,
+          "metrics": {
+            "net_profit": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 4037.670904109589,
+              "preset_mean": 4037.670904109589,
+              "noninferiority_margin": 0.0
+            },
+            "fill_rate": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 0.9943020794403529,
+              "preset_mean": 0.9943020794403529,
+              "noninferiority_margin": 0.0
+            }
+          }
+        },
+        "pharmacy_dated": {
+          "status": "PASS_NONINFERIOR",
+          "failure_metrics": [],
+          "inconclusive_metrics": [],
+          "paired_runs": 20,
+          "seed_clusters": 20,
+          "metrics": {
+            "net_profit": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 2545.7423287671236,
+              "preset_mean": 2545.7423287671236,
+              "noninferiority_margin": 0.0
+            },
+            "fill_rate": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 0.7610369437113256,
+              "preset_mean": 0.7610369437113256,
+              "noninferiority_margin": 0.0
+            }
+          }
+        }
+      },
+      "stated_cadence": 30,
+      "controller_cadence": 30
+    },
+    "fashion@7": {
+      "status": "PASS_NONINFERIOR",
+      "aggregate": {
+        "status": "PASS_NONINFERIOR",
+        "failure_metrics": [],
+        "inconclusive_metrics": [],
+        "paired_runs": 20,
+        "seed_clusters": 20,
+        "metrics": {
+          "net_profit": {
+            "mean": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ],
+            "general_mean": 44879.93901369863,
+            "preset_mean": 44879.93901369863,
+            "noninferiority_margin": 0.0
+          },
+          "fill_rate": {
+            "mean": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ],
+            "general_mean": 0.9923053277293622,
+            "preset_mean": 0.9923053277293622,
+            "noninferiority_margin": 0.0
+          }
+        }
+      },
+      "families": {
+        "fashion_end_season": {
+          "status": "PASS_NONINFERIOR",
+          "failure_metrics": [],
+          "inconclusive_metrics": [],
+          "paired_runs": 20,
+          "seed_clusters": 20,
+          "metrics": {
+            "net_profit": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 44879.93901369863,
+              "preset_mean": 44879.93901369863,
+              "noninferiority_margin": 0.0
+            },
+            "fill_rate": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 0.9923053277293622,
+              "preset_mean": 0.9923053277293622,
+              "noninferiority_margin": 0.0
+            }
+          }
+        }
+      },
+      "stated_cadence": 30,
+      "controller_cadence": 7
+    },
+    "fashion@30": {
+      "status": "PASS_NONINFERIOR",
+      "aggregate": {
+        "status": "PASS_NONINFERIOR",
+        "failure_metrics": [],
+        "inconclusive_metrics": [],
+        "paired_runs": 20,
+        "seed_clusters": 20,
+        "metrics": {
+          "net_profit": {
+            "mean": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ],
+            "general_mean": 41764.80109589041,
+            "preset_mean": 41764.80109589041,
+            "noninferiority_margin": 0.0
+          },
+          "fill_rate": {
+            "mean": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ],
+            "general_mean": 0.9923053277293622,
+            "preset_mean": 0.9923053277293622,
+            "noninferiority_margin": 0.0
+          }
+        }
+      },
+      "families": {
+        "fashion_end_season": {
+          "status": "PASS_NONINFERIOR",
+          "failure_metrics": [],
+          "inconclusive_metrics": [],
+          "paired_runs": 20,
+          "seed_clusters": 20,
+          "metrics": {
+            "net_profit": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 41764.80109589041,
+              "preset_mean": 41764.80109589041,
+              "noninferiority_margin": 0.0
+            },
+            "fill_rate": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 0.9923053277293622,
+              "preset_mean": 0.9923053277293622,
+              "noninferiority_margin": 0.0
+            }
+          }
+        }
+      },
+      "stated_cadence": 30,
+      "controller_cadence": 30
+    },
+    "spare-parts@7": {
+      "status": "PASS_NONINFERIOR",
+      "aggregate": {
+        "status": "PASS_NONINFERIOR",
+        "failure_metrics": [],
+        "inconclusive_metrics": [],
+        "paired_runs": 20,
+        "seed_clusters": 20,
+        "metrics": {
+          "net_profit": {
+            "mean": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ],
+            "general_mean": 15996.887671232877,
+            "preset_mean": 15996.887671232877,
+            "noninferiority_margin": 0.0
+          },
+          "fill_rate": {
+            "mean": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ],
+            "general_mean": 0.9393691691231378,
+            "preset_mean": 0.9393691691231378,
+            "noninferiority_margin": 0.0
+          }
+        }
+      },
+      "families": {
+        "intermittent_parts": {
+          "status": "PASS_NONINFERIOR",
+          "failure_metrics": [],
+          "inconclusive_metrics": [],
+          "paired_runs": 20,
+          "seed_clusters": 20,
+          "metrics": {
+            "net_profit": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 15996.887671232877,
+              "preset_mean": 15996.887671232877,
+              "noninferiority_margin": 0.0
+            },
+            "fill_rate": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 0.9393691691231378,
+              "preset_mean": 0.9393691691231378,
+              "noninferiority_margin": 0.0
+            }
+          }
+        }
+      },
+      "stated_cadence": 30,
+      "controller_cadence": 7
+    },
+    "spare-parts@30": {
+      "status": "PASS_NONINFERIOR",
+      "aggregate": {
+        "status": "PASS_NONINFERIOR",
+        "failure_metrics": [],
+        "inconclusive_metrics": [],
+        "paired_runs": 20,
+        "seed_clusters": 20,
+        "metrics": {
+          "net_profit": {
+            "mean": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ],
+            "general_mean": 15877.033561643835,
+            "preset_mean": 15877.033561643835,
+            "noninferiority_margin": 0.0
+          },
+          "fill_rate": {
+            "mean": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ],
+            "general_mean": 0.9449292685030454,
+            "preset_mean": 0.9449292685030454,
+            "noninferiority_margin": 0.0
+          }
+        }
+      },
+      "families": {
+        "intermittent_parts": {
+          "status": "PASS_NONINFERIOR",
+          "failure_metrics": [],
+          "inconclusive_metrics": [],
+          "paired_runs": 20,
+          "seed_clusters": 20,
+          "metrics": {
+            "net_profit": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 15877.033561643835,
+              "preset_mean": 15877.033561643835,
+              "noninferiority_margin": 0.0
+            },
+            "fill_rate": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 0.9449292685030454,
+              "preset_mean": 0.9449292685030454,
+              "noninferiority_margin": 0.0
+            }
+          }
+        }
+      },
+      "stated_cadence": 30,
+      "controller_cadence": 30
+    },
+    "electronics@7": {
+      "status": "PASS_NONINFERIOR",
+      "aggregate": {
+        "status": "PASS_NONINFERIOR",
+        "failure_metrics": [],
+        "inconclusive_metrics": [],
+        "paired_runs": 20,
+        "seed_clusters": 20,
+        "metrics": {
+          "net_profit": {
+            "mean": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ],
+            "general_mean": -4871.371232876712,
+            "preset_mean": -4871.371232876712,
+            "noninferiority_margin": 0.0
+          },
+          "fill_rate": {
+            "mean": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ],
+            "general_mean": 0.9708211357367056,
+            "preset_mean": 0.9708211357367056,
+            "noninferiority_margin": 0.0
+          }
+        }
+      },
+      "families": {
+        "electronics_obsolete": {
+          "status": "PASS_NONINFERIOR",
+          "failure_metrics": [],
+          "inconclusive_metrics": [],
+          "paired_runs": 20,
+          "seed_clusters": 20,
+          "metrics": {
+            "net_profit": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": -4871.371232876712,
+              "preset_mean": -4871.371232876712,
+              "noninferiority_margin": 0.0
+            },
+            "fill_rate": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 0.9708211357367056,
+              "preset_mean": 0.9708211357367056,
+              "noninferiority_margin": 0.0
+            }
+          }
+        }
+      },
+      "stated_cadence": 30,
+      "controller_cadence": 7
+    },
+    "electronics@30": {
+      "status": "PASS_NONINFERIOR",
+      "aggregate": {
+        "status": "PASS_NONINFERIOR",
+        "failure_metrics": [],
+        "inconclusive_metrics": [],
+        "paired_runs": 20,
+        "seed_clusters": 20,
+        "metrics": {
+          "net_profit": {
+            "mean": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ],
+            "general_mean": -7301.128767123288,
+            "preset_mean": -7301.128767123288,
+            "noninferiority_margin": 0.0
+          },
+          "fill_rate": {
+            "mean": 0.0,
+            "ci95": [
+              0.0,
+              0.0
+            ],
+            "general_mean": 0.9708211357367056,
+            "preset_mean": 0.9708211357367056,
+            "noninferiority_margin": 0.0
+          }
+        }
+      },
+      "families": {
+        "electronics_obsolete": {
+          "status": "PASS_NONINFERIOR",
+          "failure_metrics": [],
+          "inconclusive_metrics": [],
+          "paired_runs": 20,
+          "seed_clusters": 20,
+          "metrics": {
+            "net_profit": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": -7301.128767123288,
+              "preset_mean": -7301.128767123288,
+              "noninferiority_margin": 0.0
+            },
+            "fill_rate": {
+              "mean": 0.0,
+              "ci95": [
+                0.0,
+                0.0
+              ],
+              "general_mean": 0.9708211357367056,
+              "preset_mean": 0.9708211357367056,
+              "noninferiority_margin": 0.0
+            }
+          }
+        }
+      },
+      "stated_cadence": 30,
+      "controller_cadence": 30
+    }
+  },
+  "elapsed_seconds": 0.3941610000329092,
+  "status": "QUALIFIED_SYNTHETIC_ONLY"
+}

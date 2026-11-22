@@ -8,7 +8,9 @@
 .table-mode.detail-open .worklist { margin-right:560px; }
 .table-mode .layout { display:block; flex:1; min-height:0; height:auto; overflow:hidden; }
 .table-mode #sidebar { display:none; }
-.worklist { height:100%; min-height:0; display:flex; flex-direction:column; padding:0 24px; min-width:0; }
+.worklist { height:100%; min-height:0; display:flex; flex-direction:column; padding:0 24px; min-width:0; overflow-y:auto; }
+/* Optional summaries may exceed the viewport. Scroll the worklist shell rather
+   than clipping the products; the inner scrollport remains bounded/virtualized. */
 .worklist button,.worklist summary,.worklist select { min-height:44px; min-width:44px; border-radius:4px; }
 .worklist button,.worklist summary { font-size:14px; padding:8px 12px; font-weight:400; }
 .worklist [hidden],.table-mode #main[hidden] { display:none!important; }
@@ -54,7 +56,7 @@
 .work-active button:last-child { background:none; }
 .work-bulk { border-top:1px solid var(--line); padding:8px 0; }
 .work-bulk strong { font-size:14px; margin-right:8px; }
-.work-scroll { position:relative; flex:1; min-height:0; overflow:auto; overflow-anchor:none; scrollbar-gutter:stable; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+.work-scroll { position:relative; flex:1; min-height:210px; overflow:auto; overflow-anchor:none; scrollbar-gutter:stable; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
 .work-head,.work-row { display:grid; grid-template-columns:var(--work-columns); min-width:var(--work-min); align-items:center; }
 .work-head { position:sticky; top:0; z-index:3; background:var(--bg); height:44px; border-bottom:1px solid var(--rule); }
 .work-head .work-cell { color:var(--muted); font-size:12px; }

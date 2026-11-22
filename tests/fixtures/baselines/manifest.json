@@ -24,6 +24,9 @@
   "afea1c3:desktop/plugin.js": "3d4b36324c4e62fbdd5906dcfe2cab1e6d6a677543abbd10d8f4a95661e1b8eb",
   "afea1c3:engine.py": "18f57db24f0dad400c1f32c42fba74c91986d7843a863d9c7aacbb9165815f17",
   "ce72870:desktop/plugin.js": "c3b4b5a7868584c87efe941824ea7e6df7c62e684c0eb298083ee338b1f1678b",
+  "cee2550:csv_import.py": "8c57d697303192f090c2a5f59ff425150cbcfeba7f589ff7286a09b879ea010e",
+  "cee2550:engine.py": "8c4beabbd69fc314aeac22c00d37d7f94fde79145b50211953b1bcdf0b68eb47",
+  "cee2550:sources.py": "3b006371d3ab2ddaaba707eb9d823374d5c20415aefd8cffeba67d7e04092874",
   "e8cdcfd:engine.py": "5a79a419c7a50cf8e27334d58d03cd589a385bcde7a3916d1604144c6a668c75",
   "f0417de:desktop/plugin.js": "0d2e8fc68d94006c31d2719ff825d76cbeadce349ab1c849b9adfef2c9788907",
   "f2509b4:engine.py": "1de1a057360e01902aa775ebf94c1092038be6a863d4e9417ae4a1f15a5699af",
@@ -32,5 +35,11 @@
   "fa2da9e:engine.py": "70b87ec3c0f4e9a07a7f7e6469a5401c33aec0a2a77b0435cb5028e527e327d7",
   "fa2da9e:sources.py": "969ec3a59003aa75225f4b99be6e346bc545c7dad2fbea7762e34e86ed996752",
   "fa2da9e:tools.py": "02da85da3a0e214b6d16b4517f0ad65819f4bccaf3297fa8d5e0f2190ee62201",
-  "faa26db:desktop/plugin.js": "ff05111a8e28732f1ec5cd25db8fb7711149bafbd74cdcc574f81d9ace5ac0db"
+  "faa26db:desktop/plugin.js": "ff05111a8e28732f1ec5cd25db8fb7711149bafbd74cdcc574f81d9ace5ac0db",
+  "e92becb:engine.py": "3c8cfe29c5bff6743be921694bffcb0d4f91cd3172a0f7695eec42ae32d523be",
+  "7ef3619:engine.py": "a26c096356c0e69c6175e6d94aabc25d138b2cb0eb8add9413d27cba8b8aa10d",
+  "50e8117:engine.py": "d358c594784de9d6cedee0750498c115d888a72465151b1edbfcf61094b0c236",
+  "50e8117:csv_import.py": "69ad3bdd80a5663f1d7003339c62efdef4eecb27bca8695a4777cb55a8d44c93",
+  "de6ded8:sources.py": "eaafe613441d8496ee2c9a5459d20b2208e58a008af1d3d8f4edee45d4be696e",
+  "de6ded8:csv_import.py": "1cc216fc77a4295b40618804ac865bbce0870be8e69d7b601cad57992957f76b"
 }

@@ -1,4 +1,4 @@
-"""Stock Runway unified Hermes plugin."""
+"""Inventory Manager unified Hermes plugin."""
 from pathlib import Path
 
 if __package__:

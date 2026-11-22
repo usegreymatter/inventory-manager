@@ -1,0 +1,72 @@
+{
+  "lifecycle": "review",
+  "scope": "local synthetic import-only verification; not deployed",
+  "source_checkpoint": "de6ded8",
+  "python": "/usr/bin/python3",
+  "gates": {
+    "node --test --test-concurrency=2 tests/*.mjs": {
+      "exit": 0,
+      "passed": 3690
+    },
+    "/usr/bin/python3 -m pytest -q": {
+      "exit": 0,
+      "passed": 2221
+    },
+    "/usr/bin/python3 -m unittest discover -s tests": {
+      "exit": 0,
+      "tests": 364
+    },
+    "scripts/golden_diff.py": {
+      "exit": 0,
+      "changed_fields": 0
+    },
+    "scripts/verify_import_examples.py": {
+      "exit": 0,
+      "files": 8
+    },
+    "historical_import_fingerprints": {
+      "exit": 0,
+      "files": 34
+    },
+    "r3": {
+      "exit": 0,
+      "cases": 562,
+      "assertions": 9063,
+      "failed": 0
+    }
+  },
+  "fuzz": {
+    "status": "PASS",
+    "repro_files": 13,
+    "checks": {
+      "IMPORT-01": [
+        "mixed_blank_lotqty_7.csv",
+        "mixed_blank_lotqty_8.csv"
+      ],
+      "IMPORT-02": [
+        "transaction_4.csv",
+        "transaction_5.csv"
+      ],
+      "IMPORT-03": [
+        "xlsx_159.xlsx",
+        "xlsx_164.xlsx"
+      ],
+      "IMPORT-04": [
+        "repro_embedded_cr.csv"
+      ],
+      "IMPORT-06": [
+        "price_changes_quantity_control.csv",
+        "price_changes_quantity.csv"
+      ],
+      "IMPORT-07": [
+        "mixed_bad_lot_0.csv"
+      ],
+      "IMPORT-05": "original export runner rerun; existing formula regressions retained"
+    }
+  },
+  "limits": [
+    "No installed Desktop, live ERP, production, network, push or install verification.",
+    "Existing raw load_csv / agent tool path is warning-only; unlike CLI/Desktop it has no acknowledgement control.",
+    "Known-epoch expiry repair, newly accepted quoted CR, newly set-aside workbook row, and newly rejected ambiguous optional-price input are explicitly documented outcomes, not claimed byte-identical accepted-file behavior."
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "plugin": [
+    {
+      "before": "          jsx(DialogTitle, { children: 'Stock Runway' }),\n",
+      "after": "          jsx(DialogTitle, { children: 'Inventory Manager' }),\n"
+    },
+    {
+      "before": "    jsx('h1', { style: { fontSize: 24, lineHeight: 1.25, letterSpacing: '-0.02em', margin: '0 0 8px' }, children: 'Stock Runway' }),\n",
+      "after": "    jsx('h1', { style: { fontSize: 24, lineHeight: 1.25, letterSpacing: '-0.02em', margin: '0 0 8px' }, children: 'Inventory Manager' }),\n"
+    },
+    {
+      "before": "    jsx('h1', { children: 'Stock Runway settings' }),\n",
+      "after": "    jsx('h1', { children: 'Inventory Manager settings' }),\n"
+    },
+    {
+      "before": "  id: 'stock-runway', name: 'Stock Runway',\n",
+      "after": "  id: 'stock-runway', name: 'Inventory Manager',\n"
+    },
+    {
+      "before": "    ctx.register({ id: 'quick-view', area: PALETTE_AREA, data: { id: 'stock-runway.quick-view', label: 'Stock Runway: quick view', keywords: ['stock', 'inventory', 'runway'], run: open } })\n",
+      "after": "    ctx.register({ id: 'quick-view', area: PALETTE_AREA, data: { id: 'stock-runway.quick-view', label: 'Inventory Manager: quick view', keywords: ['stock', 'inventory', 'runway'], run: open } })\n"
+    },
+    {
+      "before": "    ctx.register({ id: 'quick-view-keybind', area: KEYBINDS_AREA, data: { id: 'stock-runway.quick-view', label: 'Stock Runway: quick view', category: 'view', defaults: ['mod+shift+i'], run: open } })\n",
+      "after": "    ctx.register({ id: 'quick-view-keybind', area: KEYBINDS_AREA, data: { id: 'stock-runway.quick-view', label: 'Inventory Manager: quick view', category: 'view', defaults: ['mod+shift+i'], run: open } })\n"
+    },
+    {
+      "before": "    ctx.register({ id: 'route', area: ROUTES_AREA, title: 'Stock Runway', data: { path: '/stock-runway' }, render: () => jsx(RecoveryBoundary, { ctx, children: jsx(Page, { ctx }) }) })\n",
+      "after": "    ctx.register({ id: 'route', area: ROUTES_AREA, title: 'Inventory Manager', data: { path: '/stock-runway' }, render: () => jsx(RecoveryBoundary, { ctx, children: jsx(Page, { ctx }) }) })\n"
+    },
+    {
+      "before": "    ctx.register({ id: 'nav', area: SIDEBAR_NAV_AREA, data: { path: '/stock-runway', label: 'Stock Runway', codicon: 'graph' }, order: 70 })\n",
+      "after": "    ctx.register({ id: 'nav', area: SIDEBAR_NAV_AREA, data: { path: '/stock-runway', label: 'Inventory Manager', codicon: 'graph' }, order: 70 })\n"
+    },
+    {
+      "before": "    ctx.register({ id: 'palette', area: PALETTE_AREA, data: { id: 'stock-runway.open', label: 'Open Stock Runway', keywords: ['inventory', 'stock', 'runway'], run: () => host.navigate('/stock-runway') } })\n",
+      "after": "    ctx.register({ id: 'palette', area: PALETTE_AREA, data: { id: 'stock-runway.open', label: 'Open Inventory Manager', keywords: ['inventory', 'stock', 'runway'], run: () => host.navigate('/stock-runway') } })\n"
+    },
+    {
+      "before": "    ctx.registerSettingsPage?.({ id: 'settings', title: 'Stock Runway', icon: 'graph', render: () => jsx(Settings, { ctx }) })\n",
+      "after": "    ctx.registerSettingsPage?.({ id: 'settings', title: 'Inventory Manager', icon: 'graph', render: () => jsx(Settings, { ctx }) })\n"
+    }
+  ],
+  "tools": [
+    {
+      "before": "            return json.dumps({\"error\": \"Stock runway could not read the selected source.\"}, separators=(\",\", \":\"))\n",
+      "after": "            return json.dumps({\"error\": \"Inventory Manager could not read the selected source.\"}, separators=(\",\", \":\"))\n"
+    }
+  ]
+}

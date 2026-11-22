@@ -4,9 +4,9 @@ Lifecycle: proposed (design only; builds on code that already exists, listed in 
 
 ## In plain words
 
-Every time Stock Runway runs, it can save what it predicted. When the real sales for that month arrive, it compares them and keeps score: how far off it was, whether it guesses too high or too low, and whether its "likely range" really caught the truth as often as it claimed.
+Every time Inventory Manager runs, it can save what it predicted. When the real sales for that month arrive, it compares them and keeps score: how far off it was, whether it guesses too high or too low, and whether its "likely range" really caught the truth as often as it claimed.
 
-Alternative forecasting methods run quietly in the background ("shadow models") and are scored the same way. If one keeps doing clearly better, Stock Runway **suggests** switching. A person approves, and the Python and JavaScript versions are proven to give identical numbers before the switch ships.
+Alternative forecasting methods run quietly in the background ("shadow models") and are scored the same way. If one keeps doing clearly better, Inventory Manager **suggests** switching. A person approves, and the Python and JavaScript versions are proven to give identical numbers before the switch ships.
 
 A planned Monte Carlo step (many simulated futures) turns this into a plain risk number: "about a 1 in 8 chance of running out before the next delivery."
 

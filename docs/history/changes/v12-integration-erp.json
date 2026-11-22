@@ -1,0 +1,206 @@
+{
+  "status": "PASS",
+  "files": [
+    {
+      "file": "dynamics-365.csv",
+      "rc": 0,
+      "quantities_identical": true,
+      "before": [
+        {
+          "sku": "A-1",
+          "order_qty": 221.0,
+          "on_hand": 1200,
+          "on_order": null,
+          "safety_stock": 20,
+          "reorder_point": 72
+        }
+      ],
+      "after": [
+        {
+          "sku": "A-1",
+          "order_qty": 221.0,
+          "on_hand": 1200,
+          "on_order": null,
+          "safety_stock": 20,
+          "reorder_point": 72
+        }
+      ]
+    },
+    {
+      "file": "netsuite.csv",
+      "rc": 0,
+      "quantities_identical": true,
+      "before": [
+        {
+          "sku": "A-1",
+          "order_qty": 221.0,
+          "on_hand": 1200,
+          "on_order": null,
+          "safety_stock": 24,
+          "reorder_point": 134
+        }
+      ],
+      "after": [
+        {
+          "sku": "A-1",
+          "order_qty": 221.0,
+          "on_hand": 1200,
+          "on_order": null,
+          "safety_stock": 24,
+          "reorder_point": 134
+        }
+      ]
+    },
+    {
+      "file": "odoo.csv",
+      "rc": 0,
+      "quantities_identical": true,
+      "before": [
+        {
+          "sku": "A-1",
+          "order_qty": 221.0,
+          "on_hand": 1200,
+          "on_order": null,
+          "safety_stock": 20,
+          "reorder_point": 72
+        }
+      ],
+      "after": [
+        {
+          "sku": "A-1",
+          "order_qty": 221.0,
+          "on_hand": 1200,
+          "on_order": null,
+          "safety_stock": 20,
+          "reorder_point": 72
+        }
+      ]
+    },
+    {
+      "file": "quickbooks.csv",
+      "rc": 0,
+      "quantities_identical": true,
+      "before": [
+        {
+          "sku": "A-1",
+          "order_qty": 221.0,
+          "on_hand": 1200,
+          "on_order": null,
+          "safety_stock": 20,
+          "reorder_point": 72
+        }
+      ],
+      "after": [
+        {
+          "sku": "A-1",
+          "order_qty": 221.0,
+          "on_hand": 1200,
+          "on_order": null,
+          "safety_stock": 20,
+          "reorder_point": 72
+        }
+      ]
+    },
+    {
+      "file": "sage.csv",
+      "rc": 0,
+      "quantities_identical": true,
+      "before": [
+        {
+          "sku": "A-1",
+          "order_qty": 221.0,
+          "on_hand": 1200,
+          "on_order": null,
+          "safety_stock": 24,
+          "reorder_point": 134
+        }
+      ],
+      "after": [
+        {
+          "sku": "A-1",
+          "order_qty": 221.0,
+          "on_hand": 1200,
+          "on_order": null,
+          "safety_stock": 24,
+          "reorder_point": 134
+        }
+      ]
+    },
+    {
+      "file": "sap-business-one.csv",
+      "rc": 0,
+      "quantities_identical": true,
+      "before": [
+        {
+          "sku": "A-1",
+          "order_qty": 221.0,
+          "on_hand": 1200,
+          "on_order": null,
+          "safety_stock": 24,
+          "reorder_point": 134
+        }
+      ],
+      "after": [
+        {
+          "sku": "A-1",
+          "order_qty": 221.0,
+          "on_hand": 1200,
+          "on_order": null,
+          "safety_stock": 24,
+          "reorder_point": 134
+        }
+      ]
+    },
+    {
+      "file": "sap-s4hana.csv",
+      "rc": 0,
+      "quantities_identical": true,
+      "before": [
+        {
+          "sku": "A-1",
+          "order_qty": 221.0,
+          "on_hand": 1200,
+          "on_order": null,
+          "safety_stock": 24,
+          "reorder_point": 134
+        }
+      ],
+      "after": [
+        {
+          "sku": "A-1",
+          "order_qty": 221.0,
+          "on_hand": 1200,
+          "on_order": null,
+          "safety_stock": 24,
+          "reorder_point": 134
+        }
+      ]
+    },
+    {
+      "file": "zoho-inventory.csv",
+      "rc": 0,
+      "quantities_identical": true,
+      "before": [
+        {
+          "sku": "A-1",
+          "order_qty": 221.0,
+          "on_hand": 1200,
+          "on_order": null,
+          "safety_stock": 20,
+          "reorder_point": 72
+        }
+      ],
+      "after": [
+        {
+          "sku": "A-1",
+          "order_qty": 221.0,
+          "on_hand": 1200,
+          "on_order": null,
+          "safety_stock": 20,
+          "reorder_point": 72
+        }
+      ]
+    }
+  ],
+  "quickbooks_import_diff": "--- v1.1 QuickBooks imported items\n+++ v1.2 QuickBooks imported items\n@@ -10,6 +10,7 @@\n       110,\n       120\n     ],\n-    \"receipts\": {}\n+    \"receipts\": {},\n+    \"sale_price\": 9.99\n   }\n ]"
+}

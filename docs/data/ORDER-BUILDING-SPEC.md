@@ -667,7 +667,7 @@ is part of this two-document delivery.
 
 ### Source and design boundaries
 
-Design authority: approved Stock Runway roadmap dated 2026-11-12, phases 4–6. Research inputs:
+Design authority: approved Inventory Manager roadmap dated 2026-11-12, phases 4–6. Research inputs:
 `CONSOLIDATED-findings.md` and `lane-2-smb-erp-inventory.md` in the same dated landscape research
 folder. Their vendor comparisons are reported research, not reproduced live-system evidence.
 ABC/XYZ thresholds, service matrix, eight-month analog ramp, allocation priority, pack-cap

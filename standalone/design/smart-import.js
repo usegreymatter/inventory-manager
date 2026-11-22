@@ -14,7 +14,7 @@ const smartImportUI = (() => {
   function resetSourceStatus(){
     retained=null;document.getElementById('input-meaning-results')?.remove();sourceStatus.classList.remove('smart-import-source');sourceStatus.querySelector('#smart-import-review')?.remove();sourceAnchor.after(sourceStatus)
   }
-  const fields={sku:'Product code (SKU)',name:'Product name',unit:'Unit',on_hand:'Stock on hand',supplier_days:'Lead time (days)',supplier:'Supplier',category:'Category',unit_cost:'Unit cost',date:'Sales date',quantity:'Quantity sold',on_order:'Stock on order',minimum_order:'Minimum order quantity',pack_size:'Pack multiple'}
+  const fields={sku:'Product code (SKU)',name:'Product name',unit:'Unit',on_hand:'Stock on hand',supplier_days:'Lead time (days)',supplier:'Supplier',category:'Category',unit_cost:'Unit cost',sale_price:'Selling price',date:'Sales date',quantity:'Quantity sold',on_order:'Stock on order',minimum_order:'Minimum order quantity',pack_size:'Pack multiple'}
   const csv=(rows,delimiter=',')=>rows.map(r=>r.map(v=>'"'+String(v??'').replaceAll('"','""')+'"').join(delimiter)).join('\r\n')+'\r\n'
   function rules(){try{const raw=localStorage.getItem(STORE);if(!raw||raw.length>1000000)return [];const a=JSON.parse(raw);return Array.isArray(a)?a.slice(-20).filter(r=>typeof r.fingerprint==='string'&&r.overrides&&typeof r.overrides==='object'&&!Array.isArray(r.overrides)&&typeof r.warning_fingerprint==='string'):[]}catch{return []}}
   async function warningFingerprint(report,parsed){
@@ -34,7 +34,10 @@ const smartImportUI = (() => {
   async function finish(accepted=false){
     if(!pending)return
     const state=pending;pending=null;if(dialog.open)dialog.close()
-    if(accepted&&state.parsed&&state.choices.units_confirmed&&(!state.meaning?.requires_ack||state.ack)&&state.stillCurrent()){
+    const expiryReview=state.parsed?.items.some(item=>item.lots?.some(lot=>lot.expiry_acknowledged===false))
+    if(accepted&&state.parsed&&state.choices.units_confirmed&&(!(state.meaning?.requires_ack||expiryReview)||state.ack)&&state.stillCurrent()){
+      // The review checkbox applies to this import only, never to a saved layout.
+      if(state.ack)for(const item of state.parsed.items)for(const lot of item.lots||[])if(lot.expiry_acknowledged===false)lot.expiry_acknowledged=true
       await remember(state);retained={file:state.file};state.resolve(state.stillCurrent()?{parsed:state.parsed,smart:!state.legacyParsed||state.edit,remembered:false}:null)
     }else state.resolve(null)
     if(state.focus?.isConnected)state.focus.focus()
@@ -73,7 +76,9 @@ const smartImportUI = (() => {
     choose('meaning-incoming','Incoming orders',[['included','Included in file'],['unknown','Not in file']],state.choices.incoming_not_in_file?'unknown':'included',value=>state.choices.incoming_not_in_file=value==='unknown')
     const units=el('label'),confirm=el('input');confirm.type='checkbox';confirm.id='meaning-units';confirm.checked=state.choices.units_confirmed;confirm.addEventListener('change',()=>{state.choices.units_confirmed=confirm.checked;draw(state)});units.append(confirm,document.createTextNode('Units — sales and stock use the same unit'));card.append(units)
     for(const text of [...(state.meaning?.warnings||[]),...(state.meaning?.reasons||[])])card.append(el('p',text,'smart-import-warning'))
-    if(state.meaning?.requires_ack){const label=el('label'),ack=el('input');ack.type='checkbox';ack.id='meaning-show-anyway';ack.checked=state.ack===true;ack.addEventListener('change',()=>{state.ack=ack.checked;draw(state)});label.append(ack,document.createTextNode('Show orders anyway'));card.append(label)}
+    const expiryReview=state.parsed?.items.flatMap(item=>(item.lots||[]).filter(lot=>lot.expiry_acknowledged===false).map(lot=>item.sku+' · lot '+lot.lot+' → '+lot.expiry+' (interpreted date)'))||[]
+    if(expiryReview.length){card.append(el('p','Check ambiguous expiry dates before ordering. Dates below are interpreted as year-month-day.','smart-import-warning'));disclosure(card,'Interpreted expiry dates',expiryReview)}
+    if(state.meaning?.requires_ack||expiryReview.length){const label=el('label'),ack=el('input');ack.type='checkbox';ack.id='meaning-show-anyway';ack.checked=state.ack===true;ack.addEventListener('change',()=>{state.ack=ack.checked;draw(state)});label.append(ack,document.createTextNode('Show orders anyway'));card.append(label)}
     card.append(el('small','These answers are remembered for this file layout. Imported data stays on this device.'));body.append(card)
     const suggestions=r.sheets.some(sheet=>sheet.mapping.some(m=>['medium','low'].includes(m.confidence)))
     body.append(el('p',(suggestions?'Suggested matches need your review before you use this file. ':'Review the column matches. ')+'Your current products stay unchanged until you choose Use this.','smart-import-note'))
@@ -108,7 +113,7 @@ const smartImportUI = (() => {
       for(const product of parsed.items.slice(0,5)){const row=el('tr');for(const value of [product.sku,product.name,product.on_hand])row.append(el('td',String(value??'')));table.append(row)}body.append(el('h3','First products'),table)
       if(report){disclosure(body,'Rows set aside',setAside);disclosure(body,'Defaults',report.defaulted.map(x=>x.field+' → '+(x.value??'unknown')+' ('+x.reason+')'));disclosure(body,'Preflight column matches',report.matched.map(x=>x.source+' → '+x.field))}
     }
-    use.disabled=!parsed?.items.length||!!r.missing.length||!!state.error||!state.choices.units_confirmed||state.meaning?.requires_ack&&!state.ack
+    use.disabled=!parsed?.items.length||!!r.missing.length||!!state.error||!state.choices.units_confirmed||(state.meaning?.requires_ack||expiryReview.length>0)&&!state.ack
     // Rebuilding a mapping must not strand keyboard users on the page behind it.
     if(focusKey){const replacement=[...body.querySelectorAll('select,input')].find(select=>focusKey.id?select.id===focusKey.id:select.dataset.sheet===focusKey.sheet&&select.dataset.index===focusKey.index);replacement?.focus({preventScroll:true});body.scrollTop=scrollTop}
   }
@@ -137,7 +142,7 @@ const smartImportUI = (() => {
     if(!stillCurrent())return null
     // Remember a layout, never permission to drop products from a later file.
     const noRowsSetAside=state.parsed?.import_report?.rows_set_aside?.length===0&&!state.report.warnings.some(w=>w.includes('row omitted'))
-    if(saved&&state.choices.units_confirmed&&!state.meaning?.requires_ack&&!reviewRequested&&state.parsed?.items.length&&!state.report.missing.length&&!state.error&&sameWarnings&&noRowsSetAside){retained={file};return {parsed:state.parsed,smart:!state.legacyParsed||state.edit,remembered:true}}
+    if(saved&&!state.parsed?.items.some(item=>item.lots?.some(lot=>lot.expiry_acknowledged===false))&&state.choices.units_confirmed&&!state.meaning?.requires_ack&&!reviewRequested&&state.parsed?.items.length&&!state.report.missing.length&&!state.error&&sameWarnings&&noRowsSetAside){retained={file};return {parsed:state.parsed,smart:!state.legacyParsed||state.edit,remembered:true}}
     return new Promise(resolve=>{state.resolve=resolve;pending=state;draw(state);dialog.showModal()})
   }
   function status(result,file){

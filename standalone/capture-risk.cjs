@@ -42,7 +42,7 @@ async function hoverForecast(page,touch=false){
  const text=await page.locator('#product-page .chart-tooltip:not([hidden])').innerText();check('tooltip shows expected / likely / wide',/expected/i.test(text)&&/likely/i.test(text)&&/wide/i.test(text));return text
 }
 async function main(){
- fs.mkdirSync(out,{recursive:true});const input=process.env.RISK_HTML?path.resolve(process.env.RISK_HTML):path.join(__dirname,'stock-runway.html'),probe=path.join(out,'risk-probe.html');fs.writeFileSync(probe,makeHarness(fs.readFileSync(input,'utf8')))
+ fs.mkdirSync(out,{recursive:true});const input=process.env.RISK_HTML?path.resolve(process.env.RISK_HTML):path.join(__dirname,'inventory-manager.html'),probe=path.join(out,'risk-probe.html');fs.writeFileSync(probe,makeHarness(fs.readFileSync(input,'utf8')))
  const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright'),browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_EXECUTABLE||undefined})
  try{
   for(const viewport of [{width:1440,height:900},{width:390,height:844}]){

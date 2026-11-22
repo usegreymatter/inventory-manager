@@ -239,7 +239,7 @@ The generator anchors snapshot to 2026-10-31 and never calls a clock or RNG. It 
 
 ## Reference evidence from supplied research
 
-Research: `lane-2-smb-erp-inventory.md`, sections “What Odoo exports” and Sources; `CONSOLIDATED-findings.md`; approved Stock Runway gradual roadmap. Docs below establish screen/concept semantics only as qualified above; no new network fetch or instance proof was performed here.
+Research: `lane-2-smb-erp-inventory.md`, sections “What Odoo exports” and Sources; `CONSOLIDATED-findings.md`; approved Inventory Manager gradual roadmap. Docs below establish screen/concept semantics only as qualified above; no new network fetch or instance proof was performed here.
 
 - **D1 / S1:** [Reordering rules, Odoo 20.0](https://www.odoo.com/documentation/20.0/applications/inventory_and_mrp/inventory/warehouses_storage/replenishment/reordering_rules.html).
 - **D2 / S2:** [Lead times](https://www.odoo.com/documentation/20.0/applications/inventory_and_mrp/inventory/warehouses_storage/replenishment/lead_times.html).

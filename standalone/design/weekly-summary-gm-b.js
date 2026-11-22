@@ -71,7 +71,7 @@ function weeklySummaryOpen(){
  const text=weeklySummaryText(model)
  const copy=wlBtn('Copy text',async()=>{try{await navigator.clipboard.writeText(text);status.textContent='Summary copied. Nothing sent.'}catch{fallback.hidden=false;fallback.value=text;fallback.focus();fallback.select();status.textContent='Clipboard unavailable. Select and copy the summary below.'}})
  copy.className='weekly-summary-primary'
- const excel=wlBtn('Download Excel',()=>{try{const bytes=wlXlsxWorkbook(weeklySummarySheets(model));wlDownload(bytes,'stock-runway-weekly-'+(model.asOf||'snapshot')+'.xlsx','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');status.textContent='Excel prepared from this summary.'}catch{status.textContent='Excel could not be prepared. Copy text instead.'}})
+ const excel=wlBtn('Download Excel',()=>{try{const bytes=wlXlsxWorkbook(weeklySummarySheets(model));wlDownload(bytes,'inventory-manager-weekly-'+(model.asOf||'snapshot')+'.xlsx','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');status.textContent='Excel prepared from this summary.'}catch{status.textContent='Excel could not be prepared. Copy text instead.'}})
  excel.disabled=typeof wlXlsxWorkbook!=='function'
  const print=wlBtn('Print / Save PDF',()=>{document.body.classList.add('weekly-summary-printing');try{window.print()}finally{document.body.classList.remove('weekly-summary-printing')}})
  const close=wlBtn('Close',()=>dialog.close());close.setAttribute('aria-label','Close weekly stock summary')

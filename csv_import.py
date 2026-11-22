@@ -6,8 +6,11 @@ Other metadata uses the first usable row; differing product units are unsafe.
 from __future__ import annotations
 import csv
 import io
+import json
+import calendar
 import math
 import re
+from datetime import date, timedelta
 from pathlib import Path
 from typing import Any
 from .sources import MAX_CSV_BYTES
@@ -15,7 +18,8 @@ from .sources import MAX_CSV_BYTES
 ENCODING_ERROR = 'File is not UTF-8; re-export as CSV UTF-8'
 FIXED = ['sku', 'name', 'unit', 'on_hand', 'supplier_days']
 OPTIONAL = ['category', 'supplier', 'on_order', 'demand_change_pct', 'last_count_date']
-PER_ITEM = ['minimum_order', 'pack_size', 'unit_cost']
+PER_ITEM = ['minimum_order', 'pack_size', 'unit_cost', 'sale_price', 'shelf_life_days']
+LOT_FIELDS = ['lots', 'lot', 'expiry', 'lot_qty']
 # Existing ERP aliases keep their rank; plain Product remains a product-name alias.
 PRODUCT_TYPE_ALIASES = ('type', 'product product category', 'categ id')
 
@@ -37,6 +41,89 @@ def product_type_rows(rows):
              if i not in others] for rownum, row in enumerate(rows)]
 
 NUMERIC = re.compile(r'^[+-]?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?$')
+
+
+def expiry_date(raw):
+    """Normalize bounded expiry text; US-first ambiguous dates remain unapproved."""
+    from .sources import SourceError, erp_month
+    raw = import_trim(raw)
+    if len(raw) > 256: raise SourceError('invalid expiry date')
+    notes, ambiguous = [], False
+    try:
+        if re.fullmatch(r'[0-9]{4}-[0-9]{2}-[0-9]{2}', raw):
+            parsed = date.fromisoformat(raw)
+        elif re.fullmatch(r'[0-9]{4}-[0-9]{2}|[0-9]{1,2}[-/.][0-9]{4}|[A-Za-z]{3,9}[\s\-/.,\']*[0-9]{4}', raw):
+            normalized = erp_month(raw)
+            if not normalized: raise ValueError
+            year, month = map(int, normalized.split('-'))
+            parsed = date(year, month, calendar.monthrange(year, month)[1])
+            notes.append('month-only expiry interpreted as end of month')
+        elif re.fullmatch(r'[0-9]+(?:\.[0-9]+)?', raw):
+            serial = float(raw)
+            if not 1 <= serial <= 2958465: raise ValueError
+            days = math.floor(serial)
+            parsed = date(1899, 12, 31) + timedelta(days=days if days < 60 else days - 1)
+            notes.append('Excel serial expiry interpreted using 1900 date system')
+        else:
+            match = re.fullmatch(r'([0-9]{1,2})([/.\-])([0-9]{1,2})\2([0-9]{4})', raw)
+            if not match: raise ValueError
+            first, second, year = int(match[1]), int(match[3]), int(match[4])
+            ambiguous = 1 <= first <= 12 and 1 <= second <= 12 and first != second
+            month, day = (first, second) if first <= 12 else (second, first)
+            parsed = date(year, month, day)
+            if ambiguous: notes.append('ambiguous expiry date interpreted month/day/year; acknowledge before ordering')
+        if parsed.year < 1000: raise ValueError
+    except (ValueError, OverflowError):
+        raise SourceError('invalid expiry date') from None
+    return parsed.isoformat(), notes, ambiguous
+
+
+def merge_lots(lots):
+    """Aggregate legitimate repeated lot rows, retaining an unapproved date flag."""
+    from .sources import SourceError, MAX_QUANTITY
+    result, seen = [], {}
+    for lot in lots:
+        key = (lot['lot'], lot['expiry'])
+        if key not in seen:
+            seen[key] = dict(lot); result.append(seen[key])
+        else:
+            seen[key]['qty'] += lot['qty']
+            if lot.get('expiry_acknowledged') is False: seen[key]['expiry_acknowledged'] = False
+        if seen[key]['qty'] > MAX_QUANTITY: raise SourceError('combined lot quantity exceeds 1000000000000')
+    return result
+
+
+def lot_fields(get, number, rownum=2, *, has_lot_qty=False):
+    """Parse one lot row or a canonical JSON lot list, never trusting approval text."""
+    from .sources import SourceError, _number
+    raw = get('lots')
+    if raw:
+        try: source = json.loads(raw)
+        except (ValueError, RecursionError): raise SourceError('lots must be a JSON list') from None
+        if not isinstance(source, list) or len(source) > 10000: raise SourceError('lots must be a JSON list of at most 10000 lots')
+    elif any(get(f) for f in ('lot', 'expiry', 'lot_qty')):
+        if has_lot_qty and not get('lot_qty'):
+            # A blank explicit lot quantity is unknown, not product stock or 0.
+            if not get('expiry'): raise SourceError('each lot requires an expiry date')
+            _, notes, _ = expiry_date(get('expiry'))
+            return [], [*notes, 'missing lot quantity; lot stock unknown; acknowledge before ordering']
+        source = [dict(lot=get('lot'), expiry=get('expiry'), qty=number(get('lot_qty') or get('on_hand')))]
+    else: return [], []
+    lots, warnings = [], []
+    for entry in source:
+        if not isinstance(entry, dict) or not isinstance(entry.get('lot'), str) or not isinstance(entry.get('expiry'), str):
+            raise SourceError('each lot requires lot, expiry and qty')
+        if not entry['expiry']: raise SourceError('each lot requires an expiry date')
+        qty = entry.get('qty')
+        if isinstance(qty, bool) or not isinstance(qty, (str, int, float)): raise SourceError('each lot requires a numeric qty')
+        value = _number(str(qty), rownum, 'lot_qty')
+        expiry, notes, ambiguous = expiry_date(entry['expiry'])
+        lot = dict(lot=import_trim(entry['lot']), expiry=expiry, qty=value)
+        if ambiguous or entry.get('expiry_acknowledged') is False:
+            lot['expiry_acknowledged'] = False
+            if not ambiguous: notes.append('ambiguous expiry date requires acknowledgement before ordering')
+        warnings.extend(notes); lots.append(lot)
+    return merge_lots(lots), list(dict.fromkeys(warnings))
 
 
 # Explicit shared boundary/lead whitespace; retains legacy identifier trimming.
@@ -166,6 +253,11 @@ def preflight_csv(text, strict=False, *, max_bytes=MAX_CSV_BYTES):
     finally:
         csv.field_size_limit(old_limit)
     if strict:
+        if rows and any(_ALIAS_LOOKUP.get(_header_key(h), ('',))[0] in [*LOT_FIELDS, 'shelf_life_days'] for h in rows[0]):
+            result = preflight_csv(text, max_bytes=max_bytes)
+            report = result.pop('import_report')
+            if report['rows_set_aside']: raise SourceError(report['rows_set_aside'][0]['reason'])
+            return result
         return _parse_canonical_csv(normalize_erp_rows(product_type_rows(rows)))
     headers = rows[0] if rows else []
     if len(rows) - 1 > MAX_ROWS: raise SourceError('CSV contains more than 10000 rows.')
@@ -199,13 +291,21 @@ def preflight_csv(text, strict=False, *, max_bytes=MAX_CSV_BYTES):
     if not canonical: months.sort(); receipts.sort()
     if not {'sku','name','on_hand'} <= picked.keys():
         raise SourceError('CSV columns must begin: sku,name,unit,on_hand,supplier_days. Common ERP names also work, e.g. Item Code, Item Name, UoM, Qty On Hand, Lead Time.')
-    numeric_indices = [idx for field,idx in picked.items() if field in ['on_hand','supplier_days','on_order','demand_change_pct',*PER_ITEM]] + [idx for _,idx in months+receipts]
+    numeric_indices = [idx for field,idx in picked.items() if field in ['on_hand','supplier_days','on_order','demand_change_pct','lot_qty',*PER_ITEM]] + [idx for _,idx in months+receipts]
     style = number_style(rows[1:], numeric_indices, delimiter)
-    mixed = style == 'decimal-comma' and any(
-        '.' in row[idx] and NUMERIC.fullmatch(erp_number(row[idx], ',', idx == picked.get('supplier_days')))
-        and erp_number(row[idx], delimiter, idx == picked.get('supplier_days'), style) == AMBIGUOUS_NUMBER
-        for row in rows[1:] for idx in numeric_indices if idx < len(row) and len(row[idx]) <= 256)
-    number = lambda raw, lead=False: erp_number(raw, delimiter, lead, style, mixed)
+    # Adding an optional sale price cannot alter pre-existing inventory numbers.
+    # Keep the legacy evidence set and parsing for every other numeric field.
+    quantity_indices = [idx for idx in numeric_indices if idx != picked.get('sale_price')]
+    quantity_style = number_style(rows[1:], quantity_indices, delimiter)
+    def mixed_for(indices, convention):
+        return convention == 'decimal-comma' and any(
+            '.' in row[idx] and NUMERIC.fullmatch(erp_number(row[idx], ',', idx == picked.get('supplier_days')))
+            and erp_number(row[idx], delimiter, idx == picked.get('supplier_days'), convention) == AMBIGUOUS_NUMBER
+            for row in rows[1:] for idx in indices if idx < len(row) and len(row[idx]) <= 256)
+    mixed = mixed_for(numeric_indices, style)
+    quantity_mixed = mixed_for(quantity_indices, quantity_style)
+    number = lambda raw, lead=False: erp_number(raw, delimiter, lead, quantity_style, quantity_mixed)
+    price_number = lambda raw: erp_number(raw, delimiter, False, style, mixed)
     dropped_order = None
     if 'on_order' in picked and headers[picked['on_order']] != 'on_order':
         vals = [number(r[picked['on_order']]) for r in rows[1:] if picked['on_order'] < len(r) and import_trim(r[picked['on_order']])]
@@ -229,6 +329,7 @@ def preflight_csv(text, strict=False, *, max_bytes=MAX_CSV_BYTES):
     dummy = ['CHECK','Check','units','0',''] + ['' if f in ('category','supplier','on_order','demand_change_pct','last_count_date') else '0' for f in output_headers[5:]]
     schema = _parse_canonical_csv([output_headers,dummy])
     items, by_sku, combined, locations = [], {}, {}, {}
+    lot_snapshots = {}
     blanks = 0
     returns = {}
     missing_lead = 0
@@ -242,7 +343,8 @@ def preflight_csv(text, strict=False, *, max_bytes=MAX_CSV_BYTES):
             aside('inactive in ERP'); continue
         if not get('sku'): aside('blank sku in ERP — add a reference'); continue
         if len(values) != len(headers): aside(f'Row {rownum}: column count does not match the header.'); continue
-        if any(number(values[idx], idx == picked.get('supplier_days')) == AMBIGUOUS_NUMBER for idx in numeric_indices):
+        if (any(number(values[idx], idx == picked.get('supplier_days')) == AMBIGUOUS_NUMBER for idx in quantity_indices)
+                or 'sale_price' in picked and price_number(get('sale_price')) == AMBIGUOUS_NUMBER):
             aside(AMBIGUOUS_NUMBER); continue
         row_returns = []
         local_blanks = 0
@@ -261,26 +363,54 @@ def preflight_csv(text, strict=False, *, max_bytes=MAX_CSV_BYTES):
             item = _parse_canonical_csv([output_headers,line])['items'][0]
             for f in PER_ITEM:
                 if get(f):
+                    if f == 'shelf_life_days' and get(f).lower() in ('none', 'null', '0'):
+                        item[f] = None
+                        continue
                     from .sources import _number
-                    value = _number(number(get(f)),rownum,f)
+                    value = _number(price_number(get(f)) if f == 'sale_price' else number(get(f)),rownum,f)
                     if f in ('pack_size','minimum_order') and value != 0:
                         from .engine import valid_order_increment
                         if not valid_order_increment(value): raise SourceError(f'Row {rownum}: {f} must be a valid order increment.')
                     if f == 'pack_size' and value == 0: raise SourceError(f'Row {rownum}: pack_size must be positive.')
+                    if f == 'shelf_life_days' and (value <= 0 or int(value) != value): raise SourceError(f'Row {rownum}: shelf_life_days must be a positive integer.')
                     item[f] = value
+            lots, lot_notes = lot_fields(get, number, rownum, has_lot_qty='lot_qty' in picked)
+            lot_row = bool(lots) or 'lot_qty' in picked and any(get(f) for f in ('lot', 'expiry'))
+            if lot_row: item['lots'] = lots
+            if lot_notes: item['expiry_warnings'] = lot_notes
             sku=item['sku']
             if sku in by_sku:
-                if 'location' not in picked: raise SourceError('duplicate sku without warehouse/location — first row kept')
-                if get('location') and get('location').casefold().lower() in locations[sku]: raise SourceError('duplicate sku at same warehouse/location — first row kept')
+                if not lot_row and 'location' not in picked: raise SourceError('duplicate sku without warehouse/location — first row kept')
+                if not lot_row and get('location') and get('location').casefold().lower() in locations[sku]: raise SourceError('duplicate sku at same warehouse/location — first row kept')
                 first=by_sku[sku]
                 if first['unit'] != item['unit']: raise SourceError('warehouse units differ — convert to one stock unit')
                 aggregate = {**first,'on_hand':first['on_hand']+item['on_hand'], 'monthly_sales':[a+b for a,b in zip(first['monthly_sales'],item['monthly_sales'])]}
                 if 'on_order' in first or 'on_order' in item: aggregate['on_order']=first.get('on_order',0)+item.get('on_order',0)
                 if 'historical_receipts' in first: aggregate['historical_receipts']={m:first['historical_receipts'][m]+item['historical_receipts'][m] for m in first['historical_receipts']}
+                if lot_row:
+                    # Explicit lot quantities accompany a product/location snapshot;
+                    # implicit quantities mean each row's on_hand is lot stock.
+                    location_key = get('location').casefold().lower()
+                    prior = lot_snapshots.get((sku, location_key))
+                    if prior is not None:
+                        aggregate = dict(first)
+                        explicit = 'lot_qty' in picked or bool(get('lots'))
+                        if not explicit:
+                            aggregate['on_hand'] = first['on_hand'] + item['on_hand']
+                        elif prior['on_hand'] != item['on_hand']:
+                            lot_notes.append('conflicting stock snapshot across lot rows; first snapshot kept; acknowledge before ordering')
+                        if any(prior.get(k) != item.get(k) for k in ('monthly_sales', 'on_order', 'historical_receipts')):
+                            lot_notes.append('conflicting sales/incoming snapshot across lot rows; first snapshot kept; acknowledge before ordering')
+                    aggregate['lots'] = merge_lots([*first.get('lots', []), *lots])
+                    notes = list(dict.fromkeys([*first.get('expiry_warnings', []), *lot_notes]))
+                    if notes: aggregate['expiry_warnings'] = notes
                 totals=[aggregate['on_hand'],*aggregate['monthly_sales'],aggregate.get('on_order',0),*aggregate.get('historical_receipts',{}).values()]
                 if any(v > MAX_QUANTITY for v in totals): raise SourceError('combined warehouse quantity exceeds 1000000000000')
-                first.update(aggregate); combined[sku]=combined.get(sku,1)+1
+                first.update(aggregate)
+                if not lot_row: combined[sku]=combined.get(sku,1)+1
             else: items.append(item); by_sku[sku]=item
+            if lot_row:
+                lot_snapshots.setdefault((sku, get('location').casefold().lower()), dict(item))
             locations.setdefault(sku, {})[get('location').casefold().lower()] = get('location')
             report['accepted_rows'].append(row_index)
             report['rows_imported']+=1; blanks+=local_blanks; missing_lead += item['supplier_days'] is None; 
@@ -289,13 +419,21 @@ def preflight_csv(text, strict=False, *, max_bytes=MAX_CSV_BYTES):
             aside(str(error).replace('Row 2:',f'Row {rownum}:') if rownum != 2 else str(error))
     for month,n in returns.items(): report['warnings'].append(f'returns exceeded sales in {month} ({n} rows)')
     for sku,n in combined.items(): report['warnings'].append(f'{sku}: combined {n} warehouse rows ({", ".join(label or "Unspecified" for label in locations[sku].values())}); stock, on order, sales and receipts summed; first-row metadata kept')
-    if 'location' in picked and any('' in labels for labels in locations.values()):
+    if 'location' in picked and not any(f in picked for f in LOT_FIELDS) and any('' in labels for labels in locations.values()):
         report['warnings'].append('Blank warehouse/location treated as Unspecified; all blank-location rows aggregated, including repeated blanks. Check for duplicate exports.')
     if missing_lead and 'supplier_days' in picked: report['defaulted'].append(dict(field='supplier_days',value=None,reason=f'lead time blank in {missing_lead} imported rows'))
     if 'location' in picked:
         partial = dict.fromkeys(import_trim(r['values'][picked['sku']]) for r in report['rows_set_aside'] if picked['sku'] < len(r['values']) and import_trim(r['values'][picked['sku']]) in by_sku)
         for sku in partial: report['warnings'].append(f'{sku}: some warehouse rows set aside; totals include usable rows only')
     if blanks: report['warnings'].append(f'{blanks} blank sales cells treated as 0')
+    for item in items:
+        if 'lots' not in item: continue
+        notes = item.get('expiry_warnings', [])[:]
+        if not math.isclose(sum(lot['qty'] for lot in item['lots']), item['on_hand'], rel_tol=1e-12, abs_tol=1e-9):
+            notes.append('lot total does not match on-hand stock; check lot quantities')
+        if notes:
+            item['expiry_warnings'] = list(dict.fromkeys(notes))
+            report['warnings'].extend(f'{item["sku"]}: {note}' for note in item['expiry_warnings'])
     report['products_ready']=len(items)
     if not items:
         error=SourceError('CSV has no usable item rows.' + (' ' + report['rows_set_aside'][0]['reason'] if report['rows_set_aside'] else ''))

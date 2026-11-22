@@ -1,5 +1,28 @@
 # Changelog
 
+## Unreleased
+
+- **v1.2 — Import safety:** blank lot quantities remain unknown without duplicating stock; ambiguous transaction dates and lot-total mismatches require input review. Excel numeric expiry respects the 1904 date system, quoted CR survives Python CSV roundtrips, sale prices cannot change inventory-number inference, and workbook bad-lot rows are set aside individually. Forecast/purchase maths is unchanged.
+
+### Inventory Manager v1.2.0 candidate
+
+- **Fixed — profit shelf cap:** the opt-in suggestion and alternatives now receive the computed shelf ceiling. MOQ/pack conflicts omit the suggestion with an explicit standard-amount fallback; ordinary quantities are unchanged.
+- **Fixed — preset cover floor:** each product covers only its own review interval via a product `months_of_cover` override when needed. Delivery time is not added twice, slow suppliers cannot inflate other products, and previews count the actual changed quantities.
+
+[Candidate release notes and validation limits](docs/release-notes/v1.2.0.md). Publication and downloads are separate owner actions.
+
+- **Industry buttons are setup guides**, not quantity optimizers: check ordering rhythm and verified per-product shelf-life facts. They preserve the actual ordering interval rather than silently selecting one, and do not change amounts on their own from General defaults. Confirmed ordinary-setting changes can affect amounts; preview shows the impact, with Cancel and Undo. [Exact settings and evidence](docs/PRESETS.md).
+- **Pharmacy's automatic 99% service target is removed** after the independent synthetic gate failed. The chosen service target is preserved. With that change removed, the guides match General quantities at 7- and 30-day ordering cadence; this is synthetic no-op evidence, not superiority or a service guarantee.
+- **Product settings documentation** now lists all supported override fields, including profit suggestions, sale price, shelf-life facts and salvage percentage. Explicit per-product no-shelf-life values disable an inherited cap; blank/inherit and Reset remain distinct.
+
+- Opt-in shelf-life ceilings apply after MOQ/pack rounding, subtract usable stock unsold at arrival, keep safety stock within the cap, and explain zero/MOQ conflicts. Global, product/file settings and CLI flags are supported.
+- Lot expiry imports (CSV/Excel/ERP aliases) and FEFO commercial **Get rid of by** prompts identify expiry-risk quantities and clearance dates; ambiguous dates retain input-review acknowledgement, month-only dates are flagged, and lot totals are checked. Forecast-unsellable lots explicitly reduce usable planning stock without changing physical chart stock.
+- Default-off quantities/import outputs remain unchanged; see [shelf-life arithmetic and limitations](docs/SHELF-LIFE.md).
+- **Display-only cost & profit view:** optional `sale_price` import aliases; money tied up, incoming/order value, unit/gross margin, cost-weighted weeks of cover, modelled lost-profit estimate and an expiry-value-at-risk hook. Custom columns, totals and product detail exclude unknown facts rather than guessing. CLI `--json`/`--explain` expose the same metrics. The existing deterministic risk sampler optionally reports mean unmet units without changing its paths/probabilities; purchase quantities and all order/forecast engine bytes stay unchanged. [Formulas, limitations and worked example](docs/COSTS.md).
+
+- **v1.2 — Import safety:** set-aside/rejected-row CSV exports reuse the normal order export's formula-cell hardening, including markers after leading whitespace, LF or BOM. Imported values remain unchanged in memory.
+- **v1.2 — Known limits:** the opt-in most profitable amount shows a reliability warning for an effective order rhythm under 30 days or positive incoming stock. The warning changes no quantity or maths. [Candidate notes](docs/release-notes/v1.2.0.md#known-limits).
+
 ## v1.1.0 (2026-11-20)
 
 [Release notes and offline download instructions](docs/release-notes/v1.1.0.md).

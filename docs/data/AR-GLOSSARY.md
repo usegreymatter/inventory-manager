@@ -1,6 +1,6 @@
 # Arabic glossary — draft, not production-approved
 
-Status: draft Modern Standard Arabic for Stock Runway, awaiting Kuwait inventory-operator
+Status: draft Modern Standard Arabic for Inventory Manager, awaiting Kuwait inventory-operator
 and Arabic-language review. This is terminology preparation, not a translated UI or RTL
 verification. Existing reference: `../terminology.md`. Future feature policy and chip states:
 `ORDER-BUILDING-SPEC.md`. English source terms remain the translation keys' meanings; do not
@@ -55,7 +55,7 @@ These are diagnostic preflight labels, not proof a feature is implemented or rea
 
 | English source | Arabic draft | Meaning / review note |
 | --- | --- | --- |
-| Stock Runway | مدة كفاية المخزون | Product name may remain Stock Runway with this descriptor. |
+| Inventory Manager | مدة كفاية المخزون | Product name may remain Inventory Manager with this descriptor. |
 | Hidden | مخفي | No feature chip is rendered. |
 | Locked | يتطلب مراجعة | Missing data/policy or a conflict; not a locked user account. |
 | On | مفعّل | Inputs valid for this feature. |

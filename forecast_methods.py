@@ -260,3 +260,128 @@ def forecast_with_metadata(values, horizon=12, method='ses'):
             metadata['method'] = 'naive'
     return {'forecast': curve, 'classification': classification, **metadata,
             'fallback': metadata['method'] != selected}
+
+
+# Deliberately separate from METHODS: the November fixed-candidate registry and
+# all existing forecast/classify behaviour remain frozen.
+RECOMMEND_CANDIDATES = ('current', 'ses', 'seasonal_naive', 'sba', 'combination')
+
+
+def recommend_forecast(values, horizon=12, method='current'):
+    """Candidate point curve, including the shipped raw-history Current hybrid.
+
+    Current's calendar factors are represented relative to the next month;
+    no actual calendar labels or real-world observations are needed.
+    """
+    _values(values)
+    if isinstance(horizon, bool) or not isinstance(horizon, int) or not 1 <= horizon <= 120:
+        raise ValueError('Horizon must be an integer from 1 to 120')
+    if not isinstance(method, str) or method not in RECOMMEND_CANDIDATES:
+        raise ValueError('Unknown recommendation candidate')
+    if method != 'current':
+        return forecast(values, horizon, method)
+    if not values:
+        return [0.0] * horizon
+    positive = [y for y in values if y > 0]
+    avg = _mean(positive)
+    smooth = (len(values) >= 3 and bool(positive) and len(values) / len(positive) < 1.32
+              and _mean([(y - avg) * (y - avg) for y in positive]) / (avg * avg) < .49
+              if avg * avg > 0 else False)
+    tail = values[-12:]
+    if smooth:
+        curve = [_mean(tail)] * horizon
+    else:
+        base = _mean(tail) if len(values) >= 12 else 0.0
+        factors = [max(.5, min(2.0, y / base)) if base else 1.0 for y in tail]
+        if len(values) < 12:
+            factors = [1.0] * 12
+        level = _mean(values[-3:])
+        # tail[0] is the next month's phase; the last 3 are slots 9..11.
+        if len(values) >= 12:
+            level = _mean([y / factors[9 + j] for j, y in enumerate(values[-3:])])
+        curve = [level * factors[h % 12] for h in range(horizon)]
+    return [_rounded(min(MAX_VALUE, max(0.0, y))) for y in curve]
+
+
+def recommend(values, previous=None, stockout_adjust=False):
+    """Pure, bounded rolling-origin recommendation; opt-in, not calibration.
+
+    Inputs are sales (or externally corrected sales). Numeric observations alone
+    cannot identify stockouts: the flag records mode, never invents lost demand.
+    Pass a previous candidate ID to retain it unless clearly beaten.
+    """
+    return _recommend(values, previous, stockout_adjust)
+
+
+def _recommend(values, previous=None, stockout_adjust=False, prior_only=False, fit_cache=None):
+    _values(values)
+    if previous is not None and (not isinstance(previous, str) or previous not in RECOMMEND_CANDIDATES):
+        raise ValueError('Unknown previous recommendation candidate')
+    if not isinstance(stockout_adjust, bool):
+        raise ValueError('stockout_adjust must be boolean')
+    xs = values[-48:]
+    # One public recommendation owns this memo, including its reconstructed
+    # prior month. Fit inputs are exact values/horizon/candidate, not SKU or
+    # incumbent/mode (which affect selection, never these pure point fits).
+    # <= 9 unique origins x 5 candidates + 2 final curves; no retained state.
+    if fit_cache is None:
+        fit_cache = {}
+
+    def predict(prefix, horizon, method):
+        key = (tuple(prefix), horizon, method)
+        if key not in fit_cache:
+            fit_cache[key] = recommend_forecast(prefix, horizon, method)
+        return fit_cache[key]
+
+    # A clean import has no saved choice. Reconstruct one prior-month choice
+    # without hidden state or recursive reselection; overlapping fits are shared.
+    reconstructed = previous is None and len(xs) >= 21 and not prior_only
+    if reconstructed:
+        previous = _recommend(xs[:-1], stockout_adjust=stockout_adjust, prior_only=True, fit_cache=fit_cache)['method']
+    incumbent = previous or 'current'
+    suffix = (' Stockout adjustment on: supplied values must already be corrected; zeros alone are not evidence.'
+              if stockout_adjust else ' Stockout adjustment off: observed sales may understate demand.')
+    folds, scores, proxies = [], {}, {}
+    if len(xs) >= 20 and any(xs):
+        for origin in range(max(12, len(xs) - 10), len(xs) - 2):
+            prefix, actual = xs[:origin], xs[origin:origin + 3]
+            predictions = {m: predict(prefix, 3, m) for m in RECOMMEND_CANDIDATES}
+            folds.append({'origin': origin, 'actual': actual, 'predictions': predictions})
+        for method in RECOMMEND_CANDIDATES:
+            losses, costs = [], []
+            for fold in folds:
+                prefix = xs[:fold['origin']]
+                # Numeric rescaling only: target values never enter fitting.
+                scale = max(prefix + fold['actual']) or 1.0
+                p = [y / scale for y in prefix]
+                lag = 12 if len(p) >= 24 else 1
+                differences = [(p[i] - p[i-lag]) ** 2 for i in range(lag, len(p))]
+                denominator = max(_mean(differences), (.05 * _mean(p)) ** 2, 1e-24)
+                errors = [(pred - actual) / scale for pred, actual in
+                          zip(fold['predictions'][method], fold['actual'])]
+                losses.append((.5 * _mean([e*e for e in errors]) + .5 * _mean(errors)**2) / denominator)
+                # One replenishment / 3-month total proxy: shortage costs 2x
+                # excess. Not a daily inventory simulation or equal-stock test.
+                error = _sum(errors)
+                costs.append((max(error, 0.0) + 2 * max(-error, 0.0)) / max(_mean(p) * 3, 1e-12))
+            scores[method] = _rounded(math.sqrt(_mean(losses)))
+            proxies[method] = _rounded(_mean(costs))
+    picked, improvement = incumbent, 0.0
+    if scores:
+        winner = min(RECOMMEND_CANDIDATES, key=lambda m: scores[m])
+        improvement = (scores[incumbent] - scores[winner]) / scores[incumbent] if scores[incumbent] else 0.0
+        margin = .15 if previous and not (reconstructed and previous == 'current') else .10
+        if winner != incumbent and improvement >= margin and proxies[winner] <= proxies[incumbent] * 1.02:
+            picked = winner
+            reason = 'rolling-origin scaled error improves by at least ' + str(int(margin*100)) + '% with no material worsening of the backtest order proxy'
+        else:
+            reason = ('keeping reconstructed prior-month choice' if reconstructed else 'keeping previous choice' if previous else 'keeping basic Current hybrid') + ': no clear error and order-proxy advantage'
+    else:
+        reason = ('keeping reconstructed prior-month choice' if reconstructed else 'keeping previous choice' if previous else 'keeping basic Current hybrid') + ': fewer than 20 months or no positive demand'
+    return {'method': picked, 'reason': reason + suffix,
+            'forecast': predict(xs, 12, picked), 'scores': scores,
+            'order_proxy': proxies, 'folds': len(folds), 'backtest': folds,
+            'improvement': _rounded(max(0.0, improvement)), 'stockout_adjust': stockout_adjust,
+            'history_used': len(xs), 'range_available': False,
+            'previous_method': previous, 'hysteresis': previous is not None}
+

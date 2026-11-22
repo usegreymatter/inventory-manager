@@ -52,7 +52,7 @@ def cli_boundary(monkeypatch):
     engine, _ = cli._load_modules()
     calls = []
 
-    def guidance(item, today, settings, as_of=None):
+    def guidance(item, today, settings, as_of=None, _include_profit=True):
         calls.append((item, today, settings, as_of))
         return {"status": "order", "quantity": 3 if item["sku"] == "A" else 0,
                 "order_by": "now" if item["sku"] == "A" else "2027-08-01",

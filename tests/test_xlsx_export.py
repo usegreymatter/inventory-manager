@@ -111,7 +111,7 @@ function wlValue(r,k){return ({product:r.item.name,qty:r.guidance.quantity,statu
 function resolveOrderSettings(i){return {values:{unit_cost:i.cost}}}
 function dateOrdinal(s){return Number.isFinite(Date.parse(s))?Date.parse(s)/86400000:null}
 function ordinalDate(n){return new Date(n*86400000).toISOString().slice(0,10)}
-function wlDownload(bytes,name,mime){if(name!=='stock-runway-order.xlsx'||mime!=='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')throw Error('wrong download');console.log(Buffer.from(bytes).toString('base64'))}
+function wlDownload(bytes,name,mime){if(name!=='inventory-manager-order.xlsx'||mime!=='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')throw Error('wrong download');console.log(Buffer.from(bytes).toString('base64'))}
 const before=JSON.stringify(currentRows);
 wlExcel([a,c,b,d]);
 if(JSON.stringify(currentRows)!==before)throw Error('source rows mutated');

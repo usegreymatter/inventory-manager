@@ -8,7 +8,7 @@ function riskMonthEnd(month){const day=typeof month==='string'&&month.length===7
 function riskSpec(row){
  if(!riskReady(row))return null
  const i=row.item,g=row.guidance,asof=riskDate(data.as_of),today=riskDate(currentToday),cutoff=today&&asof?(today>asof?today:asof):null
- const hand=Number.isFinite(i.on_hand)?i.on_hand:i.stock,orderDate=g.order_by==='now'?today:riskDate(g.order_by)||today
+ const hand=Math.max(0,(Number.isFinite(i.on_hand)?i.on_hand:i.stock)-(g.expiry_excluded_qty||0)),orderDate=g.order_by==='now'?today:riskDate(g.order_by)||today
  const forecast=(i.projection||[]).map(r=>r.demand),history=(data.months||[]).flatMap((month,n)=>{const end=riskMonthEnd(month),value=i.monthly_sales?.[n];return end&&asof&&end<=asof&&Number.isFinite(value)&&value>=0?[value]:[]})
  if(!asof||!today||!cutoff||!orderDate||!Number.isFinite(hand)||!forecast.length||forecast.some(v=>!Number.isFinite(v)||v<0)||!Number.isFinite(g.lead_days)||g.lead_days<0)return null
  const facts=planningEventFacts(i,asof,today)
@@ -19,7 +19,7 @@ function riskSpec(row){
  if(local&&!(i.planning_facts?.incoming_pos||[]).some(po=>String(po.po_line_id||'').startsWith('local-device:'))&&local.unit===i.unit&&local.expected_on>=today)receipts.push({date:local.expected_on,quantity:local.qty})
  if(i.on_order>0)receipts.push({date:ordinalDate(dateOrdinal(today)+Math.ceil(g.lead_days)),quantity:i.on_order})
  receipts.sort((a,b)=>a.date.localeCompare(b.date))
- return {sku:i.sku,as_of:asof.slice(0,7),today:ordinalDate(dateOrdinal(asof)+1),history,forecast,on_hand:hand,on_order:0,receipts,order_by:orderDate,lead_days:g.lead_days,cover_months:settings.months_of_cover,quantity:Number.isFinite(g.quantity)?Math.max(0,g.quantity):0,receipt_history:i.receipt_history||[],...(Array.isArray(i.lead_multipliers)?{lead_multipliers:[...i.lead_multipliers]}:{})}
+ return {sku:i.sku,as_of:asof.slice(0,7),today:ordinalDate(dateOrdinal(asof)+1),history,forecast,on_hand:hand,on_order:0,receipts,order_by:orderDate,lead_days:g.lead_days,cover_months:resolveOrderSettings(i,settings).settings.months_of_cover,quantity:Number.isFinite(g.quantity)?Math.max(0,g.quantity):0,receipt_history:i.receipt_history||[],...(Array.isArray(i.lead_multipliers)?{lead_multipliers:[...i.lead_multipliers]}:{})}
 }
 function productRisk(row,multiplier=1){
  if(!riskReady(row)||typeof StockRunwayRisk==='undefined'||typeof StockRunwayRisk.simulateRisk!=='function')return null
@@ -28,7 +28,7 @@ function productRisk(row,multiplier=1){
  if(!cache||cache.key!==key){cache={key,values:new Map()};riskCache.set(row,cache)}
  if(cache.values.has(multiplier))return cache.values.get(multiplier)
  let result
- try{result=StockRunwayRisk.simulateRisk(spec,multiplier)}catch{riskMetrics.errors++;return null}
+ try{result=StockRunwayRisk.simulateRisk({...spec,include_shortfall:true},multiplier)}catch{riskMetrics.errors++;return null}
  // The shared API returns probabilities in [0,1], not rounded percentages.
  if(!result||![result.before,result.after].every(v=>Number.isFinite(v)&&v>=0&&v<=1))return null
  if(cache.values.size>=32)cache.values.clear();cache.values.set(multiplier,result)
@@ -79,7 +79,7 @@ const riskWlRowBase=wlRow
 wlRow=function(row,...args){const element=riskWlRowBase(row,...args),cell=element.querySelector('[data-column=risk]');if(cell){const value=wlValue(row,'risk');cell.classList.add('numeric');paintRiskCell(cell,row,value);cell.title=riskReady(row)?'Modelled chance of running out before the suggested order arrives. Not a guarantee.':'Risk withheld: check product data.'}return element}
 let riskColumnJob=null,riskColumnToken=0
 function riskScheduleColumns(){
- const enabled=wl.columns.includes('risk')&&typeof StockRunwayRisk!=='undefined'
+ const enabled=(wl.columns.includes('risk')||wl.columns.includes('lost_profit_est'))&&typeof StockRunwayRisk!=='undefined'
  if(!enabled){if(riskColumnJob){riskColumnJob=null;riskColumnToken++}return}
  const context=[currentRows,data,settings,currentToday,typeof localOrders==='undefined'?null:localOrders.records]
  if(riskColumnJob&&context.every((v,k)=>riskColumnJob.context[k]===v))return

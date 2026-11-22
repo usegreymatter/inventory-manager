@@ -1,4 +1,5 @@
 import { readBaseline, baselineResult } from './baseline.mjs'
+import beforeReviewedFeatures from './reviewed-v12-delta.cjs'
 import './planning.test.mjs'
 import './safety.test.mjs'
 
@@ -604,6 +605,7 @@ test('order panel leads the product browser, rows expose SKU, filters count, and
     'Lead time — days from order to delivery', 'Buffer days — extra demand cover', 'Each order should last (months)',
     'MOQ — smallest order the supplier accepts', 'Pack size — order in multiples of', 'Big-order check above (months of stock)', 'Overstocked if more than (months) of stock',
     "'Order now' if stock lasts under (days)", "'Order soon' if stock lasts under (days)",
+    'Total shelf life (days)', 'Age on arrival (days)', 'Minimum remaining life (days)',
     'Review period — how often you order (days)', 'Cost per order (ordering cost)',
     'Holding cost — % of item cost per year (storage, money tied up, damage)', 'Unit cost — what one unit costs you',
   ])
@@ -1303,7 +1305,7 @@ test('SDK shim receives palette, rebindable shortcut, shell host and validated d
   const keybind = ctx.entries.find(e => e.area === ui.sdk.KEYBINDS_AREA)
   const hostEntry = ctx.entries.find(e => e.area === 'titleBar.center')
   const directive = ctx.entries.find(e => e.area === ui.sdk.TRANSCRIPT_DIRECTIVE_AREA)
-  assert.equal(palette.data.label, 'Stock Runway: quick view')
+  assert.equal(palette.data.label, 'Inventory Manager: quick view')
   assert.deepEqual(plain(palette.data.keywords), ['stock', 'inventory', 'runway'])
   assert.deepEqual(plain(keybind.data.defaults), ['mod+shift+i'])
   assert.equal(keybind.data.id, palette.data.id)
@@ -2410,7 +2412,7 @@ test('quick capture waits for the mounted dialog host after reload without chang
   assert.equal(state.window.runwayDialogHostReady, true)
   state.cleanup(); assert.equal(state.window.runwayDialogHostReady, false)
   const reload = capture.slice(capture.indexOf('await page.reload()'), capture.indexOf('// The statusbar can disappear'))
-  assert.match(reload, /Stock Runway settings/)
+  assert.match(reload, /Inventory Manager settings/)
   assert.ok(reload.indexOf('window.runwayDialogHostReady === true') < reload.indexOf("await page.keyboard.press('Meta+Shift+i')"))
   assert.ok(reload.includes("'CSV survives reload'"))
 })
@@ -2507,9 +2509,10 @@ test('owner-approved planning settings and editors are pinned; historical checks
   // bytes in the approved snapshot; retain the original backtest baseline below.
   const approved=JSON.parse(fs.readFileSync(new URL('../docs/seasonal-logic-baseline.json',import.meta.url),'utf8'))
   const methods=JSON.parse(fs.readFileSync(new URL('../docs/forecast-methods-baseline.json',import.meta.url),'utf8'))
+  const guardedSource=beforeReviewedFeatures(source,'plugin')
   for (const original of approved.approvedBlocks) {
     const {start,end,sha256}=methods.approvedBlocks.find(b=>b.start===original.start) || original
-    const current=source.slice(source.indexOf(start),source.indexOf(end,source.indexOf(start)))
+    const current=guardedSource.slice(guardedSource.indexOf(start),guardedSource.indexOf(end,guardedSource.indexOf(start)))
     assert.equal(createHash('sha256').update(current).digest('hex'),sha256)
     assert.notEqual(createHash('sha256').update(current+'mutation').digest('hex'),sha256)
   }

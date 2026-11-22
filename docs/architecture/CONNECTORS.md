@@ -4,7 +4,7 @@ Lifecycle: proposed (design only, nothing here is implemented yet)
 
 ## In plain words
 
-A connector copies the facts Stock Runway needs out of a business system: products, stock per warehouse, past sales, open purchase orders, suppliers, costs and lead times. It writes them into the **same local CSV bundle** the app already reads (`docs/data/CONTRACT.md`, version 1.0). The forecast engine never talks to an ERP. It only reads that bundle.
+A connector copies the facts Inventory Manager needs out of a business system: products, stock per warehouse, past sales, open purchase orders, suppliers, costs and lead times. It writes them into the **same local CSV bundle** the app already reads (`docs/data/CONTRACT.md`, version 1.0). The forecast engine never talks to an ERP. It only reads that bundle.
 
 Defaults that never change without the owner's say-so:
 
@@ -105,7 +105,7 @@ Contract rules carried over unchanged: case-sensitive ids, blank means unknown, 
 
 | Mode | How it starts | Good for | Notes |
 |---|---|---|---|
-| **File drop** | User or ERP export job places files in a watched local folder; `stock_runway.py sync --connector csv --from DIR` | Any ERP with export (SAP B1, Sage, QuickBooks Desktop, SFTP downloads) | No credentials at all. SFTP fetching is a separate step done by the business's own tool; Stock Runway reads only local files |
+| **File drop** | User or ERP export job places files in a watched local folder; `stock_runway.py sync --connector csv --from DIR` | Any ERP with export (SAP B1, Sage, QuickBooks Desktop, SFTP downloads) | No credentials at all. SFTP fetching is a separate step done by the business's own tool; Inventory Manager reads only local files |
 | **Scheduled pull** | Hermes cron or launchd runs `stock_runway.py sync --connector odoo` | API ERPs (Odoo, Zoho, ERPNext, Xero, QuickBooks Online, Shopify) | Default schedule: daily after close of business. The run still lands in staging. Auto-apply needs `apply: auto` in config plus a clean validation and diff limits (§6) |
 | **Webhook** (later, P5+) | ERP calls a local endpoint saying "something changed" | Near-real-time stock | The webhook is **only a trigger**: it schedules a pull. The payload is never used as data. Signature checked with a constant-time compare **before** parsing, body capped, event id deduped. It needs a listening server, so it ships last and needs owner approval |
 
@@ -169,7 +169,7 @@ OAuth connectors (Zoho, QuickBooks, Xero, Shopify custom apps) keep refresh toke
 - `.env*` files are git-ignored except `.env.example` (names only). A secret that ever lands in git is rotated, not just deleted.
 - Logs and envelopes may contain host labels, but never tokens, passwords, cookies, full auth headers or URLs with userinfo. Test C8 greps all outputs for the fixture secret values.
 - Server-side fetches use one `safe_fetch()`: HTTPS only, host must equal the configured host, private and reserved IPs refused (DNS resolved first), redirects not followed across hosts, timeout plus byte cap. AI models never supply URLs.
-- Least privilege: the docs for each connector tell the owner to create a dedicated **read-only API user** in the ERP. Stock Runway's own allowlist is the second lock, not the only one.
+- Least privilege: the docs for each connector tell the owner to create a dedicated **read-only API user** in the ERP. Inventory Manager's own allowlist is the second lock, not the only one.
 
 ## 10. Conformance kit (every connector must pass)
 

@@ -4,7 +4,7 @@
 const path = require('node:path'), fs = require('node:fs'), { pathToFileURL } = require('node:url')
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright')
 const root = path.resolve(__dirname, '..'), out = path.join(root, 'docs/img')
-const page_url = pathToFileURL(path.join(root, 'standalone/stock-runway.html')).href
+const page_url = pathToFileURL(path.join(root, 'standalone/inventory-manager.html')).href
 ;(async () => {
   fs.mkdirSync(out, { recursive: true })
   const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_EXECUTABLE || undefined })

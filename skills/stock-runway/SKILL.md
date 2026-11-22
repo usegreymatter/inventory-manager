@@ -1,9 +1,9 @@
 ---
 name: stock-runway
-description: "Use when the user asks about inventory coverage, likely stock run-out, or forecast reliability."
+description: "Use Inventory Manager (by GreyMatter), the local read-only reorder planner, when the user asks about inventory coverage, likely stock run-out, or forecast reliability."
 ---
 
-# Stock Runway
+# Inventory Manager
 
 Use `stock_runway` to estimate when an item may run out and to check how closely recent forecasts matched sales.
 

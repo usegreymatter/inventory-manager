@@ -1,7 +1,7 @@
 // Lifecycle: living. Offline declutter approval proof, not the full release gate.
 'use strict'
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),{pathToFileURL}=require('node:url')
-const out=path.resolve(__dirname,'../.scratch/pp'),url=pathToFileURL(path.join(__dirname,'stock-runway.html')).href,report={checks:[],errors:[],screenshots:[],not_checked:['Owner design approval','Full suite / linters','Real iPhone / Safari','Arabic UI','Live inventory']}
+const out=path.resolve(__dirname,'../.scratch/pp'),url=pathToFileURL(path.join(__dirname,'inventory-manager.html')).href,report={checks:[],errors:[],screenshots:[],not_checked:['Owner design approval','Full suite / linters','Real iPhone / Safari','Arabic UI','Live inventory']}
 const check=(name,value)=>{report.checks.push({name,pass:!!value});assert.ok(value,name)}
 const settle=p=>p.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))))
 

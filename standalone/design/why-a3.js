@@ -67,8 +67,9 @@ function openWhyPass(row, trigger) {
     : node('p',STRINGS.cantExplain))
   if(!validBreakdown(steps,row.guidance.quantity)){openSheet($('why-dialog'),trigger);return}
   const forecast=forecastDetails(row.item,row.guidance,settings,data.as_of,currentRows.map(r=>r.item))
-  const method=node('p',S('methodLabel',{name:forecast.method_name==="Average"&&forecast.method==='champion'?STRINGS.method_baseline:STRINGS['method_'+forecast.method]}),'forecast-method');method.dataset.forecastMethod=forecast.method
+  const method=node('p',S('methodLabel',{name:row.item.forecast_method?.requested==='recommended'?forecast.method_name:forecast.method_name==="Average"&&forecast.method==='champion'?STRINGS.method_baseline:STRINGS['method_'+forecast.method]||forecast.method_name}),'forecast-method');method.dataset.forecastMethod=forecast.method
   $('why-chart').append(method)
+  if(forecast.note)$('why-chart').append(node('p',forecast.note,'forecast-assumption'))
   if(row.guidance.undated_on_order_assumed_within_lead){const note=node('p',STRINGS.undatedIncomingAssumption,'forecast-assumption');note.dataset.undatedIncomingAssumption='true';$('why-chart').append(note)}
   if(forecast.tested_months>0)$('why-chart').append(node('p',S('testedMonths',{count:forecast.tested_months}),'forecast-tested'))
   const classes=evaluationSnapshot.health.features.demand_classes

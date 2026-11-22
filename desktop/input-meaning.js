@@ -121,6 +121,15 @@ export function reviewCsvInputMeaning(sheets,data,choices={},today=null) {
 }
 export function attachInputMeaning(data,review) {
   for(const item of data.items){
+    for(const note of item.expiry_warnings||[]){
+      if(!note.includes('lot total does not match')&&!note.includes('missing lot quantity'))continue;
+      const message=item.sku+': '+note;
+      if(!review.reasons.includes(message))review.reasons.push(message);
+      if(!review.warnings.includes(message))review.warnings.push(message);
+      let row=review.affected.find(r=>r.sku===item.sku);if(!row){row={sku:item.sku,warnings:[]};review.affected.push(row);}
+      if(!row.warnings.includes(message))row.warnings.push(message);
+      review.requires_ack=true;
+    }
     if((review.choices.incoming_not_in_file||item.on_order==null)&&!review.incoming_unknown.includes(item.sku)){
       review.incoming_unknown.push(item.sku)
       if(!review.warnings.includes(INCOMING_UNKNOWN))review.warnings.push(INCOMING_UNKNOWN)

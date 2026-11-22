@@ -4,7 +4,7 @@
  * `champion` additionally uses the existing core forecastMethodValues function.
  * Scenario frequencies are not calibrated real-world guarantees.
  */
-(function (root) {
+;(function (root) {
   'use strict';
   const PATHS = 1000, DEFAULT_LEADS = [.9, 1, 1, 1.1, 1.25, 1.5];
   const own = (x, k) => Object.prototype.hasOwnProperty.call(x, k);
@@ -132,7 +132,7 @@
     }
     const avg = history.length ? history.reduce((a, b) => a+b, 0)/history.length : 0,
       factors = avg ? history.map(v => v/avg) : [1], n = factors.length, seed = seedFor(spec.sku, asOf);
-    let state = seed, before = 0, after = 0;
+    let state = seed, before = 0, after = 0, shortfallBefore = 0;
     for (let path = 0; path < PATHS; path++) {
       state = next(state);
       const arrival = Math.max(today, order)+Math.ceil(lead*leads[state%leads.length]), [segments, count] = timelines.get(arrival), draws = [];
@@ -145,12 +145,15 @@
       for (const [m, demand, added, pre, post] of segments) {
         left += added;
         const amount = demand*draws[m], missed = amount-left > Math.max(1, amount, left)*1e-12;
+        if (pre) shortfallBefore += Math.max(0, amount-left);
         if (missed) { missedBefore ||= pre; missedAfter ||= post; }
         left = Math.max(0, left-amount);
       }
       before += Number(missedBefore); after += Number(missedAfter);
     }
-    return {before:before/PATHS, after:after/PATHS, paths:PATHS, seed, thin_history:history.length < 8};
+    const result = {before:before/PATHS, after:after/PATHS, paths:PATHS, seed, thin_history:history.length < 8};
+    if (spec.include_shortfall === true) result.expected_shortfall_before = shortfallBefore/PATHS;
+    return result;
   }
   root.StockRunwayRisk = Object.freeze({predictionBands, simulateRisk});
 }(globalThis));

@@ -207,5 +207,75 @@
     }
     return {forecast: curve, classification, ...metadata, fallback: metadata.method !== selected};
   }
-  return Object.freeze({METHODS, METHOD_LABELS, PRESETS, forecast, classify, forecast_with_metadata});
+  // Separate experimental registry: do not change November's fixed methods.
+  const RECOMMEND_CANDIDATES = Object.freeze(['current','ses','seasonal_naive','sba','combination']);
+  function recommend_forecast(xs, horizon=12, method='current') {
+    values(xs);
+    if (!Number.isInteger(horizon)||horizon<1||horizon>120) fail('Horizon must be an integer from 1 to 120');
+    if (!RECOMMEND_CANDIDATES.includes(method)) fail('Unknown recommendation candidate');
+    if (method!=='current') return forecast(xs,horizon,method);
+    if (!xs.length) return Array(horizon).fill(0);
+    const positive=xs.filter(y=>y>0),avg=mean(positive);
+    const smooth=xs.length>=3&&positive.length>0&&xs.length/positive.length<1.32&&avg*avg>0&&mean(positive.map(y=>(y-avg)*(y-avg)))/(avg*avg)<.49;
+    const tail=xs.slice(-12);let curve;
+    if(smooth)curve=Array(horizon).fill(mean(tail));
+    else{
+      const base=xs.length>=12?mean(tail):0;
+      const factors=xs.length<12?Array(12).fill(1):tail.map(y=>base?Math.max(.5,Math.min(2,y/base)):1);
+      const level=xs.length>=12?mean(xs.slice(-3).map((y,j)=>y/factors[9+j])):mean(xs.slice(-3));
+      curve=Array.from({length:horizon},(_,h)=>level*factors[h%12]);
+    }
+    return curve.map(y=>rounded(Math.min(MAX_VALUE,Math.max(0,y))));
+  }
+  function recommend(xs,previous=null,stockout_adjust=false){return recommendInternal(xs,previous,stockout_adjust,false)}
+  function recommendInternal(xs,previous=null,stockout_adjust=false,priorOnly=false,fitCache=new Map()){
+    values(xs);
+    if(previous!==null&&(typeof previous!=='string'||!RECOMMEND_CANDIDATES.includes(previous)))fail('Unknown previous recommendation candidate');
+    if(typeof stockout_adjust!=='boolean')fail('stockout_adjust must be boolean');
+    xs=xs.slice(-48);
+    // Call-local: reconstructed prior/current folds share only exact pure fits.
+    // Selection still recomputes for each incumbent/mode; no results escape into
+    // a later call. At most 9 unique origins x 5 candidates + 2 final curves.
+    const predict=(prefix,horizon,method)=>{
+      const key=JSON.stringify([prefix,horizon,method]);
+      if(!fitCache.has(key))fitCache.set(key,recommend_forecast(prefix,horizon,method));
+      return fitCache.get(key);
+    };
+    const reconstructed=previous===null&&xs.length>=21&&!priorOnly;
+    if(reconstructed)previous=recommendInternal(xs.slice(0,-1),null,stockout_adjust,true,fitCache).method;
+    const incumbent=previous||'current',folds=[],scores={},proxies={};
+    const suffix=stockout_adjust?' Stockout adjustment on: supplied values must already be corrected; zeros alone are not evidence.':' Stockout adjustment off: observed sales may understate demand.';
+    if(xs.length>=20&&xs.some(y=>y>0)){
+      for(let origin=Math.max(12,xs.length-10);origin<xs.length-2;origin++){
+        const prefix=xs.slice(0,origin),actual=xs.slice(origin,origin+3);
+        const predictions=Object.fromEntries(RECOMMEND_CANDIDATES.map(m=>[m,predict(prefix,3,m)]));
+        folds.push({origin,actual,predictions});
+      }
+      for(const method of RECOMMEND_CANDIDATES){
+        const losses=[],costs=[];
+        for(const fold of folds){
+          const prefix=xs.slice(0,fold.origin),scale=Math.max(...prefix,...fold.actual)||1,p=prefix.map(y=>y/scale),lag=p.length>=24?12:1;
+          const differences=p.slice(lag).map((y,i)=>(y-p[i])**2);
+          const denominator=Math.max(mean(differences),(.05*mean(p))**2,1e-24);
+          const errors=fold.predictions[method].map((pred,i)=>(pred-fold.actual[i])/scale);
+          losses.push((.5*mean(errors.map(e=>e*e))+.5*mean(errors)**2)/denominator);
+          const error=sum(errors);
+          costs.push((Math.max(error,0)+2*Math.max(-error,0))/Math.max(mean(p)*3,1e-12));
+        }
+        scores[method]=rounded(Math.sqrt(mean(losses)));proxies[method]=rounded(mean(costs));
+      }
+    }
+    let picked=incumbent,improvement=0,reason;
+    if(Object.keys(scores).length){
+      let winner=RECOMMEND_CANDIDATES[0];
+      for(const m of RECOMMEND_CANDIDATES)if(scores[m]<scores[winner])winner=m;
+      improvement=scores[incumbent]?(scores[incumbent]-scores[winner])/scores[incumbent]:0;
+      const margin=previous&&!(reconstructed&&previous==='current') ? .15 : .10;
+      if(winner!==incumbent&&improvement>=margin&&proxies[winner]<=proxies[incumbent]*1.02){
+        picked=winner;reason='rolling-origin scaled error improves by at least '+Math.round(margin*100)+'% with no material worsening of the backtest order proxy';
+      }else reason=(reconstructed?'keeping reconstructed prior-month choice':previous?'keeping previous choice':'keeping basic Current hybrid')+': no clear error and order-proxy advantage';
+    }else reason=(reconstructed?'keeping reconstructed prior-month choice':previous?'keeping previous choice':'keeping basic Current hybrid')+': fewer than 20 months or no positive demand';
+    return {method:picked,reason:reason+suffix,forecast:predict(xs,12,picked),scores,order_proxy:proxies,folds:folds.length,backtest:folds,improvement:rounded(Math.max(0,improvement)),stockout_adjust,history_used:xs.length,range_available:false,previous_method:previous,hysteresis:previous!==null};
+  }
+  return Object.freeze({METHODS, METHOD_LABELS, PRESETS, forecast, classify, forecast_with_metadata, RECOMMEND_CANDIDATES, recommend, recommend_forecast});
 }));

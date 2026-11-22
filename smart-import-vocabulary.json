@@ -5,5 +5,6 @@
   "supplier": ["المورد", "اسم المورد"],
   "supplier_days": ["مدة التوريد", "أيام التوريد"],
   "unit": ["الوحدة"],
-  "unit_cost": ["avg cost", "تكلفة الوحدة"]
+  "unit_cost": ["avg cost", "تكلفة الوحدة"],
+  "sale_price": ["sale price", "price", "selling price", "retail price", "sales price", "list price"]
 }

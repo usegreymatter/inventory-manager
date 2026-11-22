@@ -8,7 +8,7 @@ from baseline import FIXTURES, read_baseline
 class BaselineTests(unittest.TestCase):
     def test_all_vendored_bytes_match_manifest_without_git(self):
         manifest = json.loads((FIXTURES / 'manifest.json').read_text())
-        self.assertEqual(len(manifest), 34)
+        self.assertEqual(len(manifest), 43)
         with mock.patch('baseline.subprocess.check_output', side_effect=AssertionError('git must not run')):
             for spec, expected in manifest.items():
                 with self.subTest(spec=spec):

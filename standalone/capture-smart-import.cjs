@@ -289,7 +289,7 @@ async function main() {
     const focused = process.argv.includes('--repeat-safety')
     const matrix = focused ? completeMatrix.filter(entry => entry.fixture.filename === 'messy_title.csv') : completeMatrix
     report.focusedRepeatSafety = focused
-    const bundleFile = path.join(root, 'standalone/stock-runway.html')
+    const bundleFile = path.join(root, 'standalone/inventory-manager.html')
     const bundle = fs.readFileSync(bundleFile, 'utf8')
     report.bundleSha256 = createHash('sha256').update(bundle).digest('hex')
     report.bundleSmartImportReady = bundle.includes("dialog.id='smart-import'")

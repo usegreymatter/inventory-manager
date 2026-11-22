@@ -1,0 +1,21 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import test from 'node:test';
+const read=p=>fs.readFileSync(new URL('../'+p,import.meta.url),'utf8');
+test('standalone profit detail wrapper, switch and settings preservation are wired',()=>{
+  const settings=read('standalone/design/settings-gm-b.js'),build=read('standalone/build.py');
+  assert.match(settings,/profit_suggestion:\[/);
+  assert.match(settings,/stockout_adjust','profit_suggestion'/);
+  const portable=settings.match(/function gmPortableSettings\(\)\{return (.*?)\}/)[1];
+  const input={profit_suggestion:true,sale_price:27.5,shelf_life_days:14,review_days:7,product_overrides:{A:{sale_price:31}}};
+  const copy=Function('settings','return '+portable)(input);
+  assert.deepEqual(copy,input);
+  copy.product_overrides.A.sale_price=99;
+  assert.equal(input.product_overrides.A.sale_price,31);
+  const display=read('standalone/design/profit-order-gm-b.js');
+  assert.match(build,/profit-order-gm-b.js/);
+  assert.match(display,/drawProductPage=function/);
+  assert.match(display,/chartPanel=function/);
+  assert.match(display,/profitSuggestionSentence\(row.guidance\)/);
+  assert.doesNotMatch(display,/innerHTML|insertAdjacentHTML/);
+});

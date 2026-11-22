@@ -5,7 +5,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE)
 const root=path.resolve(__dirname,'..'),out=path.join(root,'.scratch/input-meaning');fs.mkdirSync(out,{recursive:true})
 const csv='Stock report\nsku,name,unit,on_hand,supplier_days,2026-07,2026-08,2026-09,reserved,on_order,Sales unit\n'+Array.from({length:5},(_,i)=>`P${i},Synthetic ${i},pcs,10,14,${i<2?'':'3'},3,3,4,50,${i===0?'boxes':'pcs'}`).join('\n')+'\n'
 const file={name:'synthetic-meaning.csv',mimeType:'text/csv',buffer:Buffer.from(csv)}
-const probe=path.join(out,'probe.html'),html=fs.readFileSync(path.join(root,'standalone/stock-runway.html'),'utf8');fs.writeFileSync(probe,html.replace('</script>','\nwindow.meaningQA=()=>({data,sourceName});\n</script>'))
+const probe=path.join(out,'probe.html'),html=fs.readFileSync(path.join(root,'standalone/inventory-manager.html'),'utf8');fs.writeFileSync(probe,html.replace('</script>','\nwindow.meaningQA=()=>({data,sourceName});\n</script>'))
 const report={checks:[],screenshots:[],network:[],errors:[]}
 function check(label,value){report.checks.push({label,pass:!!value});assert.ok(value,label)}
 ;(async()=>{const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_EXECUTABLE});try{

@@ -41,7 +41,9 @@ def verify(revision='af2b1c7'):
     for path in paths:
         before = old.load_csv(str(path))
         after = current.load_csv(str(path))
-        assert before['items'] == after['items'], path.name
+        expected = [dict(item, sale_price=9.99) for item in before['items']] if path.name == 'quickbooks.csv' else before['items']
+        # Owner-approved additive field only; every historical quantity stays exact.
+        assert expected == after['items'], path.name
         assert before['months'] == after['months'], path.name
         assert before['as_of'] == after['as_of'], path.name
         results.append({'file': str(path.relative_to(ROOT)), 'items': len(after['items']),

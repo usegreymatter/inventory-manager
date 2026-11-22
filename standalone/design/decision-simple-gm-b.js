@@ -25,7 +25,7 @@ function decisionProduct(row){
  const on=decisionDetail(),wrap=overlay.querySelector('.product-page-content'),figures=wrap.querySelector('.product-page-figures'),header=wrap.querySelector('.product-page-heading');overlay.dataset.decisionDetail=String(on)
  if(decisionBeyondView(row)){figures.firstElementChild.querySelector('strong').textContent='—';figures.firstElementChild.querySelector('small').textContent='Beyond 6-month view'}
  const toggle=decisionToggle('product-show-detail');figures.after(toggle)
- for(const el of wrap.querySelectorAll('.product-page-chart,.product-ledger,.product-inputs,.product-risk,[data-forecast-method]'))el.hidden=!on
+ for(const el of wrap.querySelectorAll('.product-page-chart,.product-ledger,.product-inputs,.product-risk,[data-forecast-method]:not([data-recommended-method])'))el.hidden=!on
  const runs=figures.lastElementChild;runs.hidden=!on
  const hand=node('div');hand.append(node('span','On hand'),node('strong',row.item.on_hand==null?'Unknown':orderAmount(row.item.on_hand)),node('small',row.item.unit));figures.prepend(hand)
  const result=productRisk(row),risk=node('p',null,'decision-product-risk');risk.append(node('span','Risk '),riskChip(row,result?.before??null,false));header.append(risk)
@@ -42,6 +42,43 @@ chartPanel=function(row){
  const why=node('p','Why this amount: '+decisionWhyLine(row),'decision-why');why.title=decisionWhy(row);why.setAttribute('aria-description',decisionWhy(row));heading.after(why,decisionToggle('panel-show-detail'))
  if(!on){heading.after(decision);const dates=decision.querySelector('.dates');dates?.replaceChildren(stat('On hand',row.item.on_hand==null?'Unknown':orderAmount(row.item.on_hand)),stat('Order by',row.guidance.order_by==='now'?'Today':row.guidance.order_by?shortDate(row.guidance.order_by):'Not needed'));const risk=node('p',null,'decision-product-risk');risk.append(node('span','Risk '),riskChip(row,productRisk(row)?.before??null,false));heading.append(risk)}return panel
 }
+// Shelf-life presentation reads evaluated shared-core guidance, never recalculates caps.
+function shelfBadge(row,detail=false){
+ if(!row?.guidance.capped)return null
+ const g=row.guidance,badge=node(detail?'p':'span','Shelf-life capped · '+orderAmount(g.shelf_cap_qty)+' '+row.item.unit+(detail?' ceiling. '+g.cap_reason:''),'shelf-capped');badge.dataset.shelfCapped='true';badge.title=g.cap_reason||'';return badge
+}
+function shelfClearanceSection(rows){
+ const lots=rows.flatMap(({item,guidance})=>(guidance.expiring||[]).filter(lot=>lot.at_risk_qty>0).map(lot=>({sku:item.sku,name:item.name,unit:item.unit,...lot}))).sort((a,b)=>a.clear_by<b.clear_by?-1:a.clear_by>b.clear_by?1:0)
+ if(!lots.length)return null
+ const section=node('section',null,'shelf-clearance');section.dataset.clearanceList='true';section.setAttribute('aria-label','Get rid of by')
+ section.append(node('h2','Get rid of by'),node('p','Commercial clearance estimate: consider discounting or returning these lots by the dates below. This is not a safety/compliance control.','product-note'))
+ const list=node('ul');section.append(list)
+ // Bound the initial DOM for large lot ledgers; every row stays reachable.
+ let shown=0
+ const more=wlBtn('Show next 100 lots',append)
+ function append(){const end=Math.min(shown+100,lots.length);for(;shown<end;shown++){const lot=lots[shown],line=node('li',lot.name+' · '+lot.sku+' · lot '+lot.lot+' — '+lot.clear_by+' · '+orderAmount(lot.at_risk_qty)+' '+lot.unit+' at risk (expiry '+lot.expiry+')');line.dataset.clearanceSku=lot.sku;list.append(line)}more.hidden=shown===lots.length}
+ section.append(more);append();return section
+}
+function shelfRenderClearance(){
+ $('shelf-clearance')?.remove();const section=shelfClearanceSection(currentRows)
+ if(section){section.id='shelf-clearance';section.prepend(node('p','All loaded products · independent of worklist filters.','product-note'));wlSummary.after(section)}
+}
+const shelfBuildList=buildList
+buildList=function(...args){const result=shelfBuildList(...args);shelfRenderClearance();return result}
+// Expiry interpretation/quantity warnings belong beside the decision, even in
+// Simple mode. node() assigns textContent: imported text is never HTML.
+function shelfWarnings(row){
+ const warnings=row?.guidance.expiry_warnings||row?.item.expiry_warnings||[];if(!warnings.length)return null
+ const box=node('section',null,'expiry-warnings');box.dataset.expiryWarnings='true';box.setAttribute('aria-label','Check expiry data')
+ for(const text of warnings){const line=node('p',text,'warning');line.setAttribute('role','status');box.append(line)}return box
+}
+const shelfWorkRow=wlRow
+wlRow=function(row,...args){const element=shelfWorkRow(row,...args),badge=shelfBadge(row),warnings=shelfWarnings(row);if(badge)element.querySelector('.work-sku')?.append(badge);if(warnings)element.querySelector('.work-product')?.append(warnings);return element}
+const shelfDrawProduct=drawProductPage
+drawProductPage=function(row){shelfDrawProduct(row);if(!row)return;const figures=productPage.overlay?.querySelector('.product-page-figures');if(!figures)return;const badge=shelfBadge(row,true),section=shelfClearanceSection([row]),warnings=shelfWarnings(row);if(section)figures.after(section);if(badge)figures.after(badge);if(warnings)figures.after(warnings)}
+const shelfChartPanel=chartPanel
+chartPanel=function(row){const panel=shelfChartPanel(row),badge=shelfBadge(row,true),section=shelfClearanceSection([row]),warnings=shelfWarnings(row);if(section)panel.append(section);if(badge)panel.prepend(badge);if(warnings)panel.prepend(warnings);return panel}
+shelfRenderClearance()
 // Match device preference on a fresh dataset; explicit saved views still win.
 // Initial mode is chosen by wlRefresh for every dataset, not only at boot.
 wlRenderControls();wlRenderRows();if(productPage.overlay)drawProductPage(rowMap.get(selectedSku))

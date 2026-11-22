@@ -1,7 +1,7 @@
 'use strict'
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),{pathToFileURL}=require('node:url')
 const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright')
-const out=path.join(__dirname,'../.scratch/pp'),url=pathToFileURL(path.join(__dirname,'stock-runway.html')).href,report={checks:[],errors:[],network:[],contrast:[],whiteAllowlist:[],screenshots:[]}
+const out=path.join(__dirname,'../.scratch/pp'),url=pathToFileURL(path.join(__dirname,'inventory-manager.html')).href,report={checks:[],errors:[],network:[],contrast:[],whiteAllowlist:[],screenshots:[]}
 function check(name,value,details){report.checks.push({name,pass:!!value,details});if(!value)throw Error(name+' '+JSON.stringify(details))}
 async function settle(p){await p.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))))}
 async function audit(p,label,dark){await settle(p);const result=await p.evaluate(()=>{

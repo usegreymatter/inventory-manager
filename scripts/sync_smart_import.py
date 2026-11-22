@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Embed the dependency-free workbook reader and shared vocabulary in Desktop core."""
 import argparse
+import ast
 import json
 from pathlib import Path
 import re
@@ -15,7 +16,12 @@ def generated():
     # Keep a stable blank-line separator independent of authored EOF formatting.
     module = re.sub(r'^export\s+', '', module, flags=re.M).rstrip('\n') + '\n\n'
     vocabulary = json.dumps(json.loads((ROOT / 'smart-import-vocabulary.json').read_text()), ensure_ascii=True, separators=(',', ':'))
+    price_aliases = json.dumps(json.loads(vocabulary)['sale_price'])
     return f'''{START}
+// Add import-only metadata here so every protected forecasting byte stays frozen.
+ERP_ALIASES.sale_price = {price_aliases}
+ERP_ALIASES.sale_price.forEach((name,rank) => ERP_LOOKUP.set(name, ['sale_price',rank]))
+if (!IMPORT_PER_ITEM.includes('sale_price')) IMPORT_PER_ITEM.push('sale_price')
 const SMART_WORKBOOK = (() => {{
 {module}
 const vocabulary = {vocabulary}
@@ -36,12 +42,18 @@ export function understandStockWorkbook(sheets,sheet=null,overrides=null) {{
 '''
 
 
-def main():
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--check', action='store_true')
-    args = parser.parse_args()
-    target = ROOT / 'desktop/plugin.js'
-    source = target.read_text()
+def _literal(path, name):
+    """Read shared import metadata without importing the application package."""
+    nodes = [node.value for node in ast.parse(path.read_text()).body
+             if isinstance(node, ast.Assign)
+             and any(isinstance(target, ast.Name) and target.id == name for target in node.targets)]
+    if len(nodes) != 1:
+        raise SystemExit(f'{name} source assignment is ambiguous.')
+    return ast.literal_eval(nodes[0])
+
+
+def synchronized_source(source):
+    """Return the complete importer mirror, without writing its target."""
     block = generated()
     if START in source:
         if source.count(START) != 1 or source.count(END) != 1:
@@ -53,13 +65,23 @@ def main():
         if source.count(anchor) != 1:
             raise SystemExit('readStockFile anchor changed.')
         updated = source.replace(anchor, block + anchor, 1)
+    return updated
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--check', action='store_true')
+    args = parser.parse_args()
+    target = ROOT / 'desktop/plugin.js'
+    source = target.read_text()
+    updated = synchronized_source(source)
     if args.check:
         if updated != source:
-            raise SystemExit('Smart workbook core is stale. Run scripts/sync_smart_import.py.')
-        print('Smart workbook core and vocabulary are in sync.')
+            raise SystemExit('Smart workbook core or import metadata is stale. Run scripts/sync_smart_import.py.')
+        print('Smart workbook core, vocabulary and import metadata are in sync.')
     else:
         target.write_text(updated)
-        print('Synced smart workbook core and vocabulary.')
+        print('Synced smart workbook core, vocabulary and import metadata.')
 
 
 if __name__ == '__main__':

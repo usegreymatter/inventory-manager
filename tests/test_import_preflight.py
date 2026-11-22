@@ -30,7 +30,8 @@ def test_valid_examples_unchanged_items():
     for path in sorted((ROOT/'docs/erp-examples').glob('*.csv'))+[ROOT/'samples/synthetic/stock.csv']:
         old=load_csv(str(path),strict=True)
         new=load_csv(str(path))
-        assert new['items']==old['items'],path.name
+        expected=[dict(item,sale_price=9.99) for item in old['items']] if path.name=='quickbooks.csv' else old['items']
+        assert new['items']==expected,path.name
         assert new['months']==old['months']
         assert new['as_of']==old['as_of']
 

@@ -45,7 +45,7 @@ function renderer(document){
 }
 function visible(node){for(let n=node;n;n=n.parent)if('hidden' in n.attrs||n.tag==='details'&&!('open' in n.attrs)||n.tag==='dialog'&&!('open' in n.attrs))return false;return true}
 const parsed={items:[{sku:'A',input_warnings:['Check reserved stock']}],input_meaning:{warnings:['Check imported quantities']}}
-const pages=['standalone/stock-runway.html','standalone/stock-runway-demo-1000.html',...['baseline','option-a','option-a2','option-a3','option-b','option-gm-a','option-gm-b','option-gm-c'].map(n=>`standalone/design/${n}.html`)]
+const pages=['standalone/inventory-manager.html','standalone/inventory-manager-demo-1000.html',...['baseline','option-a','option-a2','option-a3','option-b','option-gm-a','option-gm-b','option-gm-c'].map(n=>`standalone/design/${n}.html`)]
 for(const path of pages)for(const withoutWorklist of [false,true]){
   test(`${path}: ${withoutWorklist?'fallback':'normal'} warning summary stays outside collapsed import controls`,()=>{
     const document=pageDOM(path,{withoutWorklist}),show=renderer(document)

@@ -14,6 +14,19 @@
 [data-design=option-gm-b] .product-page .product-order-action .local-order-actions button{background:transparent;color:var(--ink);border:1px solid var(--line)}
 .work-phone-summary small {display:flex;gap:12px;align-items:center}
 .work-phone-summary .decision-risk-chip {padding:0 6px;line-height:18px;font-size:11px}
+/* Commercial clearance and cap evidence remain visible in Simple and Detail. */
+.shelf-clearance {flex:0 0 auto;min-width:0;max-width:100%;max-height:min(320px,40dvh);overflow:auto;box-sizing:border-box;margin:16px 0;padding:16px;border:1px solid var(--line);border-radius:6px;overflow-wrap:anywhere}
+.shelf-clearance h2 {font-size:16px;margin:0 0 8px}
+.shelf-clearance ul {margin:8px 0;padding-inline-start:20px}
+.shelf-clearance li {margin:8px 0;font-size:13px;line-height:1.5;overflow-wrap:anywhere}
+.shelf-clearance button {min-height:44px;max-width:100%;white-space:normal}
+.shelf-capped {max-width:100%;font-size:12px;line-height:16px;color:var(--warn);overflow-wrap:anywhere;white-space:normal}
+.work-sku .shelf-capped {display:block;margin:0;line-height:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.work-product:has(.shelf-capped) .work-name {-webkit-line-clamp:1}
+.work-product:has(.shelf-capped) .work-sku-code {display:block;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.import-expiry-review {display:flex;align-items:flex-start;gap:8px;min-height:44px;overflow-wrap:anywhere}
+.import-expiry-review input {flex:0 0 auto;margin-top:4px}
+@media(max-width:600px){.shelf-clearance {padding:12px;margin:12px 0}.shelf-clearance li {font-size:12px}.work-sku .shelf-capped {font-size:11px}}
 body[data-table-detail=simple] .work-header-tools {visibility:hidden}
 @media(max-width:1023px){.work-views{flex-wrap:wrap}.work-tabs{flex:1 0 100%;width:100%}.work-saved{width:100%;justify-content:flex-end}.work-saved .decision-detail-toggle{margin-right:auto}}
 @media(max-width:600px){.product-page-figures,.product-page[data-decision-detail=false] .product-page-figures {gap:16px;grid-template-columns:repeat(2,minmax(0,1fr))}.decision-why{font-size:14px}.work-saved .decision-detail-toggle{flex-shrink:0}}

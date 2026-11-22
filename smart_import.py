@@ -17,7 +17,7 @@ from datetime import date, timedelta
 from decimal import Decimal, localcontext
 from pathlib import Path
 from xml.etree import ElementTree as ET
-from .csv_import import PER_ITEM, AMBIGUOUS_NUMBER, number_style, erp_number
+from .csv_import import PER_ITEM, LOT_FIELDS, lot_fields, merge_lots, AMBIGUOUS_NUMBER, number_style, erp_number
 
 MAX_INPUT = 20 * 1024 * 1024
 MAX_EXPANDED = 80 * 1024 * 1024
@@ -32,7 +32,7 @@ REVIEW_ALIASES = {
     'stock_unit': ['stock unit', 'stock uom', 'inventory unit'],
     'sales_unit': ['sales unit', 'sales uom', 'sold unit'],
 }
-NUMERIC_FIELDS = {'reserved', 'on_hand', 'on_order', 'supplier_days', 'demand_change_pct', 'quantity', *PER_ITEM}
+NUMERIC_FIELDS = {'reserved', 'on_hand', 'on_order', 'supplier_days', 'demand_change_pct', 'quantity', 'lot_qty', *PER_ITEM}
 BALANCE_ERROR = 'differing on-hand balances; use stock snapshot'
 DATE_HEADERS = ['date', 'transaction date', 'sales date', 'invoice date', 'document date', 'posting date', 'month', 'period']
 QUANTITY_HEADERS = ['quantity', 'qty', 'sales quantity', 'qty sold', 'quantity sold', 'units sold', 'sales', 'sold', 'demand', 'sales qty', 'quantity invoiced']
@@ -154,6 +154,7 @@ def read_workbook(path):
 
 
 def _read_xlsx(raw):
+    from .sources import ERP_ALIASES
     try:
         with zipfile.ZipFile(io.BytesIO(raw)) as archive:
             infos = archive.infolist()
@@ -244,7 +245,9 @@ def _read_xlsx(raw):
                             fmt = formats.get(fmt_id,'')
                             if fmt_id in (9,10) or '%' in re.sub(r'"[^\"]*"|\\.', '', fmt):
                                 percent_cells.append([row_index, col])
-                            if 14 <= fmt_id <= 22 or _date_format(fmt):
+                            if (14 <= fmt_id <= 22 or _date_format(fmt) or
+                                len(value) <= 256 and NUMERIC.fullmatch(value) and math.isfinite(float(value)) and 0 <= float(value) <= 2958465 and
+                                any(col < len(previous) and _key(previous[col]) in ERP_ALIASES['expiry'] for previous in rows[:min(row_index, 30)])):
                                 if len(value) > 256 or not NUMERIC.fullmatch(value): raise ValueError('Invalid Excel date value.')
                                 serial = float(value)
                                 if not math.isfinite(serial) or not 0 <= serial <= 2958465: raise ValueError('Invalid Excel date value.')
@@ -252,6 +255,12 @@ def _read_xlsx(raw):
                                 # Excel's fictional 1900-02-29 maps to 1900-02-28.
                                 epoch = date(1904,1,1) if epoch1904 else date(1899,12,31)
                                 value = (epoch + timedelta(days=days if epoch1904 or days < 60 else days-1)).isoformat()
+                                # A display-only month is an end-of-month expiry,
+                                # not the hidden day stored in the Excel serial.
+                                clean_format = re.sub(r'"[^"]*"|\\.|\[[^\]]*\]', '', fmt or ('mmm-yy' if fmt_id == 17 else '')).lower()
+                                if ('m' in clean_format and not re.search('[dhs]', clean_format) and
+                                    any(col < len(previous) and _key(previous[col]) in ERP_ALIASES['expiry'] for previous in rows[:min(row_index, 30)])):
+                                    value = value[:7]
                             elif re.fullmatch('0+',fmt) and re.fullmatch('[0-9]+',value):
                                 # Formatting can amplify tiny numeric cells independently
                                 # of ZIP expansion. Budget before allocating padded text.
@@ -307,6 +316,29 @@ def _yearless(raw):
     return _month(raw) is not None and not re.search('[0-9]',raw)
 
 
+def _transaction_dates_need_ack(sheet, picked, start):
+    """Review ambiguous numeric dates; never rewrite legacy month assignments."""
+    if 'date' not in picked: return False
+    index = picked['date'][0]
+    separators, orders = set(), set()
+    numeric_dates = False
+    for row in sheet['rows'][start:]:
+        if index >= len(row): continue
+        text = _trim(row[index])
+        match = re.fullmatch(r'([0-9]{1,2})([-/.])([0-9]{1,2})([-/.])([1-9][0-9]{3})', text)
+        if match:
+            numeric_dates = True
+            if match[2] != match[4]: return True
+            separators.add(match[2])
+            a, b = int(match[1]), int(match[3])
+            if a > 12: orders.add('dmy')
+            if b > 12: orders.add('mdy')
+        else:
+            iso = re.fullmatch(r'[1-9][0-9]{3}([-/.])[0-9]{1,2}([-/.])[0-9]{1,2}(?:[ T].*)?', text)
+            if iso and iso[1] != iso[2]: return True
+    return numeric_dates and (len(separators) > 1 or len(orders) != 1)
+
+
 def _sheet_numbers(sheet, picked, start):
     """Reuse preflight's convention per sheet, never guess lone Excel commas."""
     rows = sheet['rows'][start:]
@@ -321,11 +353,18 @@ def _sheet_numbers(sheet, picked, start):
     mixed = style == 'decimal-comma' and any('.' in r[i] and NUMERIC.fullmatch(erp_number(r[i], ',', i == lead_index))
                 and erp_number(r[i], effective, i == lead_index, style) == AMBIGUOUS_NUMBER
                 for r in rows for i in indices if i < len(r) and len(r[i]) <= 256)
-    def number(raw, lead=False):
+    price_style, price_mixed = style, mixed
+    quantity_indices = [i for i in indices if i not in picked.get('sale_price', [])]
+    style = number_style(rows, quantity_indices, effective)
+    mixed = style == 'decimal-comma' and any('.' in r[i] and NUMERIC.fullmatch(erp_number(r[i], ',', i == lead_index))
+                and erp_number(r[i], effective, i == lead_index, style) == AMBIGUOUS_NUMBER
+                for r in rows for i in quantity_indices if i < len(r) and len(r[i]) <= 256)
+    def number(raw, lead=False, price=False):
+        convention, mixed_style = (price_style, price_mixed) if price else (style, mixed)
         t = _trim(raw)
-        if delimiter is None and style == 'decimal-dot' and ',' in t and not re.fullmatch(r'[+-]?[0-9]{1,3}(?:,[0-9]{3})+\.[0-9]+', t):
+        if delimiter is None and convention == 'decimal-dot' and ',' in t and not re.fullmatch(r'[+-]?[0-9]{1,3}(?:,[0-9]{3})+\.[0-9]+', t):
             return AMBIGUOUS_NUMBER
-        result = erp_number(t, effective, lead, style, mixed)
+        result = erp_number(t, effective, lead, convention, mixed_style)
         return _add('0', result) if lead and NUMERIC.fullmatch(result) else result
     return number, style
 
@@ -343,6 +382,13 @@ def _add(left, right):
             text = format(a+b,'f')
             return (text.rstrip('0').rstrip('.') if '.' in text else text) or '0'
     except ArithmeticError: return 'Invalid quantity'
+
+
+def _lots_text(lots):
+    # Canonical numeric JSON uses fixed decimal tokens in both runtimes, so
+    # 1.0/1 and 1e-07/1e-7 cannot break exact CSV/report parity.
+    quote = lambda value: json.dumps(value, ensure_ascii=False, separators=(',', ':'))
+    return '[' + ','.join('{"lot":' + quote(lot['lot']) + ',"expiry":' + quote(lot['expiry']) + ',"qty":' + _add('0', str(lot['qty'])) + (',"expiry_acknowledged":false' if lot.get('expiry_acknowledged') is False else '') + '}' for lot in lots) + ']'
 
 
 def _same_number(left, right):
@@ -469,6 +515,7 @@ def _analyse(sheet, overrides, aliases, type_aliases):
     report,picked,headers,inferred,has_year=best
     records={}; warnings=[]; locations={}
     report['accepted_rows'] = []
+    report['rows_set_aside'] = []
     report['incoming_evidence'] = {}
     report['reserved_warnings'] = {}
     report['input_warnings'] = {}
@@ -507,18 +554,27 @@ def _analyse(sheet, overrides, aliases, type_aliases):
         if negative_fields:
             warnings.append(f'{name}: row {rownum} negative {negative_fields[0]} in ERP; row omitted.'); continue
         location = get('location').casefold().lower()
+        from .sources import SourceError
+        try:
+            lots, lot_notes = lot_fields(get, number, rownum, has_lot_qty='lot_qty' in picked)
+        except SourceError as error:
+            report['rows_set_aside'].append(dict(row=rownum, reason=str(error), values=row))
+            warnings.append(f'{name}: row {rownum}: {error}; row omitted.')
+            continue
+        lot_row = bool(lots) or 'lot_qty' in picked and any(get(f) for f in ('lot', 'expiry'))
+        snapshot_repeat = lot_row and sku in records and location in locations[sku]
         if sku in records:
             record = records[sku]
             reason = None
             if (record.get('unit') or record.get('stock_unit') or 'units') != (get('unit') or get('stock_unit') or 'units'):
                 reason = 'conflicting stock units'
-            elif report['layout'] != 'long':
+            elif report['layout'] != 'long' and not lot_row:
                 if 'location' not in picked: reason = 'duplicate sku without warehouse/location'
                 elif location and location in locations[sku]: reason = 'duplicate sku at same warehouse/location'
                 elif 'on_hand' in picked and (not record.get('on_hand') or not get('on_hand')): reason = 'missing on-hand stock for warehouse row'
             if reason:
                 warnings.append(f'{name}: {sku}: {reason}; first row kept; row omitted ({rownum}).'); continue
-            if report['layout'] != 'long':
+            if report['layout'] != 'long' and not lot_row:
                 warnings.append(f'{name}: {sku}: combined distinct warehouse/location rows; stock, on order, sales and receipts summed; first-row metadata kept.')
                 if not location or '' in locations[sku]:
                     warnings.append(f'{name}: {sku}: blank warehouse/location treated as Unspecified; all blank-location rows aggregated, including repeated blanks. Check for duplicate exports.')
@@ -536,12 +592,21 @@ def _analyse(sheet, overrides, aliases, type_aliases):
         if 'on_hand' in picked and 'available' in _key(headers[picked['on_hand'][0]]):
             report['reserved_warnings'].setdefault(sku, []).append('Stock header says already available — subtracting reserved again may double-count allocations.')
         record=records.setdefault(sku,{})
+        if lots:
+            record['lots'] = _lots_text(merge_lots([*json.loads(record.get('lots', '[]')), *lots]))
+        for note in lot_notes:
+            message = f'{name}: {sku}: {note}'
+            warnings.append(message)
+            if 'ambiguous expiry date' in note or 'missing lot quantity' in note:
+                report['reasons'].append(message)
+                report['input_warnings'].setdefault(sku, []).append(message)
         locations.setdefault(sku,set()).add(location)
         for f in picked:
-            if f in ('date','quantity','sku','location','active','inactive'): continue
+            if f in ('date','quantity','sku','location','active','inactive',*LOT_FIELDS): continue
             is_month=bool(re.fullmatch(r'(?:rcv:)?[0-9]{4}-[0-9]{2}',f))
+            if snapshot_repeat and (is_month or f in ('on_order', 'reserved') or f == 'on_hand' and ('lot_qty' in picked or bool(get('lots')))): continue
             numeric = is_month or f in NUMERIC_FIELDS
-            vals=[(number(row[i], f == 'supplier_days') if numeric else _trim(row[i])) if i < len(row) else '' for i in picked[f]]
+            vals=[(number(row[i], f == 'supplier_days', f == 'sale_price') if numeric else _trim(row[i])) if i < len(row) else '' for i in picked[f]]
             for j, index in enumerate(picked[f]):
                 if numeric and (rownum - 1, index) in percent_cells and vals[j]:
                     vals[j] = _percent(vals[j]) if f == 'demand_change_pct' else 'percentage-formatted quantity; use stock units'
@@ -626,6 +691,7 @@ def contributor_metadata(sheet, meta):
     number, _ = _sheet_numbers(sheet, picked, meta['header_row'])
     accepted = set(meta.get('accepted_rows', []))
     warnings, missing, reasons, first, identical, informational = {}, {}, [], {}, {}, {}
+    lot_snapshots = {}
     def mark(sku, message):
         message = _short_label(message, 512)
         if message not in reasons and len(reasons) >= 99:
@@ -634,6 +700,7 @@ def contributor_metadata(sheet, meta):
             warnings[sku].append(message)
         if message not in reasons:
             reasons.append(message)
+    ambiguous_dates = _transaction_dates_need_ack(sheet, picked, meta['header_row'])
     for index, row in enumerate(sheet['rows'][meta['header_row']:], meta['header_row']):
         if index not in accepted:
             continue
@@ -643,9 +710,25 @@ def contributor_metadata(sheet, meta):
         sku = get('sku')
         if not sku:
             continue
+        if ambiguous_dates and get('date'):
+            mark(sku, f'{sheet["name"]}: {sku}: ambiguous transaction date order or mixed separators; check month assignments; acknowledge before ordering.')
         if 'on_hand' in picked and reserved is not None and (reserved >= len(row) or not _trim(row[reserved])):
             missing.setdefault(sku, [sheet['name']])
-        if meta.get('layout') != 'long' and not get('location'):
+        if any(get(f) for f in LOT_FIELDS):
+            _, notes = lot_fields(get, number, index + 1, has_lot_qty='lot_qty' in picked)
+            for note in notes:
+                if 'ambiguous expiry date' in note or 'missing lot quantity' in note:
+                    mark(sku, f'{sheet["name"]}: {sku}: {note}')
+            if any(get(f) for f in LOT_FIELDS):
+                snapshot = lot_snapshots.setdefault((sku, get('location').casefold().lower()), {})
+                for field in picked:
+                    if field == 'on_hand' and not ('lot_qty' in picked or get('lots')): continue
+                    if field not in ('on_hand', 'on_order', 'reserved') and not re.fullmatch(r'(?:rcv:)?[0-9]{4}-[0-9]{2}', field): continue
+                    value = number(get(field))
+                    if field in snapshot and snapshot[field] != value and not _same_number(snapshot[field], value):
+                        mark(sku, f'{sheet["name"]}: conflicting {field} for {sku} across lot rows; first snapshot kept; acknowledge before ordering.')
+                    snapshot.setdefault(field, value)
+        if meta.get('layout') != 'long' and not get('location') and not any(get(f) for f in LOT_FIELDS):
             fingerprint = tuple(row)
             seen = identical.setdefault(sku, set())
             if fingerprint in seen:
@@ -653,12 +736,12 @@ def contributor_metadata(sheet, meta):
             seen.add(fingerprint)
         values = first.setdefault(sku, {})
         for field in picked:
-            if field in ('sku', 'location', 'active', 'inactive', 'date', 'quantity', 'on_hand', 'on_order', 'reserved') or re.fullmatch(r'(?:rcv:)?[0-9]{4}-[0-9]{2}', field):
+            if field in ('sku', 'location', 'active', 'inactive', 'date', 'quantity', 'on_hand', 'on_order', 'reserved', *LOT_FIELDS) or re.fullmatch(r'(?:rcv:)?[0-9]{4}-[0-9]{2}', field):
                 continue
-            value = number(get(field), field == 'supplier_days') if field in NUMERIC_FIELDS else get(field)
+            value = number(get(field), field == 'supplier_days', field == 'sale_price') if field in NUMERIC_FIELDS else get(field)
             if value:
                 if values.get(field) and values[field] != value and not (field in NUMERIC_FIELDS and _same_number(values[field], value)):
-                    if field in ('supplier_days', 'unit', 'stock_unit', 'sales_unit'):
+                    if field in ('supplier_days', 'shelf_life_days', 'unit', 'stock_unit', 'sales_unit'):
                         mark(sku, f'{_short_label(sheet["name"])}: conflicting {field} for {_short_label(sku)}; first value kept; acknowledge before ordering.')
                     else:
                         informational[sku] = None
@@ -768,12 +851,15 @@ def understand_workbook(sheets, sheet=None, overrides=None):
                     if name not in reserved_missing.setdefault(sku, []):
                         reserved_missing[sku].append(name)
             for field,value in values.items():
+                if field == 'lots':
+                    target[field] = _lots_text(merge_lots([*json.loads(target.get(field, '[]')), *json.loads(value)]))
+                    continue
                 quantity_field = field in ('on_hand', 'reserved', 'on_order') or bool(re.fullmatch(r'(?:rcv:)?[0-9]{4}-[0-9]{2}', field))
                 if combine_stock and quantity_field:
                     target[field] = _add(target.get(field, ''), value)
                 elif not target.get(field): target[field]=value
                 elif value and target[field]!=value and not (field in NUMERIC_FIELDS and _same_number(value, target[field])):
-                    if not quantity_field and field not in ('supplier_days', 'unit', 'stock_unit', 'sales_unit'):
+                    if not quantity_field and field not in ('supplier_days', 'shelf_life_days', 'unit', 'stock_unit', 'sales_unit'):
                         informational[sku] = None
                     else:
                         message = f'{_short_label(other["name"])}: conflicting {field} for {_short_label(sku)}; base sheet value kept; acknowledge before ordering.'
@@ -787,6 +873,12 @@ def understand_workbook(sheets, sheet=None, overrides=None):
     if len(stock_sheets) > 1 and summed_sources:
         warnings.append('Combined stock from sheets ' + ', '.join(stock_sheets))
     if unmatched: warnings.append(f'{len(unmatched)} product codes in other sheets did not match {report["name"]}; not imported.')
+    for sku, values in products.items():
+        if values.get('lots') and NUMERIC.fullmatch(values.get('on_hand', '')):
+            total = sum(lot['qty'] for lot in json.loads(values['lots']))
+            stock = float(values['on_hand'])
+            if abs(total - stock) > max(1e-9, 1e-12 * max(abs(total), abs(stock))):
+                flag(sku, f'{sku}: lot total does not match on-hand stock; check lot quantities; acknowledge before ordering.')
     fields=set().union(*(set(v) for v in products.values())) if products else available
     for sku in joined_reserved:
         reserved_missing.pop(sku, None)
@@ -802,7 +894,7 @@ def understand_workbook(sheets, sheet=None, overrides=None):
             input_warnings.setdefault(sku, []).append(summary)
     months=sorted(f for f in fields if re.fullmatch(r'[1-9][0-9]{3}-(?:0[1-9]|1[0-2])',f))
     receipts=sorted(f for f in fields if re.fullmatch(r'rcv:[1-9][0-9]{3}-(?:0[1-9]|1[0-2])',f))
-    headers=FIXED+[f for f in OPTIONAL+PER_ITEM+REVIEW_FIELDS if f in fields]+months+receipts
+    headers=FIXED+[f for f in OPTIONAL+PER_ITEM+REVIEW_FIELDS+['lots'] if f in fields]+months+receipts
     canonical=[headers]
     for sku,values in products.items():
         canonical.append([sku if f=='sku' else values.get(f,'') or ('units' if f=='unit' else '') for f in headers])

@@ -15,7 +15,10 @@ let rowMap=new Map(),buttonMap=new Map(),seriesCache=new WeakMap(),activeButton=
 let evaluationSnapshot=null
 // Replay persisted toggles/owner decisions/prior factors before keying: a log
 // update (even in place) must not leave a previously ready snapshot in use.
-function evaluationSnapshotKey(){return JSON.stringify([localToday(),settings,learningSettingsFromLog(data,learningSettings,learningLog)])}
+// Include source contents: synthetic edits and host integrations can update an
+// existing dataset in place. Identity alone would keep stale standard guidance
+// until an unrelated setting (such as the profit display toggle) forced a refit.
+function evaluationSnapshotKey(){return JSON.stringify([localToday(),settings,learningSettingsFromLog(data,learningSettings,learningLog),data])}
 function withDatasetEvaluation(fn){
   const key=evaluationSnapshotKey()
   if(!evaluationSnapshot||evaluationSnapshot.data!==data||evaluationSnapshot.key!==key||evaluationSnapshot.diary!==learningDiary||evaluationSnapshot.log!==learningLog)

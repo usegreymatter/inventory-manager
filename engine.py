@@ -147,15 +147,15 @@ def method_item(item, last_month, settings=None):
     """
     settings = settings if isinstance(settings, dict) else {}
     method = settings.get('forecast_method', 'current')
-    if method == 'current' or method not in method_library.METHODS:
-        if '_method_model' in item or isinstance(item.get('forecast_method'), dict) and item['forecast_method'].get('requested') in method_library.METHODS:
+    if method == 'current' or method not in method_library.METHODS + ['recommended']:
+        if '_method_model' in item or isinstance(item.get('forecast_method'), dict) and item['forecast_method'].get('requested') in method_library.METHODS + ['recommended']:
             return {k: v for k, v in item.items() if k not in ('_method_model', 'forecast_method')}
         return item
     sales = item.get('monthly_sales')
     if not isinstance(sales, list) or len(sales) < 3 or len(sales) > 1200 or any(not quantity(x) for x in sales) or item.get('held'):
         return item
     cache = _EVALUATION.get()
-    key = ('method', method, _history_key('input', {k:v for k,v in item.items() if k != '_method_model'}, last_month))
+    key = ('method', method, (json.dumps(item.get('forecast_method')), settings.get('stockout_adjust') is True, item.get('_recommended_stockout_adjusted') is True) if method == 'recommended' else None, _history_key('input', {k:v for k,v in item.items() if k != '_method_model'}, last_month))
     if cache is not None and key in cache:
         model, info = cache[key]
     else:
@@ -168,22 +168,47 @@ def method_item(item, last_month, settings=None):
                 'experimental': True, 'fallback': True,
                 'note': 'Using Current: ' + reason}}.items() if k != '_method_model'}
         values = history.get('adjusted', history.get('after_projects', history.get('corrected', sales)))
-        fit_key = ('method-fit', last_month, method, tuple(values))
+        stockout_mode = settings.get('stockout_adjust') is True or item.get('_recommended_stockout_adjusted') is True
+        if method == 'recommended' and stockout_mode:
+            detection = detect_stockout_months(item, last_month)
+            values = list(values)
+            for flag in detection['flagged']:
+                if flag['adjusted_demand'] is not None:
+                    values[flag['index']] = flag['adjusted_demand']
+        if (method == 'recommended' and isinstance(item.get('_method_model'), dict)
+                and item['_method_model'].get('recommend_input') == [last_month, values[-48:], stockout_mode]):
+            return item
+        previous = item.get('forecast_method', {}).get('method') if isinstance(item.get('forecast_method'), dict) and item['forecast_method'].get('requested') == 'recommended' else None
+        prior_input = item.get('_method_model', {}).get('recommend_input') if isinstance(item.get('_method_model'), dict) else None
+        if (previous not in method_library.RECOMMEND_CANDIDATES or not isinstance(prior_input, list)
+                or len(prior_input) != 3 or not isinstance(prior_input[0], str)
+                or prior_input[0] >= last_month or prior_input[2] != stockout_mode):
+            previous = None
+        fit_key = ('method-fit', last_month, method, tuple(values), previous if method == 'recommended' else None, stockout_mode if method == 'recommended' else None)
         if cache is not None and fit_key in cache:
             fitted = cache[fit_key]
         else:
-            fitted = method_library.forecast_with_metadata(values, 12, method)
+            if method == 'recommended':
+                fitted = method_library.recommend(values, previous=previous, stockout_adjust=stockout_mode)
+                fitted = {**fitted, 'classification': method_library.classify(values), 'fallback': False}
+            else:
+                fitted = method_library.forecast_with_metadata(values, 12, method)
             if cache is not None:
                 cache[fit_key] = fitted
         info, used, curve = fitted['classification'], fitted['method'], fitted['forecast']
-        label = 'Croston-SBA' if used == 'sba' else method_library.METHOD_LABELS[used]
+        label = 'Basic Current hybrid (no adopted challenger)' if used == 'current' else 'Croston-SBA' if used == 'sba' else method_library.METHOD_LABELS[used]
         info = {**info, 'requested': method, 'method': used,
                 'label': info['class'].capitalize() + ' demand — using ' + label,
                 'experimental': True, 'fallback': fitted['fallback']}
+        if method == 'recommended':
+            info.update(reason=fitted['reason'], label='Method picked: ' + label + ' because ' + fitted['reason'],
+                        tested_months=fitted['folds'], range_available=False)
         factors = [0.0]*12
         for h, value in enumerate(curve, 1):
             factors[int(month_after(last_month, h)[5:7])-1] = value
         model = dict(seasonal=False, factors=factors, level=1, method_name=info['label'])
+        if method == 'recommended':
+            model['recommend_input'] = [last_month, list(values[-48:]), stockout_mode]
         if cache is not None:
             cache[key] = model, info
     return {**item, '_method_model': model, 'forecast_method': info,
@@ -273,6 +298,9 @@ def normalize_order_settings(value=None):
             ("holding_pct", .01, 100, False)):
         if setting_number(value.get(key), low, high, integer):
             fields[key] = value[key]
+    for key in SHELF_FIELDS:
+        if valid_setting_field(key, value.get(key)):
+            fields[key] = value[key]
     # Preserve old saved 0..3650 values safely, but never retain >1 year margin.
     fields["buffer_days"] = min(365, fields["buffer_days"])
     if "default_delivery_days" in value and value["default_delivery_days"] is None:
@@ -284,6 +312,10 @@ def normalize_order_settings(value=None):
     for key in ("forecast_method", "industry_preset", "safety_stock_basis"):
         if valid_setting_field(key, value.get(key)):
             fields[key] = value[key]
+    # Optional economics/expiry inputs stay absent by default (old settings bytes).
+    for key in ("profit_suggestion", "sale_price", "shelf_life_days", "arrival_age_days", "min_remaining_life_days", "salvage_pct"):
+        if key in value and valid_setting_field(key, value[key]):
+            fields[key] = value[key]
     for group in ("supplier_overrides", "product_overrides"):
         overrides = value.get(group)
         if not isinstance(overrides, dict):
@@ -292,18 +324,26 @@ def normalize_order_settings(value=None):
             if not isinstance(identity, str) or not isinstance(entry, dict):
                 continue
             normalized = {key: v for key, v in entry.items()
-                          if key in OVERRIDE_FIELDS[group] and valid_setting_field(key, v)}
+                          if key in OVERRIDE_FIELDS[group] and valid_product_setting_field(key, v, group)}
             if normalized:
                 fields[group][identity] = normalized
+    # Optional storage only; the preset name never selects ordering behaviour.
+    for key in ("shelf_life_days", "arrival_age_days", "min_remaining_life_days"):
+        if key in value and valid_setting_field(key, value[key]):
+            fields[key] = value[key]
     return fields
 
 
 # Input resolution only: formulas below consume these effective values unchanged.
+SHELF_FIELDS = ("shelf_life_days", "arrival_age_days", "min_remaining_life_days")
 OVERRIDE_FIELDS = {
     "supplier_overrides": ("supplier_days", "minimum_order", "pack_size", "review_days", "service_level"),
-    "product_overrides": ("supplier_days", "minimum_order", "pack_size", "unit_cost", "review_days", "service_level"),
+    "product_overrides": ("months_of_cover", "supplier_days", "minimum_order", "pack_size", "unit_cost", "review_days", "service_level", "profit_suggestion", "sale_price", "shelf_life_days", "arrival_age_days", "min_remaining_life_days", "salvage_pct"),
 }
+OPTIONAL_SETTING_FIELDS = SHELF_FIELDS
 SETTING_RANGES = {
+    "shelf_life_days": (1, 36500, True), "arrival_age_days": (0, 36500, True),
+    "min_remaining_life_days": (0, 36500, True),
     "default_delivery_days": (1, 3650, True), "supplier_days": (0, 3650, False),
     "months_of_cover": (0, 36, False), "buffer_days": (0, 365, True),
     "overstock_months": (.1, 120, False), "big_order_months": (.1, 120, False),
@@ -313,11 +353,29 @@ SETTING_RANGES = {
 }
 
 
+PROFIT_OPTIONAL_RANGES = {"sale_price": (0, MAX_QUANTITY, False),
+    "shelf_life_days": (1, 36500, True), "arrival_age_days": (0, 36500, True),
+    "min_remaining_life_days": (0, 36500, True), "salvage_pct": (0, 100, False)}
+
+
+def no_shelf_life(value):
+    return value is None or (not isinstance(value, bool) and value == 0) or value == "none"
+
+
+def valid_product_setting_field(key, value, group):
+    return (group == "product_overrides" and key == "shelf_life_days" and no_shelf_life(value)
+            or valid_setting_field(key, value))
+
+
 def valid_setting_field(key, value):
+    if key == "profit_suggestion":
+        return isinstance(value, bool)
+    if key in PROFIT_OPTIONAL_RANGES:
+        return setting_number(value, *PROFIT_OPTIONAL_RANGES[key])
     if key == "safety_stock_basis":
         return isinstance(value, str) and value in ("sales_variation", "forecast_misses")
     if key == "forecast_method":
-        return isinstance(value, str) and value in ["current"] + method_library.METHODS
+        return isinstance(value, str) and value in ["current", "recommended"] + method_library.METHODS
     if key == "industry_preset":
         return isinstance(value, str) and value in ["none"] + list(method_library.PRESETS)
     if key in ("pack_size", "minimum_order"):
@@ -343,9 +401,9 @@ def validate_order_settings(value):
                 if not isinstance(identity, str) or not identity or len(identity) > 512 or not isinstance(entry, dict):
                     raise ValueError(key + " needs a named settings object.")
                 for field, number in entry.items():
-                    if field not in OVERRIDE_FIELDS[key] or not valid_setting_field(field, number):
+                    if field not in OVERRIDE_FIELDS[key] or not valid_product_setting_field(field, number, key):
                         raise ValueError(f"Invalid {field} for {identity}.")
-        elif key not in DEFAULT_ORDER_SETTINGS or not valid_setting_field(key, v):
+        elif key not in DEFAULT_ORDER_SETTINGS and key not in PROFIT_OPTIONAL_RANGES and key != "profit_suggestion" or not valid_setting_field(key, v):
             raise ValueError("Invalid setting: " + key)
     return normalize_order_settings(value)
 
@@ -355,8 +413,11 @@ def resolve_order_settings(item, raw_settings=None) -> dict:
     settings = normalize_order_settings(raw_settings)
     supplier = settings["supplier_overrides"].get(item.get("supplier"), {})
     product = settings["product_overrides"].get(item.get("sku"), {})
+    if "months_of_cover" in product:
+        settings["months_of_cover"] = product["months_of_cover"]
     defaults = dict(supplier_days=settings["default_delivery_days"], minimum_order=None,
                     pack_size=None, unit_cost=None, service_level=settings["service_level"], review_days=settings["review_days"])
+    defaults.update({k: settings.get(k) for k in SHELF_FIELDS if k in settings or k in item or k in product})
     values, sources = {}, {}
     for field, fallback in defaults.items():
         values[field], sources[field] = fallback, "default"
@@ -366,6 +427,19 @@ def resolve_order_settings(item, raw_settings=None) -> dict:
             values[field], sources[field] = supplier[field], "supplier setting"
         if field in product:
             values[field], sources[field] = product[field], "product setting"
+    # Retain raw effective shelf values so direct callers fail closed too.
+    raw_shelf = raw_settings if isinstance(raw_settings, dict) else {}
+    entries = raw_shelf.get("product_overrides", {})
+    entry = entries.get(item.get("sku"), {}) if isinstance(entries, dict) else {}
+    for key in SHELF_FIELDS:
+        if key in raw_shelf:
+            values[key] = raw_shelf[key]
+        if key in item:
+            values[key] = None if key == 'shelf_life_days' and no_shelf_life(item[key]) else item[key]
+            sources[key] = 'from file'
+        if isinstance(entry, dict) and key in entry:
+            values[key] = None if key == 'shelf_life_days' and no_shelf_life(entry[key]) else entry[key]
+            sources[key] = 'product setting'
     # Raw increment drafts retain the existing fail-closed arithmetic validation.
     raw = raw_settings if isinstance(raw_settings, dict) else {}
     raw_override = {k: item[k] for k in ("minimum_order", "pack_size", "unit_cost") if k in item}
@@ -1222,6 +1296,8 @@ def forecast_miss_buffer(item, last_month, settings, protection, lead_variance=0
         return None
     values = history.get('adjusted', history.get('after_projects', history.get('corrected', item['monthly_sales'])))
     method = settings['forecast_method']
+    if method == 'recommended':
+        return None  # Selected-model residual calibration is not available.
     key = ('miss-buffer', method, last_month, tuple(values), protection, settings['service_level'], lead_variance)
     cache = _EVALUATION.get()
     if cache is not None and key in cache:
@@ -1315,7 +1391,8 @@ def inventory_planning(item, last_month, raw_settings=None):
                 parts.append('Safety stock basis: Past forecast misses (experimental)')
             else:
                 result['safety_stock_provenance']['basis'] = 'sales_variation'
-                result['safety_stock_provenance']['fallback'] = 'At least 8 own eligible forecast errors required'
+                result['safety_stock_provenance']['fallback'] = ('Recommended per product: residual calibration unavailable'
+                    if settings['forecast_method'] == 'recommended' else 'At least 8 own eligible forecast errors required')
                 parts.append('Safety stock basis: Sales variation (past forecast misses unavailable)')
         result["safety_stock"] = backup
         parts.append(f"Safety stock {planning_display_number(backup)} because sales are {(sales_pattern(sigma, mean) or 'Steady').lower()} and lead time is {planning_display_number(lead)} days")
@@ -1400,7 +1477,7 @@ def planning_runout(item, as_of, model, stock=None):
 def safety_order_planning(item, last_month, as_of, physical, raw_settings=None, today=None):
     """Compatibility fields derive from the single shared policy planner."""
     current = today.isoformat() if isinstance(today, date) else today or as_of
-    guidance = order_guidance({**item, **physical, "as_of": as_of}, current, raw_settings, as_of)
+    guidance = order_guidance({**item, **physical, "as_of": as_of}, current, raw_settings, as_of, _include_profit=False)
     return dict(inventory_position=inventory_position(item), suggested_order=guidance.get("quantity"),
                 covered_by_on_order=guidance.get("covered_by_on_order", False), big_order=guidance.get("big_order", False),
                 **({"on_order": item["on_order"]} if "on_order" in item else {}))
@@ -1845,8 +1922,83 @@ def mrp_window_need(item, as_of, facts, arrival, endpoint, buffer_demand, backup
     return net_need
 
 
+def shelf_life_context(item, as_of, facts, values, lead):
+    """FEFO commercial sell-through; exclude forecast-unsellable lots explicitly."""
+    life = values.get("shelf_life_days")
+    lots = item.get("lots")
+    for key in SHELF_FIELDS:
+        value = values.get(key)
+        if value is not None and not valid_setting_field(key, value):
+            raise ValueError("Invalid " + key + ".")
+    if life is None and lots is None:
+        return None
+    remaining = values.get("min_remaining_life_days") or 0
+    rows, sold, risk, total = [], Fraction(0), Fraction(0), Fraction(0)
+    if lots is not None:
+        if not isinstance(lots, list) or len(lots) > 10000:
+            raise ValueError("Lot expiry data needs checking.")
+        for lot in lots:
+            if (not isinstance(lot, dict) or date_ordinal(lot.get("expiry")) is None
+                    or not setting_number(lot.get("qty"), 0, MAX_QUANTITY)):
+                raise ValueError("Lot expiry data needs checking.")
+        # Stable source order breaks equal-expiry ties in both runtimes.
+        for lot in sorted(lots, key=lambda row: row["expiry"]):
+            deadline = date_ordinal(lot["expiry"]) - remaining
+            clear_by = ordinal_date(deadline - max(1, lead))
+            if clear_by is None:
+                raise ValueError("The clearance date exceeds the supported calendar.")
+            qty = Fraction(str(lot["qty"]))
+            sell = min(qty, max(Fraction(0), dated_demand(item, as_of, deadline, facts) - sold))
+            at_risk = qty - sell
+            rows.append(dict(lot=str(lot.get("lot") or ""), expiry=lot["expiry"], qty=event_value(qty),
+                             sell_through_qty=event_value(sell), at_risk_qty=event_value(at_risk), clear_by=clear_by))
+            sold += sell
+            risk += at_risk
+            total += qty
+    excluded = min(Fraction(str(item["on_hand"])), risk)
+    warnings = list(item.get("expiry_warnings") or [])
+    if lots is not None and total != Fraction(str(item["on_hand"])):
+        warning = "Lot total does not match on-hand stock; review lot quantities."
+        if warning not in warnings:
+            warnings.append(warning)
+    return dict(expiring=rows, expiry_at_risk_qty=event_value(risk), expiry_excluded_qty=event_value(excluded),
+                expiry_warnings=warnings, _window=None if life is None else life - (values.get("arrival_age_days") or 0) - remaining)
+
+
+def shelf_life_cap(item, as_of, facts, context, arrival, lead, cover_days, override, quantity, review_days=30):
+    """Apply the sellable ceiling AFTER ordinary upward MOQ/pack rounding."""
+    result = {k: v for k, v in context.items() if not k.startswith("_")}
+    window = context["_window"]
+    if window is None:
+        return quantity, result
+    if window > 0 and ordinal_date(arrival + window) is None:
+        raise ValueError("The shelf-life date exceeds the supported calendar.")
+    cap = Fraction(0)
+    if window > 0:
+        received = sum((Fraction(str(e["quantity"])) for e in dated_supply(item, as_of, facts)
+                        if date_ordinal(as_of) < e["date"] <= arrival), Fraction(0))
+        balance = max(Fraction(0), Fraction(str(item["on_hand"])) + Fraction(str(item.get("on_order") or 0))
+                      + received - dated_demand(item, as_of, arrival, facts))
+        demand = dated_demand(item, as_of, arrival + window, facts) - dated_demand(item, as_of, arrival, facts)
+        pack = Fraction(str(override.get("pack_size") or 1))
+        cap = max(0, (demand - balance) // pack) * pack
+    cap_qty = event_value(cap)
+    minimum = override.get("minimum_order") or 0
+    conflict = window <= 0 or quantity > 0 and minimum > cap
+    capped_qty = 0 if conflict else min(quantity, cap_qty)
+    reason = ("Cannot stock: no usable shelf life remains on arrival." if window <= 0 else
+              "MOQ " + planning_number(minimum) + " exceeds shelf-life cap " + planning_number(cap_qty) + "." if conflict else
+              "Shelf-life cap " + planning_number(cap_qty) + " after stock unsold at arrival; safety stock is within this cap.")
+    result.update(shelf_cap_qty=cap_qty, uncapped_qty=quantity, capped=capped_qty < quantity,
+                  cap_reason=reason, coarse_warning=0 < window < 30, shelf_conflict=bool(conflict))
+    if 0 < window < lead + cover_days:
+        result["order_every_days"] = min(window, review_days)
+        result["cap_reason"] += " Order every " + planning_number(min(window, review_days)) + " days; monthly review cannot sustain this shelf life."
+    return capped_qty, result
+
+
 @evaluation_pass
-def order_guidance(item, today, settings=None, as_of=None):
+def order_guidance(item, today, settings=None, as_of=None, _include_profit=True):
     """Exact Desktop orderGuidance mirror; input is a calculated/source item.
 
     Retain raw stock, sales, seasonal and as_of on the input. Date defaults are
@@ -1866,9 +2018,11 @@ def order_guidance(item, today, settings=None, as_of=None):
         detection = detect_stockout_months(item, as_of[:7])
         if any(flag['adjusted_demand'] is not None for flag in detection['flagged']):
             adjusted = _stockout_adjusted_item(item, detection)
+            if normalized['forecast_method'] == 'recommended':
+                adjusted['_recommended_stockout_adjusted'] = True
             physical = _forecast(adjusted, detection['months'], as_of, 6)
             return order_guidance({**adjusted, **physical, 'as_of': as_of}, today,
-                                  {**raw_settings, 'stockout_adjust': False}, as_of)
+                                  {**raw_settings, 'stockout_adjust': False}, as_of, _include_profit=_include_profit)
     demand = item.get("monthly_demand")
     demand_limit = (64 if adopted["state"] == "on" and adopted.get("manual_state") == "on" else 16 if adopted["state"] == "on" else 4) * MAX_QUANTITY
     def needs(reason):
@@ -1895,8 +2049,17 @@ def order_guidance(item, today, settings=None, as_of=None):
     receipts = item.get("receipts") or {}
     if not isinstance(receipts, dict) or any(month_end_ordinal(m) is None or not setting_number(v, 0, MAX_QUANTITY) for m, v in receipts.items()):
         return needs("Confirmed delivery data needs checking.")
+    if isinstance(item.get("lots"), list) and any(isinstance(lot, dict) and lot.get("expiry_acknowledged") is False for lot in item["lots"]):
+        return needs("Check ambiguous expiry dates and acknowledge the interpreted dates before ordering.")
     try:
         facts = planning_event_facts(item, as_of, today)
+        try:
+            shelf = shelf_life_context(item, as_of, facts, resolved["values"], lead)
+        except ValueError as error:
+            return needs(str(error))
+        profit_item = item  # Lane O keeps its independently reviewed physical-stock basis.
+        if shelf is not None:
+            item = {**item, "on_hand": max(0, item["on_hand"] - shelf["expiry_excluded_qty"])}
         physical = dated_calendar(item, as_of, now, facts) if "planning_facts" in item else guidance_calendar(item, as_of, now)
     except (ValueError, OverflowError, TypeError, KeyError):
         return needs("The forecast exceeds the supported arithmetic range.")
@@ -1939,6 +2102,12 @@ def order_guidance(item, today, settings=None, as_of=None):
         return needs("The rounded quantity exceeds safe decimal precision (maximum 9007199254740991 units).")
     if cover_days == 0 or crossing is None:
         quantity = 0  # Explicitly disabled replenishment; never a rounding-only order.
+    shelf_result = {}
+    if shelf is not None:
+        try:
+            quantity, shelf_result = shelf_life_cap(item, as_of, facts, shelf, order_date + lead, lead, cover_days, override, quantity, resolved["values"]["review_days"])
+        except (ValueError, OverflowError):
+            return needs("The shelf-life date exceeds the supported calendar.")
     out_of_stock = physical["outOfStock"]
     covered = bool(on_order > 0 and runout and now + lead <= runout)
     uncovered_gap = (not covered and bool(physical["gap"] or out_of_stock or runout and now + lead > runout)) if on_order > 0 else bool(physical["gap"] or out_of_stock)
@@ -1956,6 +2125,11 @@ def order_guidance(item, today, settings=None, as_of=None):
         "order_date": ordinal_date(order_date), "endpoint": ordinal_date(endpoint),
         "buffer_demand": event_value(buffer_demand),
         "undated_on_order_assumed_within_lead": on_order > 0}
+    if shelf_result:
+        result.update(shelf_result)
+        result["reason"] = shelf_result.get("cap_reason", "")
+        if shelf_result.get("shelf_conflict") or shelf_result.get("capped") and quantity == 0:
+            result["status"] = "shelf-conflict" if shelf_result.get("shelf_conflict") else "shelf-limited"
     if "on_order" in item or "big_order_months" in raw_settings:
         result.update(inventory_position=inventory_position(item), covered_by_on_order=covered,
                       big_order=quantity > demand * normalized["big_order_months"])
@@ -1971,6 +2145,30 @@ def order_guidance(item, today, settings=None, as_of=None):
             result.update(status="needs-data", reason=facts["needs"], scenario_quantity=quantity, quantity=None, order_by=None)
     if 'demand_change_pct' in item and facts['hold']:
         result.update(purchase_hold=True, status='needs-data', reason=facts['needs'], scenario_quantity=quantity, quantity=None, order_by=None)
+    if _include_profit and (normalized.get('profit_suggestion') or any('profit_suggestion' in entry for entry in normalized['product_overrides'].values())):
+        try:
+            from .profit_order import for_guidance, suggest, unavailable_reason
+        except ImportError:
+            from profit_order import for_guidance, suggest, unavailable_reason
+        memo = _EVALUATION.get()
+        def evaluate_profit(spec):
+            key = ('profit-suggestion', json.dumps(spec, sort_keys=True, separators=(',', ':')))
+            if key not in memo:
+                memo[key] = suggest(spec)
+            return memo[key]
+        try:
+            profit_guidance = result
+            if shelf is not None and shelf['expiry_excluded_qty'] > 0:
+                profit_physical = (dated_calendar(profit_item, as_of, now, facts) if 'planning_facts' in profit_item
+                                   else guidance_calendar(profit_item, as_of, now))
+                profit_guidance = {**result, 'projected_balance_today': profit_physical['balanceToday']}
+            suggestion = for_guidance(profit_item, profit_guidance, normalized, resolved, now, dated_supply(profit_item, as_of, facts), evaluate_profit)
+        except (ValueError, TypeError, OverflowError):
+            suggestion = None  # Invalid optional economics must never break ordinary advice.
+        if suggestion is not None:
+            result['profit_suggestion'] = suggestion
+        elif unavailable_reason(item, normalized, result, resolved):
+            result['profit_suggestion_unavailable'] = unavailable_reason(item, normalized, result, resolved)
     return result
 
 
@@ -2027,6 +2225,9 @@ def why_breakdown(item, today, settings=None, as_of=None):
     if facts['committed_state'] != 'hidden':
         add('committed_orders', expected-baseline)
     add('stock_on_hand', -Fraction(str(item['on_hand'])))
+    if guidance.get('expiry_excluded_qty', 0):
+        add('expiry_exclusion', guidance['expiry_excluded_qty'])
+        item = {**item, 'on_hand': max(0, item['on_hand'] - guidance['expiry_excluded_qty'])}
     if guidance['incoming']:
         # Re-use exact individual supply cells, not their rounded aggregate.
         amounts = ([e['quantity'] for e in dated_supply(item, as_of, facts) if date_ordinal(as_of)<e['date']<=date_ordinal(guidance['order_date'])]
@@ -2034,7 +2235,7 @@ def why_breakdown(item, today, settings=None, as_of=None):
         add('incoming_supply', -sum((Fraction(str(v)) for v in amounts), Fraction(0)))
     if item.get('on_order'):
         add('undated_incoming', -Fraction(str(item['on_order'])))
-    normalized = normalize_order_settings(settings)
+    normalized = resolve_order_settings(item, settings)['settings']
     if guidance.get('buffer_demand'):
         add('buffer_demand', guidance['buffer_demand'])
     if normalized['include_backup_in_orders'] and guidance.get('safety_stock') is not None:
@@ -2053,7 +2254,8 @@ def why_breakdown(item, today, settings=None, as_of=None):
     minimum = Fraction(str(override.get('minimum_order') or 0))
     if exact > 0 and minimum > exact:
         add('minimum_order', minimum-exact)
-    delta = Fraction(str(target)) - exact
+    rounding_target = guidance.get('uncapped_qty', target)
+    delta = Fraction(str(rounding_target)) - exact
     pack = Fraction(str(override.get('pack_size') or 1))
     if abs(delta) < Fraction(1, 10**9) and delta < 0:
         add('arithmetic_reconciliation', delta)
@@ -2064,6 +2266,8 @@ def why_breakdown(item, today, settings=None, as_of=None):
         add(key, delta)
         delta = Fraction(0)
     add('pack_rounding', delta)
+    if guidance.get('capped'):
+        add('shelf_life_cap', Fraction(str(target)) - Fraction(str(rounding_target)))
     # Numeric clients can reduce qty directly with strict equality, even when
     # decimal fractions/cancellation leave a binary64 residue. Never hide it in
     # a forecast/stock component. Two corrections suffice; a bounded reset is a
@@ -2100,6 +2304,7 @@ _WHY_AMOUNT_LABELS = {
     'no_recent_demand': 'no recent demand — not ordering',
     'policy_cap': 'replenishment policy cap', 'policy_adjustment': 'replenishment policy adjustment',
     'display_rounding': 'display rounding',
+    'shelf_life_cap': 'shelf-life cap', 'expiry_exclusion': 'expiry-risk stock excluded',
     'late_po_hold': 'Update overdue incoming delivery dates.',
     'demand_history_hold': 'Check incomplete or invalid demand history.',
     'committed_orders_hold': 'Check incomplete or invalid committed orders.',
@@ -2144,12 +2349,21 @@ def why_this_amount(item, today, settings=None, as_of=None):
         terms = [(('+' if i and v >= 0 else '') + text_number(v) + ' [' + _WHY_AMOUNT_LABELS[k] + ']') for i, (k, v) in enumerate((pair for pair in visible if pair[1]))]
         text = 'Suggested order: ' + text_number(tick(guidance['quantity'])) + ' ' + (item.get('unit') or 'units') + ' = ' + (' '.join(terms) or '0 [no purchase needed]') + '.'
     if guidance.get('quantity') is not None:
-        values = resolve_order_settings(item, settings or {})['values']
+        resolved = resolve_order_settings(item, settings or {})
+        values = resolved['values']
         text += (' Sells ~' + human_number(guidance.get('monthly_demand', 0)) + '/mo · '
                  + planning_number(guidance['lead_days']) + '-day delivery · '
-                 + planning_number(normalize_order_settings(settings)['months_of_cover']) + ' months cover'
+                 + planning_number(resolved['settings']['months_of_cover']) + ' months cover'
                  + (' · pack ' + planning_number(values['pack_size']) if values.get('pack_size') else '')
                  + (' · MOQ ' + planning_number(values['minimum_order']) if values.get('minimum_order') else '') + '.')
+    if "shelf_cap_qty" in guidance:
+        text += " Shelf-life cap: " + planning_number(guidance["shelf_cap_qty"]) + ". " + guidance["cap_reason"]
+        if guidance.get("order_every_days"):
+            text += " Order every " + planning_number(guidance["order_every_days"]) + " days."
+        if guidance.get("coarse_warning"):
+            text += " Coarse estimate: usable life is under 30 days but demand is monthly."
+    if guidance.get("expiry_excluded_qty", 0) > 0:
+        text += " Expiry-risk stock excluded from usable stock: " + planning_number(guidance["expiry_excluded_qty"]) + "."
     if guidance.get('monthly_demand') == 0:
         text += ' No forecast demand; this does not prove there will be no future sales.'
     if guidance.get('used_default_lead'):
@@ -2158,6 +2372,12 @@ def why_this_amount(item, today, settings=None, as_of=None):
         text += ' Undated incoming is assumed within lead time; confirm delivery dates before buying.'
     if guidance.get('quantity') is not None and 'on_order' not in item:
         text += ' Unknown incoming is assumed zero; check existing orders before buying.'
+    if guidance.get('profit_suggestion_unavailable'):
+        text += ' ' + guidance['profit_suggestion_unavailable']
+    if guidance.get('profit_suggestion') is not None:
+        s = guidance['profit_suggestion']
+        label = ' Most profitable: ' if s['method'] == 'simulated' else ' Service safeguard: '
+        text += label + human_number(s['qty']) + ' (current order unchanged). ' + s['reason']
     return text
 
 
@@ -2166,6 +2386,8 @@ def order_bucket(item, today, settings=None, as_of=None, *, guidance=None):
     """Desktop display bucket; skip is a separate, temporary visibility choice."""
     normalized = normalize_order_settings(settings)
     guidance = order_guidance(item, today, settings, as_of) if guidance is None else guidance
+    if guidance["status"] in ("shelf-conflict", "shelf-limited"):
+        return "needs-data"
     if guidance["status"] == 'needs-data':
         return 'needs-data'
     today = today.isoformat() if isinstance(today, date) else today
@@ -2225,6 +2447,8 @@ def gap_sentence(guidance):
 
 
 def no_order_sentence(item, guidance):
+    if guidance.get("status") in ("shelf-conflict", "shelf-limited"):
+        return guidance["cap_reason"]
     if item.get('on_order', 0) > 0 and guidance['quantity'] == 0:
         return (('Out of stock — ' if guidance['out_of_stock'] else '') + 'No extra purchase needed, but incoming may arrive after physical run-out.'
                 if guidance['supply_gap'] else 'No extra order needed — incoming stock covers the order period.')
@@ -2295,7 +2519,7 @@ def forecast(item: dict, months: list[str], as_of: str, horizon: int = 6, settin
             if "on_order" in item or isinstance(settings, dict) and "big_order_months" in settings:
                 result.update(safety_order_planning(item, months[-1], as_of, result, settings, today))
             current = today.isoformat() if isinstance(today, date) else today or as_of
-            guidance = order_guidance({**item, **result, "as_of": as_of}, current, settings)
+            guidance = order_guidance({**item, **result, "as_of": as_of}, current, settings, _include_profit=False)
             if guidance["status"] != "needs-data":
                 result.update(order_by=guidance["order_by"], runout_day=guidance["runout_date"],
                     runout_month=guidance["runout_date"][:7] if guidance["runout_date"] else None,

@@ -7,7 +7,7 @@ const check=(name,value,evidence)=>results.push({name,pass:!!value,evidence})
 async function scoped(page,fn){return page.evaluate(code=>globalThis.safariEval('('+code+')()'),fn.toString())}
 async function main(){
  fs.mkdirSync(out,{recursive:true})
- const probe=path.join(out,'v11-safari-probe.html');fs.writeFileSync(probe,fs.readFileSync(path.join(root,'standalone/stock-runway-demo-1000.html'),'utf8').replace('</script>','globalThis.safariEval=code=>eval(code);\n</script>'))
+ const probe=path.join(out,'v11-safari-probe.html');fs.writeFileSync(probe,fs.readFileSync(path.join(root,'standalone/inventory-manager-demo-1000.html'),'utf8').replace('</script>','globalThis.safariEval=code=>eval(code);\n</script>'))
  const pw=require(process.env.PLAYWRIGHT_MODULE||'playwright')
  for(const engine of ['chromium','webkit']){
   const browser=await pw[engine].launch({headless:true,...(engine==='chromium'?{executablePath:process.env.CHROMIUM_EXECUTABLE||undefined}:{})})

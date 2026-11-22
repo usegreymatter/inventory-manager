@@ -11,7 +11,7 @@ START = "import { jsx, jsxs } from 'react/jsx-runtime'\n"
 END = "const pageStyle ="
 DEFAULT_TEMPLATE = "option-gm-b"
 TEMPLATES = ("baseline", "option-a", "option-b", "option-a2", "option-a3", "option-gm-a", "option-gm-b", "option-gm-c")
-LICENSE_NOTICE = """Stock Runway — MIT License, Copyright (c) 2026 Stock Runway contributors
+LICENSE_NOTICE = """Inventory Manager — MIT License, Copyright (c) 2026 GreyMatter and Stock Runway contributors
 """
 FONT_LICENSE_NOTICE = """Embedded fonts Poppins and Tajawal: SIL Open Font License 1.1, see LICENSES/OFL-1.1.txt and THIRD_PARTY_NOTICES.md
 Copyright 2020 The Poppins Project Authors (https://github.com/itfoundry/Poppins)
@@ -150,7 +150,10 @@ def build(template=DEFAULT_TEMPLATE, data=None):
                 presentation += "\n" + (design / "product-page-gm-b.js").read_text(encoding="utf-8")
                 css += "\n" + (design / "product-page-gm-b.css").read_text(encoding="utf-8")
                 presentation += "\n" + (design / "risk-gm-b.js").read_text(encoding="utf-8")
+                presentation += "\n" + (design / "costs-gm-b.js").read_text(encoding="utf-8")
+                css += "\n" + (design / "costs-gm-b.css").read_text(encoding="utf-8")
                 presentation += "\n" + (design / "decision-simple-gm-b.js").read_text(encoding="utf-8")
+                presentation += "\n" + (design / "profit-order-gm-b.js").read_text(encoding="utf-8")
                 css += "\n" + (design / "decision-simple-gm-b.css").read_text(encoding="utf-8")
                 css += "\n" + (design / "risk-gm-b.css").read_text(encoding="utf-8")
                 presentation += "\n" + (design / "import-gm-b.js").read_text(encoding="utf-8")
@@ -179,7 +182,7 @@ def build(template=DEFAULT_TEMPLATE, data=None):
             html = html.replace("const a3Started=performance.now()", copy_source + "\n" + extras + "\nconst a3Started=performance.now()")
     # One shared review module for every standalone variant, outside the pure core.
     design = ROOT / "standalone" / "design"
-    smart_js = (design / "smart-import.js").read_text(encoding="utf-8")
+    smart_js = (ROOT / "desktop/cost-view.js").read_text(encoding="utf-8") + "\n" + (ROOT / "desktop/profit-warnings.js").read_text(encoding="utf-8") + "\n" + (design / "smart-import.js").read_text(encoding="utf-8")
     smart_css = (design / "smart-import.css").read_text(encoding="utf-8")
     html = html.replace("/* STOCK_RUNWAY_CORE_END */", "/* STOCK_RUNWAY_CORE_END */\n" + smart_js, 1)
     html = html.replace("</style>", smart_css + "\n</style>", 1)
@@ -226,7 +229,7 @@ def main():
     if args.data is not None:
         if args.output is None:
             parser.error("--data requires an explicit, separate --out HTML path")
-        protected = {ROOT / "standalone/stock-runway.html"}
+        protected = {ROOT / "standalone/inventory-manager.html"}
         protected.update(ROOT / f"standalone/design/{name}.html" for name in TEMPLATES)
         if args.output.resolve() in {p.resolve() for p in protected}:
             parser.error("--data must use a separate output, not a standard sample build")
@@ -241,7 +244,7 @@ def main():
         except (OSError, ValueError) as error:
             parser.error(str(error))
     if args.output is None:
-        args.output = ROOT / "standalone" / ("stock-runway.html" if args.template is None else f"design/{args.template}.html")
+        args.output = ROOT / "standalone" / ("inventory-manager.html" if args.template is None else f"design/{args.template}.html")
     try:
         output = build(args.template or DEFAULT_TEMPLATE, data=data).encode("utf-8")
     except ValueError as error:
@@ -249,6 +252,12 @@ def main():
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_bytes(output)
     print(f"Built {args.output} ({len(output)} bytes; exact Desktop JS core, no dependencies)")
+    if args.template is None and args.data is None and args.output.resolve() == (ROOT / "standalone/inventory-manager.html").resolve():
+        alias = ROOT / "standalone/stock-runway.html"
+        alias.write_text('<!doctype html><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=inventory-manager.html"><title>Inventory Manager</title><p><a href="inventory-manager.html">Open Inventory Manager</a></p>\n', encoding="utf-8")
+    if args.data is not None and args.output.resolve() == (ROOT / "standalone/inventory-manager-demo-1000.html").resolve():
+        alias = ROOT / "standalone/stock-runway-demo-1000.html"
+        alias.write_text('<!doctype html><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=inventory-manager-demo-1000.html"><title>Inventory Manager</title><p><a href="inventory-manager-demo-1000.html">Open Inventory Manager demo</a></p>\n', encoding="utf-8")
 
 
 if __name__ == "__main__":

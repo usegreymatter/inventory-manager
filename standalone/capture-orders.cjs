@@ -9,7 +9,7 @@ async function shot(p,name){await settle(p);const file=path.join(out,name+'.png'
 async function overflow(p,label){check(label+' no page/product/modal overflow',await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth&&[...document.querySelectorAll('.product-page,dialog[open],.chart-focus')].every(e=>e.scrollWidth<=e.clientWidth)))}
 async function main(){
  fs.mkdirSync(out,{recursive:true});const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright'),browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_EXECUTABLE||undefined})
- try{for(const [dataset,file]of [['sample','stock-runway.html'],['demo','stock-runway-demo-1000.html']]){
+ try{for(const [dataset,file]of [['sample','inventory-manager.html'],['demo','inventory-manager-demo-1000.html']]){
   // Only expose already-mounted module state; the runtime sources are unchanged.
   const src=fs.readFileSync(path.join(__dirname,file),'utf8'),probe=path.join(out,'orders-'+dataset+'.html');fs.writeFileSync(probe,src.replace('</script>',bridge+'\n</script>'))
   for(const width of [1440,390]){

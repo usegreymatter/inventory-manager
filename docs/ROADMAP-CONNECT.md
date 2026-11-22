@@ -4,7 +4,7 @@ Lifecycle: proposed
 
 ## Status today (v1.1.0)
 
-Shipped: smart Excel/CSV import with preflight, the canonical CSV bundle, a read-only Odoo source, forecast methods (Current default; Auto experimental), light/dark themes, local order lists kept in the browser, and the Python CLI. **Not built:** the phases below (mapping-file connectors and `sync`, email drafts, auto-reorder, ERP write-back, webhooks, the MCP server). Everything after this section is a plan.
+Shipped: smart Excel/CSV import with preflight, the canonical CSV bundle, a read-only Odoo source, forecast methods (Current default; Auto experimental), light/dark themes, local order lists kept in the browser, the Python CLI, and the [local read-only MCP server](architecture/MCP.md) (`list_reorders`, `explain_item`, `data_health`). **Not built:** the phases below (mapping-file connectors and `sync`, email drafts, auto-reorder, ERP write-back, webhooks, MCP draft/write extensions). The remaining phases below are a plan; P6's read-only subset has shipped.
 
 ## In plain words
 
@@ -124,11 +124,12 @@ Design docs: [CONNECTORS](architecture/CONNECTORS.md), [AUTOMATION](architecture
 - **P5.w ERP draft-PO writeback:** `write_po_draft` for Odoo first (draft RFQ only), idempotency key, C14. Risk gate: **OWNER APPROVAL** of exact model, fields and dedicated ERP user.
 - **P5.h webhooks:** local receiver, signature check before parse, body cap, event dedupe, trigger-only. Risk gate: **OWNER APPROVAL** (opens a listener).
 
-## P6: MCP server
+## P6: MCP server (read-only subset implemented)
 
-- Scope: MCP.md tools over stdio. `draft_po` behind `--allow-drafts`. No approve/send tools.
+- Implemented: `list_reorders`, `explain_item`, `data_health` over local stdio; see [current MCP contract](architecture/MCP.md).
+- Remaining proposed scope: `draft_po` behind `--allow-drafts`. No approve/send tools.
 - Files: `mcp_server.py`, `tests/test_mcp.py`, client config examples (version-pinned).
-- Tests: per MCP §7.
+- Tests: `tests/test_mcp.py`; see the MCP contract verification section.
 - Risk gate: none for read-only. **OWNER APPROVAL** to enable `--allow-drafts` by default or to add any further write tool.
 
 ## Open questions for the owner

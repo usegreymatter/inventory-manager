@@ -1,0 +1,772 @@
+{
+  "source_commit": "4bbb99764dbc5d6521acde2acda2be8d8593d171",
+  "scope": "Synthetic offline local source and SDK-shim harness; not installed Desktop/live ERP proof",
+  "tests": {
+    "node": {
+      "command": "node --test tests/*.mjs",
+      "rc": 0,
+      "passed": 3620
+    },
+    "pytest": {
+      "command": "/usr/bin/python3 -m pytest -q",
+      "rc": 0,
+      "passed": 2151
+    },
+    "unittest": {
+      "command": "/usr/bin/python3 -m unittest discover -s tests",
+      "rc": 0,
+      "passed": 294
+    },
+    "golden_diff": {
+      "rc": 0,
+      "output": "| sku | field | before | after |\n| --- | --- | --- | --- |\n| (all SKUs) | (all fields) | unchanged | unchanged |\n"
+    },
+    "verify_import_examples": {
+      "rc": 0,
+      "result": {
+        "status": "PASS",
+        "baseline": "af2b1c7",
+        "files": 8,
+        "item_records": 8,
+        "results": [
+          {
+            "file": "docs/erp-examples/dynamics-365.csv",
+            "items": 1,
+            "items_sha256": "9ee9cfa9b0b5606f29545cd1c1755d51cd83156d73fc3472cbefd4e8c4aed25c"
+          },
+          {
+            "file": "docs/erp-examples/netsuite.csv",
+            "items": 1,
+            "items_sha256": "ab633a900dbaa4d6d78b75d7d6c105ff1d87476d1c8c71d0167af0b131338eda"
+          },
+          {
+            "file": "docs/erp-examples/odoo.csv",
+            "items": 1,
+            "items_sha256": "9ee9cfa9b0b5606f29545cd1c1755d51cd83156d73fc3472cbefd4e8c4aed25c"
+          },
+          {
+            "file": "docs/erp-examples/quickbooks.csv",
+            "items": 1,
+            "items_sha256": "782f033d8c0810ede7312323e32ad7025ebe265fdfce300581adeb152231c2c6"
+          },
+          {
+            "file": "docs/erp-examples/sage.csv",
+            "items": 1,
+            "items_sha256": "ab633a900dbaa4d6d78b75d7d6c105ff1d87476d1c8c71d0167af0b131338eda"
+          },
+          {
+            "file": "docs/erp-examples/sap-business-one.csv",
+            "items": 1,
+            "items_sha256": "ee566381abdfc840472482e4544137d071f7dce79ec81fc3a495da6d31b9d194"
+          },
+          {
+            "file": "docs/erp-examples/sap-s4hana.csv",
+            "items": 1,
+            "items_sha256": "ab633a900dbaa4d6d78b75d7d6c105ff1d87476d1c8c71d0167af0b131338eda"
+          },
+          {
+            "file": "docs/erp-examples/zoho-inventory.csv",
+            "items": 1,
+            "items_sha256": "9ee9cfa9b0b5606f29545cd1c1755d51cd83156d73fc3472cbefd4e8c4aed25c"
+          }
+        ]
+      }
+    },
+    "check_docs": {
+      "rc": 0,
+      "relative_links": 133,
+      "json_files_before_receipt": 65,
+      "problems": 0
+    },
+    "round3": {
+      "rc": 0,
+      "result": {
+        "numeric_noise_cases": 38,
+        "stock_numeric_tolerance": 1e-09,
+        "status": "PASS",
+        "seed": 20261120,
+        "repo": "<repo>/.worktrees/v12-int",
+        "cases": 562,
+        "directed": 62,
+        "fuzz": 500,
+        "erp_examples": 8,
+        "formats": {
+          "csv": 444,
+          "xlsx": 118
+        },
+        "cli_original_csv_runs": 444,
+        "assertions": {
+          "no_crash": {
+            "pass": 1124,
+            "fail": 0
+          },
+          "aggregate_available": {
+            "pass": 528,
+            "fail": 0
+          },
+          "why_sentence_sum": {
+            "pass": 1116,
+            "fail": 0
+          },
+          "why_displayed_quantity": {
+            "pass": 1116,
+            "fail": 0
+          },
+          "standalone_meaning_vs_embedded": {
+            "pass": 562,
+            "fail": 0
+          },
+          "python_js_review_parity": {
+            "pass": 562,
+            "fail": 0
+          },
+          "python_js_acceptance_parity": {
+            "pass": 562,
+            "fail": 0
+          },
+          "python_js_value_warning_order_why_parity": {
+            "pass": 558,
+            "fail": 0
+          },
+          "cli_no_crash": {
+            "pass": 444,
+            "fail": 0
+          },
+          "original_cli_vs_desktop_parity": {
+            "pass": 442,
+            "fail": 0
+          },
+          "original_cli_ack_parity": {
+            "pass": 442,
+            "fail": 0
+          },
+          "partial_incoming_provenance": {
+            "pass": 496,
+            "fail": 0
+          },
+          "unit_evidence_not_overwritten": {
+            "pass": 1026,
+            "fail": 0
+          },
+          "valid_input_accepted": {
+            "pass": 40,
+            "fail": 0
+          },
+          "current_month_not_silent": {
+            "pass": 8,
+            "fail": 0
+          },
+          "invalid_reserved_rejected": {
+            "pass": 6,
+            "fail": 0
+          },
+          "clean_input_no_ack": {
+            "pass": 20,
+            "fail": 0
+          },
+          "joined_known_incoming_preserved": {
+            "pass": 2,
+            "fail": 0
+          },
+          "unit_row_order_invariant": {
+            "pass": 4,
+            "fail": 0
+          },
+          "unit_row_order_numeric_invariant": {
+            "pass": 4,
+            "fail": 0
+          },
+          "source_unchanged": {
+            "pass": 1,
+            "fail": 0
+          }
+        },
+        "total_assertions": 9063,
+        "failed_assertions": 0,
+        "failing_case_count": 0,
+        "failing_cases": [],
+        "source_hashes": {
+          "input_meaning.py": "75f71f070c512d2584d2205eb739376a474e2169551ca400d1c74f345a363e84",
+          "stock_runway.py": "5872bdb31746ba17a2f2ca0cb20706ad286caef59cb6760628dfc5b29cad2e23",
+          "engine.py": "8c4beabbd69fc314aeac22c00d37d7f94fde79145b50211953b1bcdf0b68eb47",
+          "smart_import.py": "86b15ae8b7b4bc9953882840b3c75bda8f92caa786850cc0920baec9c3f738c9",
+          "csv_import.py": "8c57d697303192f090c2a5f59ff425150cbcfeba7f589ff7286a09b879ea010e",
+          "desktop/input-meaning.js": "95b1236be0c98074e3c8805041fc77c49506d1aff9ac107c318c5cb853c55ca1",
+          "desktop/plugin.js": "6242f88f48179c44776464b4eb81248333f73242ef1a991015b089156c5ffb63"
+        },
+        "artifacts": {
+          "cases": "<local-scratch>/sr-r3-prep/results/cases.json",
+          "js": "<local-scratch>/sr-r3-prep/results/js.json",
+          "python": "<local-scratch>/sr-r3-prep/results/python.json",
+          "cli": "<local-scratch>/sr-r3-prep/results/cli.json",
+          "failures": "<local-scratch>/sr-r3-prep/results/failures.json"
+        },
+        "limits": [
+          "Synthetic only; no browser DOM or live inventory",
+          "Current-month policy oracle requires warning or hold, not any particular fix",
+          "CLI accepts CSV, not XLSX; original CSV CLI parity is distinct from workbook parity",
+          "Leading blank cases are exercised but no product-launch-date oracle exists",
+          "XLSX uses uncompressed ZIP entries and inline strings, not every Excel encoding"
+        ]
+      }
+    },
+    "sync_cost_view": {
+      "rc": 0
+    },
+    "sync_smart_import": {
+      "rc": 0
+    }
+  },
+  "browser": {
+    "scripts": 38,
+    "final_passed": 38,
+    "initial_failures": [
+      {
+        "script": "standalone/capture-methods.cjs",
+        "rc": 1,
+        "seconds": 1.13
+      }
+    ],
+    "results": [
+      {
+        "script": "docs/capture-harness.cjs",
+        "rc": 0,
+        "seconds": 10.85,
+        "initial_rc": 0,
+        "final_rc": 0
+      },
+      {
+        "script": "docs/capture-inventory.cjs",
+        "rc": 0,
+        "seconds": 126.29,
+        "initial_rc": 0,
+        "final_rc": 0
+      },
+      {
+        "script": "docs/capture-polish.cjs",
+        "rc": 0,
+        "seconds": 41.63,
+        "initial_rc": 0,
+        "final_rc": 0
+      },
+      {
+        "script": "docs/capture-quick-view.cjs",
+        "rc": 0,
+        "seconds": 12.77,
+        "initial_rc": 0,
+        "final_rc": 0
+      },
+      {
+        "script": "docs/capture-readme.cjs",
+        "rc": 0,
+        "seconds": 1.78,
+        "initial_rc": 0,
+        "final_rc": 0
+      },
+      {
+        "script": "docs/capture-stress.cjs",
+        "rc": 0,
+        "seconds": 186.25,
+        "initial_rc": 0,
+        "final_rc": 0
+      },
+      {
+        "script": "standalone/capture-a2.cjs",
+        "rc": 0,
+        "seconds": 63.19,
+        "initial_rc": 0,
+        "final_rc": 0
+      },
+      {
+        "script": "standalone/capture-a3.cjs",
+        "rc": 0,
+        "seconds": 27.09,
+        "initial_rc": 0,
+        "final_rc": 0
+      },
+      {
+        "script": "standalone/capture-arctic.cjs",
+        "rc": 0,
+        "seconds": 15.2,
+        "initial_rc": 0,
+        "final_rc": 0
+      },
+      {
+        "script": "standalone/capture-browse.cjs",
+        "rc": 0,
+        "seconds": 3.67,
+        "initial_rc": 0,
+        "final_rc": 0
+      },
+      {
+        "script": "standalone/capture-chart.cjs",
+        "rc": 0,
+        "seconds": 95.25,
+        "initial_rc": 0,
+        "final_rc": 0
+      },
+      {
+        "script": "standalone/capture-clean.cjs",
+        "rc": 0,
+        "seconds": 12.43,
+        "initial_rc": 0,
+        "final_rc": 0
+      },
+      {
+        "script": "standalone/capture-columns.cjs",
+        "rc": 0,
+        "seconds": 6.84,
+        "initial_rc": 0,
+        "final_rc": 0
+      },
+      {
+        "script": "standalone/capture-costs.cjs",
+        "rc": 0,
+        "seconds": 4.12,
+        "initial_rc": 0,
+        "final_rc": 0,
+        "rerun_evidence": ".scratch/cost-ui/report.json",
+        "checks": 37
+      },
+      {
+        "script": "standalone/capture-demo.cjs",
+        "rc": 0,
+        "seconds": 78.83,
+        "initial_rc": 0,
+        "final_rc": 0
+      },
+      {
+        "script": "standalone/capture-gm.cjs",
+        "rc": 0,
+        "seconds": 57.02,
+        "initial_rc": 0,
+        "final_rc": 0
+      },
+      {
+        "script": "standalone/capture-import.cjs",
+        "rc": 0,
+        "seconds": 14.4,
+        "initial_rc": 0,
+        "final_rc": 0
+      },
+      {
+        "script": "standalone/capture-input-meaning.cjs",
+        "rc": 0,
+        "seconds": 3.43,
+        "initial_rc": 0,
+        "final_rc": 0
+      },
+      {
+        "script": "standalone/capture-local-orders.cjs",
+        "rc": 0,
+        "seconds": 9.38,
+        "initial_rc": 0,
+        "final_rc": 0
+      },
+      {
+        "script": "standalone/capture-methods-scale.cjs",
+        "rc": 0,
+        "seconds": 163.21,
+        "initial_rc": 0,
+        "final_rc": 0
+      },
+      {
+        "script": "standalone/capture-methods.cjs",
+        "rc": 1,
+        "seconds": 1.13,
+        "initial_rc": 1,
+        "final_rc": 0,
+        "rerun_evidence": ".scratch/methods/report.json",
+        "checks": 52,
+        "fix": "Exact 18 options include Recommended; preserve full phone geometry by keeping method group above recipes."
+      },
+      {
+        "script": "standalone/capture-orders.cjs",
+        "rc": 0,
+        "seconds": 16.57,
+        "initial_rc": 0,
+        "final_rc": 0
+      },
+      {
+        "script": "standalone/capture-oss-firstrun.cjs",
+        "rc": 0,
+        "seconds": 11.13,
+        "initial_rc": 0,
+        "final_rc": 0
+      },
+      {
+        "script": "standalone/capture-product-page.cjs",
+        "rc": 0,
+        "seconds": 11.08,
+        "initial_rc": 0,
+        "final_rc": 0
+      },
+      {
+        "script": "standalone/capture-progressive-safety.cjs",
+        "rc": 0,
+        "seconds": 230.37,
+        "initial_rc": 0,
+        "final_rc": 0
+      },
+      {
+        "script": "standalone/capture-risk.cjs",
+        "rc": 0,
+        "seconds": 5.62,
+        "initial_rc": 0,
+        "final_rc": 0
+      },
+      {
+        "script": "standalone/capture-round3.cjs",
+        "rc": 0,
+        "seconds": 10.08,
+        "initial_rc": 0,
+        "final_rc": 0
+      },
+      {
+        "script": "standalone/capture-safari-qa.cjs",
+        "rc": 0,
+        "seconds": 11.84,
+        "initial_rc": 0,
+        "final_rc": 0
+      },
+      {
+        "script": "standalone/capture-settings.cjs",
+        "rc": 0,
+        "seconds": 10.44,
+        "initial_rc": 0,
+        "final_rc": 0
+      },
+      {
+        "script": "standalone/capture-shelf-v12.cjs",
+        "initial_rc": null,
+        "final_rc": 0,
+        "rerun_evidence": ".scratch/shelf-ui/report.json",
+        "checks": 42
+      },
+      {
+        "script": "standalone/capture-simple.cjs",
+        "rc": 0,
+        "seconds": 5.35,
+        "initial_rc": 0,
+        "final_rc": 0
+      },
+      {
+        "script": "standalone/capture-smart-import.cjs",
+        "rc": 0,
+        "seconds": 24.47,
+        "initial_rc": 0,
+        "final_rc": 0
+      },
+      {
+        "script": "standalone/capture-stockout.cjs",
+        "rc": 0,
+        "seconds": 9.76,
+        "initial_rc": 0,
+        "final_rc": 0
+      },
+      {
+        "script": "standalone/capture-stress-ui.cjs",
+        "rc": 0,
+        "seconds": 10.09,
+        "initial_rc": 0,
+        "final_rc": 0
+      },
+      {
+        "script": "standalone/capture-table.cjs",
+        "rc": 0,
+        "seconds": 28.15,
+        "initial_rc": 0,
+        "final_rc": 0
+      },
+      {
+        "script": "standalone/capture-theme.cjs",
+        "rc": 0,
+        "seconds": 25.52,
+        "initial_rc": 0,
+        "final_rc": 0
+      },
+      {
+        "script": "standalone/capture-warning-visibility.cjs",
+        "rc": 0,
+        "seconds": 17.88,
+        "initial_rc": 0,
+        "final_rc": 0
+      },
+      {
+        "script": "tests/capture-auto-v12.cjs",
+        "rc": 0,
+        "seconds": 2.52,
+        "initial_rc": 0,
+        "final_rc": 0,
+        "rerun_evidence": ".scratch/auto-ui/report.json",
+        "checks": 23
+      }
+    ],
+    "post_followup_reruns": [
+      "docs/capture-harness.cjs",
+      "standalone/capture-settings.cjs",
+      "standalone/capture-methods.cjs",
+      "standalone/capture-costs.cjs",
+      "standalone/capture-shelf-v12.cjs",
+      "tests/capture-auto-v12.cjs"
+    ],
+    "note": "Full discovery batch followed by targeted successful reruns after the presentation-only mobile order fix. Initial failures retained, not erased."
+  },
+  "perf": {
+    "definition": "Fresh Chromium process/context for each navigation; offline demo-1000 file, 1440px, frozen 2026-11-11; navigation start until DOMContentLoaded and 1000 evaluated rows. No task-owned capture batch was running; host-wide load was not controlled.",
+    "runs": [
+      {
+        "method": "current",
+        "run": 0,
+        "cold_load_ms": 789.04,
+        "picked": 0,
+        "dom_ms": 772.5
+      },
+      {
+        "method": "current",
+        "run": 1,
+        "cold_load_ms": 780.76,
+        "picked": 0,
+        "dom_ms": 768.6999999284744
+      },
+      {
+        "method": "current",
+        "run": 2,
+        "cold_load_ms": 771.28,
+        "picked": 0,
+        "dom_ms": 760.2000000476837
+      },
+      {
+        "method": "recommended",
+        "run": 0,
+        "cold_load_ms": 1645.15,
+        "picked": 980,
+        "dom_ms": 1629
+      },
+      {
+        "method": "recommended",
+        "run": 1,
+        "cold_load_ms": 1614.19,
+        "picked": 980,
+        "dom_ms": 1598
+      },
+      {
+        "method": "recommended",
+        "run": 2,
+        "cold_load_ms": 1602.68,
+        "picked": 980,
+        "dom_ms": 1588.7999999523163
+      }
+    ],
+    "median_ms": {
+      "current": 780.76,
+      "recommended": 1614.19
+    }
+  },
+  "erp": {
+    "status": "PASS",
+    "files": [
+      {
+        "file": "dynamics-365.csv",
+        "rc": 0,
+        "quantities_identical": true,
+        "before": [
+          {
+            "sku": "A-1",
+            "order_qty": 221.0,
+            "on_hand": 1200,
+            "on_order": null,
+            "safety_stock": 20,
+            "reorder_point": 72
+          }
+        ],
+        "after": [
+          {
+            "sku": "A-1",
+            "order_qty": 221.0,
+            "on_hand": 1200,
+            "on_order": null,
+            "safety_stock": 20,
+            "reorder_point": 72
+          }
+        ]
+      },
+      {
+        "file": "netsuite.csv",
+        "rc": 0,
+        "quantities_identical": true,
+        "before": [
+          {
+            "sku": "A-1",
+            "order_qty": 221.0,
+            "on_hand": 1200,
+            "on_order": null,
+            "safety_stock": 24,
+            "reorder_point": 134
+          }
+        ],
+        "after": [
+          {
+            "sku": "A-1",
+            "order_qty": 221.0,
+            "on_hand": 1200,
+            "on_order": null,
+            "safety_stock": 24,
+            "reorder_point": 134
+          }
+        ]
+      },
+      {
+        "file": "odoo.csv",
+        "rc": 0,
+        "quantities_identical": true,
+        "before": [
+          {
+            "sku": "A-1",
+            "order_qty": 221.0,
+            "on_hand": 1200,
+            "on_order": null,
+            "safety_stock": 20,
+            "reorder_point": 72
+          }
+        ],
+        "after": [
+          {
+            "sku": "A-1",
+            "order_qty": 221.0,
+            "on_hand": 1200,
+            "on_order": null,
+            "safety_stock": 20,
+            "reorder_point": 72
+          }
+        ]
+      },
+      {
+        "file": "quickbooks.csv",
+        "rc": 0,
+        "quantities_identical": true,
+        "before": [
+          {
+            "sku": "A-1",
+            "order_qty": 221.0,
+            "on_hand": 1200,
+            "on_order": null,
+            "safety_stock": 20,
+            "reorder_point": 72
+          }
+        ],
+        "after": [
+          {
+            "sku": "A-1",
+            "order_qty": 221.0,
+            "on_hand": 1200,
+            "on_order": null,
+            "safety_stock": 20,
+            "reorder_point": 72
+          }
+        ]
+      },
+      {
+        "file": "sage.csv",
+        "rc": 0,
+        "quantities_identical": true,
+        "before": [
+          {
+            "sku": "A-1",
+            "order_qty": 221.0,
+            "on_hand": 1200,
+            "on_order": null,
+            "safety_stock": 24,
+            "reorder_point": 134
+          }
+        ],
+        "after": [
+          {
+            "sku": "A-1",
+            "order_qty": 221.0,
+            "on_hand": 1200,
+            "on_order": null,
+            "safety_stock": 24,
+            "reorder_point": 134
+          }
+        ]
+      },
+      {
+        "file": "sap-business-one.csv",
+        "rc": 0,
+        "quantities_identical": true,
+        "before": [
+          {
+            "sku": "A-1",
+            "order_qty": 221.0,
+            "on_hand": 1200,
+            "on_order": null,
+            "safety_stock": 24,
+            "reorder_point": 134
+          }
+        ],
+        "after": [
+          {
+            "sku": "A-1",
+            "order_qty": 221.0,
+            "on_hand": 1200,
+            "on_order": null,
+            "safety_stock": 24,
+            "reorder_point": 134
+          }
+        ]
+      },
+      {
+        "file": "sap-s4hana.csv",
+        "rc": 0,
+        "quantities_identical": true,
+        "before": [
+          {
+            "sku": "A-1",
+            "order_qty": 221.0,
+            "on_hand": 1200,
+            "on_order": null,
+            "safety_stock": 24,
+            "reorder_point": 134
+          }
+        ],
+        "after": [
+          {
+            "sku": "A-1",
+            "order_qty": 221.0,
+            "on_hand": 1200,
+            "on_order": null,
+            "safety_stock": 24,
+            "reorder_point": 134
+          }
+        ]
+      },
+      {
+        "file": "zoho-inventory.csv",
+        "rc": 0,
+        "quantities_identical": true,
+        "before": [
+          {
+            "sku": "A-1",
+            "order_qty": 221.0,
+            "on_hand": 1200,
+            "on_order": null,
+            "safety_stock": 20,
+            "reorder_point": 72
+          }
+        ],
+        "after": [
+          {
+            "sku": "A-1",
+            "order_qty": 221.0,
+            "on_hand": 1200,
+            "on_order": null,
+            "safety_stock": 20,
+            "reorder_point": 72
+          }
+        ]
+      }
+    ],
+    "quickbooks_import_diff": "--- v1.1 QuickBooks imported items\n+++ v1.2 QuickBooks imported items\n@@ -10,6 +10,7 @@\n       110,\n       120\n     ],\n-    \"receipts\": {}\n+    \"receipts\": {},\n+    \"sale_price\": 9.99\n   }\n ]"
+  }
+}

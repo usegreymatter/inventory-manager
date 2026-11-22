@@ -9,7 +9,7 @@ function check(label,value,evidence){report.checks.push({label,pass:!!value,evid
 const synthetic=['SKU,Name,On Hand,Jan 2026,Feb 2026,Mar 2026,Unused A,Unused B,Unused C'];for(let i=0;i<2000;i++)synthetic.push([`SYN-${i}`,`Synthetic product ${i}`,i<18?-1:50,10,11,12,'x','y','z'].join(','));fs.writeFileSync(path.join(out,'synthetic-2000.csv'),synthetic.join('\n')+'\n')
 const partialFile=path.join(out,'partial-warehouses.csv');fs.writeFileSync(partialFile,'SKU,Name,Warehouse,On Hand,Jan 2026,Feb 2026,Mar 2026\nA,Widget,W1,10,1,2,3\nA,Widget,W1,20,4,5,6\nA,Widget,W2,-1,1,2,3\nA,Widget,W3,30,7,8,9\n')
 const hooks='\nwindow.importQA={state:()=>({count:data.items.length,skus:data.items.map(i=>i.sku),items:data.items,source:sourceName}),report:()=>importPending?.report,downloadCsv:importSetAsideCsv};'
-const probe=path.join(out,'probe.html');fs.writeFileSync(probe,fs.readFileSync(path.join(root,'standalone/stock-runway.html'),'utf8').replace('</script>',hooks+'</script>'))
+const probe=path.join(out,'probe.html');fs.writeFileSync(probe,fs.readFileSync(path.join(root,'standalone/inventory-manager.html'),'utf8').replace('</script>',hooks+'</script>'))
 async function main(){const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_EXECUTABLE||undefined});try{
 for(const [width,height]of [[1440,900],[390,844]]){
  const ctx=await browser.newContext({viewport:{width,height},acceptDownloads:true,reducedMotion:'reduce'});await ctx.route(/^https?:/,r=>{report.network.push(r.request().url());return r.abort()});const p=await ctx.newPage();p.on('pageerror',e=>report.errors.push(String(e)))

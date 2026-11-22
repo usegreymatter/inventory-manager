@@ -266,5 +266,5 @@ def make_handler(secret_getter=None, sample_path: Path | None = None, *, today: 
         except SourceError as exc:
             return json.dumps({"error": str(exc)}, ensure_ascii=False, separators=(",", ":"))
         except Exception:
-            return json.dumps({"error": "Stock runway could not read the selected source."}, separators=(",", ":"))
+            return json.dumps({"error": "Inventory Manager could not read the selected source."}, separators=(",", ":"))
     return stock_runway

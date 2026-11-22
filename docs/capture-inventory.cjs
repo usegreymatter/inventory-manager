@@ -617,7 +617,7 @@ async function checkRecovery(browser) {
     await page.screenshot({path:'.scratch/a4-screens/a10-fractional-now-390.png',fullPage:true})
     await timelineSummary.click()
     step = 'A10 exact fractional quick-view stock'
-    await page.getByRole('button', {name:'Stock Runway: quick view', exact:true}).click()
+    await page.getByRole('button', {name:'Inventory Manager: quick view', exact:true}).click()
     const popup = page.getByRole('dialog')
     await popup.waitFor({state:'visible'})
     const liquidRow = popup.getByRole('row').filter({hasText:'Synthetic liquid'})
@@ -710,14 +710,14 @@ async function checkRecovery(browser) {
     await page.evaluate(() => localStorage.setItem('runway-harness.csv_data','{}'))
     await page.goto(pathToFileURL(path.resolve('docs/harness.html')).href + '?theme=light#settings')
     step = 'quick-view invalid CSV recovery off route'
-    await page.getByRole('button',{name:'Stock Runway: quick view',exact:true}).click()
+    await page.getByRole('button',{name:'Inventory Manager: quick view',exact:true}).click()
     await page.getByRole('dialog').getByRole('alert').waitFor({state:'visible'})
     await check('csv','{}','recovery') // quickData catches this; React must not throw.
     await page.getByRole('dialog').getByRole('button',{name:'Back to sample data',exact:true}).click()
     await page.getByRole('dialog').waitFor({state:'hidden'})
     assert.equal(await page.getByRole('dialog').count(),0)
     assert.equal(await panel.count(),0)
-    assert.equal(await page.getByRole('heading',{name:'Stock Runway settings',exact:true}).isVisible(),true)
+    assert.equal(await page.getByRole('heading',{name:'Inventory Manager settings',exact:true}).isVisible(),true)
     assert.deepEqual(await storageState(),{source:'sample',csv:'{}'})
     step = 'main sample after quick-view recovery retains corrupt CSV'
     await page.goto(pathToFileURL(path.resolve('docs/harness.html')).href + '?theme=light')

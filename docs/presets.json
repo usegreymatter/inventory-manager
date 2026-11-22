@@ -1,0 +1,56 @@
+{
+  "version": "1.2-round3",
+  "cover_floor": "per_product: max(product_months_of_cover ?? max(current_months_of_cover, recipe.months_of_cover), effective_review_days / 30)",
+  "preserve_review_days": true,
+  "preserve_global_shelf_fields": true,
+  "max_months_of_cover": 36,
+  "over_limit": "block_apply",
+  "superiority_verified": false,
+  "presets": {
+    "general": {
+      "label": "General",
+      "settings": {
+        "forecast_method": "current",
+        "months_of_cover": 2,
+        "service_level": 0.95,
+        "buffer_days": 0
+      },
+      "why": "The v1.1 broad defaults, with your actual order interval preserved. Cover is never reduced."
+    },
+    "grocery": {
+      "label": "Grocery/food",
+      "settings": {
+        "months_of_cover": 2
+      },
+      "why": "Retain broad cover rather than assuming daily purchases. Enter verified shelf life only for the applicable products."
+    },
+    "pharmacy": {
+      "label": "Pharmacy",
+      "settings": {
+        "months_of_cover": 2
+      },
+      "why": "Setup guide only: preserve your model service target. Verify product life and acceptance margins individually."
+    },
+    "fashion": {
+      "label": "Fashion/seasonal",
+      "settings": {
+        "months_of_cover": 2
+      },
+      "why": "Retain broad cover rather than assuming weekly purchases or last-year seasonality. Review season-end products individually."
+    },
+    "spare-parts": {
+      "label": "Spare parts",
+      "settings": {
+        "months_of_cover": 2
+      },
+      "why": "Retain broad cover for intermittent demand; no forced Croston method or weekly purchasing assumption."
+    },
+    "electronics": {
+      "label": "Electronics",
+      "settings": {
+        "months_of_cover": 2
+      },
+      "why": "Retain broad cover rather than assuming weekly purchases; no forced smoothing or blanket obsolescence cap."
+    }
+  }
+}

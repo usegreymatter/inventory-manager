@@ -27,7 +27,7 @@ const { chromium } = require(playwrightPath)
         const errors = []
         page.on('pageerror', error => errors.push(error.message))
         await page.goto(pathToFileURL(path.resolve('docs/harness.html')).href + `?theme=${theme}`)
-        await page.getByRole('heading', { name: 'Stock Runway', exact: true }).waitFor()
+        await page.getByRole('heading', { name: 'Inventory Manager', exact: true }).waitFor()
         await page.getByRole('img').waitFor()
         assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false)
         const body = await page.locator('body').innerText()

@@ -4,20 +4,20 @@
   "scope": "CSV parsing/reports (import) and replenishment policy v2 (safety stock in orders, one trigger window). Forecast methods unchanged (180 Py + 180 JS frozen-forecast comparisons). Retains original seasonal baseline separately.",
   "previous_snapshot": "docs/seasonal-logic-baseline.json",
   "pins": {
-    "engine.py": "f2509b4",
-    "csv_import.py": "74572d6",
-    "sources.py": "74572d6"
+    "engine.py": "50e8117",
+    "csv_import.py": "de6ded8",
+    "sources.py": "de6ded8"
   },
   "pureBlock": {
     "start": "const SAMPLE =",
     "end": "const pageStyle =",
-    "sha256": "02e370af7058a318533e34bcef5230381ddfeacde6777d507c5bc00853e57ecb",
-    "comment": "Final-polish warning/gating/provenance-only refresh (joined allocations, narrow metadata gate, bounded messages); authored smart-import.js and generated mirror synchronized. Protected-maths guard passed before fingerprint refresh. Round-3 re-check (A1/A2/O1/O2/O3): canonical joined review, warehouse joins, CSV accepted identities and Unspecified eligibility. tests/r2-protected-maths.test.mjs verifies every byte outside the three exact import/review spans against c54b645; engine.py stays byte-identical. No purchase or forecast maths changed. csv_import.py hash refresh covers only import eligibility/report code; historical pins retained for provenance."
+    "sha256": "55891fb2ea1f679030134653e4c1ce65136d5dbbb3e8dc09a15f08e300324a2b",
+    "comment": "v1.2 E/P/M/C/O local integration; opt-in suggestion plus irregular-demand abstention, guidance-only cadence and exact-result performance fixes. Default-off goldens unchanged. See docs/history/changes/v12-integration.md. Owner-authorized import-only safety fixes; exact hunk and SHA rationale: docs/history/changes/v12-import-safety.md."
   },
   "files": {
-    "engine.py": "0d57278d36910a92de0cc65db70196ce6e85c7cf04c044f638969af11df7a86e",
-    "sources.py": "2da814a6a1d1a34ce24985fefce99253c626dee96098f3f2f2d23b25074479bb",
-    "csv_import.py": "3500576741e2b09ecbac4d88146a9f73f9c7980759d6b13bab1e7a6b252a68fd",
+    "engine.py": "d358c594784de9d6cedee0750498c115d888a72465151b1edbfcf61094b0c236",
+    "sources.py": "eaafe613441d8496ee2c9a5459d20b2208e58a008af1d3d8f4edee45d4be696e",
+    "csv_import.py": "1cc216fc77a4295b40618804ac865bbce0870be8e69d7b601cad57992957f76b",
     "tools.py": "524526fcd1217a55213a699ceac219515d06c0736008605af6571b4b9409e23e",
     "data/sample.json": "25ee9f210b24f3b7862be8b6b95044438af3b141cec5bc06a7735348473c2677"
   },

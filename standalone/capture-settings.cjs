@@ -5,7 +5,7 @@ const fs=require('node:fs'),path=require('node:path'),assert=require('node:asser
 const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright')
 const root=path.resolve(__dirname,'..'),out=path.join(root,'.scratch/settings');fs.mkdirSync(out,{recursive:true})
 const hooks=`\nwindow.settingsQA={state:()=>({settings:gmPortableSettings(),key:gmDatasetSettingsKey,rows:currentRows.map(r=>({sku:r.item.sku,supplier:r.item.supplier,quantity:r.guidance.quantity,safety:r.guidance.safety_stock,eoq:r.guidance.eoq,reorder:r.guidance.reorder_point,lead:r.guidance.lead_days,order_by:r.guidance.order_by,bucket:r.bucket,big:bigOrderWarning(r.guidance,settings),sources:resolveOrderSettings(r.item,settings).sources})),selected:selectedSku}),select:sku=>wlOpen(rowMap.get(sku))};\n`
-const probe=path.join(out,'probe.html');fs.writeFileSync(probe,fs.readFileSync(path.join(__dirname,'stock-runway.html'),'utf8').replace('</script>',hooks+'</script>'))
+const probe=path.join(out,'probe.html');fs.writeFileSync(probe,fs.readFileSync(path.join(__dirname,'inventory-manager.html'),'utf8').replace('</script>',hooks+'</script>'))
 const report={checks:[],errors:[],network:[],screenshots:[]};function check(label,value,evidence){report.checks.push({label,pass:!!value,evidence});assert.ok(value,label+': '+JSON.stringify(evidence))}
 const csv='sku,name,unit,on_hand,supplier_days,category,supplier,2026-08,2026-09,2026-10\nSYN-A,Synthetic alpha,box,25,,Parts,North,20,45,30\nSYN-B,Synthetic beta,box,25,30,Parts,North,20,45,30\nSYN-C,Synthetic gamma,box,150,30,Parts,South,20,45,30\n'
 async function main(){const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_EXECUTABLE||undefined});try{

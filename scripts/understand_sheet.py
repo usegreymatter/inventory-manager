@@ -31,7 +31,7 @@ MONTH = re.compile(r'(?:rcv:)?[1-9][0-9]{3}-(?:0[1-9]|1[0-2])\Z')
 def canonical_text(rows):
     """Serialize the core proposal without changing identifiers or quantities."""
     output = io.StringIO(newline='')
-    csv.writer(output, lineterminator='\n').writerows(rows)
+    csv.writer(output, lineterminator='\r\n').writerows(rows)
     return output.getvalue()
 
 

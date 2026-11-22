@@ -8,7 +8,7 @@ const source = fs.readFileSync(new URL('../desktop/plugin.js', import.meta.url),
 // search, filter-chip and column interactions are exercised in capture-clean/columns.cjs.
 const outputs = ['baseline', 'shipped', 'option-a', 'option-b', 'option-a2', 'option-a3'].map(name => ({
   name,
-  html: fs.readFileSync(new URL(`../standalone/${name === 'shipped' ? 'stock-runway' : `design/${name}`}.html`, import.meta.url), 'utf8'),
+  html: fs.readFileSync(new URL(`../standalone/${name === 'shipped' ? 'inventory-manager' : `design/${name}`}.html`, import.meta.url), 'utf8'),
 }))
 const block = (html, name) => {
   const start = `/* STOCK_RUNWAY_${name}_START */\n`, end = `/* STOCK_RUNWAY_${name}_END */`
@@ -106,16 +106,16 @@ test('PO format, positive order-today items only, exact quantities and units', (
     row('Incoming covers it', 'Z-1', 'pcs', 0), row('Later', 'L-1', 'l', 5, 'healthy'),
     row('Soon', 'S-1', 'boxes', 2, 'running-low'), row('Held', 'H-1', 'units', undefined, 'needs-data'),
   ], today)
-  assert.equal(text, 'Purchase order · Stock Runway\nDate: 2026-11-11\n\n• Cement (C-1) — 1,200 bags\n• Cable (W-2) — 0.125 m\n• Soon (S-1) — 2 boxes\n\n3 items')
+  assert.equal(text, 'Purchase order · Inventory Manager\nDate: 2026-11-11\n\n• Cement (C-1) — 1,200 bags\n• Cable (W-2) — 0.125 m\n• Soon (S-1) — 2 boxes\n\n3 items')
 })
 
 test('PO empty case never implies an order or includes zero-quantity attention rows', () => {
-  assert.equal(standalone.purchaseOrderText([], today), 'Purchase order · Stock Runway\nDate: 2026-11-11\n\nNo items to order.\n\n0 items')
+  assert.equal(standalone.purchaseOrderText([], today), 'Purchase order · Inventory Manager\nDate: 2026-11-11\n\nNo items to order.\n\n0 items')
   assert.equal(standalone.purchaseOrderText([{ item: {}, guidance: { quantity: 0 }, bucket: 'order' }], today), standalone.purchaseOrderText([], today))
 })
 
 test('PO preserves fractional units, singular count and neutralizes embedded line breaks', () => {
-  assert.equal(standalone.purchaseOrderText([{ item: { name: 'Oil\nRefill', sku: 'O\r1', unit: 'l' }, guidance: { quantity: 0.000001 }, bucket: 'running-low' }], today), 'Purchase order · Stock Runway\nDate: 2026-11-11\n\n• Oil Refill (O 1) — 0.000001 l\n\n1 item')
+  assert.equal(standalone.purchaseOrderText([{ item: { name: 'Oil\nRefill', sku: 'O\r1', unit: 'l' }, guidance: { quantity: 0.000001 }, bucket: 'running-low' }], today), 'Purchase order · Inventory Manager\nDate: 2026-11-11\n\n• Oil Refill (O 1) — 0.000001 l\n\n1 item')
 })
 }
 

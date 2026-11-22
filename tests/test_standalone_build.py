@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 BUILD = ROOT / "standalone" / "build.py"
 OUTPUTS = {
     "baseline": ROOT / "standalone" / "design/baseline.html",
-    "option-gm-b": ROOT / "standalone" / "stock-runway.html",
+    "option-gm-b": ROOT / "standalone" / "inventory-manager.html",
     "option-a": ROOT / "standalone" / "design/option-a.html",
     "option-b": ROOT / "standalone" / "design/option-b.html",
     "option-a2": ROOT / "standalone" / "design/option-a2.html",

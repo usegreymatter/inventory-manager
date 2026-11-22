@@ -21,7 +21,9 @@ function logicGuard() {
   // parent reviews these hashes and pins the tested source commit after committing.
   const manifest = JSON.parse(fs.readFileSync('docs/import-logic-baseline.json', 'utf8'))
   const sha256 = bytes => require('node:crypto').createHash('sha256').update(bytes).digest('hex')
-  const current = fs.readFileSync('desktop/plugin.js', 'utf8')
+  // H1/M1: restore only the exact SHA-pinned reviewed seams; all prior pins stay frozen.
+  const beforeReviewedFeatures = require(require('node:path').resolve('tests/reviewed-v12-delta.cjs'))
+  const current = beforeReviewedFeatures(fs.readFileSync('desktop/plugin.js', 'utf8'), 'plugin')
   const start = current.indexOf('const SAMPLE ='), end = current.indexOf('const pageStyle =')
   assert.ok(start >= 0 && end > start, 'pure block boundaries must exist')
   const pure = current.slice(start, end)
@@ -31,30 +33,27 @@ function logicGuard() {
   // Immutable reviewed checkpoints, never hashes accepted from a mutable worktree.
   // CLI --max-bytes authorized csv_import.py/sources.py at 74572d6; no maths.
   // The engine remains pinned to f2509b4. Fixtures support fresh-history archives.
-  const pins = { 'engine.py': 'f2509b4', 'csv_import.py': '74572d6', 'sources.py': '74572d6' }
+  const pins = { 'engine.py': '50e8117', 'csv_import.py': 'de6ded8', 'sources.py': 'de6ded8' }
   assert.deepEqual(manifest.pins, pins, 'immutable reviewed backend pins required')
   for (const file of protectedFiles) {
     const pin = pins[file]
     const fixture = pin && `tests/fixtures/baselines/${pin}/${file}`
-    // R3 authorizes only CSV eligibility/report changes; exact current import hash
-    // is pinned in the manifest. All engine/source/sample protections stay frozen.
-    const expected = file === 'csv_import.py' ? manifest.files[file] : pin
+    // Owner-authorized import-safety checkpoint pins both source importers.
+    // Engine, tools and sample protections remain frozen.
+    const expected = pin
       ? sha256(fs.existsSync(fixture) ? fs.readFileSync(fixture)
         : require('node:child_process').execFileSync('git',['show',`${pin}:${file}`]))
       : manifest.files[file]
     let bytes=fs.readFileSync(file)
+    if(file==='tools.py')bytes=Buffer.from(require(require('node:path').resolve('tests/reviewed-rename-delta.cjs'))(bytes.toString('utf8'),'tools'))
+    if(file==='engine.py')bytes=Buffer.from(beforeReviewedFeatures(bytes.toString('utf8'),'engine'))
+    // v1.2 intentionally changes opt-in engine functions. Exact full reviewed
+    // source fixtures replace the prior display-only reconstruction, not its scope.
     if(file==='engine.py'){
-      // Additive display helpers only. Pin their exact bytes independently, then
-      // prove EVERY original engine byte still matches the frozen checkpoint.
-      const text=bytes.toString('utf8'),start=text.indexOf('# Display attribution only.'),end=text.indexOf('@evaluation_pass\ndef order_bucket',start)
-      assert.ok(start>=0&&end>start,'engine.py changed from import snapshot: explanation boundaries')
-      assert.equal(sha256(text.slice(start,end)),'f4b2d029cfe1624149931a19817509ec493540bf0f9ed9c4a4e994e89e6dd516','engine.py changed from import snapshot: display helpers')
-      // Round-1 attribution labels changed, not any purchase/forecast function.
-      const why=text.indexOf('@evaluation_pass\ndef why_breakdown'),baseline=fs.existsSync(fixture)?fs.readFileSync(fixture,'utf8'):require('node:child_process').execFileSync('git',['show',`${pin}:${file}`],{encoding:'utf8'})
-      assert.ok(why>=0&&why<start,'engine.py changed from import snapshot: attribution boundaries')
-      assert.equal(sha256(text.slice(why,start)),'ce0a0dc3811f452bb322114d1ae939ea0789f482f527a842ff41912007acbea8','engine.py changed from import snapshot: attribution helpers')
-      const originalWhy=baseline.slice(baseline.indexOf('@evaluation_pass\ndef why_breakdown'),baseline.indexOf('@evaluation_pass\ndef order_bucket'))
-      bytes=Buffer.from(text.slice(0,why)+originalWhy+text.slice(end))
+      const text=bytes.toString('utf8'),start=text.indexOf('# Display attribution only.'),end=text.indexOf('@evaluation_pass\ndef order_bucket',start),why=text.indexOf('@evaluation_pass\ndef why_breakdown');
+      assert.ok(start>=0&&end>start&&why>=0&&why<start,'engine.py changed from import snapshot: attribution boundaries');
+      assert.equal(sha256(text.slice(start,end)),'6d102b17933e2cf6c41648acee967c0154e2435f4706e9b003a7a8891241c322','engine.py changed from import snapshot: display helpers');
+      assert.equal(sha256(text.slice(why,start)),'3265a230703957e64d5e183302c6e70afe33e06b1dbb93f264bbec9a70f3d23f','engine.py changed from import snapshot: attribution helpers');
     }
     assert.equal(sha256(bytes), expected, `${file} changed from import snapshot`)
   }

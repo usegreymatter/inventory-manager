@@ -6,7 +6,7 @@ const hook=`window.stockoutQA={state:()=>({enabled:settings.stockout_adjust,rows
 async function main(){
  fs.mkdirSync(out,{recursive:true});const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright'),browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_EXECUTABLE||undefined})
  try{for(const width of [1440,390]){
-  const html=fs.readFileSync(path.join(__dirname,'stock-runway-demo-1000.html'),'utf8'),file=path.join(out,'stockout-probe.html');fs.writeFileSync(file,html.replace('</script>',hook+'\n</script>'))
+  const html=fs.readFileSync(path.join(__dirname,'inventory-manager-demo-1000.html'),'utf8'),file=path.join(out,'stockout-probe.html');fs.writeFileSync(file,html.replace('</script>',hook+'\n</script>'))
   const ctx=await browser.newContext({viewport:{width,height:width===390?844:900},reducedMotion:'reduce'});await ctx.addInitScript(()=>{const D=Date;globalThis.Date=class extends D{constructor(...a){super(...(a.length?a:['2026-11-17T09:00:00Z']))}static now(){return new D('2026-11-17T09:00:00Z').getTime()}}})
   await ctx.route(/^https?:/,r=>{report.network.push(r.request().url());r.abort()});const p=await ctx.newPage();p.on('pageerror',e=>report.errors.push(e.message));await p.goto(pathToFileURL(file).href);await p.waitForFunction(()=>window.stockoutQA)
   const before=await p.evaluate(()=>stockoutQA.state());check(width+' defaults OFF',before.enabled===false);check(width+' catalog optional, absent Simple',await p.evaluate(()=>stockoutQA.simple()&&stockoutQA.catalog()))

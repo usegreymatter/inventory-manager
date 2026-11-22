@@ -25,7 +25,7 @@ class SafariFontLicenseIffTests(unittest.TestCase):
                 embeds_fonts = bool(re.search(r"@font-face\b", styles, re.I))
                 self.assertEqual(embeds_fonts, name == "option-gm-c")
                 notice = html.split("-->", 1)[0]
-                self.assertTrue(notice.startswith("<!--\nStock Runway — MIT License,"))
+                self.assertTrue(notice.startswith("<!--\nInventory Manager — MIT License,"))
                 self.assertEqual("Embedded fonts Poppins and Tajawal:" in notice, embeds_fonts)
                 self.assertEqual("SIL Open Font License 1.1" in notice, embeds_fonts)
                 for copyright_line in (

@@ -249,8 +249,15 @@ class UnderstandSheetTests(unittest.TestCase):
                 current = preflight(text)
                 # R3 adds only logical contributor identities to valid example reports.
                 self.assertEqual(current['import_report'].pop('accepted_rows'), [1])
+                expected = old.preflight_csv(text)
+                if path.name == 'quickbooks.csv':
+                    # Owner-approved additive sale_price=9.99; retain every quantity.
+                    for item in expected['items']:
+                        item['sale_price'] = 9.99
+                    expected['import_report']['ignored'].remove('Sales Price')
+                    expected['import_report']['matched'].insert(3, {'source':'Sales Price','field':'sale_price'})
                 self.assertEqual(json.dumps(current, ensure_ascii=False),
-                                 json.dumps(old.preflight_csv(text), ensure_ascii=False))
+                                 json.dumps(expected, ensure_ascii=False))
 
 
 def make_workbook(path, sheets):

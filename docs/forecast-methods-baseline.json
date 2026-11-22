@@ -5,7 +5,12 @@
     {
       "start": "export const DEFAULT_ORDER_SETTINGS",
       "end": "const dateOrdinal =",
-      "sha256": "3e7d319fd69219db1ba94da6ccd5d8f70068eb9202222ed62efbb8458d1177da"
+      "sha256": "3afb665374a102ad63bf20f978d779b8ed6980f03d701f53ac5c89b56fcf1e0c"
+    },
+    {
+      "start": "      // Owner 'align this'",
+      "end": "function defaultHorizon(",
+      "sha256": "1d45562a261f97f240a9c56f2e91a88f00090b8ccbf1b051415d6a18260d84f1"
     }
   ]
 }

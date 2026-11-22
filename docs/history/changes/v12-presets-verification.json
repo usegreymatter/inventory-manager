@@ -1,0 +1,1204 @@
+{
+  "scope": "Synthetic offline source/Chromium and SDK-shim proof only; no installed Desktop/live ERP/commercial outcome claim",
+  "product_revision": "c187f8e0631b74f51563416843e04deac22f9d1d",
+  "suites": [
+    {
+      "name": "node",
+      "command": "node --test tests/*.mjs",
+      "rc": 0,
+      "seconds": 17.3
+    },
+    {
+      "name": "pytest",
+      "command": "/usr/bin/python3 -m pytest -q",
+      "rc": 0,
+      "seconds": 65.25
+    },
+    {
+      "name": "unittest",
+      "command": "/usr/bin/python3 -m unittest discover -s tests",
+      "rc": 0,
+      "seconds": 29.45
+    },
+    {
+      "name": "golden",
+      "command": "/usr/bin/python3 scripts/golden_diff.py",
+      "rc": 0,
+      "seconds": 0.15
+    },
+    {
+      "name": "imports",
+      "command": "/usr/bin/python3 scripts/verify_import_examples.py",
+      "rc": 0,
+      "seconds": 0.08
+    },
+    {
+      "name": "docs",
+      "command": "/usr/bin/python3 scripts/check_docs.py",
+      "rc": 0,
+      "seconds": 0.07
+    },
+    {
+      "name": "kit",
+      "command": "<local-scratch>/sr-r3-prep/run_r3.sh \"$PWD\"",
+      "rc": 0,
+      "seconds": 38.45
+    }
+  ],
+  "counts": {
+    "node": 3639,
+    "pytest": 2195,
+    "unittest": 338
+  },
+  "captures": [
+    {
+      "script": "docs/capture-harness.cjs",
+      "rc": 0,
+      "seconds": 11.94
+    },
+    {
+      "script": "docs/capture-inventory.cjs",
+      "rc": 0,
+      "seconds": 127.23
+    },
+    {
+      "script": "docs/capture-polish.cjs",
+      "rc": 0,
+      "seconds": 45.94
+    },
+    {
+      "script": "docs/capture-quick-view.cjs",
+      "rc": 0,
+      "seconds": 12.56
+    },
+    {
+      "script": "docs/capture-readme.cjs",
+      "rc": 0,
+      "seconds": 1.82
+    },
+    {
+      "script": "docs/capture-stress.cjs",
+      "rc": 0,
+      "seconds": 201.96
+    },
+    {
+      "script": "standalone/capture-a2.cjs",
+      "rc": 0,
+      "seconds": 64.57
+    },
+    {
+      "script": "standalone/capture-a3.cjs",
+      "rc": 0,
+      "seconds": 26.93
+    },
+    {
+      "script": "standalone/capture-arctic.cjs",
+      "rc": 0,
+      "seconds": 13.94
+    },
+    {
+      "script": "standalone/capture-browse.cjs",
+      "rc": 0,
+      "seconds": 4.07
+    },
+    {
+      "script": "standalone/capture-chart.cjs",
+      "rc": 0,
+      "seconds": 100.11
+    },
+    {
+      "script": "standalone/capture-clean.cjs",
+      "rc": 0,
+      "seconds": 11.49
+    },
+    {
+      "script": "standalone/capture-columns.cjs",
+      "rc": 0,
+      "seconds": 7.3
+    },
+    {
+      "script": "standalone/capture-costs.cjs",
+      "rc": 0,
+      "seconds": 4.24
+    },
+    {
+      "script": "standalone/capture-demo.cjs",
+      "rc": 0,
+      "seconds": 76.42
+    },
+    {
+      "script": "standalone/capture-gm.cjs",
+      "rc": 0,
+      "seconds": 62.64
+    },
+    {
+      "script": "standalone/capture-import.cjs",
+      "rc": 0,
+      "seconds": 14.15
+    },
+    {
+      "script": "standalone/capture-input-meaning.cjs",
+      "rc": 0,
+      "seconds": 3.67
+    },
+    {
+      "script": "standalone/capture-local-orders.cjs",
+      "rc": 0,
+      "seconds": 10.15
+    },
+    {
+      "script": "standalone/capture-methods-scale.cjs",
+      "rc": 0,
+      "seconds": 167.7
+    },
+    {
+      "script": "standalone/capture-methods.cjs",
+      "rc": 0,
+      "seconds": 4.04
+    },
+    {
+      "script": "standalone/capture-orders.cjs",
+      "rc": 0,
+      "seconds": 15.0
+    },
+    {
+      "script": "standalone/capture-oss-firstrun.cjs",
+      "rc": 0,
+      "seconds": 10.2
+    },
+    {
+      "script": "standalone/capture-product-page.cjs",
+      "rc": 0,
+      "seconds": 11.91
+    },
+    {
+      "script": "standalone/capture-progressive-safety.cjs",
+      "rc": 0,
+      "seconds": 222.41
+    },
+    {
+      "script": "standalone/capture-risk.cjs",
+      "rc": 0,
+      "seconds": 6.46
+    },
+    {
+      "script": "standalone/capture-round3.cjs",
+      "rc": 0,
+      "seconds": 7.1
+    },
+    {
+      "script": "standalone/capture-safari-qa.cjs",
+      "rc": 0,
+      "seconds": 10.31
+    },
+    {
+      "script": "standalone/capture-settings.cjs",
+      "rc": 0,
+      "seconds": 10.52
+    },
+    {
+      "script": "standalone/capture-shelf-v12.cjs",
+      "rc": 0,
+      "seconds": 4.76
+    },
+    {
+      "script": "standalone/capture-simple.cjs",
+      "rc": 0,
+      "seconds": 5.03
+    },
+    {
+      "script": "standalone/capture-smart-import.cjs",
+      "rc": 0,
+      "seconds": 22.33
+    },
+    {
+      "script": "standalone/capture-stockout.cjs",
+      "rc": 0,
+      "seconds": 10.71
+    },
+    {
+      "script": "standalone/capture-stress-ui.cjs",
+      "rc": 0,
+      "seconds": 9.6
+    },
+    {
+      "script": "standalone/capture-table.cjs",
+      "rc": 0,
+      "seconds": 29.02
+    },
+    {
+      "script": "standalone/capture-theme.cjs",
+      "rc": 0,
+      "seconds": 23.54
+    },
+    {
+      "script": "standalone/capture-warning-visibility.cjs",
+      "rc": 0,
+      "seconds": 18.24
+    },
+    {
+      "script": "tests/capture-auto-v12.cjs",
+      "rc": 0,
+      "seconds": 2.4
+    }
+  ],
+  "capture_count": 38,
+  "preset_browser": {
+    "status": "PASS",
+    "checks": 14,
+    "width": 390,
+    "themes": [
+      "light",
+      "dark"
+    ],
+    "errors": [],
+    "network": []
+  },
+  "profit_browser": {
+    "browser": "159.0.8154.13",
+    "checks": [
+      {
+        "width": 1440,
+        "expiry_risk_uses_usable_stock": true,
+        "expiry_warnings_visible_and_escaped": true,
+        "irregular_reason_visible": true,
+        "irregular_standard_unchanged": true,
+        "default_hidden": true,
+        "native_toggle": true,
+        "current_unchanged": true,
+        "product_line": true,
+        "panel_line": true,
+        "persistence": true,
+        "off_hidden": true,
+        "no_overflow": true
+      },
+      {
+        "width": 390,
+        "expiry_risk_uses_usable_stock": true,
+        "expiry_warnings_visible_and_escaped": true,
+        "irregular_reason_visible": true,
+        "irregular_standard_unchanged": true,
+        "default_hidden": true,
+        "native_toggle": true,
+        "current_unchanged": true,
+        "product_line": true,
+        "panel_line": true,
+        "persistence": true,
+        "off_hidden": true,
+        "no_overflow": true
+      }
+    ],
+    "errors": [],
+    "network": [],
+    "status": "PASS"
+  },
+  "kit": {
+    "numeric_noise_cases": 38,
+    "stock_numeric_tolerance": 1e-09,
+    "status": "PASS",
+    "seed": 20261120,
+    "repo": "<repo>/.worktrees/v12-docs/.worktrees/subagent-sa-0-6fa61726",
+    "cases": 562,
+    "directed": 62,
+    "fuzz": 500,
+    "erp_examples": 8,
+    "formats": {
+      "csv": 444,
+      "xlsx": 118
+    },
+    "cli_original_csv_runs": 444,
+    "assertions": {
+      "no_crash": {
+        "pass": 1124,
+        "fail": 0
+      },
+      "aggregate_available": {
+        "pass": 528,
+        "fail": 0
+      },
+      "why_sentence_sum": {
+        "pass": 1116,
+        "fail": 0
+      },
+      "why_displayed_quantity": {
+        "pass": 1116,
+        "fail": 0
+      },
+      "standalone_meaning_vs_embedded": {
+        "pass": 562,
+        "fail": 0
+      },
+      "python_js_review_parity": {
+        "pass": 562,
+        "fail": 0
+      },
+      "python_js_acceptance_parity": {
+        "pass": 562,
+        "fail": 0
+      },
+      "python_js_value_warning_order_why_parity": {
+        "pass": 558,
+        "fail": 0
+      },
+      "cli_no_crash": {
+        "pass": 444,
+        "fail": 0
+      },
+      "original_cli_vs_desktop_parity": {
+        "pass": 442,
+        "fail": 0
+      },
+      "original_cli_ack_parity": {
+        "pass": 442,
+        "fail": 0
+      },
+      "partial_incoming_provenance": {
+        "pass": 496,
+        "fail": 0
+      },
+      "unit_evidence_not_overwritten": {
+        "pass": 1026,
+        "fail": 0
+      },
+      "valid_input_accepted": {
+        "pass": 40,
+        "fail": 0
+      },
+      "current_month_not_silent": {
+        "pass": 8,
+        "fail": 0
+      },
+      "invalid_reserved_rejected": {
+        "pass": 6,
+        "fail": 0
+      },
+      "clean_input_no_ack": {
+        "pass": 20,
+        "fail": 0
+      },
+      "joined_known_incoming_preserved": {
+        "pass": 2,
+        "fail": 0
+      },
+      "unit_row_order_invariant": {
+        "pass": 4,
+        "fail": 0
+      },
+      "unit_row_order_numeric_invariant": {
+        "pass": 4,
+        "fail": 0
+      },
+      "source_unchanged": {
+        "pass": 1,
+        "fail": 0
+      }
+    },
+    "total_assertions": 9063,
+    "failed_assertions": 0,
+    "failing_case_count": 0,
+    "failing_cases": [],
+    "source_hashes": {
+      "input_meaning.py": "75f71f070c512d2584d2205eb739376a474e2169551ca400d1c74f345a363e84",
+      "stock_runway.py": "fcdb25078ada516ace32c848dbc1137ee87145094248b70efa89f4330c88bcad",
+      "engine.py": "d358c594784de9d6cedee0750498c115d888a72465151b1edbfcf61094b0c236",
+      "smart_import.py": "86b15ae8b7b4bc9953882840b3c75bda8f92caa786850cc0920baec9c3f738c9",
+      "csv_import.py": "69ad3bdd80a5663f1d7003339c62efdef4eecb27bca8695a4777cb55a8d44c93",
+      "desktop/input-meaning.js": "95b1236be0c98074e3c8805041fc77c49506d1aff9ac107c318c5cb853c55ca1",
+      "desktop/plugin.js": "0d04bedd125a939084b137458cd646c06169aaeb8a0b24a4a010cce9f05e1f68"
+    },
+    "artifacts": {
+      "cases": "<local-scratch>/sr-r3-prep/results/cases.json",
+      "js": "<local-scratch>/sr-r3-prep/results/js.json",
+      "python": "<local-scratch>/sr-r3-prep/results/python.json",
+      "cli": "<local-scratch>/sr-r3-prep/results/cli.json",
+      "failures": "<local-scratch>/sr-r3-prep/results/failures.json"
+    },
+    "limits": [
+      "Synthetic only; no browser DOM or live inventory",
+      "Current-month policy oracle requires warning or hold, not any particular fix",
+      "CLI accepts CSV, not XLSX; original CSV CLI parity is distinct from workbook parity",
+      "Leading blank cases are exercised but no product-launch-date oracle exists",
+      "XLSX uses uncompressed ZIP entries and inline strings, not every Excel encoding"
+    ]
+  },
+  "erp_cli": [
+    {
+      "file": "docs/erp-examples/dynamics-365.csv",
+      "rc": 0,
+      "items": 1
+    },
+    {
+      "file": "docs/erp-examples/netsuite.csv",
+      "rc": 0,
+      "items": 1
+    },
+    {
+      "file": "docs/erp-examples/odoo.csv",
+      "rc": 0,
+      "items": 1
+    },
+    {
+      "file": "docs/erp-examples/quickbooks.csv",
+      "rc": 0,
+      "items": 1
+    },
+    {
+      "file": "docs/erp-examples/sage.csv",
+      "rc": 0,
+      "items": 1
+    },
+    {
+      "file": "docs/erp-examples/sap-business-one.csv",
+      "rc": 0,
+      "items": 1
+    },
+    {
+      "file": "docs/erp-examples/sap-s4hana.csv",
+      "rc": 0,
+      "items": 1
+    },
+    {
+      "file": "docs/erp-examples/zoho-inventory.csv",
+      "rc": 0,
+      "items": 1
+    }
+  ],
+  "benchmark": {
+    "items": 1000,
+    "paths": 96,
+    "eligible_suggestions": [
+      778,
+      778,
+      778,
+      778,
+      778
+    ],
+    "off_ms": [
+      1423.658583,
+      1285.1093330000003,
+      1292.757250000001,
+      1668.4306660000009,
+      1471.661333
+    ],
+    "on_ms": [
+      1581.3489160000006,
+      1530.32125,
+      1449.447000000001,
+      1571.0430839999995,
+      1632.0907499999996
+    ],
+    "paired_added_ms": [
+      157.6903330000007,
+      245.21191699999963,
+      156.68975,
+      -97.38758200000143,
+      160.4294169999996
+    ],
+    "median_added_ms": 157.6903330000007,
+    "scope": "Local CPU measurement after task-owned capture batch completed; host-wide load uncontrolled; five paired alternating-order runs, not an SLA."
+  },
+  "default_off": {
+    "command": "/usr/bin/python3 -m pytest -q tests/test_v12_cli_review.py tests/test_legacy_unchanged.py",
+    "passed": 479,
+    "existing_golden_diff": ""
+  },
+  "html_sha256": {
+    "standalone/design/baseline.html": "7561ba99aa527a71d46bdec21f3189c67a02720eadd48593c584be3dcccbeafd",
+    "standalone/design/option-a.html": "5032fb0165e78b01ecef3cc32978297d6cfee896864cf09b9c27909c98db0554",
+    "standalone/design/option-b.html": "9990552a1491872f92e05df64c3d4f4fdc8dec3bc307b3c31f001ffd49023cbb",
+    "standalone/design/option-a2.html": "7e9d5a597042afa1a7808106330b16d75953814442403d1f640c2b024e906212",
+    "standalone/design/option-a3.html": "46bd06d9c0fc61268e3d9587a2891a2e92e354f19c4bccdb79b2600f6bf1a905",
+    "standalone/design/option-gm-a.html": "1ea2666988385bf3a5255b80726e164f5f5124cc417114e7ef2250dc23b5598b",
+    "standalone/design/option-gm-b.html": "da20571206047324ecbfa9b45cb20da735b7775872555e222c02900abe3a161d",
+    "standalone/design/option-gm-c.html": "e9dc053bb9d86d915449a425d05f7e4507a1adb5a1501f25e6f1e39400b5defe",
+    "standalone/stock-runway.html": "da20571206047324ecbfa9b45cb20da735b7775872555e222c02900abe3a161d",
+    "standalone/stock-runway-demo-1000.html": "55a9c43bf066db565ea8ae764001814d6d8d2f1464a475444259f2b7c5fd24c5"
+  },
+  "protected_maths": {
+    "plugin": "0d80862e43d6e32be9f36d8a021e749f12a4f7d2babe012bca3c93dccacc1ea2",
+    "engine": "a26c096356c0e69c6175e6d94aabc25d138b2cb0eb8add9413d27cba8b8aa10d",
+    "reviewed_delta": "a1286b842b5d2ea318c257af0c5c4d5276d2b7c33c3b84315ebcc584113b0dfa"
+  },
+  "not_checked": [
+    "Installed Hermes Desktop",
+    "Actual Safari/WebKit or physical devices",
+    "Live ERP/inventory",
+    "Real-world demand or profit outcomes"
+  ],
+  "preset_gate_sources": {
+    "redesigned-gate-both": {
+      "path": "<repo>/.worktrees/v12-stress3/stress/results/redesigned-gate-both/gate-results.json",
+      "sha256": "929ee3e04c429feedf31474d4f938b912c35f45ad94243532e9087d6ffeba709",
+      "status": "NOT_QUALIFIED",
+      "completed_runs": 1680,
+      "expected_runs": 1680,
+      "seeds": 20,
+      "gates": {
+        "grocery@7": {
+          "status": "PASS_NONINFERIOR",
+          "aggregate": {
+            "status": "PASS_NONINFERIOR",
+            "failure_metrics": [],
+            "inconclusive_metrics": [],
+            "paired_runs": 260,
+            "seed_clusters": 20,
+            "metrics": {
+              "net_profit": {
+                "mean": 0.0,
+                "ci95": [
+                  0.0,
+                  0.0
+                ],
+                "general_mean": -8179.053781875658,
+                "preset_mean": -8179.053781875658,
+                "noninferiority_margin": 0.0
+              },
+              "fill_rate": {
+                "mean": 0.0,
+                "ci95": [
+                  0.0,
+                  0.0
+                ],
+                "general_mean": 0.7406217645276859,
+                "preset_mean": 0.7406217645276859,
+                "noninferiority_margin": 0.0
+              }
+            }
+          }
+        },
+        "grocery@30": {
+          "status": "PASS_NONINFERIOR",
+          "aggregate": {
+            "status": "PASS_NONINFERIOR",
+            "failure_metrics": [],
+            "inconclusive_metrics": [],
+            "paired_runs": 260,
+            "seed_clusters": 20,
+            "metrics": {
+              "net_profit": {
+                "mean": 0.0,
+                "ci95": [
+                  0.0,
+                  0.0
+                ],
+                "general_mean": -3265.590402528978,
+                "preset_mean": -3265.590402528978,
+                "noninferiority_margin": 0.0
+              },
+              "fill_rate": {
+                "mean": 0.0,
+                "ci95": [
+                  0.0,
+                  0.0
+                ],
+                "general_mean": 0.6066147012404858,
+                "preset_mean": 0.6066147012404858,
+                "noninferiority_margin": 0.0
+              }
+            }
+          }
+        },
+        "pharmacy@7": {
+          "status": "FAIL_SIGNIFICANT_HARM",
+          "aggregate": {
+            "status": "INCONCLUSIVE",
+            "failure_metrics": [],
+            "inconclusive_metrics": [
+              "net_profit",
+              "fill_rate"
+            ],
+            "paired_runs": 100,
+            "seed_clusters": 20,
+            "metrics": {
+              "net_profit": {
+                "mean": -633.3124246575343,
+                "ci95": [
+                  -1497.4753726027398,
+                  283.3634657534247
+                ],
+                "general_mean": 3842.8910410958906,
+                "preset_mean": 3209.578616438356,
+                "noninferiority_margin": 0.0
+              },
+              "fill_rate": {
+                "mean": 0.0015163242507340079,
+                "ci95": [
+                  -0.0004402830651518075,
+                  0.0037976670155972967
+                ],
+                "general_mean": 0.960034195156001,
+                "preset_mean": 0.961550519406735,
+                "noninferiority_margin": 0.0
+              }
+            }
+          }
+        },
+        "pharmacy@30": {
+          "status": "FAIL_SIGNIFICANT_HARM",
+          "aggregate": {
+            "status": "FAIL_SIGNIFICANT_HARM",
+            "failure_metrics": [
+              "net_profit"
+            ],
+            "inconclusive_metrics": [
+              "fill_rate"
+            ],
+            "paired_runs": 100,
+            "seed_clusters": 20,
+            "metrics": {
+              "net_profit": {
+                "mean": -1648.6042356164382,
+                "ci95": [
+                  -2906.0528273972604,
+                  -400.5287561643836
+                ],
+                "general_mean": 3879.9166301369864,
+                "preset_mean": 2231.312394520548,
+                "noninferiority_margin": 0.0
+              },
+              "fill_rate": {
+                "mean": -0.0005520465860203371,
+                "ci95": [
+                  -0.0066901172615787706,
+                  0.00535952739233546
+                ],
+                "general_mean": 0.9502519935620363,
+                "preset_mean": 0.9496999469760159,
+                "noninferiority_margin": 0.0
+              }
+            }
+          }
+        },
+        "fashion@7": {
+          "status": "PASS_NONINFERIOR",
+          "aggregate": {
+            "status": "PASS_NONINFERIOR",
+            "failure_metrics": [],
+            "inconclusive_metrics": [],
+            "paired_runs": 20,
+            "seed_clusters": 20,
+            "metrics": {
+              "net_profit": {
+                "mean": 0.0,
+                "ci95": [
+                  0.0,
+                  0.0
+                ],
+                "general_mean": 44879.93901369863,
+                "preset_mean": 44879.93901369863,
+                "noninferiority_margin": 0.0
+              },
+              "fill_rate": {
+                "mean": 0.0,
+                "ci95": [
+                  0.0,
+                  0.0
+                ],
+                "general_mean": 0.9923053277293622,
+                "preset_mean": 0.9923053277293622,
+                "noninferiority_margin": 0.0
+              }
+            }
+          }
+        },
+        "fashion@30": {
+          "status": "PASS_NONINFERIOR",
+          "aggregate": {
+            "status": "PASS_NONINFERIOR",
+            "failure_metrics": [],
+            "inconclusive_metrics": [],
+            "paired_runs": 20,
+            "seed_clusters": 20,
+            "metrics": {
+              "net_profit": {
+                "mean": 0.0,
+                "ci95": [
+                  0.0,
+                  0.0
+                ],
+                "general_mean": 41764.80109589041,
+                "preset_mean": 41764.80109589041,
+                "noninferiority_margin": 0.0
+              },
+              "fill_rate": {
+                "mean": 0.0,
+                "ci95": [
+                  0.0,
+                  0.0
+                ],
+                "general_mean": 0.9923053277293622,
+                "preset_mean": 0.9923053277293622,
+                "noninferiority_margin": 0.0
+              }
+            }
+          }
+        },
+        "spare-parts@7": {
+          "status": "PASS_NONINFERIOR",
+          "aggregate": {
+            "status": "PASS_NONINFERIOR",
+            "failure_metrics": [],
+            "inconclusive_metrics": [],
+            "paired_runs": 20,
+            "seed_clusters": 20,
+            "metrics": {
+              "net_profit": {
+                "mean": 0.0,
+                "ci95": [
+                  0.0,
+                  0.0
+                ],
+                "general_mean": 15996.887671232877,
+                "preset_mean": 15996.887671232877,
+                "noninferiority_margin": 0.0
+              },
+              "fill_rate": {
+                "mean": 0.0,
+                "ci95": [
+                  0.0,
+                  0.0
+                ],
+                "general_mean": 0.9393691691231378,
+                "preset_mean": 0.9393691691231378,
+                "noninferiority_margin": 0.0
+              }
+            }
+          }
+        },
+        "spare-parts@30": {
+          "status": "PASS_NONINFERIOR",
+          "aggregate": {
+            "status": "PASS_NONINFERIOR",
+            "failure_metrics": [],
+            "inconclusive_metrics": [],
+            "paired_runs": 20,
+            "seed_clusters": 20,
+            "metrics": {
+              "net_profit": {
+                "mean": 0.0,
+                "ci95": [
+                  0.0,
+                  0.0
+                ],
+                "general_mean": 15877.033561643835,
+                "preset_mean": 15877.033561643835,
+                "noninferiority_margin": 0.0
+              },
+              "fill_rate": {
+                "mean": 0.0,
+                "ci95": [
+                  0.0,
+                  0.0
+                ],
+                "general_mean": 0.9449292685030454,
+                "preset_mean": 0.9449292685030454,
+                "noninferiority_margin": 0.0
+              }
+            }
+          }
+        },
+        "electronics@7": {
+          "status": "PASS_NONINFERIOR",
+          "aggregate": {
+            "status": "PASS_NONINFERIOR",
+            "failure_metrics": [],
+            "inconclusive_metrics": [],
+            "paired_runs": 20,
+            "seed_clusters": 20,
+            "metrics": {
+              "net_profit": {
+                "mean": 0.0,
+                "ci95": [
+                  0.0,
+                  0.0
+                ],
+                "general_mean": -4871.371232876712,
+                "preset_mean": -4871.371232876712,
+                "noninferiority_margin": 0.0
+              },
+              "fill_rate": {
+                "mean": 0.0,
+                "ci95": [
+                  0.0,
+                  0.0
+                ],
+                "general_mean": 0.9708211357367056,
+                "preset_mean": 0.9708211357367056,
+                "noninferiority_margin": 0.0
+              }
+            }
+          }
+        },
+        "electronics@30": {
+          "status": "PASS_NONINFERIOR",
+          "aggregate": {
+            "status": "PASS_NONINFERIOR",
+            "failure_metrics": [],
+            "inconclusive_metrics": [],
+            "paired_runs": 20,
+            "seed_clusters": 20,
+            "metrics": {
+              "net_profit": {
+                "mean": 0.0,
+                "ci95": [
+                  0.0,
+                  0.0
+                ],
+                "general_mean": -7301.128767123288,
+                "preset_mean": -7301.128767123288,
+                "noninferiority_margin": 0.0
+              },
+              "fill_rate": {
+                "mean": 0.0,
+                "ci95": [
+                  0.0,
+                  0.0
+                ],
+                "general_mean": 0.9708211357367056,
+                "preset_mean": 0.9708211357367056,
+                "noninferiority_margin": 0.0
+              }
+            }
+          }
+        }
+      },
+      "scope": "Owner-supplied independent synthetic gate read back; not re-executed in integration"
+    },
+    "redesigned-gate-no99": {
+      "path": "<repo>/.worktrees/v12-stress3/stress/results/redesigned-gate-no99/gate-results.json",
+      "sha256": "0ae83e82b2bfd6e0b4244c6aaa0f50c9358578787dbc0b4283afa19d427bc309",
+      "status": "QUALIFIED_SYNTHETIC_ONLY",
+      "completed_runs": 1680,
+      "expected_runs": 1680,
+      "seeds": 20,
+      "gates": {
+        "grocery@7": {
+          "status": "PASS_NONINFERIOR",
+          "aggregate": {
+            "status": "PASS_NONINFERIOR",
+            "failure_metrics": [],
+            "inconclusive_metrics": [],
+            "paired_runs": 260,
+            "seed_clusters": 20,
+            "metrics": {
+              "net_profit": {
+                "mean": 0.0,
+                "ci95": [
+                  0.0,
+                  0.0
+                ],
+                "general_mean": -8179.053781875658,
+                "preset_mean": -8179.053781875658,
+                "noninferiority_margin": 0.0
+              },
+              "fill_rate": {
+                "mean": 0.0,
+                "ci95": [
+                  0.0,
+                  0.0
+                ],
+                "general_mean": 0.7406217645276859,
+                "preset_mean": 0.7406217645276859,
+                "noninferiority_margin": 0.0
+              }
+            }
+          }
+        },
+        "grocery@30": {
+          "status": "PASS_NONINFERIOR",
+          "aggregate": {
+            "status": "PASS_NONINFERIOR",
+            "failure_metrics": [],
+            "inconclusive_metrics": [],
+            "paired_runs": 260,
+            "seed_clusters": 20,
+            "metrics": {
+              "net_profit": {
+                "mean": 0.0,
+                "ci95": [
+                  0.0,
+                  0.0
+                ],
+                "general_mean": -3265.590402528978,
+                "preset_mean": -3265.590402528978,
+                "noninferiority_margin": 0.0
+              },
+              "fill_rate": {
+                "mean": 0.0,
+                "ci95": [
+                  0.0,
+                  0.0
+                ],
+                "general_mean": 0.6066147012404858,
+                "preset_mean": 0.6066147012404858,
+                "noninferiority_margin": 0.0
+              }
+            }
+          }
+        },
+        "pharmacy@7": {
+          "status": "PASS_NONINFERIOR",
+          "aggregate": {
+            "status": "PASS_NONINFERIOR",
+            "failure_metrics": [],
+            "inconclusive_metrics": [],
+            "paired_runs": 100,
+            "seed_clusters": 20,
+            "metrics": {
+              "net_profit": {
+                "mean": 0.0,
+                "ci95": [
+                  0.0,
+                  0.0
+                ],
+                "general_mean": 3842.8910410958906,
+                "preset_mean": 3842.8910410958906,
+                "noninferiority_margin": 0.0
+              },
+              "fill_rate": {
+                "mean": 0.0,
+                "ci95": [
+                  0.0,
+                  0.0
+                ],
+                "general_mean": 0.960034195156001,
+                "preset_mean": 0.960034195156001,
+                "noninferiority_margin": 0.0
+              }
+            }
+          }
+        },
+        "pharmacy@30": {
+          "status": "PASS_NONINFERIOR",
+          "aggregate": {
+            "status": "PASS_NONINFERIOR",
+            "failure_metrics": [],
+            "inconclusive_metrics": [],
+            "paired_runs": 100,
+            "seed_clusters": 20,
+            "metrics": {
+              "net_profit": {
+                "mean": 0.0,
+                "ci95": [
+                  0.0,
+                  0.0
+                ],
+                "general_mean": 3879.9166301369864,
+                "preset_mean": 3879.9166301369864,
+                "noninferiority_margin": 0.0
+              },
+              "fill_rate": {
+                "mean": 0.0,
+                "ci95": [
+                  0.0,
+                  0.0
+                ],
+                "general_mean": 0.9502519935620363,
+                "preset_mean": 0.9502519935620363,
+                "noninferiority_margin": 0.0
+              }
+            }
+          }
+        },
+        "fashion@7": {
+          "status": "PASS_NONINFERIOR",
+          "aggregate": {
+            "status": "PASS_NONINFERIOR",
+            "failure_metrics": [],
+            "inconclusive_metrics": [],
+            "paired_runs": 20,
+            "seed_clusters": 20,
+            "metrics": {
+              "net_profit": {
+                "mean": 0.0,
+                "ci95": [
+                  0.0,
+                  0.0
+                ],
+                "general_mean": 44879.93901369863,
+                "preset_mean": 44879.93901369863,
+                "noninferiority_margin": 0.0
+              },
+              "fill_rate": {
+                "mean": 0.0,
+                "ci95": [
+                  0.0,
+                  0.0
+                ],
+                "general_mean": 0.9923053277293622,
+                "preset_mean": 0.9923053277293622,
+                "noninferiority_margin": 0.0
+              }
+            }
+          }
+        },
+        "fashion@30": {
+          "status": "PASS_NONINFERIOR",
+          "aggregate": {
+            "status": "PASS_NONINFERIOR",
+            "failure_metrics": [],
+            "inconclusive_metrics": [],
+            "paired_runs": 20,
+            "seed_clusters": 20,
+            "metrics": {
+              "net_profit": {
+                "mean": 0.0,
+                "ci95": [
+                  0.0,
+                  0.0
+                ],
+                "general_mean": 41764.80109589041,
+                "preset_mean": 41764.80109589041,
+                "noninferiority_margin": 0.0
+              },
+              "fill_rate": {
+                "mean": 0.0,
+                "ci95": [
+                  0.0,
+                  0.0
+                ],
+                "general_mean": 0.9923053277293622,
+                "preset_mean": 0.9923053277293622,
+                "noninferiority_margin": 0.0
+              }
+            }
+          }
+        },
+        "spare-parts@7": {
+          "status": "PASS_NONINFERIOR",
+          "aggregate": {
+            "status": "PASS_NONINFERIOR",
+            "failure_metrics": [],
+            "inconclusive_metrics": [],
+            "paired_runs": 20,
+            "seed_clusters": 20,
+            "metrics": {
+              "net_profit": {
+                "mean": 0.0,
+                "ci95": [
+                  0.0,
+                  0.0
+                ],
+                "general_mean": 15996.887671232877,
+                "preset_mean": 15996.887671232877,
+                "noninferiority_margin": 0.0
+              },
+              "fill_rate": {
+                "mean": 0.0,
+                "ci95": [
+                  0.0,
+                  0.0
+                ],
+                "general_mean": 0.9393691691231378,
+                "preset_mean": 0.9393691691231378,
+                "noninferiority_margin": 0.0
+              }
+            }
+          }
+        },
+        "spare-parts@30": {
+          "status": "PASS_NONINFERIOR",
+          "aggregate": {
+            "status": "PASS_NONINFERIOR",
+            "failure_metrics": [],
+            "inconclusive_metrics": [],
+            "paired_runs": 20,
+            "seed_clusters": 20,
+            "metrics": {
+              "net_profit": {
+                "mean": 0.0,
+                "ci95": [
+                  0.0,
+                  0.0
+                ],
+                "general_mean": 15877.033561643835,
+                "preset_mean": 15877.033561643835,
+                "noninferiority_margin": 0.0
+              },
+              "fill_rate": {
+                "mean": 0.0,
+                "ci95": [
+                  0.0,
+                  0.0
+                ],
+                "general_mean": 0.9449292685030454,
+                "preset_mean": 0.9449292685030454,
+                "noninferiority_margin": 0.0
+              }
+            }
+          }
+        },
+        "electronics@7": {
+          "status": "PASS_NONINFERIOR",
+          "aggregate": {
+            "status": "PASS_NONINFERIOR",
+            "failure_metrics": [],
+            "inconclusive_metrics": [],
+            "paired_runs": 20,
+            "seed_clusters": 20,
+            "metrics": {
+              "net_profit": {
+                "mean": 0.0,
+                "ci95": [
+                  0.0,
+                  0.0
+                ],
+                "general_mean": -4871.371232876712,
+                "preset_mean": -4871.371232876712,
+                "noninferiority_margin": 0.0
+              },
+              "fill_rate": {
+                "mean": 0.0,
+                "ci95": [
+                  0.0,
+                  0.0
+                ],
+                "general_mean": 0.9708211357367056,
+                "preset_mean": 0.9708211357367056,
+                "noninferiority_margin": 0.0
+              }
+            }
+          }
+        },
+        "electronics@30": {
+          "status": "PASS_NONINFERIOR",
+          "aggregate": {
+            "status": "PASS_NONINFERIOR",
+            "failure_metrics": [],
+            "inconclusive_metrics": [],
+            "paired_runs": 20,
+            "seed_clusters": 20,
+            "metrics": {
+              "net_profit": {
+                "mean": 0.0,
+                "ci95": [
+                  0.0,
+                  0.0
+                ],
+                "general_mean": -7301.128767123288,
+                "preset_mean": -7301.128767123288,
+                "noninferiority_margin": 0.0
+              },
+              "fill_rate": {
+                "mean": 0.0,
+                "ci95": [
+                  0.0,
+                  0.0
+                ],
+                "general_mean": 0.9708211357367056,
+                "preset_mean": 0.9708211357367056,
+                "noninferiority_margin": 0.0
+              }
+            }
+          }
+        }
+      },
+      "scope": "Owner-supplied independent synthetic gate read back; not re-executed in integration"
+    }
+  },
+  "range_diff_check": {
+    "rc": 2,
+    "output": "tests/fixtures/baselines/50e8117/csv_import.py:402: trailing whitespace.\n+            report['rows_imported']+=1; blanks+=local_blanks; missing_lead += item['supplier_days'] is None; \n",
+    "reason": "Only inherited trailing whitespace in exact newly vendored csv_import.py source; do not normalize reviewed checkpoint bytes."
+  }
+}
