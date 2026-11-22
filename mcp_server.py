@@ -22,7 +22,7 @@ _cli_spec.loader.exec_module(cli)
 MODERN = '2026-07-28'
 LEGACY = ('2025-11-25', '2025-06-18', '2024-11-05')
 VERSIONS = (MODERN, *LEGACY)
-INFO = {'name': 'inventory-manager', 'version': '1.2.0-beta'}
+INFO = {'name': 'inventory-manager', 'version': '1.2.1-beta'}
 MAX_LINE = 1024 * 1024
 MAX_RESPONSE = 2 * 1024 * 1024
 PREFIX = 'io.modelcontextprotocol/'
@@ -67,6 +67,18 @@ def regular(path):
     if not stat.S_ISREG(p.stat().st_mode):
         raise ValueError('regular file required')
     return p
+
+
+def safe_source_reason(error):
+    text = str(error)
+    if text in ('CSV must be a local file no larger than 2 MiB.', 'CSV contains more than 10000 rows.', 'Add at least three YYYY-MM monthly sales columns after supplier_days.'):
+        return text
+    match = re.fullmatch(r'CSV is missing required ([a-z ,]+) columns?\. Required columns are product code, product name and stock on hand; unit and supplier lead time are optional\. Common ERP names also work, e\.g\. Item Code, Item Name, UoM, Qty On Hand, Lead Time\.', text)
+    if match:
+        return text
+    if text.endswith('use --show-orders-anyway to acknowledge these risks.'):
+        return 'Input review flagged risks. Check the file, then add --show-orders-anyway to acknowledge them.'
+    return 'Check the local CSV or bundle path, required columns (product code, product name, stock on hand, three or more monthly sales columns) and whether flagged risks need --show-orders-anyway.'
 
 
 def cap_arrays(value, path='', counts=None):
@@ -129,7 +141,7 @@ class Snapshot:
             meaning = importlib.import_module(engine.__package__+'.input_meaning')
             self.data = meaning.interpret_csv(str(p), self.data, dict(stock_includes_reserved=args.stock_includes_reserved, incoming_not_in_file=args.incoming_not_in_file), self.today)
             if self.data['input_meaning']['requires_ack'] and not args.show_orders_anyway:
-                raise ValueError()
+                raise ValueError('Input review flagged risks; use --show-orders-anyway to acknowledge these risks.')
         if args.show_orders_anyway:
             for item in self.data['items']:
                 for lot in item.get('lots', []):
@@ -140,7 +152,7 @@ class Snapshot:
         self.health = health.data_health(self.data, self.today, self.settings)
         self.meta = dict(planning_date=self.today, as_of=self.data['as_of'],
                          data_age_days=(date.fromisoformat(self.today)-date.fromisoformat(self.data['as_of'])).days,
-                         model_version='1.2.0-beta', source_loaded_once=True)
+                         model_version='1.2.1-beta', source_loaded_once=True)
 
     def call(self, name, args):
         if not isinstance(args, dict):
@@ -297,8 +309,8 @@ def main():
     args = parser().parse_args()
     try:
         snapshot = Snapshot(args)
-    except Exception:
-        print('Inventory source could not be loaded safely. Check local inputs and risk acknowledgment.',file=sys.stderr)
+    except Exception as error:
+        print('Inventory source could not be loaded: ' + safe_source_reason(error), file=sys.stderr)
         return 1
     try:
         serve(snapshot,sys.stdin.buffer,sys.stdout.buffer)

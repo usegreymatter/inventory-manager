@@ -4,6 +4,7 @@ import fs from 'node:fs'
 import {spawnSync} from 'node:child_process'
 import {createHash} from 'node:crypto'
 import beforeRename from './reviewed-rename-delta.cjs'
+import beforeV121 from './reviewed-v121-delta.cjs'
 const read=p=>fs.readFileSync(new URL('../'+p,import.meta.url),'utf8')
 const oldName=/stock runway/i,brand='Inventory Manager'
 test('CLI help, command answers and authored display strings use the new name',()=>{
@@ -15,7 +16,7 @@ test('CLI help, command answers and authored display strings use the new name',(
  assert.match(read('README.md'),/\*\*Beta:\*\*/)
 })
 test('exact SHA-pinned rename reconstructs pre-rename plugin bytes and rejects unknown changes',()=>{
- const source=read('desktop/plugin.js'),before=beforeRename(source,'plugin')
+ const source=read('desktop/plugin.js'),before=beforeRename(beforeV121(source,'plugin'),'plugin')
  assert.equal(createHash('sha256').update(before).digest('hex'),'43e46a82fcd8a4cd2b6174f08650227a51d8cf0f386be075fd9913c4d5aeb5c9')
  assert.throws(()=>beforeRename(source.replace("name: 'Inventory Manager'","name: 'UNKNOWN BRAND'"),'plugin'))
  assert.notEqual(createHash('sha256').update(beforeRename(source+'UNKNOWN','plugin')).digest('hex'),'43e46a82fcd8a4cd2b6174f08650227a51d8cf0f386be075fd9913c4d5aeb5c9')

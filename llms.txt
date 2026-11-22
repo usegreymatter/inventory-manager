@@ -1,6 +1,6 @@
 # Inventory Manager
 
-Version: 1.2.0-beta. Free Beta: tested with example data; feedback welcome.
+Version: 1.2.1-beta. Free Beta: tested with example data; feedback welcome.
 
 > Free, open-source reorder planner: what to buy, how much, by when. Offline; your data stays on your device. Python standard-library engine/CLI, Hermes Desktop plugin (JS mirror of the engine), offline single-file HTML page. Read-only data sources; nothing places orders.
 

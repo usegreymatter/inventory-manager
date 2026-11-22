@@ -23,9 +23,9 @@ def test_primary_outputs_redirect_old_names_and_show_current_brand():
 def test_beta_version_and_mcp_client_name():
     manifest = (ROOT / "plugin.yaml").read_text()
     server = (ROOT / "mcp_server.py").read_text()
-    assert re.search(r"(?m)^version: 1\.2\.0-beta$", manifest)
-    assert "'name': 'inventory-manager', 'version': '1.2.0-beta'" in server
-    assert "model_version='1.2.0-beta'" in server
+    assert re.search(r"(?m)^version: 1\.2\.1-beta$", manifest)
+    assert "'name': 'inventory-manager', 'version': '1.2.1-beta'" in server
+    assert "model_version='1.2.1-beta'" in server
 
 
 def test_new_download_names_and_legacy_protocol_keys_remain_compatible():

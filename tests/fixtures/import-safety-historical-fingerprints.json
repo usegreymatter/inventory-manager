@@ -97,7 +97,8 @@
     },
     {
       "file": "tests/fixtures/import-probes/per_warehouse_cols.csv",
-      "sha256": "e9b80164fe40ce6c8be5bd74abbd937821bb35f5caf1c6fda301a160af6e48e2"
+      "sha256": "0019d91e1bf28ee92a2f974c4925bfe1ba491249ccd438048ba42bce2bfedcde",
+      "reviewed_delta": "v1.2.1: error text only (missing stock-on-hand column, optional fields and ERP aliases); still rejected. No parsed data changed. Previous error digest: e9b80164fe40ce6c8be5bd74abbd937821bb35f5caf1c6fda301a160af6e48e2."
     },
     {
       "file": "tests/fixtures/import-probes/purchase_uom_only.csv",

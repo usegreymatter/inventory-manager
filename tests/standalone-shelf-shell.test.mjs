@@ -129,3 +129,28 @@ test('preset shelf copy reflects active cap while retaining global scope and com
 test('shell CSS keeps clearance and cap text within narrow 390px layouts',()=>{
   const css=read('standalone/design/decision-simple-gm-b.css');assert.match(css,/\.shelf-clearance/);assert.match(css,/\.shelf-capped/);assert.match(css,/overflow-wrap\s*:\s*anywhere/);assert.match(css,/@media\s*\(max-width:\s*(?:480|600|640)px\)/)
 })
+
+test('smart import renderer counts physical omitted rows once across negative_stock and duplicate_sku channels',async()=>{
+  const cases=[
+    ['negative_stock','B,Negative,-1,1,2,3\n',1,false],
+    ['duplicate_sku','A,Duplicate,8,1,2,3\nA,Duplicate again,9,1,2,3\n',2,false],
+    ['warning_only','B,Negative,-1,1,2,3\n',1,true],
+  ]
+  for(const [name,extra,count,titleRow] of cases){
+    const document=dom(),core=read('desktop/plugin.js'),ctx=vm.createContext({document,TextEncoder,TextDecoder,atob,btoa,crypto:webcrypto,localStorage:{getItem:()=>null},readStockFile:async file=>file.text})
+    const status=new Element('p');status.id='source-status';document.body.append(status)
+    vm.runInContext(core.slice(core.indexOf('const SAMPLE ='),core.indexOf('const pageStyle =')).replaceAll('export ','')+'\n'+read('standalone/design/smart-import.js')+'\nthis.api={loadStockImport,parseStockImport,understandStockWorkbook,importRows}',ctx)
+    const text=(titleRow?'Synthetic stock report\n':'')+'sku,name,on_hand,2026-08,2026-09,2026-10\nA,Synthetic,5,1,2,3\n'+extra
+    const report=ctx.api.understandStockWorkbook([{name:'CSV',rows:ctx.api.importRows(text,','),delimiter:','}])
+    assert.equal(report.warnings.filter(w=>w.includes('row omitted')).length,count,name+' warning channel')
+    if(!titleRow)assert.equal(ctx.api.parseStockImport(text).import_report.rows_set_aside.length,count,name+' structured channel')
+    const promise=ctx.api.loadStockImport({name:name+'.csv',size:text.length,text,arrayBuffer:async()=>new TextEncoder().encode(text).buffer},()=>true)
+    for(let n=0;n<100&&!document.getElementById('smart-import')?.open;n++)await new Promise(resolve=>setTimeout(resolve,5))
+    assert.match(document.getElementById('smart-import-ready').textContent,new RegExp(` · ${count} rows set aside$`),name)
+    const details=document.querySelectorAll('details').find(d=>d.querySelector('summary')?.textContent.startsWith('Rows set aside'))
+    assert.ok(details,name+' disclosure exists even when closed')
+    assert.equal(details.querySelectorAll('li').length,count,name+' list agrees with count')
+    assert.equal(new Set(details.querySelectorAll('li').map(li=>li.textContent.match(/Row (\d+)/)?.[1])).size,count,name+' distinct physical rows')
+    await document.getElementById('smart-import-cancel').dispatch('click');assert.equal(await promise,null)
+  }
+})

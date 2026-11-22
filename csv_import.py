@@ -219,7 +219,9 @@ def import_csv(path, strict=False, *, max_bytes=MAX_CSV_BYTES):
         raise SourceError('CSV source requires an explicit local csv_path.')
     try:
         p = Path(path).expanduser().resolve(strict=True)
-        if not p.is_file() or p.stat().st_size > max_bytes:
+        if not p.is_file():
+            raise SourceError('CSV must be a local file.')
+        if p.stat().st_size > max_bytes:
             raise SourceError(size_error)
         # A file can grow after stat; never perform an unbounded read.
         with p.open('rb') as handle: raw = _read_csv_bytes(handle, max_bytes)
@@ -290,7 +292,8 @@ def preflight_csv(text, strict=False, *, max_bytes=MAX_CSV_BYTES):
     canonical = headers[:5] == FIXED
     if not canonical: months.sort(); receipts.sort()
     if not {'sku','name','on_hand'} <= picked.keys():
-        raise SourceError('CSV columns must begin: sku,name,unit,on_hand,supplier_days. Common ERP names also work, e.g. Item Code, Item Name, UoM, Qty On Hand, Lead Time.')
+        missing = [label for field, label in (('sku', 'product code'), ('name', 'product name'), ('on_hand', 'stock on hand')) if field not in picked]
+        raise SourceError('CSV is missing required ' + ', '.join(missing) + ' column' + ('' if len(missing) == 1 else 's') + '. Required columns are product code, product name and stock on hand; unit and supplier lead time are optional. Common ERP names also work, e.g. Item Code, Item Name, UoM, Qty On Hand, Lead Time.')
     numeric_indices = [idx for field,idx in picked.items() if field in ['on_hand','supplier_days','on_order','demand_change_pct','lot_qty',*PER_ITEM]] + [idx for _,idx in months+receipts]
     style = number_style(rows[1:], numeric_indices, delimiter)
     # Adding an optional sale price cannot alter pre-existing inventory numbers.

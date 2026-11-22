@@ -9,7 +9,7 @@ tier: community
 category: tools
 requires_hermes: ">=0.22.2"
 docs_url: ""
-version: "1.2.0-beta"
+version: "1.2.1-beta"
 readme: true
 platforms: []
 title: Inventory Manager

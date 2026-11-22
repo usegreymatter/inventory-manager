@@ -23,7 +23,9 @@ function logicGuard() {
   const sha256 = bytes => require('node:crypto').createHash('sha256').update(bytes).digest('hex')
   // H1/M1: restore only the exact SHA-pinned reviewed seams; all prior pins stay frozen.
   const beforeReviewedFeatures = require(require('node:path').resolve('tests/reviewed-v12-delta.cjs'))
-  const current = beforeReviewedFeatures(fs.readFileSync('desktop/plugin.js', 'utf8'), 'plugin')
+  // v1.2.1: reverse only SHA-pinned diagnostic deltas; all historical pins stay frozen.
+  const beforeV121 = require(require('node:path').resolve('tests/reviewed-v121-delta.cjs'))
+  const current = beforeReviewedFeatures(beforeV121(fs.readFileSync('desktop/plugin.js', 'utf8'), 'plugin'), 'plugin')
   const start = current.indexOf('const SAMPLE ='), end = current.indexOf('const pageStyle =')
   assert.ok(start >= 0 && end > start, 'pure block boundaries must exist')
   const pure = current.slice(start, end)
@@ -45,6 +47,7 @@ function logicGuard() {
         : require('node:child_process').execFileSync('git',['show',`${pin}:${file}`]))
       : manifest.files[file]
     let bytes=fs.readFileSync(file)
+    if(file==='csv_import.py')bytes=Buffer.from(beforeV121(bytes.toString('utf8'),'csv'))
     if(file==='tools.py')bytes=Buffer.from(require(require('node:path').resolve('tests/reviewed-rename-delta.cjs'))(bytes.toString('utf8'),'tools'))
     if(file==='engine.py')bytes=Buffer.from(beforeReviewedFeatures(bytes.toString('utf8'),'engine'))
     // v1.2 intentionally changes opt-in engine functions. Exact full reviewed

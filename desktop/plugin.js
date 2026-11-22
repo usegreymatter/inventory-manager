@@ -2616,7 +2616,7 @@ export function parseCsv(text,{strict=false}={}) {
   for(const [field,title]of [['category','Category'],['supplier','Supplier'],['on_order','On order'],['demand_change_pct','demand_change_pct'],['last_count_date','last_count_date']])if(headers.filter(h=>h===field).length>1)throw new CsvError(`${title} column must be unique.`)
   const canonical=IMPORT_FIXED.every((h,i)=>headers[i]===h),cmp=(a,b)=>a[0]<b[0]?-1:a[0]>b[0]?1:a[1]-b[1]
   if(!canonical){months.sort(cmp);receipts.sort(cmp)}
-  if(!['sku','name','on_hand'].every(f=>f in picked))throw new CsvError('CSV columns must begin: sku,name,unit,on_hand,supplier_days. Common ERP names also work, e.g. Item Code, Item Name, UoM, Qty On Hand, Lead Time.')
+  if(!['sku','name','on_hand'].every(f=>f in picked)){const missing=[['sku','product code'],['name','product name'],['on_hand','stock on hand']].filter(([field])=>!(field in picked)).map(([,label])=>label);throw new CsvError(`CSV is missing required ${missing.join(', ')} column${missing.length===1?'':'s'}. Required columns are product code, product name and stock on hand; unit and supplier lead time are optional. Common ERP names also work, e.g. Item Code, Item Name, UoM, Qty On Hand, Lead Time.`)}
   const numericIndices=[...Object.entries(picked).filter(([f])=>['on_hand','supplier_days','on_order','demand_change_pct','lot_qty',...IMPORT_PER_ITEM].includes(f)).map(([,i])=>i),...[...months,...receipts].map(([,i])=>i)]
   const style=importNumberStyle(rows.slice(1),numericIndices,delimiter)
   // Sale-price evidence cannot reinterpret existing inventory quantities.

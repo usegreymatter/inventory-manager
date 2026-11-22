@@ -15,12 +15,19 @@ LINK = re.compile(r'\]\(([^)\s]+)\)')
 SKIP_DIRS = ('docs/history/',)  # historical notes may cite ignored local evidence
 
 
+def checkable(path):
+    return path.is_file() and not {'.git', '.scratch', 'node_modules'}.intersection(path.relative_to(ROOT).parts)
+
+
 def tracked():
     try:
-        out = subprocess.run(['git', 'ls-files'], cwd=ROOT, capture_output=True, text=True, check=True).stdout
-        return [ROOT / f for f in out.splitlines() if f]
+        top = subprocess.run(['git', 'rev-parse', '--show-toplevel'], cwd=ROOT, capture_output=True, text=True, check=True).stdout.strip()
+        if Path(top).resolve() == ROOT.resolve():
+            out = subprocess.run(['git', 'ls-files'], cwd=ROOT, capture_output=True, text=True, check=True).stdout
+            return [ROOT / f for f in out.splitlines() if f and checkable(ROOT / f)]
     except (OSError, subprocess.CalledProcessError):
-        return [p for p in ROOT.rglob('*') if p.is_file() and '.git' not in p.parts and '.scratch' not in p.parts]
+        pass
+    return [p for p in ROOT.rglob('*') if checkable(p)]
 
 
 def main():
@@ -48,7 +55,7 @@ def main():
     for p in problems:
         print(p)
     print(f'checked {links} relative links, {jsons} JSON files: {len(problems)} problem(s)')
-    return 1 if problems else 0
+    return 1 if problems or (links == 0 and jsons == 0) else 0
 
 
 if __name__ == '__main__':

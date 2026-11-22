@@ -106,7 +106,15 @@ const smartImportUI = (() => {
     const warnings=[...r.warnings,...(state.parsed?.import_report?.warnings||[])];if(warnings.length){const w=el('div',undefined,'smart-import-warnings');w.append(el('p',warnings[0]));disclosure(w,'All warnings',warnings);body.append(w)}
     if(state.error)body.append(el('p',state.error.message,'smart-import-problem'))
     const parsed=state.parsed,report=parsed?.import_report
-    const omitted=r.warnings.filter(w=>w.includes('row omitted')),setAside=[...(report?.rows_set_aside||[]).map(x=>'Row '+x.row+': '+x.reason),...omitted.map(w=>w.replace(/^(.*?): row ([0-9]+) /,'$1: Row $2: '))]
+    const setAside=[],seenRows=new Set()
+    const addAside=(sheet,row,text)=>{const key=JSON.stringify([sheet,Number(row)]);if(row!=null&&seenRows.has(key))return;if(row!=null)seenRows.add(key);setAside.push(text)}
+    // Legacy preflight rows and workbook warnings refer to the same physical CSV rows.
+    for(const x of report?.rows_set_aside||[])addAside(state.legacyParsed&&!state.edit?r.sheet_used:'canonical',x.row,'Row '+x.row+': '+x.reason)
+    for(const w of r.warnings.filter(w=>w.includes('row omitted'))){
+      const sheet=r.sheets.find(s=>w.startsWith(s.name+': '))?.name
+      const row=w.slice((sheet?.length||0)+2).match(/^row (\d+)\b|row omitted \((\d+)\)/)
+      addAside(sheet,row?(row[1]||row[2]):null,w.replace(/^(.*?): row ([0-9]+) /,'$1: Row $2: ').replace(/row omitted \((\d+)\)/,'Row $1 omitted'))
+    }
     const count=el('p',parsed?`${parsed.items.length} products ready · ${state.meaning.rows_kept} rows kept · ${state.meaning.rows_flagged} rows flagged${report?' · '+setAside.length+' rows set aside':''}`:'No products ready yet. Check the column matches.','smart-import-ready');count.id='smart-import-ready';count.setAttribute('aria-live','polite');body.append(count)
     if(parsed){
       const table=el('table');table.id='smart-import-preview';const head=el('tr');for(const t of ['Product code','Product name','Stock on hand'])head.append(el('th',t));table.append(head)

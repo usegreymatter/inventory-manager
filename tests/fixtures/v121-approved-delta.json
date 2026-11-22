@@ -1,0 +1,35 @@
+{
+  "baseline": "8465334",
+  "rationale": {
+    "plugin": "Required-column diagnostic only; retain ERP aliases, no parser data or forecast/order changes.",
+    "csv": "Separate non-file diagnostic and required-column diagnostic only; retain local-file size contract.",
+    "smartImport": "Deduplicate set-aside display rows by physical sheet/row; no parsed inventory data change."
+  },
+  "baseline_sha256": {
+    "plugin": "25d5a80adbedce755d5128e8c16d2051f32148a57eefd967dd76168cb8479dee",
+    "csv": "1cc216fc77a4295b40618804ac865bbce0870be8e69d7b601cad57992957f76b",
+    "smartImport": "28dedffe4c6a7903484fa96dc334e4ae9c81bfa27f181f81b314d48e29eff365"
+  },
+  "plugin": [
+    {
+      "before": "  if(!['sku','name','on_hand'].every(f=>f in picked))throw new CsvError('CSV columns must begin: sku,name,unit,on_hand,supplier_days. Common ERP names also work, e.g. Item Code, Item Name, UoM, Qty On Hand, Lead Time.')\n",
+      "after": "  if(!['sku','name','on_hand'].every(f=>f in picked)){const missing=[['sku','product code'],['name','product name'],['on_hand','stock on hand']].filter(([field])=>!(field in picked)).map(([,label])=>label);throw new CsvError(`CSV is missing required ${missing.join(', ')} column${missing.length===1?'':'s'}. Required columns are product code, product name and stock on hand; unit and supplier lead time are optional. Common ERP names also work, e.g. Item Code, Item Name, UoM, Qty On Hand, Lead Time.`)}\n"
+    }
+  ],
+  "csv": [
+    {
+      "before": "        if not p.is_file() or p.stat().st_size > max_bytes:\n",
+      "after": "        if not p.is_file():\n            raise SourceError('CSV must be a local file.')\n        if p.stat().st_size > max_bytes:\n"
+    },
+    {
+      "before": "        raise SourceError('CSV columns must begin: sku,name,unit,on_hand,supplier_days. Common ERP names also work, e.g. Item Code, Item Name, UoM, Qty On Hand, Lead Time.')\n",
+      "after": "        missing = [label for field, label in (('sku', 'product code'), ('name', 'product name'), ('on_hand', 'stock on hand')) if field not in picked]\n        raise SourceError('CSV is missing required ' + ', '.join(missing) + ' column' + ('' if len(missing) == 1 else 's') + '. Required columns are product code, product name and stock on hand; unit and supplier lead time are optional. Common ERP names also work, e.g. Item Code, Item Name, UoM, Qty On Hand, Lead Time.')\n"
+    }
+  ],
+  "smartImport": [
+    {
+      "before": "    const omitted=r.warnings.filter(w=>w.includes('row omitted')),setAside=[...(report?.rows_set_aside||[]).map(x=>'Row '+x.row+': '+x.reason),...omitted.map(w=>w.replace(/^(.*?): row ([0-9]+) /,'$1: Row $2: '))]\n",
+      "after": "    const setAside=[],seenRows=new Set()\n    const addAside=(sheet,row,text)=>{const key=JSON.stringify([sheet,Number(row)]);if(row!=null&&seenRows.has(key))return;if(row!=null)seenRows.add(key);setAside.push(text)}\n    // Legacy preflight rows and workbook warnings refer to the same physical CSV rows.\n    for(const x of report?.rows_set_aside||[])addAside(state.legacyParsed&&!state.edit?r.sheet_used:'canonical',x.row,'Row '+x.row+': '+x.reason)\n    for(const w of r.warnings.filter(w=>w.includes('row omitted'))){\n      const sheet=r.sheets.find(s=>w.startsWith(s.name+': '))?.name\n      const row=w.slice((sheet?.length||0)+2).match(/^row (\\d+)\\b|row omitted \\((\\d+)\\)/)\n      addAside(sheet,row?(row[1]||row[2]):null,w.replace(/^(.*?): row ([0-9]+) /,'$1: Row $2: ').replace(/row omitted \\((\\d+)\\)/,'Row $1 omitted'))\n    }\n"
+    }
+  ]
+}
