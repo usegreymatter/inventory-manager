@@ -5,10 +5,38 @@ import assert from 'node:assert/strict'
 const policyFields = new Set(['runout_month','runout_day','order_by','order_overdue',
   'demand_swing','safety_stock','reorder_point','why','safety_stock_provenance',
   'suggested_order','big_order'])
-export const forecastOnly = row => Object.fromEntries(Object.entries(row).filter(([key])=>!policyFields.has(key)))
+// Reverse only the documented v1.2.2 warning strings, independently checked
+// against raw history. Unknown warning bytes remain part of historical guards.
+export function expectedSafetyWarnings(row,orderQuantity){
+  const sales=row.monthly_sales,allowed=new Set()
+  if(!Array.isArray(sales))return allowed
+  const nonzero=sales.filter(v=>v>0).sort((a,b)=>a-b)
+  if(sales.length>=4&&nonzero.length&&row.as_of){
+    const n=nonzero.length,median=n%2?nonzero[(n-1)/2]:(nonzero[n/2-1]+nonzero[n/2])/2
+    const [y,m]=row.as_of.slice(0,7).split('-').map(Number),unusual=[]
+    sales.forEach((v,i)=>{if(v>4*median)unusual.push(new Date(Date.UTC(y,m-1-sales.length+1+i,1)).toISOString().slice(0,7))})
+    if(unusual.length)allowed.add(`${unusual.length===1?'One month':'Months'} (${unusual.join(', ')}) ${unusual.length===1?'is':'are'} much higher than usual. Check it isn't a one-off before ordering.`)
+  }
+  let trailing=0;for(let i=sales.length-1;i>=0&&sales[i]===0;i--)trailing++
+  if(trailing>=3&&orderQuantity>0)allowed.add(`No sales for ${trailing} months. Check it isn't discontinued before ordering.`)
+  if(trailing&&row.on_hand<=0)allowed.add('Out of stock with no recent sales — sales may be low because it ran out. Check demand before trusting this.')
+  return allowed
+}
+export function assertSafetyWarningAdditions(row,quantity){
+  if(row.held)return
+  for(const note of expectedSafetyWarnings(row,quantity))assert.ok(row.input_warnings?.includes(note),`expected warning addition: ${note}`)
+}
+export function reviewedSafetyProjection(row,quantity=row.suggested_order??0){
+  const out={...row},notes=row.input_warnings
+  if(!Array.isArray(notes))return out
+  const allowed=expectedSafetyWarnings(row,quantity),kept=notes.filter(note=>!allowed.has(note))
+  if(kept.length!==notes.length){if(kept.length)out.input_warnings=kept;else delete out.input_warnings}
+  return out
+}
+export const forecastOnly = (row,quantity=row.suggested_order??0) => Object.fromEntries(Object.entries(reviewedSafetyProjection(row,quantity)).filter(([key])=>!policyFields.has(key)))
 export const plain = value => JSON.parse(JSON.stringify(value))
-export function assertFrozenForecast(actual, historical) {
-  const a=plain(forecastOnly(actual)),b=plain(forecastOnly(historical))
+export function assertFrozenForecast(actual, historical, quantity=actual.suggested_order??0) {
+  const a=plain(forecastOnly(actual,quantity)),b=plain(forecastOnly(historical,quantity))
   const projection=a.projection,previous=b.projection
   delete a.projection;delete b.projection
   assert.deepEqual(a,b,'all non-policy, non-projection fields stay exact')
@@ -26,6 +54,7 @@ export const shiftDay = (date, days) => new Date(Date.parse(date+'T00:00:00Z')+d
 export function assertGuidanceDates(api, row, today, settings = {}, asOf = row.as_of) {
   if (row.held) return
   const g = api.orderGuidance(row,today,settings,asOf)
+  assertSafetyWarningAdditions(row,g.quantity??0)
   if (g.status === 'needs-data') return
   assert.equal(row.runout_day,g.runout_date,'row runout comes from guidance, even beyond the chart horizon')
   assert.equal(row.runout_month,g.runout_date?.slice(0,7)??null)

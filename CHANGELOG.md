@@ -2,9 +2,18 @@
 
 ## Unreleased
 
+### Inventory Manager v1.2.2-beta
+
+- Added purchase-review warnings for a single-month sales spike, three or more trailing zero-sales months with a positive order, and zero latest-month sales when no stock remains. These warnings do not automatically change sales history or quantities.
+- Made big-order review visible in the browser worklist and product detail, and retained the missing-incoming caveat in copied orders and CSV exports.
+- Clarified browser versus CLI/AI startup expectations, English-only UI with Arabic browser-import support, and name-generated codes when browser smart import or the CLI/MCP CSV loader has no SKU column.
+- Updated current documentation and download guidance without claiming a hosted update or published release asset. [Beta notes and limitations](docs/release-notes/v1.2.2-beta.md).
+
+### Earlier v1.2 development
+
 - **v1.2 — Import safety:** blank lot quantities remain unknown without duplicating stock; ambiguous transaction dates and lot-total mismatches require input review. Excel numeric expiry respects the 1904 date system, quoted CR survives Python CSV roundtrips, sale prices cannot change inventory-number inference, and workbook bad-lot rows are set aside individually. Forecast/purchase maths is unchanged.
 
-### Inventory Manager v1.2.0 candidate
+#### Inventory Manager v1.2.0 candidate (historical)
 
 - **Fixed — profit shelf cap:** the opt-in suggestion and alternatives now receive the computed shelf ceiling. MOQ/pack conflicts omit the suggestion with an explicit standard-amount fallback; ordinary quantities are unchanged.
 - **Fixed — preset cover floor:** each product covers only its own review interval via a product `months_of_cover` override when needed. Delivery time is not added twice, slow suppliers cannot inflate other products, and previews count the actual changed quantities.

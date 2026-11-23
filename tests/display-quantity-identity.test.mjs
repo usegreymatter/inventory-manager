@@ -9,16 +9,17 @@ import beforeDisplay from './reviewed-display-delta.cjs'
 import beforeCombinedImports from './reviewed-combined-import-delta.cjs'
 import beforeRename from './reviewed-rename-delta.cjs'
 import beforeV121 from './reviewed-v121-delta.cjs'
+import beforeV122 from './reviewed-v122-delta.cjs'
 const read=p=>fs.readFileSync(new URL('../'+p,import.meta.url),'utf8'),sha=s=>createHash('sha256').update(s).digest('hex')
 const bytes=fs.readFileSync(new URL('fixtures/v12-display-quantity-cases.json.gz',import.meta.url))
 assert.equal(sha(bytes),'c4aad32e2b16491c4259d847ab255e6d362dc7f2b09a627285bc06c322f0a17a')
 const fixture=JSON.parse(gunzipSync(bytes)),source=read('desktop/plugin.js'),delta=JSON.parse(read('tests/fixtures/v12-display-approved-delta.json'))
 function runtime(source){const c=vm.createContext({console,TextEncoder,TextDecoder,Date,Intl});vm.runInContext(source.slice(source.indexOf('const SAMPLE ='),source.indexOf('const pageStyle =')).replaceAll('export ','')+'\nthis.api={calculate,orderGuidance}',c);return c.api}
-const old=runtime(beforeDisplay(source,'plugin')),now=runtime(source)
+const old=runtime(beforeDisplay(beforeV122(source,'plugin'),'plugin')),now=runtime(source)
 function project(api,data,today,settings){return api.calculate(data.items,data.months,data.as_of,6,settings,today).map(i=>{const g=api.orderGuidance({...i,as_of:data.as_of},today,settings,data.as_of);return [i.sku,g.quantity,g.uncapped_qty??null,g.shelf_cap_qty??null,g.profit_suggestion?.qty??null,g.profit_suggestion?.alt.map(a=>a.qty)??null]})}
 test('exact display deltas reconstruct ce20b2d and reject unknown protected mutations',()=>{
  assert.equal(sha(beforeDisplay(beforeCombinedImports(beforeRename(beforeV121(source,'plugin'),'plugin')),'plugin')),delta.plugin_before_sha256)
- assert.equal(sha(beforeDisplay(read('engine.py'),'engine')),delta.engine_before_sha256)
+ assert.equal(sha(beforeDisplay(beforeV122(read('engine.py'),'engine'),'engine')),delta.engine_before_sha256)
  assert.throws(()=>beforeCombinedImports(beforeV121(source,'plugin').replace('missing lot quantity','UNKNOWN IMPORT MUTATION')))
  assert.throws(()=>beforeDisplay(source.replace('if(capTicks<=0)','if(capTicks<0)'),'plugin'))
  assert.notEqual(sha(beforeDisplay(source+'\nUNKNOWN','plugin')),delta.plugin_before_sha256)

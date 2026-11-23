@@ -23,7 +23,7 @@ function annotated(sales=[30,30,30],exposure=null,policies=null){
  const item={sku:'A',name:'Synthetic',unit:'box',on_hand:25,supplier_days:2,monthly_sales:sales,receipts:{},planning_facts:{version:'1.0',sales_history:months.map((month,i)=>({sku:'A',month,quantity:sales[i],in_stock_days:exposure?.[i]??days(month),backorder:policies?.[i]??false}))}}
  return {item,months,as_of,today,settings:{big_order_months:6}}
 }
-const physicalKeys=['held','sku','name','unit','stock','monthly_demand','seasonal','forecast_explanation','runout_month','runout_day','order_by','order_overdue','error_percent','grade','projection','receipts','demand_swing','safety_stock','safety_stock_provenance','reorder_point','eoq','why','lead_demand','planning_facts','purchase_hold','late_po_quantity','overdue_order_quantity','committed_quantity','inventory_position','suggested_order','covered_by_on_order','big_order','on_order','reason','demand_history']
+const physicalKeys=['held','sku','name','unit','stock','monthly_demand','seasonal','forecast_explanation','runout_month','runout_day','order_by','order_overdue','error_percent','grade','projection','receipts','demand_swing','safety_stock','safety_stock_provenance','reorder_point','eoq','why','lead_demand','planning_facts','purchase_hold','late_po_quantity','overdue_order_quantity','committed_quantity','inventory_position','suggested_order','covered_by_on_order','big_order','on_order','reason','demand_history','input_warnings']
 function evaluate(c){
  const p=api.calculate([c.item],c.months,c.as_of,6,c.settings||{},c.today)[0],g=api.orderGuidance(p,c.today,c.settings||{},c.as_of)
  return plain({physical:Object.fromEntries(physicalKeys.filter(k=>Object.hasOwn(p,k)).map(k=>[k,p[k]])),guidance:g,bucket:api.orderBucket(p,c.today,c.settings||{},c.as_of),health:api.dataHealth({items:[p],as_of:c.as_of,months:c.months},c.today,c.settings||{})})
@@ -120,7 +120,8 @@ test('absent exposure frozen forecast bytes remain aeecfd7; dates follow policy 
   if(noFacts)delete raw.planning_facts
   for(const settings of [{},{big_order_months:6,include_backup_in_orders:true}]){
    const p=api.calculate([raw],c.months,as_of,6,settings,today)[0],before=old.calculate([raw],c.months,as_of,6,settings,today)[0]
-   assert.equal(JSON.stringify(forecastOnly(p)),JSON.stringify(forecastOnly(before)))
+   const quantity=api.orderGuidance(p,today,settings,as_of).quantity??0
+   assert.equal(JSON.stringify(forecastOnly(p,quantity)),JSON.stringify(forecastOnly(before,quantity)))
    assertGuidanceDates(api,p,today,settings,as_of)
   }
   }

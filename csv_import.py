@@ -6,6 +6,7 @@ Other metadata uses the first usable row; differing product units are unsafe.
 from __future__ import annotations
 import csv
 import io
+import unicodedata
 import json
 import calendar
 import math
@@ -231,6 +232,62 @@ def import_csv(path, strict=False, *, max_bytes=MAX_CSV_BYTES):
         raise SourceError('Could not read the local CSV file.') from None
 
 
+def normalized_product_name(name):
+    """NFC + Unicode casefold, with the same import whitespace in both engines."""
+    return unicodedata.normalize('NFC', import_trim(name)).casefold()
+
+
+def generated_product_code(name):
+    """Stable 64-bit FNV-1a identity over the normalized UTF-8 name."""
+    name = normalized_product_name(name)
+    hash_value = 14695981039346656037
+    for byte in name.encode('utf-8'):
+        hash_value = ((hash_value ^ byte) * 1099511628211) & 0xffffffffffffffff
+    return (re.sub(r'[^a-z0-9]+', '-', name).strip('-')[:48] or 'product') + '-' + format(hash_value, '016x')
+
+
+def code_column_candidates(headers, rows, recognized):
+    """Fail closed on unknown text/code-hint columns with populated, unique values."""
+    rows = [row for row in rows if any(import_trim(v) for v in row)]
+    candidates = []
+    for index, header in enumerate(headers):
+        if index in recognized or not rows:
+            continue
+        values = [import_trim(row[index]) for row in rows if index < len(row) and import_trim(row[index])]
+        text = [v for v in values if len(v) > 256 or not re.fullmatch(r'[+\-]?[0-9][0-9.,\s]*(?:[eE][+\-]?[0-9]+|%)?', v)]
+        tokens = set(re.findall(r'[a-z0-9]+', normalized_product_name(import_trim(header)[:128])))
+        code_hint = bool(tokens & {'ref', 'reference', 'code', 'id', 'sku'}) or ('no' in tokens and bool(tokens & {'article', 'item', 'part', 'material'}))
+        if len(values) >= .8 * len(rows) and len(set(values)) >= .8 * len(values) and (code_hint or len(text) >= .8 * len(values)):
+            candidates.append(header)
+    return candidates
+
+
+def missing_code_message(candidates):
+    labels = " or ".join("'" + label + "'" for label in candidates)
+    return f"Could not find a product code column. Is {labels} your product code? Rename it to 'sku' (or 'Item Code')."
+
+
+def validate_generated_names(names):
+    seen, codes, repeated = {}, {}, []
+    for name in names:
+        if not name or normalized_product_name(name) in ('total', 'totals', 'grand total', 'subtotal', 'sub total'):
+            continue
+        normalized = normalized_product_name(name)
+        if normalized in seen and seen[normalized] not in repeated:
+            repeated.append(seen[normalized])
+        seen.setdefault(normalized, name)
+        code = generated_product_code(name)
+        if code in codes and codes[code] != normalized:
+            raise ValueError('Generated product codes collide — add a product code column so names are not mixed up.')
+        codes[code] = normalized
+    if repeated:
+        labels = [name if len(name) <= 128 else name[:127] + '…' for name in repeated[:3]]
+        messages = [f'Two rows share the name "{name}" and there is no product code column — add a code column so they aren\'t mixed up.' for name in labels]
+        if len(repeated) > 3:
+            messages.append(f'…and {len(repeated) - 3} more repeated names.')
+        raise ValueError(' '.join(messages))
+
+
 def preflight_csv(text, strict=False, *, max_bytes=MAX_CSV_BYTES):
     from .sources import (SourceError, _parse_canonical_csv, normalize_erp_rows,
                           _header_key, _ALIAS_LOOKUP, erp_month, MAX_ROWS, MAX_QUANTITY, _csv_byte_limit)
@@ -291,7 +348,16 @@ def preflight_csv(text, strict=False, *, max_bytes=MAX_CSV_BYTES):
         if headers.count(field) > 1: raise SourceError(f'{title} column must be unique.')
     canonical = headers[:5] == FIXED
     if not canonical: months.sort(); receipts.sort()
-    if not {'sku','name','on_hand'} <= picked.keys():
+    generated_codes = 'sku' not in picked and 'name' in picked
+    if generated_codes:
+        candidates = code_column_candidates(headers, rows[1:], {*picked.values(), *(i for _, i in months + receipts)})
+        if candidates:
+            raise SourceError(missing_code_message(candidates))
+        try:
+            validate_generated_names([import_trim(row[picked['name']]) for row in rows[1:] if picked['name'] < len(row)])
+        except ValueError as error:
+            raise SourceError(str(error)) from None
+    if not {'name','on_hand'} <= picked.keys():
         missing = [label for field, label in (('sku', 'product code'), ('name', 'product name'), ('on_hand', 'stock on hand')) if field not in picked]
         raise SourceError('CSV is missing required ' + ', '.join(missing) + ' column' + ('' if len(missing) == 1 else 's') + '. Required columns are product code, product name and stock on hand; unit and supplier lead time are optional. Common ERP names also work, e.g. Item Code, Item Name, UoM, Qty On Hand, Lead Time.')
     numeric_indices = [idx for field,idx in picked.items() if field in ['on_hand','supplier_days','on_order','demand_change_pct','lot_qty',*PER_ITEM]] + [idx for _,idx in months+receipts]
@@ -319,6 +385,8 @@ def preflight_csv(text, strict=False, *, max_bytes=MAX_CSV_BYTES):
     report: dict[str, Any] = dict(matched=[dict(source=h,field=fields[i]) for i,h in enumerate(headers) if i in fields],
                   ignored=[h for i,h in enumerate(headers) if i not in fields], defaulted=[],
                   rows_imported=0, products_ready=0, rows_set_aside=[], accepted_rows=[], warnings=[], source_headers=headers)
+    if generated_codes:
+        report['warnings'].append('No product code column found — codes were made from product names.')
     report['warnings'].append('Number format: ' + style + (' (comma decimal; dot thousands)' if style == 'decimal-comma' else ' (dot decimal; comma thousands)'))
     if dropped_order is not None: report['warnings'].append(f'{dropped_order} ignored: no numeric on_order values parsed; no incoming stock counted')
     if 'unit' not in picked: report['defaulted'].append(dict(field='unit', value='units', reason='unit column missing'))
@@ -338,13 +406,15 @@ def preflight_csv(text, strict=False, *, max_bytes=MAX_CSV_BYTES):
     missing_lead = 0
     for row_index, (rownum, values) in enumerate(zip(row_numbers[1:], rows[1:]), 1):
         if not any(import_trim(v) for v in values): continue
-        get = lambda field: import_trim(values[picked[field]]) if field in picked and picked[field] < len(values) else ''
+        read = lambda field: import_trim(values[picked[field]]) if field in picked and picked[field] < len(values) else ''
+        code = generated_product_code(read('name')) if generated_codes and read('name') else ''
+        get = lambda field: code if field == 'sku' and generated_codes else read(field)
         def aside(reason): report['rows_set_aside'].append(dict(row=rownum,reason=reason,values=values))
-        if get('sku').lower() in ('total','grand total','totals') or not get('sku') and get('name').lower() in ('total','grand total','totals'):
+        if get('sku').lower() in ('total','grand total','totals') or (generated_codes or not get('sku')) and get('name').lower() in ('total','grand total','totals'):
             aside('summary/footer row (not a product)'); continue
         if get('active').lower() in ('false','0','no','inactive') or get('inactive').lower() in ('true','1','yes','inactive'):
             aside('inactive in ERP'); continue
-        if not get('sku'): aside('blank sku in ERP — add a reference'); continue
+        if not get('sku'): aside('product name is blank' if generated_codes else 'blank sku in ERP — add a reference'); continue
         if len(values) != len(headers): aside(f'Row {rownum}: column count does not match the header.'); continue
         if (any(number(values[idx], idx == picked.get('supplier_days')) == AMBIGUOUS_NUMBER for idx in quantity_indices)
                 or 'sale_price' in picked and price_number(get('sale_price')) == AMBIGUOUS_NUMBER):
@@ -426,7 +496,11 @@ def preflight_csv(text, strict=False, *, max_bytes=MAX_CSV_BYTES):
         report['warnings'].append('Blank warehouse/location treated as Unspecified; all blank-location rows aggregated, including repeated blanks. Check for duplicate exports.')
     if missing_lead and 'supplier_days' in picked: report['defaulted'].append(dict(field='supplier_days',value=None,reason=f'lead time blank in {missing_lead} imported rows'))
     if 'location' in picked:
-        partial = dict.fromkeys(import_trim(r['values'][picked['sku']]) for r in report['rows_set_aside'] if picked['sku'] < len(r['values']) and import_trim(r['values'][picked['sku']]) in by_sku)
+        code_column = picked.get('sku', picked['name'])
+        row_codes = [import_trim(r['values'][code_column]) for r in report['rows_set_aside'] if code_column < len(r['values'])]
+        if generated_codes:
+            row_codes = [generated_product_code(name) for name in row_codes if name]
+        partial = dict.fromkeys(code for code in row_codes if code in by_sku)
         for sku in partial: report['warnings'].append(f'{sku}: some warehouse rows set aside; totals include usable rows only')
     if blanks: report['warnings'].append(f'{blanks} blank sales cells treated as 0')
     for item in items:

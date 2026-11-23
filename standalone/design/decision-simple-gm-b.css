@@ -24,6 +24,10 @@
 .work-sku .shelf-capped {display:block;margin:0;line-height:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .work-product:has(.shelf-capped) .work-name {-webkit-line-clamp:1}
 .work-product:has(.shelf-capped) .work-sku-code {display:block;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* Name, SKU and large-order note must fit the 60px phone product slot. */
+.work-product:has(> [data-big-order]) .work-name {-webkit-line-clamp:1}
+.work-product:has(> [data-big-order]) .work-sku {height:16px;line-height:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.work-product> [data-big-order] {display:block;margin:0;font-size:11px;line-height:16px;white-space:nowrap}
 .import-expiry-review {display:flex;align-items:flex-start;gap:8px;min-height:44px;overflow-wrap:anywhere}
 .import-expiry-review input {flex:0 0 auto;margin-top:4px}
 @media(max-width:600px){.shelf-clearance {padding:12px;margin:12px 0}.shelf-clearance li {font-size:12px}.work-sku .shelf-capped {font-size:11px}}

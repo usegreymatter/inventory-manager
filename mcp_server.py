@@ -22,7 +22,7 @@ _cli_spec.loader.exec_module(cli)
 MODERN = '2026-07-28'
 LEGACY = ('2025-11-25', '2025-06-18', '2024-11-05')
 VERSIONS = (MODERN, *LEGACY)
-INFO = {'name': 'inventory-manager', 'version': '1.2.1-beta'}
+INFO = {'name': 'inventory-manager', 'version': '1.2.2-beta'}
 MAX_LINE = 1024 * 1024
 MAX_RESPONSE = 2 * 1024 * 1024
 PREFIX = 'io.modelcontextprotocol/'
@@ -152,7 +152,11 @@ class Snapshot:
         self.health = health.data_health(self.data, self.today, self.settings)
         self.meta = dict(planning_date=self.today, as_of=self.data['as_of'],
                          data_age_days=(date.fromisoformat(self.today)-date.fromisoformat(self.data['as_of'])).days,
-                         model_version='1.2.1-beta', source_loaded_once=True)
+                         model_version='1.2.2-beta', source_loaded_once=True)
+        generated_note = 'No product code column found — codes were made from product names.'
+        if generated_note in self.data.get('import_report', {}).get('warnings', []):
+            # Fixed message only: never echo arbitrary importer text or paths.
+            self.meta['input_notes'] = [generated_note]
 
     def call(self, name, args):
         if not isinstance(args, dict):

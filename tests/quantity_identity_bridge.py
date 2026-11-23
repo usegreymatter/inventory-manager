@@ -9,6 +9,14 @@ sys.path.insert(0, str(ROOT))
 import stock_runway
 engine, _ = stock_runway._load_modules()
 source = (ROOT/'engine.py').read_text()
+v122_blob = (ROOT/'tests/fixtures/v122-approved-delta.json').read_bytes()
+# Hash must match the JS fail-closed reviewed helper.
+import re
+pin = re.search(r"digest\('hex'\),'([0-9a-f]{64})'", (ROOT/'tests/reviewed-v122-delta.cjs').read_text()).group(1)
+assert hashlib.sha256(v122_blob).hexdigest() == pin
+for span in json.loads(v122_blob)['engine']:
+    assert source.count(span['after']) == 1
+    source = source.replace(span['after'], span['before'])
 blob = (ROOT/'tests/fixtures/v12-display-approved-delta.json').read_bytes()
 assert hashlib.sha256(blob).hexdigest() == 'f5cce9e9de3ad2108054c4b464870ea0d423816ec8646a9714384429e6d65181'
 delta = json.loads(blob)

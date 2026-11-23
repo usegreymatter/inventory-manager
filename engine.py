@@ -1356,7 +1356,8 @@ def inventory_planning(item, last_month, raw_settings=None):
     for value in recent:
         delta = value - mean
         squared += delta * delta
-    sigma = math.sqrt(squared / (len(recent) - 1)) if len(recent) > 1 else 0
+    # Identical fractional values can leave binary64 residue in the mean.
+    sigma = 0.0 if all(value == recent[0] for value in recent) else math.sqrt(squared / (len(recent) - 1)) if len(recent) > 1 else 0
     result["demand_swing"] = sigma
     lead = resolved["values"]["supplier_days"]
     parts = []
@@ -2503,6 +2504,30 @@ def inventory_history(item: dict, months: list[str]) -> dict:
                       "delivered": receipts[m]} for i, m in enumerate(months)], "warning": warning}
 
 
+def demand_safety_warnings(item, months, order_quantity=0):
+    """Warn only, using raw history; never cap or alter forecast demand."""
+    sales = item.get("monthly_sales", [])
+    warnings = []
+    nonzero = sorted(value for value in sales if value > 0)
+    if len(sales) >= 4 and nonzero:
+        middle = len(nonzero) // 2
+        median = nonzero[middle] if len(nonzero) % 2 else (nonzero[middle-1] + nonzero[middle]) / 2
+        unusual = [month for month, value in zip(months, sales) if value > 4 * median]
+        if unusual:
+            label, verb = ('One month', 'is') if len(unusual) == 1 else ('Months', 'are')
+            warnings.append(f"{label} ({', '.join(unusual)}) {verb} much higher than usual. Check it isn't a one-off before ordering.")
+    trailing = 0
+    for value in reversed(sales):
+        if value != 0:
+            break
+        trailing += 1
+    if trailing >= 3 and order_quantity and order_quantity > 0:
+        warnings.append(f"No sales for {trailing} months. Check it isn't discontinued before ordering.")
+    if trailing and item.get("on_hand", 0) <= 0:
+        warnings.append("Out of stock with no recent sales — sales may be low because it ran out. Check demand before trusting this.")
+    return warnings
+
+
 @evaluation_pass
 def forecast(item: dict, months: list[str], as_of: str, horizon: int = 6, settings=None, today=None) -> dict:
     if isinstance(horizon, bool) or not isinstance(horizon, int) or not 1 <= horizon <= 12:
@@ -2524,6 +2549,10 @@ def forecast(item: dict, months: list[str], as_of: str, horizon: int = 6, settin
                 result.update(order_by=guidance["order_by"], runout_day=guidance["runout_date"],
                     runout_month=guidance["runout_date"][:7] if guidance["runout_date"] else None,
                     order_overdue=guidance["order_by"] == "now")
+        if not result.get("held"):
+            warnings = demand_safety_warnings(item, months, guidance.get("quantity", 0))
+            if warnings:
+                result["input_warnings"] = list(dict.fromkeys([*item.get("input_warnings", []), *warnings]))
         return result
     except Exception:
         return held_item(item)

@@ -106,7 +106,7 @@ test('PO format, positive order-today items only, exact quantities and units', (
     row('Incoming covers it', 'Z-1', 'pcs', 0), row('Later', 'L-1', 'l', 5, 'healthy'),
     row('Soon', 'S-1', 'boxes', 2, 'running-low'), row('Held', 'H-1', 'units', undefined, 'needs-data'),
   ], today)
-  assert.equal(text, 'Purchase order · Inventory Manager\nDate: 2026-11-11\n\n• Cement (C-1) — 1,200 bags\n• Cable (W-2) — 0.125 m\n• Soon (S-1) — 2 boxes\n\n3 items')
+  assert.equal(text, 'Purchase order · Inventory Manager\nDate: 2026-11-11\n\n• Cement (C-1) — 1,200 bags\n• Cable (W-2) — 0.125 m\n• Soon (S-1) — 2 boxes\n\n3 items\n\nOrders already on the way were not included — subtract them before ordering.')
 })
 
 test('PO empty case never implies an order or includes zero-quantity attention rows', () => {
@@ -115,7 +115,7 @@ test('PO empty case never implies an order or includes zero-quantity attention r
 })
 
 test('PO preserves fractional units, singular count and neutralizes embedded line breaks', () => {
-  assert.equal(standalone.purchaseOrderText([{ item: { name: 'Oil\nRefill', sku: 'O\r1', unit: 'l' }, guidance: { quantity: 0.000001 }, bucket: 'running-low' }], today), 'Purchase order · Inventory Manager\nDate: 2026-11-11\n\n• Oil Refill (O 1) — 0.000001 l\n\n1 item')
+  assert.equal(standalone.purchaseOrderText([{ item: { name: 'Oil\nRefill', sku: 'O\r1', unit: 'l' }, guidance: { quantity: 0.000001 }, bucket: 'running-low' }], today), 'Purchase order · Inventory Manager\nDate: 2026-11-11\n\n• Oil Refill (O 1) — 0.000001 l\n\n1 item\n\nOrders already on the way were not included — subtract them before ordering.')
 })
 }
 

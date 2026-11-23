@@ -2,7 +2,9 @@ import assert from 'node:assert/strict'
 import fs from 'node:fs'
 import {createHash} from 'node:crypto'
 import test from 'node:test'
-import beforeReviewedFeatures from './reviewed-v12-delta.cjs'
+import reviewedFeatures from './reviewed-v12-delta.cjs'
+import beforeV122 from './reviewed-v122-delta.cjs'
+const beforeReviewedFeatures=(source,kind)=>reviewedFeatures(beforeV122(source,kind),kind)
 const sha=value=>createHash('sha256').update(value).digest('hex')
 // Exact reviewed settings-only delta, not an open-ended exclusion. Reconstruct
 // the previous checkpoint so every protected mathematical digest stays frozen.

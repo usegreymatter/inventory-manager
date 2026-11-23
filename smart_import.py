@@ -488,19 +488,6 @@ def _analyse(sheet, overrides, aliases, type_aliases):
                 candidates = [c for c in candidates if c[1] != i]
                 item.update(field='sku', confidence='medium', reason='Name identifier beside product description')
                 candidates.append((0, i, 'sku'))
-        if not any(c[2]=='sku' for c in candidates):
-            possible=[]
-            for item in mapping:
-                i=item['index']
-                if item['field'] or f'{name}:{i}' in overrides: continue
-                # Location/bin codes can look like SKUs: require product context.
-                hint = set(_key(item['source']).split())
-                if hint and not hint & {'code','id','ref','reference','sku','item','article','material','part','product','identifier'}: continue
-                if not any(c[2] == 'name' for c in candidates): continue
-                values=[_trim(r[i]) for r in rows[ri+1:ri+21] if i < len(r) and _trim(r[i])]
-                if len(values)>=2 and all(re.fullmatch(r'[A-Za-z0-9_-]{1,64}',v) and re.search('[0-9]',v) and not _month(v) for v in values): possible.append(item)
-            if len(possible)==1:
-                item=possible[0]; item.update(field='sku',confidence='low',reason='Identifier values; review mapping'); candidates.append((500,item['index'],'sku'))
         picked={}
         for rank,i,field in sorted(candidates):
             if field not in picked or re.fullmatch(r'(?:rcv:)?[0-9]{4}-[0-9]{2}',field): picked.setdefault(field,[]).append(i)
@@ -536,15 +523,28 @@ def _analyse(sheet, overrides, aliases, type_aliases):
             warnings.append(f'{name}: duplicate month columns for {field} summed; review mapping.')
     if any(_yearless(_trim(h)[4:] if _trim(h).lower().startswith('rcv:') else h) for h in headers):
         warnings.append(f'{name}: month labels without a year use {inferred}' + (' inferred from other headers.' if has_year else '; no year found, review the fixed 2000 placeholder.'))
+    from .csv_import import (code_column_candidates, missing_code_message,
+                             generated_product_code, validate_generated_names)
+    generated = 'sku' not in picked and 'name' in picked
+    possible = code_column_candidates(headers, rows[report['header_row']:], {i for hits in picked.values() for i in hits}) if generated else []
+    generate = generated and not possible
+    if possible:
+        warnings.append(missing_code_message(possible))
+    if generate:
+        report['missing'] = [title for title in report['missing'] if title != 'Product code (SKU)']
+        warnings.append('No product code column found — codes were made from product names.')
+        validate_generated_names([_trim(row[picked['name'][0]]) for row in rows[report['header_row']:] if picked['name'][0] < len(row)])
     skipped=0
     for rownum, row in enumerate(rows[report['header_row']:], report['header_row'] + 1):
         get=lambda f: _trim(row[picked[f][0]]) if f in picked and picked[f][0] < len(row) else ''
-        sku=get('sku')
+        sku=get('sku') if 'sku' in picked else generated_product_code(get('name')) if generate and get('name') else ''
         if not any(_trim(v) for v in row): continue
         def summary(value):
             k = _key(value)
             return k in ('total','totals','grand total','subtotal','sub total') or k.endswith((' total',' subtotal',' sub total'))
         if not sku or summary(sku) or summary(get('name')):
+            if generate and not get('name') and any(_trim(v) for v in row):
+                report['rows_set_aside'].append(dict(row=rownum, reason='product name is blank', values=row))
             skipped+=1; continue
         if get('active').lower() in ('false','0','no','inactive') or get('inactive').lower() in ('true','1','yes','inactive'):
             warnings.append(f'{name}: row {rownum} inactive in ERP; row omitted.'); continue
@@ -708,6 +708,9 @@ def contributor_metadata(sheet, meta):
             hits = picked.get(field, [])
             return _trim(row[hits[0]]) if hits and hits[0] < len(row) else ''
         sku = get('sku')
+        if not sku and 'name' in picked and 'Product code (SKU)' not in meta.get('missing', []):
+            from .csv_import import generated_product_code
+            sku = generated_product_code(get('name')) if get('name') else ''
         if not sku:
             continue
         if ambiguous_dates and get('date'):
@@ -769,6 +772,13 @@ def understand_workbook(sheets, sheet=None, overrides=None):
     aliases = {**REVIEW_ALIASES, **{field: [*labels, *vocabulary.get(field, [])] for field, labels in ERP_ALIASES.items()}}
     analyses=[_analyse(s,overrides or {},aliases,PRODUCT_TYPE_ALIASES) for s in sheets]
     if not analyses: raise ValueError('Workbook has no worksheets.')
+    from .csv_import import validate_generated_names
+    generated_names = []
+    for source, (meta, _, notes, _) in zip(sheets, analyses):
+        if 'No product code column found — codes were made from product names.' in notes:
+            index = next(m['index'] for m in meta['mapping'] if m['field'] == 'name')
+            generated_names.extend(_trim(row[index]) for row in source['rows'][meta['header_row']:] if index < len(row))
+    validate_generated_names(generated_names)
     if sheet is not None:
         found=[i for i,s in enumerate(sheets) if s['name']==sheet or isinstance(sheet,int) and not isinstance(sheet,bool) and i==sheet]
         if not found: raise ValueError('Selected worksheet was not found.')
@@ -782,6 +792,8 @@ def understand_workbook(sheets, sheet=None, overrides=None):
     products={sku:dict(values) for sku,values in products.items()}
     warnings=[w for _,_,ws,_ in analyses for w in ws]
     matched=set(); unmatched=set(); available={m['field'] for m in report['mapping'] if m['field']}
+    if products and 'Product code (SKU)' not in report['missing']:
+        available.add('sku')
     has_sales = lambda values: any(re.fullmatch(r'[1-9][0-9]{3}-(?:0[1-9]|1[0-2])', f) and v for f,v in values.items())
     external_sales = False
     reasons = [reason for a, _, _, _ in analyses for reason in a['reasons']]

@@ -357,3 +357,25 @@ def test_ignored_import_columns_count(source):
     health=snapshot(source).call('data_health',{})
     assert health['import_summary']['ignored'] == 1
     assert 'PRIVATE' not in server.dumps(health)
+
+
+def test_name_generated_codes_are_visible_without_ambiguous_rows(tmp_path):
+    file=tmp_path/'private-source.csv'
+    file.write_text('name,on_hand,2026-08,2026-09,2026-10\nWidget,5,1,1,1\nOther,5,1,1,1\nTotal,10,2,2,2\n')
+    result=run(file,[request('tools/call',{'name':'list_reorders','arguments':{'status':'all'}},id=1),request('tools/call',{'name':'data_health','arguments':{}},id=2)])
+    assert result.returncode==0 and result.stderr==b''
+    rows,health=[json.loads(line)['result']['structuredContent'] for line in result.stdout.splitlines()]
+    note='No product code column found — codes were made from product names.'
+    assert rows['input_notes']==health['input_notes']==[note]
+    assert len(rows['items'])==2 and any(i['sku']=='widget-c07f0119e3154625' for i in rows['items'])
+    assert health['import_summary']['rows_set_aside']==1
+    assert 'private-source' not in server.dumps(rows)+server.dumps(health)
+
+
+def test_name_generated_duplicate_fails_closed_in_mcp(tmp_path):
+    file=tmp_path/'ambiguous.csv'
+    file.write_text('name,on_hand,Warehouse,2026-08,2026-09,2026-10\nWidget,5,East,1,1,1\nWidget,5,West,1,1,1\n')
+    result=run(file,[request('tools/call',{'name':'list_reorders','arguments':{'status':'all'}},id=1)])
+    assert result.returncode != 0
+    assert result.stdout == b''
+    assert result.stderr, 'startup rejects ambiguous source before serving tools'

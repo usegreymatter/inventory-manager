@@ -138,11 +138,15 @@ function attentionRows(rows) {
       || (a.guidance.runout_date || '9999-12-31').localeCompare(b.guidance.runout_date || '9999-12-31')
       || a.item.sku.localeCompare(b.item.sku))
 }
+function incomingOrderCaveat(item){
+  return (item.incoming_unknown||!Object.hasOwn(item,'on_order')&&!Object.keys(item.receipts||{}).length&&!Object.hasOwn(item,'planning_facts'))?'Orders already on the way were not included — subtract them before ordering.':''
+}
 function purchaseOrderText(rows, today) {
   const oneLine = value => String(value ?? '').replace(/[\r\n\u2028\u2029]+/g, ' ')
   const items = rows.filter(row => (row.bucket === 'order' || row.bucket === 'running-low') && row.guidance.quantity > 0)
-  const lines = items.map(({ item, guidance }) => `• ${oneLine(item.name)} (${oneLine(item.sku)}) — ${orderAmount(guidance.quantity)} ${oneLine(item.unit)}`)
-  return `Purchase order · Inventory Manager\nDate: ${today}\n\n${lines.join('\n') || 'No items to order.'}\n\n${items.length} ${items.length === 1 ? 'item' : 'items'}`
+  const lines = items.map(({ item, guidance }) => `• ${oneLine(item.name)} (${oneLine(item.sku)}) — ${orderAmount(guidance.quantity)} ${oneLine(item.unit)}${bigOrderWarning(guidance,typeof settings==='undefined'?undefined:settings)?' — '+bigOrderWarning(guidance,typeof settings==='undefined'?undefined:settings):''}`)
+  const caveat=items.some(({item})=>incomingOrderCaveat(item))?'\n\n'+incomingOrderCaveat(items.find(({item})=>incomingOrderCaveat(item)).item):''
+  return `Purchase order · Inventory Manager\nDate: ${today}\n\n${lines.join('\n') || 'No items to order.'}\n\n${items.length} ${items.length === 1 ? 'item' : 'items'}${caveat}`
 }
 /* STOCK_RUNWAY_HELPERS_END */
 const $ = id => document.getElementById(id)

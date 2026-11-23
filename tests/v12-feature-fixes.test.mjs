@@ -3,7 +3,9 @@ import assert from 'node:assert/strict'
 import fs from 'node:fs'
 import vm from 'node:vm'
 import {spawnSync} from 'node:child_process'
-import beforeReviewedFeatures from './reviewed-v12-delta.cjs'
+import reviewedFeatures from './reviewed-v12-delta.cjs'
+import beforeV122 from './reviewed-v122-delta.cjs'
+const beforeReviewedFeatures=(source,kind)=>reviewedFeatures(beforeV122(source,kind),kind)
 const source=fs.readFileSync(new URL('../desktop/plugin.js',import.meta.url),'utf8')
 const context=vm.createContext({console,TextEncoder,TextDecoder,Date,Intl})
 vm.runInContext(source.slice(source.indexOf('const SAMPLE ='),source.indexOf('const pageStyle =')).replaceAll(/export /g,'')+'\nthis.api={previewIndustryPreset,normalizeOrderSettings,validateOrderSettings,resolveOrderSettings,orderGuidance,calculate,parseCsv,PROFIT_ORDER}',context)

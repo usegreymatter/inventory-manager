@@ -63,7 +63,7 @@ test('R3 CLI CSV and joined Desktop warning arrays use one canonical priority or
  assert.match(cli.items[0].input_warnings[0],/^Oversold:/);assert.match(cli.items[0].input_warnings[1],/^Incoming partly/);assert.match(cli.items[0].input_warnings[2],/^Sales and stock units/)
 })
 test('R3 canonical rebuild cannot erase missing source mappings or unmatched history',()=>{
- for(const sheets of [[{name:'Stock',rows:[['name','on_hand',...months],['Alpha','10','1','1','1']]}],[{name:'Stock',rows:[['sku','name','on_hand'],['A','Alpha','10'],['B','Beta','10']]},{name:'Sales',rows:[['sku',...months],['A','1','1','1']]}]]){
+ for(const sheets of [[{name:'Stock',rows:[['sku','on_hand',...months],['A','10','1','1','1']]}],[{name:'Stock',rows:[['sku','name','on_hand'],['A','Alpha','10'],['B','Beta','10']]},{name:'Sales',rows:[['sku',...months],['A','1','1','1']]}]]){
   const original=api.understandStockWorkbook(sheets),state={sheets,sheet:'Stock',overrides:{},choices:{},edit:false},desktop=api.smartPreflight(state,6),stand={...state};api.standalonePreflight(stand)
   assert.ok(original.missing.length);assert.deepEqual(plain(desktop.report.missing),plain(original.missing));assert.deepEqual(plain(stand.report.missing),plain(original.missing));assert.equal(desktop.parsed,null);assert.equal(stand.parsed,null)
  }

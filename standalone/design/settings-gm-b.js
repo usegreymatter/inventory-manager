@@ -115,7 +115,7 @@ function gmSettingsField(key,scope=null,existing=null){
   }
   if(scope?.group==='product_overrides'){
     const effective=resolveOrderSettings(rowMap.get(scope.id)?.item||{},settings),value=effective.values[key],source=effective.sources[key],disabledShelf=key==='shelf_life_days'&&Object.hasOwn(settings.product_overrides[scope.id]||{},key)&&noShelfLife(settings.product_overrides[scope.id][key])
-    wrap.append(node('p',`${disabledShelf?'No shelf-life cap':value==null?'Not set':key==='service_level'?value*100+'%':value+(['supplier_days','review_days'].includes(key)?' days':'')} · ${source}`,'setting-source'))
+    wrap.append(node('p',`${disabledShelf?'No shelf-life cap':value==null?'Not set':key==='service_level'?value*100+'%':value+(['supplier_days','review_days'].includes(key)?' days':'')}${source?" · "+source:""}`,'setting-source'))
     wrap.lastChild.dataset.provenance=key
   }
   return wrap

@@ -72,7 +72,22 @@ class V12CliReviewTests(unittest.TestCase):
                 with self.subTest(source=source.name, flags=flags):
                     before = self.successful(*flags, stock=source, frozen=True)
                     after = self.successful(*flags, stock=source)
-                    self.assertEqual(after.stdout, before.stdout)
+                    # Exact v1.2.2 note only; all remaining bytes stay frozen.
+                    note = 'Orders already on the way were not included — subtract them before ordering.'
+                    if '--json' in flags:
+                        rows = json.loads(after.stdout)
+                        for row in rows:
+                            if 'order_notes' in row:
+                                self.assertIsNone(row['on_order'])
+                                self.assertEqual(row.pop('order_notes'), note)
+                        reviewed = (json.dumps(rows, ensure_ascii=False, allow_nan=False, indent=2)+'\n').encode()
+                    else:
+                        for row in csv.DictReader(io.StringIO(after.stdout.decode())):
+                            if note in row['reason']:
+                                self.assertEqual(row['on_order'], '')
+                                self.assertEqual(row['reason'].count(note), 1)
+                        reviewed = after.stdout.replace((' '+note).encode(), b'').replace(note.encode(), b'')
+                    self.assertEqual(reviewed, before.stdout)
                     self.assertEqual(after.stderr, before.stderr)
 
     def test_default_output_files_and_summary_match_freeze_bytes(self):

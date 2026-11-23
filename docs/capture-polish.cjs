@@ -49,7 +49,7 @@ function logicGuard() {
     let bytes=fs.readFileSync(file)
     if(file==='csv_import.py')bytes=Buffer.from(beforeV121(bytes.toString('utf8'),'csv'))
     if(file==='tools.py')bytes=Buffer.from(require(require('node:path').resolve('tests/reviewed-rename-delta.cjs'))(bytes.toString('utf8'),'tools'))
-    if(file==='engine.py')bytes=Buffer.from(beforeReviewedFeatures(bytes.toString('utf8'),'engine'))
+    if(file==='engine.py')bytes=Buffer.from(beforeReviewedFeatures(require(require('node:path').resolve('tests/reviewed-v122-delta.cjs'))(bytes.toString('utf8'),'engine'),'engine'))
     // v1.2 intentionally changes opt-in engine functions. Exact full reviewed
     // source fixtures replace the prior display-only reconstruction, not its scope.
     if(file==='engine.py'){

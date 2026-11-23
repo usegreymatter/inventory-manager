@@ -86,6 +86,26 @@ def assert_bucket_policy(engine, item, today, settings=None):
 
 def assert_forecast_frozen(actual, historical, engine, raw, as_of, today=None, settings=None):
     a,b = without_policy(actual),without_policy(historical)
+    # v1.2.2 adds only these exact raw-history warnings. Keep all other warning
+    # bytes under the historical comparison instead of excluding the field.
+    if a.get('input_warnings') != b.get('input_warnings'):
+        import statistics
+        sales = raw['monthly_sales']
+        months = [engine.month_after(as_of[:7], i-len(sales)+1) for i in range(len(sales))]
+        nonzero = [v for v in sales if v > 0]
+        added = [f"One month ({m}) is much higher than usual. Check it isn't a one-off before ordering."
+                 for m,v in zip(months,sales) if len(sales)>=4 and nonzero and v>4*statistics.median(nonzero)]
+        trailing = next((i for i,v in enumerate(reversed(sales)) if v != 0),len(sales))
+        guidance = engine.order_guidance({**raw, **actual, 'as_of':as_of},today or as_of,settings)
+        if trailing>=3 and (guidance.get('quantity') or 0)>0:
+            added.append(f"No sales for {trailing} months. Check it isn't discontinued before ordering.")
+        if trailing and raw['on_hand']<=0:
+            added.append('Out of stock with no recent sales — sales may be low because it ran out. Check demand before trusting this.')
+        assert a.get('input_warnings') == list(dict.fromkeys([*raw.get('input_warnings',[]),*added]))
+        if 'input_warnings' in b:
+            a['input_warnings'] = b['input_warnings']
+        else:
+            a.pop('input_warnings')
     if "projection" in a:
         assert_roundoff_equal(a.pop("projection"),b.pop("projection"))
     assert a == b, {k:(a.get(k),b.get(k)) for k in a.keys() | b.keys() if a.get(k)!=b.get(k)}

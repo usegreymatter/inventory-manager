@@ -6,8 +6,10 @@ import vm from 'node:vm'
 const source=fs.readFileSync(new URL('../standalone/design/worklist-gm-b.js',import.meta.url),'utf8')
 const declaration=source.slice(source.indexOf('function wlCsv('),source.indexOf('function wlExport('))
 const c=vm.createContext({wlMeta:()=>({supplier:'',due:''}),wlRank:{order:0}})
+const plugin=fs.readFileSync('desktop/plugin.js','utf8'),template=fs.readFileSync('standalone/template.html','utf8')
+vm.runInContext(plugin.slice(plugin.indexOf('const SAMPLE ='),plugin.indexOf('const pageStyle =')).replaceAll('export ','')+'\nconst settings={};\n'+template.slice(template.indexOf('function incomingOrderCaveat('),template.indexOf('function purchaseOrderText(')),c)
 vm.runInContext(declaration,c)
-const line=text=>({item:{sku:text,name:text,unit:text,supplier:text,category:text},guidance:{quantity:1,reason:text},bucket:'order'})
+const line=text=>({item:{sku:text,name:text,unit:text,supplier:text,category:text,on_order:0},guidance:{quantity:1,reason:text},bucket:'order'})
 test('CSV neutralizes direct and whitespace-prefixed spreadsheet expressions in every imported text field',()=>{
  for(const prefix of ['', ' ', '\n', '\t', '\r', '\ufeff', '\u00a0', '\r\n '])for(const operator of ['=','+','-','@']){
   const text=prefix+operator+'1+1',csv=c.wlCsv([line(text)])

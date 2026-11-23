@@ -26,7 +26,7 @@ const SMART_WORKBOOK = (() => {{
 {module}
 const vocabulary = {vocabulary}
 const aliases = Object.fromEntries([...new Set([...Object.keys(ERP_ALIASES),...Object.keys(vocabulary)])].map(field=>[field,[...(ERP_ALIASES[field]||[]),...(vocabulary[field]||[])]]))
-return {{readWorkbook,contributorMetadata,reviewField:source=>Object.entries(REVIEW_ALIASES).find(([,labels])=>labels.includes(key(source)))?.[0]||null,understandWorkbook:(sheets,sheet=null,overrides=null)=>understandWorkbook(sheets,sheet,overrides,aliases,PRODUCT_TYPE_ALIASES)}}
+return {{normalizedProductName,generatedProductCode,codeColumnCandidates,missingCodeMessage,validateGeneratedNames,readWorkbook,contributorMetadata,reviewField:source=>Object.entries(REVIEW_ALIASES).find(([,labels])=>labels.includes(key(source)))?.[0]||null,understandWorkbook:(sheets,sheet=null,overrides=null)=>understandWorkbook(sheets,sheet,overrides,aliases,PRODUCT_TYPE_ALIASES)}}
 }})()
 export async function readSmartWorkbook(file) {{
   try {{

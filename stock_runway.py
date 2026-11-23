@@ -201,6 +201,18 @@ def _export_rows_pass(data, engine, today, settings, include_all, explain=False)
                      "safety_stock": guidance.get("safety_stock"),
                      "reorder_point": guidance.get("reorder_point"),
                      "reason": guidance.get("reason", "")})
+        safety_notes = item.get("input_warnings", [])
+        new_warnings = engine.demand_safety_warnings(raw, data["months"], guidance.get("quantity")) if not physical.get("held") else []
+        output_notes = [*new_warnings]
+        large = engine.big_order_warning(guidance, settings) if guidance.get("quantity") is not None else None
+        if large:
+            output_notes.append(large)
+        if raw.get("incoming_unknown") or "on_order" not in raw and not raw.get("receipts") and "planning_facts" not in raw:
+            output_notes.append("Orders already on the way were not included — subtract them before ordering.")
+        if output_notes:
+            rows[-1]["order_notes"] = " ".join(output_notes)
+        if new_warnings:
+            rows[-1]["input_warnings"] = safety_notes
         for key in ("shelf_cap_qty", "uncapped_qty", "capped", "cap_reason", "order_every_days", "coarse_warning",
                     "expiring", "expiry_at_risk_qty", "expiry_excluded_qty", "expiry_warnings", "shelf_conflict"):
             if key in guidance:
@@ -218,7 +230,7 @@ def _export_rows_pass(data, engine, today, settings, include_all, explain=False)
         if isinstance(method, dict) and method.get('requested') == 'recommended':
             rows[-1]['forecast_method'] = method
         if explain:
-            rows[-1]['input_warnings'] = raw.get('input_warnings', [])
+            rows[-1]['input_warnings'] = item.get('input_warnings', [])
             rows[-1]['why_breakdown'] = engine.why_breakdown(item, today, settings, data['as_of'])
             rows[-1]['why_this_amount'] = engine.why_this_amount(item, today, settings, data['as_of'])
             if 'forecast_method' in rows[-1]:
@@ -318,7 +330,7 @@ def _write_csv(handle, rows, explain=False):
     writer.writeheader()
     writer.writerows({key: _csv_cell(json.dumps(value, ensure_ascii=False, allow_nan=False)
                                    if key == 'forecast_method' else value, engine)
-                      for key, value in row.items() if key in fields} for row in rows)
+                      for key, value in {**row, "reason": " ".join(filter(None, [row.get("reason", ""), row.get("order_notes", "")]))}.items() if key in fields} for row in rows)
 
 
 def _write_rows(handle, rows, as_json=False, explain=False):

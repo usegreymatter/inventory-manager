@@ -15,7 +15,7 @@ python3 -B /absolute/checkout/mcp_server.py --bundle /absolute/data/bundle --set
 
 Replace absolute placeholders with real paths in a fixed, reviewed checkout. Source paths are startup arguments only; tools cannot choose files. Settings use the CLI validator, including its `show_costs` presentation option. Single CSVs use the CLI's input-meaning review. Flagged risks refuse startup unless the owner checks the file and explicitly adds `--show-orders-anyway`. Acknowledgment does not repair invalid rows. CSV-only `--stock-includes-reserved` and `--incoming-not-in-file` have the CLI meanings. Missing incoming remains unknown and purchase estimates assume zero; check open orders. Invalid stock/sales/incoming retain the existing importer and engine safety behavior.
 
-The planning date freezes at startup (local today unless `--today YYYY-MM-DD` is supplied). Every successful tool payload includes `planning_date`, source `as_of`, signed `data_age_days` (negative for future snapshots), `model_version` and `source_loaded_once`. Model and server versions identify this 1.2.1-beta package. No automatic reload or learning diary writes occur.
+The planning date freezes at startup (local today unless `--today YYYY-MM-DD` is supplied). Every successful tool payload includes `planning_date`, source `as_of`, signed `data_age_days` (negative for future snapshots), `model_version` and `source_loaded_once`. Model and server versions identify this 1.2.2-beta package. No automatic reload or learning diary writes occur.
 
 ## Tools
 

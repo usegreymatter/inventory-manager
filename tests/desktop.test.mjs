@@ -1,5 +1,7 @@
 import { readBaseline, baselineResult } from './baseline.mjs'
-import beforeReviewedFeatures from './reviewed-v12-delta.cjs'
+import reviewedFeatures from './reviewed-v12-delta.cjs'
+import beforeV122 from './reviewed-v122-delta.cjs'
+const beforeReviewedFeatures=(source,kind)=>reviewedFeatures(beforeV122(source,kind),kind)
 import './planning.test.mjs'
 import './safety.test.mjs'
 
@@ -2624,7 +2626,7 @@ test('ERP export CSVs (SAP B1, NetSuite, Zoho, QuickBooks, Dynamics) parse in th
     assert.deepEqual([[...js.months],a.sku,a.name,a.unit,a.on_hand,a.supplier_days,[...a.monthly_sales],a.category ?? null],py,f)
   }
   for (const [label,want] of [['Jan 2026','2026-01'],['January 2026','2026-01'],['Jan-26','2026-01'],['01/2026','2026-01'],['2026/01','2026-01'],['Sept 2026','2026-09'],['Price',null],['2026-13',null],['Janx 2026',null]]) assert.equal(context.helpers.erpMonth(label),want,label)
-  assert.throws(()=>parseCsv('Item Name,Qty On Hand,Jan 2026,Feb 2026,Mar 2026\nW,5,1,2,3\n'),/ERP names/)
+  assert.throws(()=>parseCsv('Ref,Item Name,Qty On Hand,Jan 2026,Feb 2026,Mar 2026\nW-1,Widget,5,1,2,3\n'),/Is 'Ref' your product code/)
 })
 
 // The standalone candidates must retain the owner's preferred Desktop chart.
@@ -2996,6 +2998,7 @@ test('Smart Desktop unknown required mapping blocks Use this until Change repair
   let all = await h.upload(smartTextFile('Stock report\nOdd field,Name,On Hand,Jan 2026,Feb 2026,Mar 2026\nAAA,Widget,5,1,2,3\n'))
   assert.equal(smartButton(all, 'Use this').props.disabled, true)
   assert.match(textValues(all).join(' '), /Still needed:.*[Pp]roduct code/)
+  assert.match(textValues(all).join(' '), /Is 'Odd field' your product code/)
   smartButton(all, 'Change').props.onClick()
   all = h.render()
   all.find(n => n.type === 'select' && n.props['aria-label']?.endsWith(': Odd field')).props.onChange({ target: { value: 'sku' } })

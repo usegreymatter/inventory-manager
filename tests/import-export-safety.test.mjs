@@ -6,6 +6,8 @@ import vm from 'node:vm'
 const worklist=fs.readFileSync('standalone/design/worklist-gm-b.js','utf8')
 const importer=fs.readFileSync('standalone/design/import-gm-b.js','utf8')
 const context=vm.createContext({})
+const plugin=fs.readFileSync('desktop/plugin.js','utf8'),template=fs.readFileSync('standalone/template.html','utf8')
+vm.runInContext(plugin.slice(plugin.indexOf('const SAMPLE ='),plugin.indexOf('const pageStyle =')).replaceAll('export ','')+'\nconst settings={};\n'+template.slice(template.indexOf('function incomingOrderCaveat('),template.indexOf('function purchaseOrderText(')),context)
 vm.runInContext(worklist.slice(worklist.indexOf('function wlCsv('),worklist.indexOf('function wlExport(')),context)
 vm.runInContext(importer.slice(importer.indexOf('function importSetAsideCsv('),importer.indexOf('importDownload.addEventListener')),context)
 const quote=text=>'"'+text.replaceAll('"','""')+'"'

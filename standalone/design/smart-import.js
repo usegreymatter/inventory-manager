@@ -104,6 +104,7 @@ const smartImportUI = (() => {
     if(r.missing.length){const missing=el('p','Still needed: '+r.missing.join(', '),'smart-import-problem');missing.id='smart-import-missing';body.append(missing)}
     if(r.match_report&&(r.sheets.length>1))body.append(el('p',`${r.match_report.matched} product codes matched across sheets · ${r.match_report.unmatched} did not match. Only products in the main stock sheet are imported.`,'smart-import-join'))
     const warnings=[...r.warnings,...(state.parsed?.import_report?.warnings||[])];if(warnings.length){const w=el('div',undefined,'smart-import-warnings');w.append(el('p',warnings[0]));disclosure(w,'All warnings',warnings);body.append(w)}
+    if(warnings.includes(GENERATED_CODE_NOTE))body.append(el('p',GENERATED_CODE_NOTE,'smart-import-note'))
     if(state.error)body.append(el('p',state.error.message,'smart-import-problem'))
     const parsed=state.parsed,report=parsed?.import_report
     const setAside=[],seenRows=new Set()

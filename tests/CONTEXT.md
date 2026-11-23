@@ -14,3 +14,5 @@ Fixture contract: `fixtures/CONTEXT.md` routes immutable original-sample and syn
 A3 coverage extends `test_standalone_build.py`, `standalone.test.mjs` and the actual Desktop Chart parity matrix in `desktop.test.mjs`. The A3 application DOM adapter is logic-only; it does not establish browser interactions, layout or performance. Real browser checks are in `../standalone/capture-a3.cjs`.
 
 MCP: `test_mcp.py` checks `../mcp_server.py` with synthetic CSV/bundle snapshots, CLI equality, modern/legacy protocol, bounded hostile frames and socket denial. Focused check: `python3 -B -m pytest -q tests/test_mcp.py` from the root; local evidence in `../.scratch/mcp-builder/`. Real clients and broad regression are separate controller gates.
+
+Name-generated identity and warning repairs: `test_v122_safety.py`, `v122-safety.test.mjs`, `v122-import-repair.test.mjs` cover unknown-code candidates, global duplicate names, forced collisions, full casefold/NFC parity and combined warnings. `reviewed-v122-delta.cjs` reverses only exact reviewed spans in `fixtures/v122-approved-delta.json`; baseline hashes remain immutable.

@@ -2,7 +2,7 @@
 
 # Inventory Manager by GreyMatter — free inventory reorder planner
 
-**Beta:** free and ready to try with your own data. It has been tested on example data. Requests, notes and criticism are all welcome — [open an issue](https://github.com/usegreymatter/inventory-manager/issues).
+**Beta:** v1.2.2-beta — free and ready to try with your own data. It has been tested on example data. Read the [release notes](docs/release-notes/v1.2.2-beta.md). Requests, notes and criticism are all welcome — [open an issue](https://github.com/usegreymatter/inventory-manager/issues).
 
 **Free, open-source reorder planner: what to buy, how much, by when. Offline, and your data stays on your device.**
 
@@ -14,7 +14,7 @@
 
 **[Open the demo](https://usegreymatter.github.io/inventory-manager/)** · [Source repository](https://github.com/usegreymatter/inventory-manager)
 
-The Pages link above opens the demo directly in your browser. For offline use, download **`inventory-manager-1.2.1-beta.html`** when it is published as a release asset, or open [`standalone/inventory-manager.html`](standalone/inventory-manager.html) on GitHub and choose **Download raw file** (not Save Page on the code preview). Open the downloaded `.html` file in any modern browser: double-click it or use **Open with → your browser**. It is one file and needs no server, account, install or internet. A 1,000-product synthetic demo is in [`standalone/inventory-manager-demo-1000.html`](standalone/inventory-manager-demo-1000.html); download and open it the same way. Every built HTML carries the MIT license and [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Only `option-gm-c` embeds Poppins and Tajawal and includes their OFL notice and full license; keep [LICENSES/OFL-1.1.txt](LICENSES/OFL-1.1.txt) alongside redistributed copies of that variant. The shipped Arctic page and its demos use system fonts.
+The Pages link above opens the hosted demo; it may lag this checkout. For offline use, open [`standalone/inventory-manager.html`](standalone/inventory-manager.html) on GitHub and choose **Download raw file** (not Save Page on the code preview). You can also check [Releases](https://github.com/usegreymatter/inventory-manager/releases) for a published HTML download and its version. These notes do not mean a v1.2.2-beta release asset has been published. Open the downloaded `.html` file in any modern browser: double-click it or use **Open with → your browser**. It is one file and needs no server, account, install or internet. A 1,000-product synthetic demo is in [`standalone/inventory-manager-demo-1000.html`](standalone/inventory-manager-demo-1000.html); download and open it the same way. Every built HTML carries the MIT license and [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Only `option-gm-c` embeds Poppins and Tajawal and includes their OFL notice and full license; keep [LICENSES/OFL-1.1.txt](LICENSES/OFL-1.1.txt) alongside redistributed copies of that variant. The shipped Arctic page and its demos use system fonts.
 
 To keep a local copy:
 
@@ -26,6 +26,10 @@ cd inventory-manager
 ## Use your own file
 
 Choose **Import Excel or CSV** and pick your Excel or CSV export. Smart import matches your column names (it knows common ERP headers), shows a preview of what it understood, and sets aside rows it can't read rather than guessing. The file is read in the browser and never uploaded. Details: [docs/GUIDE.md](docs/GUIDE.md#import-check-before-replacing-your-products).
+
+The browser can process **10,000 products in seconds**; actual time depends on your device, file and settings. The Python CLI and local AI/MCP route are slower: allow **30–60 seconds on first start for a few thousand products**, and longer for larger or more complex inputs. These are practical expectations, not guaranteed timings or the same performance claim for every interface.
+
+The **UI is English-only**. Arabic product names and recognised Arabic headers import in the browser; review the matched columns before accepting. Arabic text support is not an Arabic interface translation.
 
 ## What it does NOT do
 
@@ -39,9 +43,9 @@ The selected method forecasts monthly demand; the planner consumes it across act
 
 Defaults (from `DEFAULT_ORDER_SETTINGS` in `engine.py`): delivery time 14 days, 2 months of cover, buffer 0 days, 95% service level, **safety stock added to orders: on**.
 
-### Industry setup guides (v1.2 candidate)
+### Industry setup guides
 
-The industry buttons are **setup guides for ordering rhythm and shelf-life prompts**, not quantity optimizers. They ask you to check the actual ordering interval and enter verified shelf-life facts for applicable products; they do not silently set an ordering cadence or guess shelf life. **They do not change order amounts on their own from General defaults.** Confirming ordinary-setting changes, such as raising insufficient cover or resetting custom settings with General, can change amounts; review the before/after preview before applying. Pharmacy's automatic 99% service target was removed after it failed the independent synthetic gate; the user's chosen target is preserved. The remaining guides matched General quantities in the weekly/monthly synthetic comparison, not evidence of better real-world performance. See [industry setup guides, exact settings and evidence](docs/PRESETS.md) and [beta notes](docs/release-notes/v1.2.0-beta.md).
+The industry buttons are **setup guides for ordering rhythm and shelf-life prompts**, not quantity optimizers. They ask you to check the actual ordering interval and enter verified shelf-life facts for applicable products; they do not silently set an ordering cadence or guess shelf life. **They do not change order amounts on their own from General defaults.** Confirming ordinary-setting changes, such as raising insufficient cover or resetting custom settings with General, can change amounts; review the before/after preview before applying. Pharmacy's automatic 99% service target was removed after it failed the independent synthetic gate; the user's chosen target is preserved. The remaining guides matched General quantities in the weekly/monthly synthetic comparison, not evidence of better real-world performance. See [industry setup guides, exact settings and evidence](docs/PRESETS.md) and [current beta notes](docs/release-notes/v1.2.2-beta.md).
 
 ## Forecast methods
 
@@ -72,13 +76,13 @@ Start with [AGENTS.md](AGENTS.md) and [llms.txt](llms.txt). Recipes: [docs/AI-GU
 
 ## Use with your AI
 
-Add this local, read-only MCP server to an AI client. Replace the placeholders with absolute paths; entries are examples and have not all been tested in their clients. A 10,000-product file took about 25 seconds to start in one local measurement, not a guarantee. Use a larger startup timeout where the client supports it. ChatGPT's chat app needs an online MCP server, which this project does not include.
+Add this local, read-only MCP server to an AI client. Replace the placeholders with absolute paths; entries are examples and have not all been tested in their clients. Allow 30–60 seconds on first start for a few thousand products; larger files or slower devices can take longer. Use a larger startup timeout where the client supports it; the 60-second examples below may need increasing. ChatGPT's chat app needs an online MCP server, which this project does not include.
 
 All examples run `mcp_server.py` with a local CSV and the standard-library Python 3 runtime. Claude Desktop, Claude Code and Cursor use JSON `mcpServers`; Codex uses TOML and `startup_timeout_sec`; Gemini uses JSON `timeout` in milliseconds; Hermes accepts JSON-compatible YAML and `connect_timeout` in seconds.
 
 ### Claude Desktop
 
-Add to Claude Desktop's `claude_desktop_config.json`. Claude Desktop has no configurable startup timeout key; first start may take about 25 seconds for 10,000 products (one local measurement):
+Add to Claude Desktop's `claude_desktop_config.json`. Claude Desktop has no configurable startup timeout key; allow 30–60 seconds on first start for a few thousand products, with longer waits possible:
 
 ```json
 {"mcpServers":{"inventory":{"command":"/absolute/path/python3","args":["-B","/absolute/checkout/mcp_server.py","--csv","/absolute/data/stock.csv"]}}}

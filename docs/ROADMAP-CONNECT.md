@@ -2,7 +2,7 @@ Lifecycle: proposed
 
 # Roadmap: connect, automate, learn
 
-## Status today (v1.1.0)
+## Status today (v1.2.2-beta)
 
 Shipped: smart Excel/CSV import with preflight, the canonical CSV bundle, a read-only Odoo source, forecast methods (Current default; Auto experimental), light/dark themes, local order lists kept in the browser, the Python CLI, and the [local read-only MCP server](architecture/MCP.md) (`list_reorders`, `explain_item`, `data_health`). **Not built:** the phases below (mapping-file connectors and `sync`, email drafts, auto-reorder, ERP write-back, webhooks, MCP draft/write extensions). The remaining phases below are a plan; P6's read-only subset has shipped.
 
