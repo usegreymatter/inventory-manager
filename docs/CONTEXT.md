@@ -8,6 +8,7 @@ Map:
 - `GUIDE.md`: full user reference (settings, CLI, CSV/ERP import, Odoo, Desktop plugin, number rules).
 - `terminology.md`, `data/`: plain-English terms, CSV bundle contract, order-building spec, Arabic glossary.
 - `forecast-methods-spec.md`, `forecast-lab/`: forecast methods and the offline lab report.
+- `release-notes/`: user-facing version notes and known limits; the folder contract routes source checks.
 - [PRESETS.md](PRESETS.md): one-time industry setting buttons, exact values and tradeoffs, preview/undo and shelf-storage integration boundaries.
 - `erp-examples/`: synthetic example exports from eight ERPs (used by import tests).
 - `architecture/MCP.md`: implemented local read-only MCP contract and client configuration; code `../mcp_server.py`, checks `../tests/test_mcp.py`.

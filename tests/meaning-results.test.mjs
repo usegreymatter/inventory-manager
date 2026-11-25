@@ -40,7 +40,7 @@ function pageDOM(path,{withoutWorklist=false,withoutMain=false}={}){
 }
 function renderer(document){
   const context=vm.createContext({document,localStorage:{setItem(){assert.fail('warning dismissal must not persist')}}})
-  vm.runInContext(source.match(/  const el=.*\n/)[0]+showSource+'\nglobalThis.show=showMeaningResults',context)
+  vm.runInContext(source.slice(source.indexOf('const fileWideWarningCache'),source.indexOf('const smartImportUI'))+source.match(/  const el=.*\n/)[0]+showSource+'\nglobalThis.show=showMeaningResults',context)
   return context.show
 }
 function visible(node){for(let n=node;n;n=n.parent)if('hidden' in n.attrs||n.tag==='details'&&!('open' in n.attrs)||n.tag==='dialog'&&!('open' in n.attrs))return false;return true}
@@ -76,6 +76,17 @@ test('empty global warnings fall back to item warning paragraphs as literal text
   assert.ok(banner.children.some(n=>n.tag==='p'&&n.textContent===warning&&visible(n)))
   assert.equal(descendants(banner).some(n=>n.tag==='img'),false)
 })
+test('shared file warnings appear once while product-specific warnings stay in affected list',()=>{
+  const document=pageDOM('standalone/inventory-manager.html'),show=renderer(document)
+  const input={items:[{sku:'A',input_warnings:['Global incoming warning','A-specific warning']},{sku:'B',input_warnings:['Global incoming warning']}],input_meaning:{warnings:['Global incoming warning','A-specific warning']}}
+  show(input)
+  const banner=document.getElementById('input-meaning-results'),all=descendants(banner)
+  assert.equal(all.filter(n=>n.tag==='p'&&n.textContent==='Global incoming warning').length,1)
+  assert.equal(all.filter(n=>n.dataset.inputWarningSku).length,1)
+  assert.equal(all.find(n=>n.dataset.inputWarningSku==='A').textContent,'A — A-specific warning')
+  assert.deepEqual(input.items[0].input_warnings,['Global incoming warning','A-specific warning'])
+})
+
 test('reserved review fixture is outside the deterministic generator directory',()=>{
   assert.ok(fs.existsSync('tests/fixtures/review-import/v_reserved_one_sheet.xlsx'))
   assert.equal(fs.existsSync('tests/fixtures/smart-import/v_reserved_one_sheet.xlsx'),false)

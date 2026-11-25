@@ -1,6 +1,6 @@
 # Inventory Manager
 
-Version: 1.2.2-beta. Free Beta: tested with example data; feedback welcome.
+Version: 1.3.0-beta. Free Beta: tested with example data; feedback welcome.
 
 > Free, open-source reorder planner: what to buy, how much, by when. Offline; your data stays on your device. Python standard-library engine/CLI, Hermes Desktop plugin (JS mirror of the engine), offline single-file HTML page. Read-only data sources; nothing places orders.
 
@@ -10,7 +10,7 @@ Version: 1.2.2-beta. Free Beta: tested with example data; feedback welcome.
 - [CONTEXT.md](CONTEXT.md): package contract and folder routes
 - [docs/AI-GUIDE.md](docs/AI-GUIDE.md): task recipes (map ERP fields, dry run, change a column)
 - [docs/GUIDE.md](docs/GUIDE.md): full reference (settings, CLI, CSV import, Odoo, Desktop plugin, number rules)
-- [docs/release-notes/v1.2.2-beta.md](docs/release-notes/v1.2.2-beta.md): current beta safety warnings, limits and feedback
+- [docs/release-notes/v1.3.0-beta.md](docs/release-notes/v1.3.0-beta.md): current beta safety warnings, limits and feedback
 - [CONTRIBUTING.md](CONTRIBUTING.md): checks to run before a change
 
 - [docs/architecture/MCP.md](docs/architecture/MCP.md): implemented read-only local MCP: startup, tools, safety and client configs; draft/write extensions remain proposed

@@ -403,7 +403,7 @@ console.log(JSON.stringify(await core.readWorkbook(fs.readFileSync(process.argv[
                 self.core.read_workbook(path)
 
 
-    def assert_reader_error(self, path, message):
+    def assert_reader_error(self, path, message, js_message=None):
         with self.assertRaises(ValueError) as error:self.core.read_workbook(path)
         self.assertEqual(str(error.exception),message)
         script="""import fs from 'node:fs';
@@ -412,7 +412,7 @@ try{await core.readWorkbook(fs.readFileSync(process.argv[1]),process.argv[1]);co
 catch(e){console.log(JSON.stringify({error:e.message}));}
 """
         run=subprocess.run(['node','--input-type=module','-e',script,str(path)],text=True,capture_output=True,cwd=ROOT,check=True)
-        self.assertEqual(json.loads(run.stdout),{'error':message})
+        self.assertEqual(json.loads(run.stdout),{'error':js_message or message})
 
     def test_xml_element_and_shared_string_bombs_fail_before_tree_allocation(self):
         with tempfile.TemporaryDirectory(dir=ROOT/'.scratch') as directory:
@@ -421,11 +421,46 @@ catch(e){console.log(JSON.stringify({error:e.message}));}
             for label,part,value in [
                 ('three-million-shared','xl/sharedStrings.xml',b'<sst>'+b'<si/>'*3000000+b'</sst>'),
                 ('shared-limit','xl/sharedStrings.xml',b'<sst>'+b'<si/>'*200001+b'</sst>'),
-                ('element-limit','xl/worksheets/sheet1.xml',b'<worksheet>'+b'<a/>'*500000+b'</worksheet>')]:
+                ('element-limit','xl/worksheets/sheet1.xml',b'<worksheet>'+b'<a/>'*1000000+b'</worksheet>')]:
                 with self.subTest(label=label):
                     with zipfile.ZipFile(path,'w',compression=zipfile.ZIP_DEFLATED) as z:
                         for name,original in parts.items():z.writestr(name,value if name==part else original)
-                    self.assert_reader_error(path,self.core.XML_BOUNDS_ERROR)
+                    # Browser allowance is doubled for 10k x 24m; Python's older cap stays frozen.
+                    self.assert_reader_error(path,self.core.XML_BOUNDS_ERROR,
+                        'This workbook is too big for the browser. Save it as CSV and import that.')
+
+    def test_browser_reader_preserves_hidden_and_very_hidden_sheet_state(self):
+        with tempfile.TemporaryDirectory(dir=ROOT/'.scratch') as directory:
+            path=Path(directory)/'visibility.xlsx';make_xlsx(path,zipfile.ZIP_STORED)
+            with zipfile.ZipFile(path) as z:parts={n:z.read(n) for n in z.namelist()}
+            for state in ['hidden','veryHidden']:
+                with self.subTest(state=state):
+                    with zipfile.ZipFile(path,'w',compression=zipfile.ZIP_STORED) as z:
+                        for name,original in parts.items():
+                            z.writestr(name,original.replace(b'<sheet name=',f'<sheet state="{state}" name='.encode())
+                                if name=='xl/workbook.xml' else original)
+                    self.assertIs(self.js_read(path)[0]['hidden'],True)
+
+    def test_browser_accepts_10000_products_with_24_months(self):
+        # 30 columns / 600k+ XML elements: above the former 500k cap.
+        with tempfile.TemporaryDirectory(dir=ROOT/'.scratch') as directory:
+            path=Path(directory)/'ten-thousand.xlsx';make_xlsx(path,zipfile.ZIP_STORED)
+            with zipfile.ZipFile(path) as z:parts={n:z.read(n) for n in z.namelist()}
+            headers=['sku','name','unit','on_hand','supplier_days','on_order']+[
+                f'{2024+i//12}-{i%12+1:02d}' for i in range(24)]
+            def row(values):
+                return '<row>'+''.join(f'<c t="inlineStr"><is><t>{v}</t></is></c>' for v in values)+'</row>'
+            content='<worksheet><sheetData>'+row(headers)+''.join(
+                row([f'S{i}',f'Product {i}','units','40','14','0']+['10']*24)
+                for i in range(10000))+'</sheetData></worksheet>'
+            # inlineStr adds three nodes/cell, so use numeric <v> cells in data,
+            # matching actual Excel numeric storage and the stress workbook.
+            content=content.replace('<c t="inlineStr"><is><t>10</t></is></c>','<c><v>10</v></c>')
+            with zipfile.ZipFile(path,'w',compression=zipfile.ZIP_STORED) as z:
+                for name,original in parts.items():z.writestr(name,content if name=='xl/worksheets/sheet1.xml' else original)
+            sheets=self.js_read(path)
+            self.assertEqual(len(sheets[0]['rows']),10001)
+            self.assertEqual(len(sheets[0]['rows'][0]),30)
 
     def test_malformed_numeric_attributes_have_identical_friendly_errors(self):
         with tempfile.TemporaryDirectory(dir=ROOT/'.scratch') as directory:

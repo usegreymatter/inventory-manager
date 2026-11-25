@@ -28,6 +28,7 @@ dialog.smart-import::backdrop{background:var(--backdrop,rgb(0 0 0 / .4))}
 .smart-import-warnings,.smart-import-problem{font-size:14px;line-height:1.6;color:var(--ink,var(--ink,#17202a));border-inline-start:2px solid var(--amber,#94621f);padding-inline-start:12px}
 .smart-import-actions{display:flex;flex-wrap:wrap;gap:10px;position:static;background:var(--bg,var(--surface,var(--surface,#fff)));padding:16px 28px;border-top:1px solid var(--line,var(--line,#d6d9df))}
 .smart-import button,#smart-import-review{font:inherit;border-radius:6px;cursor:pointer;min-height:44px;padding:8px 16px;border:1px solid var(--line,var(--rule,#b7bec8));color:inherit;background:transparent}
+#smart-import-disabled-reason{flex-basis:100%;margin:0;font-size:13px;line-height:1.5;color:var(--muted,var(--ink,#17202a))}
 #smart-import-use{background:var(--accent,var(--accent,#3f5687));color:var(--on-accent,var(--surface,#fff));border-color:transparent}
 #smart-import-use:disabled{opacity:.45;cursor:not-allowed}
 #smart-import-review{padding:0 4px;min-height:44px;min-width:44px;border:0;text-decoration:underline}
@@ -39,7 +40,11 @@ dialog.smart-import::backdrop{background:var(--backdrop,rgb(0 0 0 / .4))}
 .input-meaning-card,.input-meaning-results{border:1px solid var(--line,#a7b5c7);border-radius:12px;padding:16px;margin:12px 0;background:var(--surface,#f4f7fb);color:var(--ink,#182234)}
 .input-meaning-card label{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:12px 0;font-weight:600}
 .input-meaning-card label select{display:block;width:100%;min-height:44px;max-width:100%;font:inherit}
-.input-meaning-card input[type=checkbox]{width:20px;height:20px;flex-shrink:0}
+.smart-import .smart-import-check{display:flex;flex-wrap:nowrap;align-items:flex-start;gap:8px;margin:12px 0;line-height:22px}
+.smart-import .smart-import-check input[type=checkbox]{width:20px;height:20px;flex:0 0 20px;margin:1px 0 0}
+.smart-import-hidden-sheet{font-size:14px;line-height:1.5;border-inline-start:2px solid var(--amber,#94621f);padding-inline-start:10px}
+/* The host has a fixed status footer; leave scroll room below the final preview. */
+@media(max-width:600px){.smart-import .smart-import-content{padding-bottom:120px;scroll-padding-bottom:120px}.smart-import-source{max-height:80px;overflow:auto}}
 .input-meaning-card h3,.input-meaning-results h3{margin:0 0 12px}
 .input-meaning-results li{overflow-wrap:anywhere}
 /* Remains outside collapsed import controls without crowding out the worklist. */

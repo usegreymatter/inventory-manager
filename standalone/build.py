@@ -136,6 +136,8 @@ def build(template=DEFAULT_TEMPLATE, data=None):
                 presentation += "\n" + (design / "settings-gm-b.js").read_text(encoding="utf-8")
                 css += "\n" + (design / "settings-gm-b.css").read_text(encoding="utf-8")
                 presentation += "\n" + (design / "local-orders-gm-b.js").read_text(encoding="utf-8")
+                presentation += "\n" + (design / "stock-date-gm-b.js").read_text(encoding="utf-8")
+                css += "\n" + (design / "stock-date-gm-b.css").read_text(encoding="utf-8")
                 presentation += "\n" + (design / "supplier-minimums-gm-b.js").read_text(encoding="utf-8")
                 presentation += "\nconst gmBStartupBrowseList=buildList\n" + (design / "worklist-gm-b.js").read_text(encoding="utf-8")
                 presentation += "\n" + (design / "xlsx-gm-b.js").read_text(encoding="utf-8")
@@ -164,6 +166,8 @@ def build(template=DEFAULT_TEMPLATE, data=None):
                 presentation += "\nconst themeField=node('label',null,'theme-control');themeField.htmlFor='theme-choice';themeField.append(node('span','Theme'));const themeChoice=node('select');themeChoice.id='theme-choice';for(const [value,label]of [['system','System'],['light','Light'],['dark','Dark']]){const option=node('option',label);option.value=value;themeChoice.append(option)}themeChoice.value=window.stockRunwayTheme.get();themeChoice.addEventListener('change',()=>window.stockRunwayTheme.set(themeChoice.value));themeField.append(themeChoice);document.querySelector('.tools-body').prepend(themeField);\n"
                 presentation = presentation.replace('render();gmSyncFields()', 'if(data.items.length<=1000)render();gmSyncFields()').replace('localOrderLoad();render()', 'localOrderLoad();if(data.items.length<=1000)render();else withDatasetEvaluation(()=>{})')
                 presentation += "\n" + (design / "progressive-gm-b.js").read_text(encoding="utf-8")
+                presentation += "\n" + (design / "first-run-gm-b.js").read_text(encoding="utf-8")
+                css += "\n" + (design / "first-run-gm-b.css").read_text(encoding="utf-8")
                 # Large startup must not normalize hashes against an empty/partial catalog.
                 html = html.replace("const a3Started=performance.now()", "const gmBInitialHash=location.hash\nlet gmBRestoreHash=gmBInitialHash,gmBInitialRestorePending=true,analysisIncomplete=true\nwindow.addEventListener('hashchange',e=>{if(analysisIncomplete){gmBRestoreHash=location.hash;e.stopImmediatePropagation()}},true)\nconst a3Started=performance.now()")
                 presentation = presentation.replace('function wlHash(){', 'function wlHash(){if(analysisIncomplete)return;').replace('function gmBrowseHash(){', 'function gmBrowseHash(){if(analysisIncomplete)return;')

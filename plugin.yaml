@@ -1,5 +1,5 @@
 name: stock-runway
-version: 1.2.2-beta
+version: 1.3.0-beta
 description: >-
   See when inventory may run out, understand forecast accuracy, and check stock from a sample,
   local CSV, or read-only Odoo connection.

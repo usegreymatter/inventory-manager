@@ -10,3 +10,5 @@ Folder routes: `desktop/CONTEXT.md`, `standalone/CONTEXT.md`, `tests/CONTEXT.md`
 Read-only MCP contract: `docs/architecture/MCP.md`; focused check: `python3 -B -m pytest -q tests/test_mcp.py`.
 Other roadmap designs (not implemented): `docs/architecture/CONTEXT.md`, `docs/ROADMAP-CONNECT.md`.
 Development history (phase notes, QA logs, old plans): `docs/history/`. Design variants: [standalone/design/CONTEXT.md](standalone/design/CONTEXT.md).
+
+Security reporting: `SECURITY.md`; user entry and offline download instructions: `README.md`.

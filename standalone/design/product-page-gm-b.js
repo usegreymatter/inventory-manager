@@ -17,7 +17,7 @@ function productInputs(row){
  const head=node('div',null,'product-section-head');head.append(node('h2','Inputs & settings'),wlBtn('Change settings for this product',()=>openProductSettings(i.sku)));section.append(head)
  const add=(label,value,source)=>{const r=node('div',null,'product-input');r.append(node('span',label),node('strong',value==null?'Not set':String(value)),node('small',source));grid.append(r)}
  const qty=x=>x==null?'Unknown':orderAmount(x)+' '+i.unit
- add('On hand',qty(i.on_hand),'File');add('On order',qty(localOrderIncoming(i)),localOrderFor(i.sku)?'File + this device':'File')
+ add('On hand',qty(i.counted_on_hand??i.on_hand),i.stock_counted_on?'File · counted '+gmDate(i.stock_counted_on):'File');add('On order',qty(localOrderIncoming(i)),localOrderFor(i.sku)?'File + this device':'File')
  const receipts=Object.entries(i.receipts||{}).filter(([month])=>month>data.as_of.slice(0,7)).map(([month,quantity])=>`${label(month)} · ${qty(quantity)} (monthly total)`)
  for(const r of i.planning_facts?.incoming_pos||[])if(r.status==='confirmed')receipts.push(`${r.due_date} · ${qty(r.remaining_qty)}`)
  add('Dated receipts',receipts.length?receipts.join('; '):'None in file',localOrderFor(i.sku)?'File + this device':'File')
@@ -74,7 +74,7 @@ function drawProductPage(row){
   const text=wlOrderText([row]);let message=action.querySelector('[role=status]');if(!message){message=node('span');message.setAttribute('role','status');action.append(message)}
   try{await navigator.clipboard.writeText(text);message.textContent='Order copied.'}catch{let input=action.querySelector('textarea');if(!input){input=node('textarea');input.readOnly=true;input.setAttribute('aria-label','Order text — select and copy');action.append(input)}input.value=text;input.focus();input.select();message.textContent='Select and copy the order text below.'}
  });const draft=wlBtn('Draft email',()=>wlDraftEmail([row]),'product-draft-email');draft.disabled=!wlEmailGroups([row]).length;copy.disabled=!(g.quantity>0);action.append(copy,draft,localOrderActions([row]),node('p',localOrderFor(i.sku)?localOrderDisplay(localOrderFor(i.sku))+' · '+orderAmount(localOrderFor(i.sku).qty)+' '+i.unit+' · not in your ERP.':g.reason||chartKeyline(row),'product-note'))
- const large=bigOrderWarning(g,settings);if(large){const note=node('p',large,'product-note');note.dataset.bigOrder=i.sku;action.prepend(note)}
+ const large=bigOrderWarning(g,settings);if(large){const note=node('details',null,'big-order-explanation'),summary=node('summary','Large order · check quantity');summary.title=gmBBigOrderExplanation(g);note.append(summary,node('p',gmBBigOrderExplanation(g)));note.dataset.bigOrder=i.sku;action.prepend(note)}
  const inputWarnings=itemInputWarnings(i);if(inputWarnings)action.append(inputWarnings)
  if(localOrderFor(i.sku)){if((i.on_order||0)>0||Object.values(i.receipts||{}).some(v=>v>0))action.append(node('p','Existing incoming stock has no exact PO dates. The shared planner holds mixed incoming data for review; no file stock was replaced.','product-note'))}
  wrap.append(nav,header,figures,chart,productLedger(row),productInputs(row),action);overlay.replaceChildren(wrap);overlay.scrollTop=oldScroll;chart.querySelector('figure')?.drawChart();cleanupCharts();syncProductSettingSources()

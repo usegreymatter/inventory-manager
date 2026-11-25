@@ -18,7 +18,9 @@ def cost_metrics(item, guidance=None, risk=None):
     if not _number(cost):
         return {}
     result = {}
-    for key, quantity in [('money_tied_up', item.get('on_hand')),
+    # A stock count date translates on_hand to the as-of balance; value the counted stock.
+    stock = item.get('counted_on_hand', item.get('on_hand'))
+    for key, quantity in [('money_tied_up', stock),
                           ('incoming_value', guidance.get('incoming_qty', item.get('on_order'))),
                           ('order_value', guidance.get('quantity')),
                           ('expiry_value_at_risk', guidance.get('expiry_at_risk_qty', item.get('expiry_at_risk_qty')))]:
@@ -35,9 +37,9 @@ def cost_metrics(item, guidance=None, risk=None):
         result['margin_unit'] = margin
         if price > 0:
             result['margin_pct'] = margin / price * 100
-        if _number(item.get('on_hand')):
-            result['stock_margin'] = item['on_hand'] * margin
-            result['stock_sale_value'] = item['on_hand'] * price
+        if _number(stock):
+            result['stock_margin'] = stock * margin
+            result['stock_sale_value'] = stock * price
         shortfall = risk.get('expected_shortfall_before')
         if _number(shortfall):
             result['lost_profit_est'] = shortfall * max(0, margin)

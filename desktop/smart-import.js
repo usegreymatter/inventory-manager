@@ -59,7 +59,7 @@ const REQUIRED=[['sku','Product code (SKU)'],['name','Product name'],['on_hand',
 const NUMERIC=/^[+-]?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?$/;
 const LEGACY_ERROR='Save as .xlsx or CSV; legacy .xls and .xlsb workbooks are not supported.';
 const BOUNDS_ERROR='Workbook exceeds safe limits (200000 rows, 16384 columns or 2000000 cells).';
-const XML_BOUNDS_ERROR='Workbook XML exceeds safe limits (500000 elements or 200000 shared strings).';
+const XML_BOUNDS_ERROR='This workbook is too big for the browser. Save it as CSV and im'+'port that.';
 const trim=v=>String(v??'').replace(/^[\s\u001c-\u001f\u0085\ufeff]+|[\s\u001c-\u001f\u0085\ufeff]+$/gu,'');
 const fail=message=>{throw new Error(message);};
 const own=(o,k)=>Object.prototype.hasOwnProperty.call(o,k);
@@ -165,7 +165,7 @@ function xml(raw,budget={elements:0}){
     if(token[0]!=='<'||token.startsWith('<!--')||token.startsWith('<?')||token.startsWith('<![CDATA['))continue;
     if(token.startsWith('</')){depth--;continue;}
     budget.elements++;if(/^<(?:[^\s:/>]+:)?si(?=[\s/>])/.test(token))strings++;
-    if(budget.elements>500000||strings>200000)fail(XML_BOUNDS_ERROR);
+    if(budget.elements>1000000||strings>200000)fail(XML_BOUNDS_ERROR);
     if(depth+1>255)fail('Workbook XML nesting is too deep.');
     if(!token.endsWith('/>')&&++depth>255)fail('Workbook XML nesting is too deep.');
   }
@@ -210,7 +210,7 @@ async function zipParts(raw){
   for(let i=0;i<count;i++){
     if(u32(at)!==0x02014b50)fail('Invalid ZIP structure in workbook.');
     const flags=u16(at+8),method=u16(at+10),crc=u32(at+16),compressed=u32(at+20),uncompressed=u32(at+24),nameLen=u16(at+28),extra=u16(at+30),comment=u16(at+32),local=u32(at+42);
-    if(flags&1)fail('Encrypted workbooks are not supported. Save an unencrypted .xlsx or CSV.');
+    if(flags&1)fail('Password-protected workbook — remove the password in Excel and save again');
     if(![0,8].includes(method))fail('Unsupported ZIP compression; Save as .xlsx or CSV.');
     const next=at+46+nameLen+extra+comment;if(next>offset+centralSize)fail('Invalid ZIP structure in workbook.');
     const name=decode(raw.subarray(at+46,at+46+nameLen));
@@ -300,7 +300,7 @@ async function readXlsx(raw){
         values[col]=value;
       }
     }
-    const result={name:sheet.attrs.name??'Sheet',rows};if(percentCells.length)result.percent_cells=percentCells;sheets.push(result);
+    const result={name:sheet.attrs.name??'Sheet',rows};if(['hidden','veryHidden'].includes(sheet.attrs.state))result.hidden=true;if(percentCells.length)result.percent_cells=percentCells;sheets.push(result);
   }
   return limits(sheets);
 }
@@ -308,7 +308,12 @@ export async function readWorkbook(buffer,filename='workbook.xlsx'){
   const raw=buffer instanceof Uint8Array?buffer:buffer instanceof ArrayBuffer?new Uint8Array(buffer):ArrayBuffer.isView(buffer)?new Uint8Array(buffer.buffer,buffer.byteOffset,buffer.byteLength):fail('Expected workbook bytes.');
   if(/\.(xls|xlsb)$/i.test(filename))fail(LEGACY_ERROR);
   if(raw.length>MAX_INPUT)fail('File must be no larger than 20 MiB.');
-  if(raw[0]===0xd0&&raw[1]===0xcf&&raw[2]===0x11&&raw[3]===0xe0)fail(LEGACY_ERROR);
+  if(raw[0]===0xd0&&raw[1]===0xcf&&raw[2]===0x11&&raw[3]===0xe0){
+    const directory=new TextDecoder('utf-16le').decode(raw);
+    if(directory.includes('EncryptionInfo')||directory.includes('EncryptedPackage'))fail('Password-protected workbook — remove the password in Excel and save again');
+    fail(LEGACY_ERROR);
+  }
+  if(/\.csv$/i.test(filename)&&raw[0]===80&&raw[1]===75)fail('This looks like an Excel file — rename it to .xlsx');
   if(/\.xlsx$/i.test(filename)||raw[0]===80&&raw[1]===75)return readXlsx(raw);
   const text=decode(raw),name=filename.split(/[\\/]/).at(-1).replace(/\.[^.]*$/,'');return [{name,rows:csvRows(text),delimiter:delimiterFor(text)}];
 }

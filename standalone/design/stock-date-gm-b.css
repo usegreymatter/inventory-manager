@@ -1,0 +1,4 @@
+.stock-date-control { display:flex; align-items:center; justify-content:space-between; gap:16px; padding-block:12px; border-block-end:1px solid var(--line); }
+.stock-date-control input { min-height:44px; width:170px; color:var(--ink); background:var(--surface); border:1px solid var(--rule); font:inherit; }
+.stock-date-message { margin:8px 0 12px; font-size:13px; line-height:18px; color:var(--muted, var(--ink)); }
+.stock-date-message.stock-date-warning { color:var(--ink); font-weight:600; }

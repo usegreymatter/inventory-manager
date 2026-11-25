@@ -33,6 +33,44 @@ class Element {
 }
 function dom(){const body=new Element('body');return {body,activeElement:null,createElement:tag=>new Element(tag),createTextNode:text=>new Element('#text',text),createComment:()=>new Element('#comment'),getElementById:id=>descendants(body).find(n=>n.id===id)||null,querySelector:s=>body.querySelector(s),querySelectorAll:s=>body.querySelectorAll(s),addEventListener(){}}}
 const malicious='<img src=x onerror=alert(1)>'
+
+// Stress repairs are UI-only: exercise the actual importer and row renderer.
+function stressCore(document){
+  const core=read('desktop/plugin.js'),ctx=vm.createContext({document,TextEncoder,TextDecoder,atob,btoa,crypto:webcrypto,localStorage:{getItem:()=>null},readStockFile:async file=>file.text})
+  const status=new Element('p');status.id='source-status';document.body.append(status)
+  vm.runInContext(core.slice(core.indexOf('const SAMPLE ='),core.indexOf('const pageStyle =')).replaceAll('export ','')+'\n'+read('standalone/design/smart-import.js')+'\nthis.api={loadStockImport,parseStockImport,reviewCsvInputMeaning,attachInputMeaning,importRows,fileWideInputWarnings}',ctx)
+  return ctx
+}
+for(const header of ['Ref','Article No','Prodcut Code'])test(`browser import names candidate ${header} and leaves the dataset untouched`,async()=>{
+  const ctx=stressCore(dom()),text=header+',Name,On Hand,2026-08,2026-09,2026-10\nA-1,Widget,5,1,1,1\nA-2,Gadget,7,2,2,2\n'
+  const dataset=ctx.api.parseStockImport('sku,name,on_hand,2026-08,2026-09,2026-10\nOLD,Previous,10,1,1,1\n'),before=JSON.stringify(dataset)
+  ctx.data=dataset
+  await assert.rejects(ctx.api.loadStockImport({name:'synthetic.csv',size:text.length,text,arrayBuffer:async()=>new TextEncoder().encode(text).buffer}),e=>e.message===`Could not find a product code column. Is '${header}' your product code? Rename it to 'sku' (or 'Item Code').`)
+  assert.equal(ctx.data,dataset);assert.equal(JSON.stringify(dataset),before)
+})
+test('future-month warnings remain visible on every worklist row even when shared file-wide',()=>{
+  const document=dom(),ctx=stressCore(document),text='sku,name,on_hand,2026-08,2026-09,2026-10,2026-11,2026-12,2027-01\nD0,Dated item 0,5,20,20,20,20,20,20\nD1,Dated item 1,7,20,20,20,20,20,20\n'
+  const parsed=ctx.api.parseStockImport(text),review=ctx.api.reviewCsvInputMeaning([{name:'CSV',rows:ctx.api.importRows(text,','),delimiter:','}],parsed,{},'2026-11-23')
+  const data=ctx.api.attachInputMeaning(parsed,review),warning='Sales dates are in the future. Dates may be shifted — check the sales period before ordering.'
+  assert.ok(ctx.api.fileWideInputWarnings(data).has(warning),'shared warning is still deduplicated in the import summary')
+  Object.assign(ctx,{data,wlMeta:()=>({}),node:(...args)=>new Element(...args),wlBtn:(text,fn,cls)=>new Element('button',text,cls),wl:{selected:new Set(),focus:0,phone:false,drawer:false},selectedSku:null,wlVisible:()=>[['product']],WL_NUMERIC:[],settings:{},bigOrderWarning:()=>'',localOrderPill:()=>null})
+  const source=read('standalone/design/worklist-gm-b.js')
+  vm.runInContext(source.slice(source.indexOf('function wlRow('),source.indexOf('function wlIndex('))+'\nthis.row=wlRow',ctx)
+  for(const item of data.items){
+    assert.ok(item.input_warnings.includes(warning))
+    const element=ctx.row({item,guidance:{},bucket:'healthy'},0),marker=element.querySelector('[data-input-warning-marker]')
+    assert.ok(marker,'future-dated '+item.sku+' needs a persistent row marker');assert.match(marker.textContent,/Input warnings?/);assert.equal(marker.dataset.inputWarningMarker,item.sku)
+  }
+  const clean=ctx.row({item:{sku:'C',name:'Clean'},guidance:{},bucket:'healthy'},0)
+  assert.equal(clean.querySelector('[data-input-warning-marker]'),null)
+})
+test('Arabic template button and README identify browser-only headers and English CLI/MCP path',()=>{
+  const source=read('standalone/design/first-run-gm-b.js'),ctx=vm.createContext({node:(...args)=>new Element(...args),wlBtn:(text,fn)=>new Element('button',text)})
+  vm.runInContext(source.slice(source.indexOf('const firstRunTemplates='),source.indexOf('const firstRunAge='))+'\nthis.templates=firstRunTemplates',ctx)
+  const arabic=ctx.templates.children.find(e=>e.id==='template-ar')
+  assert.match(arabic.textContent,/browser app/i);assert.match(arabic.title,/CLI\/MCP.*English/i)
+  assert.match(read('README.md'),/Arabic-header template.*browser app.*CLI\/MCP.*English template/)
+})
 const row=(sku='S',extra={})=>({item:{sku,name:malicious,unit:'units'},guidance:{quantity:0,capped:true,shelf_cap_qty:0,cap_reason:malicious,expiring:[{lot:malicious,expiry:'2026-12-01',qty:80,sell_through_qty:20,at_risk_qty:60,clear_by:'2026-11-25'},{lot:'sold',expiry:'2026-11-20',qty:20,sell_through_qty:20,at_risk_qty:0,clear_by:'2026-11-15'}],...extra}})
 function shelfShell(rows=[row()]){
   const source=read('standalone/design/decision-simple-gm-b.js'),start=source.indexOf('// Shelf-life presentation')
@@ -67,7 +105,7 @@ function smartAcceptance({ack=false,requiresAck=true,current=true}={}){
   const source=read('standalone/design/smart-import.js'),start=source.indexOf('  async function finish(accepted=false){'),end=source.indexOf('  function cancelPending()',start)
   const parsed={items:[{sku:'A',lots:[{lot:'a',expiry:'2026-04-03',qty:1,expiry_acknowledged:false},{lot:'b',expiry:'2026-05-01',qty:1}]}]};let result='unresolved',remembered=0
   const ctx=vm.createContext({pending:{parsed,ack,meaning:{requires_ack:requiresAck},choices:{units_confirmed:true},stillCurrent:()=>current,resolve:r=>result=r,file:{}},dialog:{open:false},remember:async()=>remembered++,retained:null})
-  vm.runInContext(source.slice(start,end)+'\nthis.finish=finish',ctx)
+  vm.runInContext(source.slice(source.indexOf('function cleanImportCanApplyDirectly'),source.indexOf('const smartImportUI'))+source.slice(start,end)+'\nthis.finish=finish',ctx)
   return {parsed,ctx,result:()=>result,remembered:()=>remembered}
 }
 test('accepted import review acknowledges only previously ambiguous lot dates',async()=>{

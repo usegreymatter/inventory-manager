@@ -134,6 +134,8 @@ def _parser():
     parser.add_argument("--incoming-not-in-file", action="store_true", help="ignore undated incoming quantities and warn to check open purchase orders")
     parser.add_argument("--receipts", metavar="receipts.csv", help="confirmed receipts CSV (sku,month,quantity)")
     parser.add_argument("--today", type=_iso_date, metavar="YYYY-MM-DD", help="planning date (default: local today)")
+    parser.add_argument("--stock-date", type=_iso_date, metavar="YYYY-MM-DD", default=None,
+                        help="date the stock on hand was counted, as of end of day (default: end of the last sales month)")
     parser.add_argument("--settings", type=Path, help="validated settings JSON (explicit flags override it)")
     parser.add_argument("--shelf-life-days", type=_life_days, default=None, help="opt-in shelf-life purchase ceiling, 1–36500 days")
     parser.add_argument("--arrival-age-days", type=_age_days, default=None, help="life already used at arrival (default: 0)")
@@ -196,7 +198,7 @@ def _export_rows_pass(data, engine, today, settings, include_all, explain=False)
                      "order_by": guidance.get("order_by"),
                      "next_confirmed_delivery": guidance.get("delivery_date"),
                      "arrives_by": _arrives_by(guidance, today),
-                     "run_out": guidance.get("runout_date"), "on_hand": raw["on_hand"],
+                     "run_out": guidance.get("runout_date"), "on_hand": raw.get("counted_on_hand", raw["on_hand"]),
                      "on_order": raw.get("on_order"),
                      "safety_stock": guidance.get("safety_stock"),
                      "reorder_point": guidance.get("reorder_point"),
@@ -496,6 +498,16 @@ def _main(argv=None):
                 {**item, 'forecast_method': {'requested': 'recommended', 'method': previous_methods[item['sku']]},
                  '_method_model': {'recommend_input': [prior_month, [], settings.get('stockout_adjust') is True]}}
                 if item['sku'] in previous_methods else item for item in data['items']]}
+        stock_date = args.stock_date
+        if stock_date:
+            # Refuses a count date before the last sales month or after today.
+            data = engine.apply_stock_date(data, stock_date, today, settings)
+            print(f"Stock counted on {stock_date}: run-out and order dates start from the count; "
+                  "sales before it are not subtracted again.", file=sys.stderr)
+        else:
+            notice = engine.stock_date_notice(data['as_of'], today)
+            if notice:
+                print(f"Warning: {notice} Use --stock-date YYYY-MM-DD.", file=sys.stderr)
         all_rows = _export_rows(data, engine, today, settings, True, args.json or args.explain)
         needs_data = sum(row["status"] == "needs-data" for row in all_rows)
         rows = all_rows if args.all else [row for row in all_rows if row["status"] in ("order", "running-low")]

@@ -2,19 +2,19 @@
 
 # Inventory Manager by GreyMatter — free inventory reorder planner
 
-**Beta:** v1.2.2-beta — free and ready to try with your own data. It has been tested on example data. Read the [release notes](docs/release-notes/v1.2.2-beta.md). Requests, notes and criticism are all welcome — [open an issue](https://github.com/usegreymatter/inventory-manager/issues).
+**Beta:** v1.3.0-beta — **free, offline, and looking for pilot shops** to try their own exports and tell us what is unclear. [Share feedback or volunteer in an issue](https://github.com/usegreymatter/inventory-manager/issues). [Release notes](docs/release-notes/v1.3.0-beta.md).
 
 **Free, open-source reorder planner: what to buy, how much, by when. Offline, and your data stays on your device.**
 
-![Inventory Manager worklist, risk tiers and product details using synthetic sample data](docs/img/demo.gif)
+![Inventory Manager v1.3 worklist using synthetic sample data](docs/img/worklist-light.png)
 
 <sub>Still images: [light](docs/img/worklist-light.png) · [dark](docs/img/worklist-dark.png). All demos use synthetic data.</sub>
 
 ## Try it
 
-**[Open the demo](https://usegreymatter.github.io/inventory-manager/)** · [Source repository](https://github.com/usegreymatter/inventory-manager)
+**[Open the demo](https://usegreymatter.github.io/inventory-manager/)** · [Source repository](https://github.com/usegreymatter/inventory-manager) · [Check for a newer version](https://github.com/usegreymatter/inventory-manager/releases)
 
-The Pages link above opens the hosted demo; it may lag this checkout. For offline use, open [`standalone/inventory-manager.html`](standalone/inventory-manager.html) on GitHub and choose **Download raw file** (not Save Page on the code preview). You can also check [Releases](https://github.com/usegreymatter/inventory-manager/releases) for a published HTML download and its version. These notes do not mean a v1.2.2-beta release asset has been published. Open the downloaded `.html` file in any modern browser: double-click it or use **Open with → your browser**. It is one file and needs no server, account, install or internet. A 1,000-product synthetic demo is in [`standalone/inventory-manager-demo-1000.html`](standalone/inventory-manager-demo-1000.html); download and open it the same way. Every built HTML carries the MIT license and [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Only `option-gm-c` embeds Poppins and Tajawal and includes their OFL notice and full license; keep [LICENSES/OFL-1.1.txt](LICENSES/OFL-1.1.txt) alongside redistributed copies of that variant. The shipped Arctic page and its demos use system fonts.
+The Pages link above opens the hosted demo; it may lag this checkout. For offline use, open [`standalone/inventory-manager.html`](standalone/inventory-manager.html) on GitHub and choose **Download raw file** (not Save Page on the code preview). You can also check [Releases](https://github.com/usegreymatter/inventory-manager/releases) for a published HTML download and its version. These notes do not mean a v1.3.0-beta release asset has been published. Open the downloaded `.html` file in any modern browser: double-click it or use **Open with → your browser**. It is one file and needs no server, account, install or internet. A 1,000-product synthetic demo is in [`standalone/inventory-manager-demo-1000.html`](standalone/inventory-manager-demo-1000.html); download and open it the same way. Every built HTML carries the MIT license and [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Only `option-gm-c` embeds Poppins and Tajawal and includes their OFL notice and full license; keep [LICENSES/OFL-1.1.txt](LICENSES/OFL-1.1.txt) alongside redistributed copies of that variant. The shipped Arctic page and its demos use system fonts.
 
 To keep a local copy:
 
@@ -25,17 +25,26 @@ cd inventory-manager
 
 ## Use your own file
 
-Choose **Import Excel or CSV** and pick your Excel or CSV export. Smart import matches your column names (it knows common ERP headers), shows a preview of what it understood, and sets aside rows it can't read rather than guessing. The file is read in the browser and never uploaded. Details: [docs/GUIDE.md](docs/GUIDE.md#import-check-before-replacing-your-products).
+Click **Use your own file** beside the sample and pick your Excel or CSV export. Need a starting sheet? **Download a template** saves a small synthetic CSV; an **Arabic-header template (browser app)** is also available. **CLI/MCP need English headers: use the English template.** Replace its example products and sales with your own. Include product name, stock on hand and at least three complete months of sales (`YYYY-MM` columns); product code is optional for unique product names. Smart import matches your column names (it knows common ERP headers), shows a preview of what it understood, and sets aside rows it can't read rather than guessing. The file is read in the browser and never uploaded. Details: [docs/GUIDE.md](docs/GUIDE.md#import-check-before-replacing-your-products).
 
 The browser can process **10,000 products in seconds**; actual time depends on your device, file and settings. The Python CLI and local AI/MCP route are slower: allow **30–60 seconds on first start for a few thousand products**, and longer for larger or more complex inputs. These are practical expectations, not guaranteed timings or the same performance claim for every interface.
 
 The **UI is English-only**. Arabic product names and recognised Arabic headers import in the browser; review the matched columns before accepting. Arabic text support is not an Arabic interface translation.
+
+The header separates **Data through** (the latest sales month) from **today** (your device date). Sales more than 45 days old get a gentle reminder to refresh the export.
+
+**Stock counted on** (Import / settings, for the loaded file only; CLI `--stock-date YYYY-MM-DD`, per run) tells the app when your stock on hand was counted (as of the end of that day). It is not saved as a setting. Without it, stock is assumed counted at the end of the last sales month, and the app warns when today is more than 7 days later: sales between month end and the count would otherwise be subtracted twice, making orders too large and run-out dates too early. The date must be inside or after the last sales month and not after today.
+
+Open **Import / settings → Print order** for a printable order list grouped by supplier, with incoming-stock caveats and warnings. Your browser can print it or save it as PDF; nothing is sent. Check open purchase orders first. See [From Odoo/Excel in 5 steps](docs/GUIDE.md#from-odooexcel-in-5-steps).
 
 ## What it does NOT do
 
 - It is **not an inventory system.** It reads a snapshot of stock and sales; it does not track stock.
 - It **never places orders,** sends email or writes to your ERP. You copy or export the list yourself.
 - **Forecasts are estimates.** The methods have not been validated on your data. Check the numbers before you buy.
+- It **does not connect live to an ERP or shop system yet.** You export Excel or CSV from your system and open it here.
+- It is a **beta**, provided as-is under the MIT license, with no warranty. You stay responsible for what you order.
+- Charts and screens in the explainer video are **illustrative** designs using example data, not live app screenshots.
 
 ## How the maths works
 
@@ -45,7 +54,7 @@ Defaults (from `DEFAULT_ORDER_SETTINGS` in `engine.py`): delivery time 14 days, 
 
 ### Industry setup guides
 
-The industry buttons are **setup guides for ordering rhythm and shelf-life prompts**, not quantity optimizers. They ask you to check the actual ordering interval and enter verified shelf-life facts for applicable products; they do not silently set an ordering cadence or guess shelf life. **They do not change order amounts on their own from General defaults.** Confirming ordinary-setting changes, such as raising insufficient cover or resetting custom settings with General, can change amounts; review the before/after preview before applying. Pharmacy's automatic 99% service target was removed after it failed the independent synthetic gate; the user's chosen target is preserved. The remaining guides matched General quantities in the weekly/monthly synthetic comparison, not evidence of better real-world performance. See [industry setup guides, exact settings and evidence](docs/PRESETS.md) and [current beta notes](docs/release-notes/v1.2.2-beta.md).
+The industry buttons are **setup guides for ordering rhythm and shelf-life prompts**, not quantity optimizers. They ask you to check the actual ordering interval and enter verified shelf-life facts for applicable products; they do not silently set an ordering cadence or guess shelf life. **They do not change order amounts on their own from General defaults.** Confirming ordinary-setting changes, such as raising insufficient cover or resetting custom settings with General, can change amounts; review the before/after preview before applying. Pharmacy's automatic 99% service target was removed after it failed the independent synthetic gate; the user's chosen target is preserved. The remaining guides matched General quantities in the weekly/monthly synthetic comparison, not evidence of better real-world performance. See [industry setup guides, exact settings and evidence](docs/PRESETS.md) and [current beta notes](docs/release-notes/v1.3.0-beta.md).
 
 ## Forecast methods
 
@@ -75,6 +84,14 @@ For a readable quantity explanation, use `--explain` (CSV) or `--json`. Explanat
 Start with [AGENTS.md](AGENTS.md) and [llms.txt](llms.txt). Recipes: [docs/AI-GUIDE.md](docs/AI-GUIDE.md). The [local read-only MCP server](docs/architecture/MCP.md) lets assistants list reorders, explain an item and check data health from one CSV/bundle snapshot. Client examples are below. Other connectors, auto-reorder and MCP draft/write tools remain **roadmap designs only** ([docs/ROADMAP-CONNECT.md](docs/ROADMAP-CONNECT.md)).
 
 ## Use with your AI
+
+To try the local server with the bundled synthetic sample and no input file:
+
+```sh
+python3 -B /absolute/checkout/mcp_server.py --demo
+```
+
+For client configuration, use `["-B", "/absolute/checkout/mcp_server.py", "--demo"]` as the arguments. The demo defaults to a fixed planning date of **2026-11-01**; it needs no risk acknowledgement. `--demo`, `--csv` and `--bundle` are mutually exclusive. For your own file, startup errors name the risks (for example an incomplete latest month or missing incoming quantities) or the first duplicate product names. Review the file before adding `--show-orders-anyway`; it does not fix the data. Diagnostics go to stderr, while stdout is reserved for MCP messages.
 
 Add this local, read-only MCP server to an AI client. Replace the placeholders with absolute paths; entries are examples and have not all been tested in their clients. Allow 30–60 seconds on first start for a few thousand products; larger files or slower devices can take longer. Use a larger startup timeout where the client supports it; the 60-second examples below may need increasing. ChatGPT's chat app needs an online MCP server, which this project does not include.
 
@@ -135,7 +152,7 @@ Configuration references: [Claude Desktop](https://modelcontextprotocol.io/docs/
 
 ## Privacy
 
-The page and the CLI run locally. No analytics, no telemetry, no network requests. Imported files, settings and local order lists stay in your browser or on your disk. The built-in sample is fully synthetic, generated by `scripts/generate_sample.py` (seed 731209); the 1,000-product demo and `samples/synthetic/` are also fully synthetic.
+The page and the CLI run locally. No analytics, no telemetry, no network requests. Imported data is in page memory unless you tick **Remember this file on this device** after a successful import (off by default). A saved snapshot stays in this browser on this device, not in an account or on another device. Reload restores it with its import date; old-sales warnings still apply. **Forget saved data** removes that snapshot, not the open in-memory file or separately saved settings, layouts and local order lists. Browser storage can be unavailable, full or cleared; files too big to save must be reimported. Do not opt in on a shared device. Settings and local order lists also stay in this browser on this device. The built-in sample is fully synthetic, generated by `scripts/generate_sample.py` (seed 731209); the 1,000-product demo and `samples/synthetic/` are also fully synthetic.
 
 ## Contributing
 

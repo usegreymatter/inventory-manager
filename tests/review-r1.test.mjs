@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import fs from 'node:fs'
 import vm from 'node:vm'
 import test from 'node:test'
-import {spawnSync} from 'node:child_process'
+import pythonStdin from './python-stdin.cjs'
 const source=fs.readFileSync('desktop/plugin.js','utf8'),ctx=vm.createContext({TextEncoder,TextDecoder,atob,btoa})
 vm.runInContext(source.slice(source.indexOf('const SAMPLE ='),source.indexOf('const pageStyle =')).replaceAll('export ','')+'\nthis.api={reviewInputMeaning,attachInputMeaning,understandStockWorkbook,parseStockImport,calculate,orderGuidance,whyBreakdown,whyThisAmount}',ctx)
 const api=ctx.api,plain=x=>JSON.parse(JSON.stringify(x))
@@ -10,7 +10,7 @@ const stock=(held='')=>[{name:'Stock',rows:[['sku','name','unit','Available','re
 function meaning(sheets,choices={}){
  const report=plain(api.understandStockWorkbook(sheets)),today='2026-11-19',r=plain(api.reviewInputMeaning(sheets,report,choices,today))
  const code="import importlib,json,sys,types\np=types.ModuleType('r1');p.__path__=['.'];sys.modules['r1']=p\nm=importlib.import_module('r1.input_meaning');a=json.load(sys.stdin);r=m.review_input_meaning(**a);d=m.attach_input_meaning({'items':[{'sku':'A','on_order':500}]},r);print(json.dumps({'review':r,'data':d}))"
- const py=spawnSync(process.env.PYTHON||'/usr/bin/python3',['-c',code],{input:JSON.stringify({sheets,report,raw_choices:choices,today}),encoding:'utf8'})
+ const py=pythonStdin(['-c',code],JSON.stringify({sheets,report,raw_choices:choices,today}))
  assert.equal(py.status,0,py.stderr)
  const expected=JSON.parse(py.stdout),data=plain(api.attachInputMeaning({items:[{sku:'A',on_order:500}]},r))
  // Attachment now replaces sorted warning arrays in its VM realm; compare JSON values, not prototypes.
@@ -57,7 +57,7 @@ test('B/C/G: bounded pack attribution, human numbers and reconciled displayed te
  for(const name of ['sample','demo-1000']){const d=JSON.parse(fs.readFileSync('data/'+name+'.json'));for(const item of d.items)cases.push({item,months:d.months,as_of:d.as_of,today:d.as_of})}
  let seed=93871;const rand=n=>((seed=(Math.imul(seed,1664525)+1013904223)>>>0)%n)
  for(let i=0;i<400;i++)cases.push({item:{sku:'R'+i,name:'Random',unit:i%2?'kg':'m',on_hand:rand(1000)/10,monthly_sales:Array.from({length:3},()=>i%7?rand(900)/100:0)},months:['2026-08','2026-09','2026-10'],as_of:'2026-10-31',today:'2026-11-01'})
- const py=spawnSync('/usr/bin/python3',['tests/why_amount_bridge.py'],{input:JSON.stringify(cases),encoding:'utf8',maxBuffer:64*1024*1024});assert.equal(py.status,0,py.stderr);const expected=JSON.parse(py.stdout)
+ const py=pythonStdin(['tests/why_amount_bridge.py'],JSON.stringify(cases));assert.equal(py.status,0,py.stderr);const expected=JSON.parse(py.stdout)
  for(const [i,c]of cases.entries()){
   const item=api.calculate([c.item],c.months,c.as_of,6,{},c.today)[0];Object.assign(item,{on_hand:c.item.on_hand,monthly_sales:c.item.monthly_sales})
   const g=api.orderGuidance(item,c.today,{}),rows=plain(api.whyBreakdown(item,c.today,{})),sentence=api.whyThisAmount(item,c.today,{})

@@ -19,6 +19,6 @@ test('round 4 default OFF preserves all sample and demo physical outputs and fir
  }
 })
 test('round 4 Python/JS detection and adjusted guidance parity: 360 random + edge + 1005 dataset cases',()=>{
- const out=JSON.parse(execFileSync(process.execPath,['scripts/stockout_parity.cjs'],{encoding:'utf8',maxBuffer:64*1024*1024}))
+ const out=JSON.parse(execFileSync(process.execPath,['scripts/stockout_parity.cjs'],{encoding:'utf8',maxBuffer:64*1024*1024,timeout:180000}))
  assert.equal(out.result,'pass');assert.ok(out.guidance_cases>=300);assert.ok(out.cases>=1300)
 })

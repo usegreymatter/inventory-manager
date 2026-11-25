@@ -1334,6 +1334,11 @@ svg[data-chart] [data-gm-receipt-label] { font-size:14px; font-weight:400; }
   .settings-sheet button,.product-settings button,.supplier-settings-link { min-height:44px; min-width:44px; }
 }
 
+.stock-date-control { display:flex; align-items:center; justify-content:space-between; gap:16px; padding-block:12px; border-block-end:1px solid var(--line); }
+.stock-date-control input { min-height:44px; width:170px; color:var(--ink); background:var(--surface); border:1px solid var(--rule); font:inherit; }
+.stock-date-message { margin:8px 0 12px; font-size:13px; line-height:18px; color:var(--muted, var(--ink)); }
+.stock-date-message.stock-date-warning { color:var(--ink); font-weight:600; }
+
 /* Lifecycle: living. Arctic weekly digest, scoped so closed reports do not restyle the app. */
 .weekly-summary {
  box-sizing:border-box; width:min(1080px,calc(100vw - 48px)); max-width:none;
@@ -2000,6 +2005,53 @@ body[data-table-detail=simple] .work-header-tools {visibility:hidden}
 .import-check #import-check-download {padding-inline:0;margin-top:8px;text-align:start;text-decoration:underline}
 @media(max-width:700px){.import-actions {padding:12px 16px}.import-check .import-summary {max-width:100%}}
 
+/* Device storage is opt-in, never a sample-data action. */
+[data-design=option-gm-b] .device-data-controls label { display:flex; align-items:flex-start; gap:8px; font-size:13px; line-height:20px; margin-top:8px; }
+[data-design=option-gm-b] .device-data-controls label[hidden] { display:none; }
+[data-design=option-gm-b] .device-data-controls input { flex:0 0 20px; width:20px; height:20px; margin:0; }
+[data-design=option-gm-b] .device-data-controls p { font-size:12px; line-height:18px; color:var(--muted); margin:4px 0; }
+[data-design=option-gm-b] .device-data-controls p:empty { display:none; }
+[data-design=option-gm-b] .device-data-controls button { min-height:44px; padding:6px 0; border:0; background:none; text-decoration:underline; }
+/* Lifecycle: living. Reuse the shipped page's tokens and native disclosures. */
+[data-design=option-gm-b] .first-run { flex-shrink:0; padding:12px 0; border-bottom:1px solid var(--line); }
+[data-design=option-gm-b] .first-run-actions { display:flex; flex-wrap:wrap; align-items:center; gap:8px 16px; }
+[data-design=option-gm-b] .first-run-actions>span { font-size:13px; color:var(--muted); }
+[data-design=option-gm-b] .first-run-actions button { min-height:44px; padding:8px 14px; }
+[data-design=option-gm-b] .first-run-hint { margin-top:8px; font-size:13px; line-height:20px; color:var(--muted); }
+[data-design=option-gm-b] .first-run-templates { display:flex; flex-wrap:wrap; gap:0 16px; }
+[data-design=option-gm-b] .first-run-templates button { min-height:44px; border:0; padding:4px 0; background:none; font-size:13px; text-decoration:underline; }
+[data-design=option-gm-b] .first-run-age { margin:8px 0 0; font-size:13px; color:var(--muted); }
+[data-design=option-gm-b] .method-quick { display:flex; flex-wrap:wrap; gap:8px; }
+[data-design=option-gm-b] .method-quick button { min-height:44px; padding:8px 12px; }
+[data-design=option-gm-b] .method-quick [aria-pressed=true] { background:var(--subtle); border-color:var(--accent); }
+[data-design=option-gm-b] .more-methods { margin-top:8px; }
+[data-design=option-gm-b] .more-methods summary { min-height:44px; padding:10px 0; cursor:pointer; }
+[data-design=option-gm-b] .more-methods .setting-controls { margin-top:8px; }
+#print-order-sheet { display:none; }
+@media(max-width:700px) {
+ [data-design=option-gm-b].table-mode .topbar { height:auto; min-height:92px; grid-template-rows:44px auto; }
+ [data-design=option-gm-b].table-mode .provenance { white-space:normal; overflow:visible; font-size:11px; line-height:16px; }
+ [data-design=option-gm-b] .first-run { padding:8px 0; }
+}
+@media print {
+ body.order-printing>*:not(#print-order-sheet) { display:none!important; }
+ body.order-printing { height:auto!important; overflow:visible!important; background:white!important; color:black!important; }
+ body.order-printing #print-order-sheet { display:block!important; margin:0; padding:12mm; color:black; background:white; font:12pt/1.5 system-ui,sans-serif; }
+ #print-order-sheet h1 { font-size:20pt; }
+ #print-order-sheet h2 { font-size:14pt; }
+ #print-order-sheet pre { white-space:pre-wrap; overflow-wrap:anywhere; font:inherit; }
+ #print-order-sheet li { break-inside:avoid; }
+ @page { margin:12mm; }
+}
+
+[data-design=option-gm-b] .app-version { display:block; line-height:16px; font-size:11px; font-weight:400; color:var(--muted); white-space:nowrap; }
+[data-design=option-gm-b] .version-link { display:block; padding:12px 0; min-height:44px; font-size:13px; color:var(--accent); }
+[data-design=option-gm-b] .big-order-note { display:block; margin:2px 0 0; width:fit-content; max-width:100%; overflow:hidden; text-overflow:ellipsis; border-radius:4px; padding:0 5px; background:var(--warning-surface); color:var(--amber); font-size:12px; line-height:18px; font-weight:500; text-decoration:none; }
+[data-design=option-gm-b] .work-product:has(.big-order-note) .work-name { -webkit-line-clamp:1; }
+[data-design=option-gm-b] .big-order-explanation { padding:8px 10px; border:1px solid var(--line); border-radius:6px; background:var(--warning-surface); color:var(--ink); font-size:13px; line-height:20px; }
+[data-design=option-gm-b] .big-order-explanation summary { min-height:32px; cursor:pointer; color:var(--amber); font-weight:500; }
+[data-design=option-gm-b] .big-order-explanation p { max-width:65ch; margin:8px 0 0; }
+
 /* Policy markers use Arctic tokens and fit the existing fixed-height rows. */
 [data-design=option-gm-b] .assumed-delivery { color:var(--accent); background:var(--subtle); border:1px solid var(--line); border-radius:4px; padding:0 4px; font-size:12px; line-height:16px; font-weight:400; }
 [data-design=option-gm-b] .work-row[data-assumed-delivery=true] .work-sku { display:flex; align-items:baseline; gap:8px; }
@@ -2055,6 +2107,7 @@ dialog.smart-import::backdrop{background:var(--backdrop,rgb(0 0 0 / .4))}
 .smart-import-warnings,.smart-import-problem{font-size:14px;line-height:1.6;color:var(--ink,var(--ink,#17202a));border-inline-start:2px solid var(--amber,#94621f);padding-inline-start:12px}
 .smart-import-actions{display:flex;flex-wrap:wrap;gap:10px;position:static;background:var(--bg,var(--surface,var(--surface,#fff)));padding:16px 28px;border-top:1px solid var(--line,var(--line,#d6d9df))}
 .smart-import button,#smart-import-review{font:inherit;border-radius:6px;cursor:pointer;min-height:44px;padding:8px 16px;border:1px solid var(--line,var(--rule,#b7bec8));color:inherit;background:transparent}
+#smart-import-disabled-reason{flex-basis:100%;margin:0;font-size:13px;line-height:1.5;color:var(--muted,var(--ink,#17202a))}
 #smart-import-use{background:var(--accent,var(--accent,#3f5687));color:var(--on-accent,var(--surface,#fff));border-color:transparent}
 #smart-import-use:disabled{opacity:.45;cursor:not-allowed}
 #smart-import-review{padding:0 4px;min-height:44px;min-width:44px;border:0;text-decoration:underline}
@@ -2066,7 +2119,11 @@ dialog.smart-import::backdrop{background:var(--backdrop,rgb(0 0 0 / .4))}
 .input-meaning-card,.input-meaning-results{border:1px solid var(--line,#a7b5c7);border-radius:12px;padding:16px;margin:12px 0;background:var(--surface,#f4f7fb);color:var(--ink,#182234)}
 .input-meaning-card label{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:12px 0;font-weight:600}
 .input-meaning-card label select{display:block;width:100%;min-height:44px;max-width:100%;font:inherit}
-.input-meaning-card input[type=checkbox]{width:20px;height:20px;flex-shrink:0}
+.smart-import .smart-import-check{display:flex;flex-wrap:nowrap;align-items:flex-start;gap:8px;margin:12px 0;line-height:22px}
+.smart-import .smart-import-check input[type=checkbox]{width:20px;height:20px;flex:0 0 20px;margin:1px 0 0}
+.smart-import-hidden-sheet{font-size:14px;line-height:1.5;border-inline-start:2px solid var(--amber,#94621f);padding-inline-start:10px}
+/* The host has a fixed status footer; leave scroll room below the final preview. */
+@media(max-width:600px){.smart-import .smart-import-content{padding-bottom:120px;scroll-padding-bottom:120px}.smart-import-source{max-height:80px;overflow:auto}}
 .input-meaning-card h3,.input-meaning-results h3{margin:0 0 12px}
 .input-meaning-results li{overflow-wrap:anywhere}
 /* Remains outside collapsed import controls without crowding out the worklist. */
@@ -2122,7 +2179,7 @@ dialog.smart-import::backdrop{background:var(--backdrop,rgb(0 0 0 / .4))}
 }
 
 </style></head>
-<body data-design="option-gm-b"><header class="topbar"><div class="brand">Inventory Manager <span class="gm-by"><span>by</span><svg class="gm-logo" aria-label="GreyMatter" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 911.75 202.36"> <g> <g> <path fill="#0B1020" d="M296.81,82.62c-2.19-4.22-5.23-7.4-9.13-9.55c-3.89-2.15-8.4-3.23-13.51-3.23c-5.6,0-10.59,1.26-14.97,3.77 c-4.38,2.52-7.81,6.09-10.28,10.71c-2.48,4.62-3.71,9.98-3.71,16.06c0,6.08,1.24,11.46,3.71,16.13c2.47,4.67,5.9,8.26,10.28,10.77 c4.38,2.52,9.37,3.77,14.97,3.77c7.55,0,13.67-2.11,18.38-6.33c4.7-4.22,7.58-9.94,8.64-17.16h-31.76V96.49h46.61v10.83 c-0.89,6.57-3.23,12.62-7,18.13c-3.77,5.52-8.68,9.92-14.72,13.2c-6.05,3.29-12.76,4.93-20.14,4.93c-7.95,0-15.21-1.84-21.78-5.54 c-6.57-3.69-11.79-8.82-15.64-15.4c-3.85-6.57-5.78-14-5.78-22.27c0-8.28,1.93-15.7,5.78-22.27c3.85-6.57,9.09-11.7,15.7-15.4 c6.61-3.69,13.85-5.54,21.72-5.54c9.01,0,17.02,2.21,24.04,6.63c7.02,4.42,12.11,10.69,15.27,18.8H296.81z"/> <path fill="#0B1020" d="M351.63,77.57c3.37-1.91,7.36-2.86,11.99-2.86v14.36h-3.53c-5.44,0-9.55,1.38-12.35,4.14 c-2.8,2.76-4.2,7.55-4.2,14.36v35.29h-13.87V75.8h13.87v9.74C345.57,82.13,348.26,79.47,351.63,77.57z"/> <path fill="#0B1020" d="M437.37,114.5h-51.24c0.41,5.36,2.39,9.66,5.96,12.9c3.57,3.25,7.95,4.87,13.14,4.87 c7.46,0,12.74-3.12,15.82-9.37h14.97c-2.03,6.17-5.7,11.22-11.01,15.15c-5.31,3.94-11.91,5.9-19.78,5.9 c-6.41,0-12.15-1.44-17.22-4.32c-5.07-2.88-9.05-6.94-11.93-12.17c-2.88-5.23-4.32-11.3-4.32-18.19c0-6.89,1.4-12.96,4.2-18.19 c2.8-5.23,6.73-9.27,11.81-12.11c5.07-2.84,10.89-4.26,17.46-4.26c6.33,0,11.97,1.38,16.92,4.14c4.95,2.76,8.8,6.63,11.56,11.62 c2.76,4.99,4.14,10.73,4.14,17.22C437.85,110.2,437.69,112.47,437.37,114.5z M423.37,103.31c-0.08-5.11-1.91-9.21-5.48-12.29 c-3.57-3.08-7.99-4.62-13.27-4.62c-4.79,0-8.88,1.52-12.29,4.56c-3.41,3.04-5.44,7.16-6.09,12.35H423.37z"/> <path fill="#0B1020" d="M511.85,75.8l-41.13,98.58h-14.36l13.63-32.62L443.57,75.8h15.46l18.86,51.11l19.59-51.11H511.85z"/> <path fill="#0B1020" d="M611.4,58.28v84.58h-13.87V84.93l-25.8,57.93h-9.61l-25.92-57.93v57.93h-13.87V58.28h14.97l29.7,66.33 l29.57-66.33H611.4z"/> <path fill="#0B1020" d="M629.22,91.14c2.8-5.19,6.61-9.23,11.44-12.11c4.83-2.88,10.16-4.32,16-4.32c5.27,0,9.88,1.03,13.81,3.1 c3.93,2.07,7.08,4.65,9.43,7.73V75.8h14v67.06h-14v-9.98c-2.35,3.16-5.56,5.8-9.61,7.91c-4.06,2.11-8.68,3.16-13.87,3.16 c-5.76,0-11.03-1.48-15.82-4.44c-4.79-2.96-8.58-7.1-11.38-12.41c-2.8-5.31-4.2-11.34-4.2-18.07 C625.03,102.29,626.43,96.33,629.22,91.14z M677.05,97.22c-1.91-3.41-4.4-6-7.48-7.79c-3.08-1.78-6.41-2.68-9.98-2.68 c-3.57,0-6.9,0.87-9.98,2.62c-3.08,1.75-5.58,4.3-7.48,7.67c-1.91,3.37-2.86,7.36-2.86,11.99c0,4.62,0.95,8.68,2.86,12.17 c1.9,3.49,4.42,6.15,7.55,7.97c3.12,1.83,6.43,2.74,9.92,2.74c3.57,0,6.9-0.89,9.98-2.68c3.08-1.78,5.58-4.4,7.48-7.85 c1.9-3.45,2.86-7.48,2.86-12.11C679.91,104.64,678.96,100.63,677.05,97.22z"/> <path fill="#0B1020" d="M728.35,87.12v37.12c0,2.52,0.59,4.32,1.76,5.42c1.18,1.1,3.18,1.64,6.02,1.64h8.52v11.56H733.7 c-6.25,0-11.04-1.46-14.36-4.38c-3.33-2.92-4.99-7.67-4.99-14.24V87.12h-7.91V75.8h7.91V59.13h14V75.8h16.31v11.32H728.35z"/> <path fill="#0B1020" d="M773.62,87.12v37.12c0,2.52,0.59,4.32,1.76,5.42c1.18,1.1,3.18,1.64,6.02,1.64h8.52v11.56h-10.95 c-6.25,0-11.04-1.46-14.36-4.38c-3.33-2.92-4.99-7.67-4.99-14.24V87.12h-7.91V75.8h7.91V59.13h14V75.8h16.31v11.32H773.62z"/> <path fill="#0B1020" d="M863.68,114.5h-51.24c0.41,5.36,2.39,9.66,5.96,12.9c3.57,3.25,7.95,4.87,13.14,4.87 c7.46,0,12.74-3.12,15.82-9.37h14.97c-2.03,6.17-5.7,11.22-11.01,15.15c-5.31,3.94-11.91,5.9-19.78,5.9 c-6.41,0-12.15-1.44-17.22-4.32c-5.07-2.88-9.05-6.94-11.93-12.17c-2.88-5.23-4.32-11.3-4.32-18.19c0-6.89,1.4-12.96,4.2-18.19 c2.8-5.23,6.73-9.27,11.81-12.11c5.07-2.84,10.89-4.26,17.46-4.26c6.33,0,11.97,1.38,16.92,4.14c4.95,2.76,8.8,6.63,11.56,11.62 c2.76,4.99,4.14,10.73,4.14,17.22C864.17,110.2,864,112.47,863.68,114.5z M849.68,103.31c-0.08-5.11-1.91-9.21-5.48-12.29 c-3.57-3.08-7.99-4.62-13.27-4.62c-4.79,0-8.88,1.52-12.29,4.56c-3.41,3.04-5.44,7.16-6.09,12.35H849.68z"/> <path fill="#0B1020" d="M899.76,77.57c3.37-1.91,7.36-2.86,11.99-2.86v14.36h-3.53c-5.44,0-9.55,1.38-12.35,4.14 c-2.8,2.76-4.2,7.55-4.2,14.36v35.29H877.8V75.8h13.87v9.74C893.7,82.13,896.4,79.47,899.76,77.57z"/> </g> <g> <path fill="#0B1020" d="M144.99,177.06v-50.59l-16.26-9.39h0l-6.27-3.62l-6.03-3.48h0l-11.14-6.43h0l-4.1-2.37l-0.01,0l-0.01,0v0 l-4.1,2.37l-11.14,6.43l-6.04,3.49l-6.26,3.61l-16.26,9.39v50.59l43.82,25.3L144.99,177.06z M113.46,122.46l2.97,1.72l16.26,9.39 v29.29l-25.36-14.64v-29.29L113.46,122.46z M69.66,133.57l16.26-9.39l0,0l2.96-1.71l6.14-3.54v29.29l-25.37,14.64V133.57z M75.81,173.51l25.37-14.64l25.36,14.64l-25.36,14.65L75.81,173.51z"/> <path fill="#0B1020" d="M101.18,101.18L101.18,101.18l4.1-2.37l11.14-6.43l6.03-3.48l6.26-3.62l16.26-9.39V25.3L101.18,0L57.36,25.3 v50.59l16.26,9.39h0l6.26,3.62l6.03,3.48h0l11.14,6.43l4.1,2.37H101.18L101.18,101.18z M132.69,68.79l-16.26,9.39l0,0l-2.97,1.71 l-6.13,3.54V54.14l25.37-14.64V68.79z M101.18,14.2l25.37,14.65l-25.37,14.64L75.81,28.85L101.18,14.2z M69.66,68.79V39.5 l25.36,14.64v29.29l-6.14-3.54l-2.96-1.71L69.66,68.79z"/> <path fill="#0B1020" d="M202.35,101.18l-25.3-43.81h-27.96v12.3h13.76l-14.64,25.36h-28.17l-1.56,0.9l-9.09,5.25l8.14,4.7l0.96,0.55 l1.55,0.9h28.17l14.64,25.37h-13.76v12.3h27.96L202.35,101.18z M158.86,101.18l14.64-25.36l14.65,25.36l-14.65,25.37 L158.86,101.18z"/> <path fill="#0B1020" d="M53.26,132.69H39.5l14.64-25.36h28.18l10.65-6.15l-8.14-4.7l-0.96-0.55l-1.55-0.9H54.14L39.5,69.66h13.77 v-12.3H25.3L0,101.18l25.3,43.81h27.97V132.69z M14.2,101.18l14.65-25.37l14.64,25.37l-14.64,25.36L14.2,101.18z"/> </g> </g> </svg></span></div><div class="provenance" id="snapshot"></div><button id="health-chip" class="health-chip" type="button" aria-haspopup="dialog" hidden></button><details class="tools" id="tools"><summary aria-label="Settings, import and purchase order">•••</summary><div class="tools-body"><button id="copy-po" type="button" class="primary">Copy order</button><p id="copy-status" role="status"></p><div id="copy-fallback" hidden><label for="po-text">Order text</label><textarea id="po-text" readonly></textarea><button id="select-po" type="button">Select all</button></div>
+<body data-design="option-gm-b"><header class="topbar"><div class="brand">Inventory Manager <span class="gm-by"><span>by</span><svg class="gm-logo" aria-label="GreyMatter" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 911.75 202.36"> <g> <g> <path fill="#0B1020" d="M296.81,82.62c-2.19-4.22-5.23-7.4-9.13-9.55c-3.89-2.15-8.4-3.23-13.51-3.23c-5.6,0-10.59,1.26-14.97,3.77 c-4.38,2.52-7.81,6.09-10.28,10.71c-2.48,4.62-3.71,9.98-3.71,16.06c0,6.08,1.24,11.46,3.71,16.13c2.47,4.67,5.9,8.26,10.28,10.77 c4.38,2.52,9.37,3.77,14.97,3.77c7.55,0,13.67-2.11,18.38-6.33c4.7-4.22,7.58-9.94,8.64-17.16h-31.76V96.49h46.61v10.83 c-0.89,6.57-3.23,12.62-7,18.13c-3.77,5.52-8.68,9.92-14.72,13.2c-6.05,3.29-12.76,4.93-20.14,4.93c-7.95,0-15.21-1.84-21.78-5.54 c-6.57-3.69-11.79-8.82-15.64-15.4c-3.85-6.57-5.78-14-5.78-22.27c0-8.28,1.93-15.7,5.78-22.27c3.85-6.57,9.09-11.7,15.7-15.4 c6.61-3.69,13.85-5.54,21.72-5.54c9.01,0,17.02,2.21,24.04,6.63c7.02,4.42,12.11,10.69,15.27,18.8H296.81z"/> <path fill="#0B1020" d="M351.63,77.57c3.37-1.91,7.36-2.86,11.99-2.86v14.36h-3.53c-5.44,0-9.55,1.38-12.35,4.14 c-2.8,2.76-4.2,7.55-4.2,14.36v35.29h-13.87V75.8h13.87v9.74C345.57,82.13,348.26,79.47,351.63,77.57z"/> <path fill="#0B1020" d="M437.37,114.5h-51.24c0.41,5.36,2.39,9.66,5.96,12.9c3.57,3.25,7.95,4.87,13.14,4.87 c7.46,0,12.74-3.12,15.82-9.37h14.97c-2.03,6.17-5.7,11.22-11.01,15.15c-5.31,3.94-11.91,5.9-19.78,5.9 c-6.41,0-12.15-1.44-17.22-4.32c-5.07-2.88-9.05-6.94-11.93-12.17c-2.88-5.23-4.32-11.3-4.32-18.19c0-6.89,1.4-12.96,4.2-18.19 c2.8-5.23,6.73-9.27,11.81-12.11c5.07-2.84,10.89-4.26,17.46-4.26c6.33,0,11.97,1.38,16.92,4.14c4.95,2.76,8.8,6.63,11.56,11.62 c2.76,4.99,4.14,10.73,4.14,17.22C437.85,110.2,437.69,112.47,437.37,114.5z M423.37,103.31c-0.08-5.11-1.91-9.21-5.48-12.29 c-3.57-3.08-7.99-4.62-13.27-4.62c-4.79,0-8.88,1.52-12.29,4.56c-3.41,3.04-5.44,7.16-6.09,12.35H423.37z"/> <path fill="#0B1020" d="M511.85,75.8l-41.13,98.58h-14.36l13.63-32.62L443.57,75.8h15.46l18.86,51.11l19.59-51.11H511.85z"/> <path fill="#0B1020" d="M611.4,58.28v84.58h-13.87V84.93l-25.8,57.93h-9.61l-25.92-57.93v57.93h-13.87V58.28h14.97l29.7,66.33 l29.57-66.33H611.4z"/> <path fill="#0B1020" d="M629.22,91.14c2.8-5.19,6.61-9.23,11.44-12.11c4.83-2.88,10.16-4.32,16-4.32c5.27,0,9.88,1.03,13.81,3.1 c3.93,2.07,7.08,4.65,9.43,7.73V75.8h14v67.06h-14v-9.98c-2.35,3.16-5.56,5.8-9.61,7.91c-4.06,2.11-8.68,3.16-13.87,3.16 c-5.76,0-11.03-1.48-15.82-4.44c-4.79-2.96-8.58-7.1-11.38-12.41c-2.8-5.31-4.2-11.34-4.2-18.07 C625.03,102.29,626.43,96.33,629.22,91.14z M677.05,97.22c-1.91-3.41-4.4-6-7.48-7.79c-3.08-1.78-6.41-2.68-9.98-2.68 c-3.57,0-6.9,0.87-9.98,2.62c-3.08,1.75-5.58,4.3-7.48,7.67c-1.91,3.37-2.86,7.36-2.86,11.99c0,4.62,0.95,8.68,2.86,12.17 c1.9,3.49,4.42,6.15,7.55,7.97c3.12,1.83,6.43,2.74,9.92,2.74c3.57,0,6.9-0.89,9.98-2.68c3.08-1.78,5.58-4.4,7.48-7.85 c1.9-3.45,2.86-7.48,2.86-12.11C679.91,104.64,678.96,100.63,677.05,97.22z"/> <path fill="#0B1020" d="M728.35,87.12v37.12c0,2.52,0.59,4.32,1.76,5.42c1.18,1.1,3.18,1.64,6.02,1.64h8.52v11.56H733.7 c-6.25,0-11.04-1.46-14.36-4.38c-3.33-2.92-4.99-7.67-4.99-14.24V87.12h-7.91V75.8h7.91V59.13h14V75.8h16.31v11.32H728.35z"/> <path fill="#0B1020" d="M773.62,87.12v37.12c0,2.52,0.59,4.32,1.76,5.42c1.18,1.1,3.18,1.64,6.02,1.64h8.52v11.56h-10.95 c-6.25,0-11.04-1.46-14.36-4.38c-3.33-2.92-4.99-7.67-4.99-14.24V87.12h-7.91V75.8h7.91V59.13h14V75.8h16.31v11.32H773.62z"/> <path fill="#0B1020" d="M863.68,114.5h-51.24c0.41,5.36,2.39,9.66,5.96,12.9c3.57,3.25,7.95,4.87,13.14,4.87 c7.46,0,12.74-3.12,15.82-9.37h14.97c-2.03,6.17-5.7,11.22-11.01,15.15c-5.31,3.94-11.91,5.9-19.78,5.9 c-6.41,0-12.15-1.44-17.22-4.32c-5.07-2.88-9.05-6.94-11.93-12.17c-2.88-5.23-4.32-11.3-4.32-18.19c0-6.89,1.4-12.96,4.2-18.19 c2.8-5.23,6.73-9.27,11.81-12.11c5.07-2.84,10.89-4.26,17.46-4.26c6.33,0,11.97,1.38,16.92,4.14c4.95,2.76,8.8,6.63,11.56,11.62 c2.76,4.99,4.14,10.73,4.14,17.22C864.17,110.2,864,112.47,863.68,114.5z M849.68,103.31c-0.08-5.11-1.91-9.21-5.48-12.29 c-3.57-3.08-7.99-4.62-13.27-4.62c-4.79,0-8.88,1.52-12.29,4.56c-3.41,3.04-5.44,7.16-6.09,12.35H849.68z"/> <path fill="#0B1020" d="M899.76,77.57c3.37-1.91,7.36-2.86,11.99-2.86v14.36h-3.53c-5.44,0-9.55,1.38-12.35,4.14 c-2.8,2.76-4.2,7.55-4.2,14.36v35.29H877.8V75.8h13.87v9.74C893.7,82.13,896.4,79.47,899.76,77.57z"/> </g> <g> <path fill="#0B1020" d="M144.99,177.06v-50.59l-16.26-9.39h0l-6.27-3.62l-6.03-3.48h0l-11.14-6.43h0l-4.1-2.37l-0.01,0l-0.01,0v0 l-4.1,2.37l-11.14,6.43l-6.04,3.49l-6.26,3.61l-16.26,9.39v50.59l43.82,25.3L144.99,177.06z M113.46,122.46l2.97,1.72l16.26,9.39 v29.29l-25.36-14.64v-29.29L113.46,122.46z M69.66,133.57l16.26-9.39l0,0l2.96-1.71l6.14-3.54v29.29l-25.37,14.64V133.57z M75.81,173.51l25.37-14.64l25.36,14.64l-25.36,14.65L75.81,173.51z"/> <path fill="#0B1020" d="M101.18,101.18L101.18,101.18l4.1-2.37l11.14-6.43l6.03-3.48l6.26-3.62l16.26-9.39V25.3L101.18,0L57.36,25.3 v50.59l16.26,9.39h0l6.26,3.62l6.03,3.48h0l11.14,6.43l4.1,2.37H101.18L101.18,101.18z M132.69,68.79l-16.26,9.39l0,0l-2.97,1.71 l-6.13,3.54V54.14l25.37-14.64V68.79z M101.18,14.2l25.37,14.65l-25.37,14.64L75.81,28.85L101.18,14.2z M69.66,68.79V39.5 l25.36,14.64v29.29l-6.14-3.54l-2.96-1.71L69.66,68.79z"/> <path fill="#0B1020" d="M202.35,101.18l-25.3-43.81h-27.96v12.3h13.76l-14.64,25.36h-28.17l-1.56,0.9l-9.09,5.25l8.14,4.7l0.96,0.55 l1.55,0.9h28.17l14.64,25.37h-13.76v12.3h27.96L202.35,101.18z M158.86,101.18l14.64-25.36l14.65,25.36l-14.65,25.37 L158.86,101.18z"/> <path fill="#0B1020" d="M53.26,132.69H39.5l14.64-25.36h28.18l10.65-6.15l-8.14-4.7l-0.96-0.55l-1.55-0.9H54.14L39.5,69.66h13.77 v-12.3H25.3L0,101.18l25.3,43.81h27.97V132.69z M14.2,101.18l14.65-25.37l14.64,25.37l-14.64,25.36L14.2,101.18z"/> </g> </g> </svg></span><small class="app-version">v1.3.0-beta</small></div><div class="provenance" id="snapshot"></div><button id="health-chip" class="health-chip" type="button" aria-haspopup="dialog" hidden></button><details class="tools" id="tools"><summary aria-label="Settings, import and purchase order">•••</summary><div class="tools-body"><a class="version-link" href="https://github.com/usegreymatter/inventory-manager/releases" target="_blank" rel="noopener noreferrer">Check for a newer version</a><button id="copy-po" type="button" class="primary">Copy order</button><p id="copy-status" role="status"></p><div id="copy-fallback" hidden><label for="po-text">Order text</label><textarea id="po-text" readonly></textarea><button id="select-po" type="button">Select all</button></div>
 <details id="file-panel"><summary>Import Excel or CSV</summary><div id="dropzone" class="detail-body"><p>Drop Excel or CSV here. Excel up to 20 MiB; standard CSV up to 2 MiB. Your file stays on this device.</p><label class="field">Choose Excel or CSV<input id="csv-file" type="file" accept=".xlsx,.csv,.json,.xls,.xlsb,text/csv,application/json" aria-label="Choose stock Excel or CSV"></label><button id="sample" type="button" hidden>Sample data</button><p id="source-status" role="status">Built-in sample, not real stock.</p><p id="file-error" role="alert" hidden></p></div></details><details id="accuracy-panel"><summary>Accuracy</summary><div class="detail-body">
 <label class="field"><span>Save forecasts</span><input id="archive-forecasts" type="checkbox"></label>
 <label class="field"><span>Bias auto-fix</span><input id="bias-auto-fix" type="checkbox"></label>
@@ -4624,7 +4681,7 @@ const REQUIRED=[['sku','Product code (SKU)'],['name','Product name'],['on_hand',
 const NUMERIC=/^[+-]?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?$/;
 const LEGACY_ERROR='Save as .xlsx or CSV; legacy .xls and .xlsb workbooks are not supported.';
 const BOUNDS_ERROR='Workbook exceeds safe limits (200000 rows, 16384 columns or 2000000 cells).';
-const XML_BOUNDS_ERROR='Workbook XML exceeds safe limits (500000 elements or 200000 shared strings).';
+const XML_BOUNDS_ERROR='This workbook is too big for the browser. Save it as CSV and im'+'port that.';
 const trim=v=>String(v??'').replace(/^[\s\u001c-\u001f\u0085\ufeff]+|[\s\u001c-\u001f\u0085\ufeff]+$/gu,'');
 const fail=message=>{throw new Error(message);};
 const own=(o,k)=>Object.prototype.hasOwnProperty.call(o,k);
@@ -4730,7 +4787,7 @@ function xml(raw,budget={elements:0}){
     if(token[0]!=='<'||token.startsWith('<!--')||token.startsWith('<?')||token.startsWith('<![CDATA['))continue;
     if(token.startsWith('</')){depth--;continue;}
     budget.elements++;if(/^<(?:[^\s:/>]+:)?si(?=[\s/>])/.test(token))strings++;
-    if(budget.elements>500000||strings>200000)fail(XML_BOUNDS_ERROR);
+    if(budget.elements>1000000||strings>200000)fail(XML_BOUNDS_ERROR);
     if(depth+1>255)fail('Workbook XML nesting is too deep.');
     if(!token.endsWith('/>')&&++depth>255)fail('Workbook XML nesting is too deep.');
   }
@@ -4775,7 +4832,7 @@ async function zipParts(raw){
   for(let i=0;i<count;i++){
     if(u32(at)!==0x02014b50)fail('Invalid ZIP structure in workbook.');
     const flags=u16(at+8),method=u16(at+10),crc=u32(at+16),compressed=u32(at+20),uncompressed=u32(at+24),nameLen=u16(at+28),extra=u16(at+30),comment=u16(at+32),local=u32(at+42);
-    if(flags&1)fail('Encrypted workbooks are not supported. Save an unencrypted .xlsx or CSV.');
+    if(flags&1)fail('Password-protected workbook — remove the password in Excel and save again');
     if(![0,8].includes(method))fail('Unsupported ZIP compression; Save as .xlsx or CSV.');
     const next=at+46+nameLen+extra+comment;if(next>offset+centralSize)fail('Invalid ZIP structure in workbook.');
     const name=decode(raw.subarray(at+46,at+46+nameLen));
@@ -4865,7 +4922,7 @@ async function readXlsx(raw){
         values[col]=value;
       }
     }
-    const result={name:sheet.attrs.name??'Sheet',rows};if(percentCells.length)result.percent_cells=percentCells;sheets.push(result);
+    const result={name:sheet.attrs.name??'Sheet',rows};if(['hidden','veryHidden'].includes(sheet.attrs.state))result.hidden=true;if(percentCells.length)result.percent_cells=percentCells;sheets.push(result);
   }
   return limits(sheets);
 }
@@ -4873,7 +4930,12 @@ async function readWorkbook(buffer,filename='workbook.xlsx'){
   const raw=buffer instanceof Uint8Array?buffer:buffer instanceof ArrayBuffer?new Uint8Array(buffer):ArrayBuffer.isView(buffer)?new Uint8Array(buffer.buffer,buffer.byteOffset,buffer.byteLength):fail('Expected workbook bytes.');
   if(/\.(xls|xlsb)$/i.test(filename))fail(LEGACY_ERROR);
   if(raw.length>MAX_INPUT)fail('File must be no larger than 20 MiB.');
-  if(raw[0]===0xd0&&raw[1]===0xcf&&raw[2]===0x11&&raw[3]===0xe0)fail(LEGACY_ERROR);
+  if(raw[0]===0xd0&&raw[1]===0xcf&&raw[2]===0x11&&raw[3]===0xe0){
+    const directory=new TextDecoder('utf-16le').decode(raw);
+    if(directory.includes('EncryptionInfo')||directory.includes('EncryptedPackage'))fail('Password-protected workbook — remove the password in Excel and save again');
+    fail(LEGACY_ERROR);
+  }
+  if(/\.csv$/i.test(filename)&&raw[0]===80&&raw[1]===75)fail('This looks like an Excel file — rename it to .xlsx');
   if(/\.xlsx$/i.test(filename)||raw[0]===80&&raw[1]===75)return readXlsx(raw);
   const text=decode(raw),name=filename.split(/[\\/]/).at(-1).replace(/\.[^.]*$/,'');return [{name,rows:csvRows(text),delimiter:delimiterFor(text)}];
 }
@@ -6211,6 +6273,70 @@ const calendarDemand = (item, asOf, endpoint) => {
     month=monthAfter(month,1)
   }
 }
+
+// Optional "stock counted on" date (mirrors engine.py). Without it stock is
+// assumed counted at as_of (unchanged behaviour). With it, counted stock is
+// translated to an equivalent as_of balance so every existing projection,
+// run-out, order-by and quantity formula runs unchanged from the count date.
+export const STOCK_DATE_NOTICE_DAYS = 7
+export const STOCK_DATE_ZERO_SALES_WARNING = 'Stock count date is inside the last sales month, whose sales are 0, so stock was not reduced for sales after the count. If those sales are missing from the file, check run-out dates by hand.'
+export function stockDateReason(stockDate, asOf, today) {
+  if (dateOrdinal(stockDate) === null) return 'Stock count date must be a real YYYY-MM-DD date.'
+  const start = asOf.slice(0,7) + '-01'
+  if (stockDate < start) return `Stock count date ${stockDate} is before the last sales month (${asOf.slice(0,7)}). Use a count date from ${start} onwards, or load newer sales.`
+  if (dateOrdinal(today) !== null && stockDate > today) return `Stock count date ${stockDate} is after today (${today}). Use the date the stock was actually counted.`
+  return null
+}
+export function stockDateNotice(asOf, today, stockDate = null) {
+  const end = dateOrdinal(asOf), now = dateOrdinal(today)
+  if (stockDate || end === null || now === null || now - end <= STOCK_DATE_NOTICE_DAYS) return null
+  return `Stock is assumed counted on ${asOf} (end of the last sales month), ${now - end} days before today. If it was counted later, set the stock count date so sales after the count are not subtracted twice.`
+}
+// Rounded toward less stock in both directions, so the translation never hides a need.
+export function stockDateAdjustment(item, asOf, stockDate) {
+  const count = dateOrdinal(stockDate), snapshot = dateOrdinal(asOf)
+  if (count > snapshot) {
+    const [n, d] = calendarDemand(item, asOf, count)
+    return Number(n / d)
+  }
+  if (count === snapshot) return 0
+  const [y, m] = asOf.slice(0,7).split('-').map(Number), days = BigInt(new Date(Date.UTC(y, m, 0)).getUTCDate())
+  const [n, d] = decimalRatio(item.monthly_sales.at(-1)), top = n * BigInt(snapshot - count), bottom = d * days
+  const up = (top + bottom - 1n) / bottom
+  return up === 0n ? 0 : -Number(up)
+}
+function stockDateIncomingWarning(item, asOf, stockDate) {
+  const late = Object.keys(item.receipts || {}).filter(m => asOf.slice(0,7) < m && m <= stockDate.slice(0,7))
+  const pos = item.planning_facts && typeof item.planning_facts === 'object' ? item.planning_facts.incoming_pos : null
+  if (Array.isArray(pos)) late.push(...pos.filter(p => p && typeof p === 'object' && typeof p.due_date === 'string' && asOf < p.due_date && p.due_date <= stockDate))
+  return late.length ? 'Incoming stock due on or before the stock count date is still added on its date. Remove it if it is already in the counted stock.' : null
+}
+export function applyStockDate(data, stockDate, today, settings = DEFAULT_ORDER_SETTINGS) {
+  const reason = stockDateReason(stockDate, data.as_of, today)
+  if (reason) throw Error(reason)
+  const items = data.items.map(raw => {
+    let physical
+    try { physical = calculate([raw], data.months, data.as_of, 6, settings, today)[0] } catch { physical = { held: true } }
+    if (physical.held || typeof raw.on_hand !== 'number' || !Number.isFinite(raw.on_hand)) return raw
+    if (raw.lots != null) {
+      const note = 'Stock count date not applied: lot quantities must match stock on hand. Check run-out dates by hand.'
+      return { ...raw, input_warnings: [...new Set([...(raw.input_warnings || []), note])] }
+    }
+    const last = Array.isArray(raw.monthly_sales) ? raw.monthly_sales.at(-1) : null
+    if (stockDate < data.as_of && !(typeof last === 'number' && Number.isFinite(last) && last >= 0)) {
+      const note = "Stock count date not applied: the last month's sales are missing. Check run-out dates by hand."
+      return { ...raw, input_warnings: [...new Set([...(raw.input_warnings || []), note])] }
+    }
+    const item = { ...raw, ...physical, on_hand: raw.on_hand, monthly_sales: raw.monthly_sales, as_of: data.as_of }
+    const adjust = stockDateAdjustment(item, data.as_of, stockDate)
+    const moved = { ...raw, on_hand: Math.max(0, raw.on_hand + adjust), counted_on_hand: raw.on_hand, stock_counted_on: stockDate, stock_date_adjustment: adjust }
+    // Blank sales cells are read as 0, so a 0 here may hide sales after the count.
+    const notes = [stockDateIncomingWarning(raw, data.as_of, stockDate), stockDate < data.as_of && last === 0 ? STOCK_DATE_ZERO_SALES_WARNING : null].filter(Boolean)
+    if (notes.length) moved.input_warnings = [...new Set([...(raw.input_warnings || []), ...notes])]
+    return moved
+  })
+  return { ...data, items, stock_counted_on: stockDate }
+}
 const ratioValue = ([n, d]) => Number(n) / Number(d)
 
 const planningCalendarDemand = (model, lastMonth, days) => {
@@ -6912,13 +7038,13 @@ const STANDALONE_DEMO_DATA={"dataset":"Synthetic construction-supplies catalogue
  const number=x=>typeof x==='number'&&Number.isFinite(x)&&x>=0&&x<=1e12;
  function costMetrics(item,guidance={},risk={}){
   guidance=guidance||{};risk=risk||{};
-  const cost=item.unit_cost,result={};if(!number(cost))return result;
-  for(const [key,quantity]of [['money_tied_up',item.on_hand],['incoming_value',Object.hasOwn(guidance,'incoming_qty')?guidance.incoming_qty:item.on_order],['order_value',guidance.quantity],['expiry_value_at_risk',Object.hasOwn(guidance,'expiry_at_risk_qty')?guidance.expiry_at_risk_qty:item.expiry_at_risk_qty]])if(number(quantity))result[key]=quantity*cost;
+  const cost=item.unit_cost,result={},stock=Object.hasOwn(item,'counted_on_hand')?item.counted_on_hand:item.on_hand;if(!number(cost))return result;
+  for(const [key,quantity]of [['money_tied_up',stock],['incoming_value',Object.hasOwn(guidance,'incoming_qty')?guidance.incoming_qty:item.on_order],['order_value',guidance.quantity],['expiry_value_at_risk',Object.hasOwn(guidance,'expiry_at_risk_qty')?guidance.expiry_at_risk_qty:item.expiry_at_risk_qty]])if(number(quantity))result[key]=quantity*cost;
   const monthly=Object.hasOwn(guidance,'monthly_demand')?guidance.monthly_demand:item.monthly_demand;
   if(number(monthly)){result.weekly_cost=monthly*7/30*cost;if(result.weekly_cost>0&&'money_tied_up'in result)result.money_cover_weeks=result.money_tied_up/result.weekly_cost;}
   const price=item.sale_price;if(number(price)){
    const margin=price-cost;result.margin_unit=margin;if(price>0)result.margin_pct=margin/price*100;
-   if(number(item.on_hand)){result.stock_margin=item.on_hand*margin;result.stock_sale_value=item.on_hand*price;}
+   if(number(stock)){result.stock_margin=stock*margin;result.stock_sale_value=stock*price;}
    if(number(risk.expected_shortfall_before))result.lost_profit_est=risk.expected_shortfall_before*Math.max(0,margin);
   }
   return result;
@@ -6952,6 +7078,67 @@ const STANDALONE_DEMO_DATA={"dataset":"Synthetic construction-supplies catalogue
 
 // Shared, local-only workbook review. Mapping rules persist without product rows;
 // accepted standalone datasets remain in page memory, not this mapping store.
+const fileWideWarningCache=new WeakMap()
+function fileWideInputWarnings(dataset){
+  if(!dataset?.items?.length)return new Set()
+  if(fileWideWarningCache.has(dataset))return fileWideWarningCache.get(dataset)
+  const common=new Set((dataset.input_meaning?.warnings||[]).filter(text=>dataset.items.every(item=>item.input_warnings?.includes(text))))
+  fileWideWarningCache.set(dataset,common);return common
+}
+function cleanImportCanApplyDirectly(state){
+  const parsed=state.parsed,report=parsed?.import_report,meaning=parsed?.input_meaning||state.meaning
+  const hasWarnings=warnings=>warnings?.some(text=>!benignIntegerNumberFormatNote(state,text))
+  return !!parsed?.items?.length&&!!state.choices?.units_confirmed&&!state.unitsReviewRequired&&!state.ack&&!state.error
+    &&!state.report?.missing?.length&&!hasWarnings(state.report?.warnings)&&!meaning?.requires_ack&&!meaning?.warnings?.length&&!meaning?.reasons?.length
+    &&!hasWarnings(report?.warnings)&&!report?.defaulted?.length&&!report?.rows_set_aside?.length
+    &&!parsed.items.some(item=>item.input_warnings?.length||item.expiry_warnings?.length||item.lots?.some(lot=>lot.expiry_acknowledged===false)
+      ||!Number.isFinite(item.on_hand)||!Number.isFinite(item.on_order)||!Number.isFinite(item.supplier_days)
+      ||!Array.isArray(item.monthly_sales)||item.monthly_sales.length<3||item.monthly_sales.some(value=>!Number.isFinite(value)))
+}
+// Both parsers always report the detected convention. Keep the notes visible;
+// only plain integer CSV source cells make these exact notes informational.
+function benignIntegerNumberFormatNote(state,text){
+  if(text!=='CSV: Number format: decimal-dot; review numeric text conventions.'&&text!=='Number format: decimal-dot (dot decimal; comma thousands)')return false
+  const sheet=state.sheets?.length===1&&state.sheets[0],report=state.report
+  if(!sheet||sheet.name!=='CSV'||sheet.delimiter!==','||report?.header_row!==1||report.layout!=='wide')return false
+  const numericFields=['reserved','on_hand','on_order','supplier_days','demand_change_pct','quantity','lot_qty','minimum_order','pack_size','unit_cost','sale_price','shelf_life_days']
+  const numeric=report.mapping.filter(m=>numericFields.includes(m.field)||/^(?:rcv:)?[0-9]{4}-[0-9]{2}$/.test(m.field||''))
+  return numeric.length>0&&sheet.rows.slice(report.header_row).every(row=>numeric.every(({index})=>{
+    const raw=row[index];return typeof raw==='string'&&raw.length<=256&&/^[+-]?[0-9]+$/.test(raw.trim())
+  }))
+}
+// Browser Excel policy: never treat a second tab as another warehouse by default.
+// Keep the shared/CLI join contract and the established CSV path unchanged.
+function isExcelWorkbook(sheets){return sheets.length>0&&sheets.every(s=>s.delimiter==null)}
+function excelWorkbookSelection(sheets,sheet,overrides,combine=false){
+  const visible=sheets.filter(s=>!s.hidden).map(s=>({...s,delimiter:','}))
+  if(!visible.length)throw new CsvError('This workbook has no visible sheets. Unhide the stock sheet in Excel and save again.')
+  let picked=visible.find(s=>s.name===sheet),pickedReport
+  if(!picked)for(const candidate of visible){
+    // A broken notes/backup tab must not prevent selecting the real stock tab.
+    try{const r=understandStockWorkbook([candidate],null,overrides)
+      if(r.mapping.some(m=>m.field==='on_hand')&&r.canonical_rows.length>1){picked=candidate;pickedReport=r;break}
+    }catch{/* A selected tab still fails closed below; unrelated tabs are not imported. */}
+  }
+  picked=picked||visible[0]
+  const sources=combine?[picked,...visible.filter(s=>s!==picked)]:[picked]
+  const report=combine?understandStockWorkbook(sources,picked.name,overrides):pickedReport||understandStockWorkbook([picked],null,overrides)
+  report.sheet_options=visible.map(s=>s.name)
+  for(const hidden of sheets.filter(s=>s.hidden))report.warnings.push('Ignored hidden sheet: '+hidden.name)
+  if(!combine&&visible.length>1)report.warnings.push('Only sheet '+picked.name+' is imported. Other visible sheets are not added.')
+  if(combine){
+    // Compare full source rows, not only totals; identical copies still need review.
+    const seen=new Map()
+    for(const s of sources){const signature=JSON.stringify(s.rows);if(seen.has(signature)){
+      const warning='Identical duplicate sheets: '+seen.get(signature)+' and '+s.name+'. Check that these are separate warehouses, not backup copies.'
+      report.warnings.push(warning);report.review_report.reasons.push(warning);report.review_report.requires_ack=true
+    }else seen.set(signature,s.name)}
+  }
+  return {sources,report}
+}
+function excelSetAsideText(x,rows){
+  return (x.sku||x.values?.[0]||rows[x.row-1]?.[0]||'Unknown product')+' — Row '+x.row+': '+x.reason
+}
 const smartImportUI = (() => {
   const el=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n}
   const dialog=el('dialog',undefined,'settings-sheet smart-import');dialog.id='smart-import';dialog.setAttribute('aria-labelledby','smart-import-title')
@@ -6959,7 +7146,8 @@ const smartImportUI = (() => {
   const body=el('div',undefined,'settings-sheet-content smart-import-content'),actions=el('div',undefined,'smart-import-actions')
   const use=el('button','Use this'),change=el('button','Edit mappings'),cancel=el('button','Cancel')
   use.id='smart-import-use';change.id='smart-import-change';cancel.id='smart-import-cancel';for(const b of [use,change,cancel])b.type='button'
-  actions.append(use,change,cancel);dialog.append(header,body,actions);document.body.append(dialog)
+  const disabledReason=el('p');disabledReason.id='smart-import-disabled-reason';disabledReason.setAttribute('role','status');use.setAttribute('aria-describedby',disabledReason.id)
+  actions.append(disabledReason,use,change,cancel);dialog.append(header,body,actions);document.body.append(dialog)
   const STORE='stock-runway-smart-mappings-v1';let pending=null,retained=null,forceReview=false
   const sourceStatus=document.getElementById('source-status'),sourceAnchor=document.createComment('source status home')
   sourceStatus.before(sourceAnchor)
@@ -6975,9 +7163,10 @@ const smartImportUI = (() => {
   }
   async function remember(state){
     try{
+      if(state.combine)return // Consent to combine applies to this import only.
       const overrides=Object.create(null)
       for(const sheet of state.report.sheets)for(const m of sheet.mapping)overrides[sheet.name+':'+m.index]=m.field||''
-      const confirmed=understandStockWorkbook(state.sheets,state.report.sheet_used,overrides)
+      const confirmed=state.excel?excelWorkbookSelection(state.sheets,state.report.sheet_used,overrides,false).report:understandStockWorkbook(state.sheets,state.report.sheet_used,overrides)
       const entry={fingerprint:state.report.fingerprint,sheet:state.report.sheet_used,overrides,choices:inputMeaningChoices(state.choices),warning_fingerprint:await warningFingerprint(confirmed,state.parsed)}
       const entries=rules().filter(r=>r.fingerprint!==entry.fingerprint);entries.push(entry)
       const encoded=JSON.stringify(entries.slice(-20));if(encoded.length<=1000000)localStorage.setItem(STORE,encoded)
@@ -6990,7 +7179,7 @@ const smartImportUI = (() => {
     if(accepted&&state.parsed&&state.choices.units_confirmed&&(!(state.meaning?.requires_ack||expiryReview)||state.ack)&&state.stillCurrent()){
       // The review checkbox applies to this import only, never to a saved layout.
       if(state.ack)for(const item of state.parsed.items)for(const lot of item.lots||[])if(lot.expiry_acknowledged===false)lot.expiry_acknowledged=true
-      await remember(state);retained={file:state.file};state.resolve(state.stillCurrent()?{parsed:state.parsed,smart:!state.legacyParsed||state.edit,remembered:false}:null)
+      await remember(state);retained={file:state.file};state.resolve(state.stillCurrent()?{parsed:state.parsed,smart:cleanImportCanApplyDirectly(state),remembered:false}:null)
     }else state.resolve(null)
     if(state.focus?.isConnected)state.focus.focus()
   }
@@ -7000,22 +7189,23 @@ const smartImportUI = (() => {
   dialog.addEventListener('cancel',event=>{event.preventDefault();finish(false)});dialog.addEventListener('close',()=>{if(!dialog.open)finish(false)})
   function disclosure(parent,label,values){if(!values?.length)return;const d=el('details'),s=el('summary',label+' · '+values.length),list=el('ul');for(const text of values.slice(0,100))list.append(el('li',text));if(values.length>100)list.append(el('li','First 100 shown.'));d.append(s,list);parent.append(d)}
   function preflight(state){
-    state.parsed=null;state.error=null
+    state.parsed=null;state.error=null;state.errorReport=null
     try{
-      const original=understandStockWorkbook(state.sheets,state.sheet,state.overrides)
+      const selection=state.excel?excelWorkbookSelection(state.sheets,state.sheet,state.overrides,state.combine):{sources:state.sheets,report:understandStockWorkbook(state.sheets,state.sheet,state.overrides)}
+      state.sources=selection.sources;const original=selection.report
       if(state.legacyParsed&&!state.edit){
         // Keep the established CSV row exclusions, warehouse handling and report.
         state.meaning=reviewCsvInputMeaning(state.sheets,state.legacyParsed,state.choices)
         state.report=original
         state.parsed=attachInputMeaning(parseStockImport(csv(state.meaning.sheets[0].rows,state.sheets[0].delimiter||',')),state.meaning);state.report.missing=[];validateDataset(state.parsed)
       }else{
-        state.meaning=reviewInputMeaning(state.sheets,original,state.choices)
+        state.meaning=reviewInputMeaning(state.sources,original,state.choices)
         // Original mappings remain editable; adjusted canonical joined rows are facts.
         const adjusted=understandStockWorkbook(state.meaning.sheets)
         state.report={...original,missing:[...new Set([...original.missing,...adjusted.missing])],canonical_rows:adjusted.canonical_rows}
         if(!state.report.missing.length&&adjusted.canonical_rows.length>1){state.parsed=attachInputMeaning(parseStockImport(csv(adjusted.canonical_rows)),state.meaning);validateDataset(state.parsed)}
       }
-    }catch(error){state.error=error instanceof CsvError?error:new CsvError(error.message||'Could not read this workbook.')}
+    }catch(error){if(state.excel)state.errorReport=error.import_report;state.error=error instanceof CsvError?error:new CsvError(error.message||'Could not read this workbook.')}
   }
   function draw(state){
     const focused=document.activeElement,focusKey=body.contains(focused)?{id:focused.id,sheet:focused.dataset.sheet,index:focused.dataset.index}:null,scrollTop=body.scrollTop
@@ -7025,16 +7215,21 @@ const smartImportUI = (() => {
     const card=el('section',undefined,'input-meaning-card');card.id='input-meaning-card';card.append(el('h3','Before we suggest orders'))
     const choose=(id,label,values,current,update)=>{const field=el('label',label),select=el('select');select.id=id;for(const [value,text]of values){const option=el('option',text);option.value=value;select.append(option)}select.value=current;select.addEventListener('change',()=>{update(select.value);state.ack=false;draw(state)});field.append(select);card.append(field)}
     choose('meaning-stock','Your stock number is',[['available','Available to sell'],['reserved','Includes reserved or allocated stock']],state.choices.stock_includes_reserved?'reserved':'available',value=>state.choices.stock_includes_reserved=value==='reserved')
-    choose('meaning-incoming','Incoming orders',[['included','Included in file'],['unknown','Not in file']],state.choices.incoming_not_in_file?'unknown':'included',value=>state.choices.incoming_not_in_file=value==='unknown')
-    const units=el('label'),confirm=el('input');confirm.type='checkbox';confirm.id='meaning-units';confirm.checked=state.choices.units_confirmed;confirm.addEventListener('change',()=>{state.choices.units_confirmed=confirm.checked;draw(state)});units.append(confirm,document.createTextNode('Units — sales and stock use the same unit'));card.append(units)
-    for(const text of [...(state.meaning?.warnings||[]),...(state.meaning?.reasons||[])])card.append(el('p',text,'smart-import-warning'))
+    const hasIncoming=r.sheets.some(sheet=>sheet.mapping.some(m=>m.field==='on_order'))
+    if(hasIncoming)choose('meaning-incoming','Incoming orders',[['included','Use incoming quantities in file'],['unknown','Ignore incoming quantities in file']],state.choices.incoming_not_in_file?'unknown':'included',value=>state.choices.incoming_not_in_file=value==='unknown')
+    else card.append(el('p','Incoming orders: no incoming column found.','smart-import-note'))
+    const units=el('label'),confirm=el('input');confirm.type='checkbox';confirm.id='meaning-units';confirm.checked=state.choices.units_confirmed;confirm.addEventListener('change',()=>{state.choices.units_confirmed=confirm.checked;draw(state)});units.className='smart-import-check';units.append(confirm,el('span','Units — sales and stock use the same unit'));card.append(units)
+    const meaningWarnings=[...new Set([...(state.meaning?.warnings||[]),...(state.meaning?.reasons||[])])]
+    for(const text of meaningWarnings)card.append(el('p',text,'smart-import-warning'))
     const expiryReview=state.parsed?.items.flatMap(item=>(item.lots||[]).filter(lot=>lot.expiry_acknowledged===false).map(lot=>item.sku+' · lot '+lot.lot+' → '+lot.expiry+' (interpreted date)'))||[]
     if(expiryReview.length){card.append(el('p','Check ambiguous expiry dates before ordering. Dates below are interpreted as year-month-day.','smart-import-warning'));disclosure(card,'Interpreted expiry dates',expiryReview)}
-    if(state.meaning?.requires_ack||expiryReview.length){const label=el('label'),ack=el('input');ack.type='checkbox';ack.id='meaning-show-anyway';ack.checked=state.ack===true;ack.addEventListener('change',()=>{state.ack=ack.checked;draw(state)});label.append(ack,document.createTextNode('Show orders anyway'));card.append(label)}
+    if(state.meaning?.requires_ack||expiryReview.length){const label=el('label'),ack=el('input');ack.type='checkbox';ack.id='meaning-show-anyway';ack.checked=state.ack===true;ack.addEventListener('change',()=>{state.ack=ack.checked;draw(state)});label.className='smart-import-check';label.append(ack,el('span','Show orders anyway'));card.append(label)}
     card.append(el('small','These answers are remembered for this file layout. Imported data stays on this device.'));body.append(card)
     const suggestions=r.sheets.some(sheet=>sheet.mapping.some(m=>['medium','low'].includes(m.confidence)))
     body.append(el('p',(suggestions?'Suggested matches need your review before you use this file. ':'Review the column matches. ')+'Your current products stay unchanged until you choose Use this.','smart-import-note'))
-    if(r.sheets.length>1){const label=el('label','Main stock sheet '),select=el('select');select.id='smart-import-sheet';for(const s of r.sheets){const o=el('option',s.name);o.value=s.name;o.selected=s.name===r.sheet_used;select.append(o)}select.addEventListener('change',()=>{state.sheet=select.value;state.ack=false;draw(state)});label.append(select);body.append(label)}
+    if((r.sheet_options||r.sheets).length>1){const label=el('label','Import this sheet '),select=el('select');select.id='smart-import-sheet';for(const name of r.sheet_options||r.sheets.map(s=>s.name)){const o=el('option',name);o.value=name;o.selected=name===r.sheet_used;select.append(o)}select.addEventListener('change',()=>{state.sheet=select.value;state.ack=false;draw(state)});label.append(select);body.append(label)}
+    for(const text of new Set(r.warnings.filter(text=>text.startsWith('Ignored hidden sheet: '))))body.append(el('p',text,'smart-import-hidden-sheet'))
+    if(state.excel&&(r.sheet_options||[]).length>1){const label=el('label'),combine=el('input');combine.type='checkbox';combine.id='smart-import-combine';combine.checked=state.combine;combine.addEventListener('change',()=>{state.combine=combine.checked;state.ack=false;draw(state)});label.className='smart-import-check';label.append(combine,el('span','Add these sheets together (one sheet per warehouse)'));body.append(label)}
     for(const sheet of r.sheets){
       const section=el('section',undefined,'smart-import-sheet');section.append(el('h3',sheet.name+' · row '+sheet.header_row))
       const table=el('table'),thead=el('thead'),head=el('tr');for(const text of ['Your column','Use as','Confidence'])head.append(el('th',text));thead.append(head);table.append(thead);const tbody=el('tbody')
@@ -7055,26 +7250,31 @@ const smartImportUI = (() => {
     }
     if(r.missing.length){const missing=el('p','Still needed: '+r.missing.join(', '),'smart-import-problem');missing.id='smart-import-missing';body.append(missing)}
     if(r.match_report&&(r.sheets.length>1))body.append(el('p',`${r.match_report.matched} product codes matched across sheets · ${r.match_report.unmatched} did not match. Only products in the main stock sheet are imported.`,'smart-import-join'))
-    const warnings=[...r.warnings,...(state.parsed?.import_report?.warnings||[])];if(warnings.length){const w=el('div',undefined,'smart-import-warnings');w.append(el('p',warnings[0]));disclosure(w,'All warnings',warnings);body.append(w)}
-    if(warnings.includes(GENERATED_CODE_NOTE))body.append(el('p',GENERATED_CODE_NOTE,'smart-import-note'))
+    const warnings=[...new Set([...r.warnings,...(state.parsed?.import_report?.warnings||[])])].filter(text=>!meaningWarnings.includes(text)&&!text.startsWith('Ignored hidden sheet: '));if(warnings.length){const w=el('div',undefined,'smart-import-warnings');for(const text of warnings.slice(0,3))w.append(el('p',text));disclosure(w,'More warnings',warnings.slice(3));body.append(w)}
     if(state.error)body.append(el('p',state.error.message,'smart-import-problem'))
-    const parsed=state.parsed,report=parsed?.import_report
+    const parsed=state.parsed,report=parsed?.import_report||state.errorReport
     const setAside=[],seenRows=new Set()
     const addAside=(sheet,row,text)=>{const key=JSON.stringify([sheet,Number(row)]);if(row!=null&&seenRows.has(key))return;if(row!=null)seenRows.add(key);setAside.push(text)}
     // Legacy preflight rows and workbook warnings refer to the same physical CSV rows.
-    for(const x of report?.rows_set_aside||[])addAside(state.legacyParsed&&!state.edit?r.sheet_used:'canonical',x.row,'Row '+x.row+': '+x.reason)
+    for(const x of report?.rows_set_aside||[])addAside(state.legacyParsed&&!state.edit?r.sheet_used:'canonical',x.row,state.excel?excelSetAsideText(x,r.canonical_rows):'Row '+x.row+': '+x.reason)
     for(const w of r.warnings.filter(w=>w.includes('row omitted'))){
       const sheet=r.sheets.find(s=>w.startsWith(s.name+': '))?.name
       const row=w.slice((sheet?.length||0)+2).match(/^row (\d+)\b|row omitted \((\d+)\)/)
       addAside(sheet,row?(row[1]||row[2]):null,w.replace(/^(.*?): row ([0-9]+) /,'$1: Row $2: ').replace(/row omitted \((\d+)\)/,'Row $1 omitted'))
     }
     const count=el('p',parsed?`${parsed.items.length} products ready · ${state.meaning.rows_kept} rows kept · ${state.meaning.rows_flagged} rows flagged${report?' · '+setAside.length+' rows set aside':''}`:'No products ready yet. Check the column matches.','smart-import-ready');count.id='smart-import-ready';count.setAttribute('aria-live','polite');body.append(count)
+    if(!parsed&&state.excel)disclosure(body,'Rows set aside',setAside)
     if(parsed){
       const table=el('table');table.id='smart-import-preview';const head=el('tr');for(const t of ['Product code','Product name','Stock on hand'])head.append(el('th',t));table.append(head)
       for(const product of parsed.items.slice(0,5)){const row=el('tr');for(const value of [product.sku,product.name,product.on_hand])row.append(el('td',String(value??'')));table.append(row)}body.append(el('h3','First products'),table)
       if(report){disclosure(body,'Rows set aside',setAside);disclosure(body,'Defaults',report.defaulted.map(x=>x.field+' → '+(x.value??'unknown')+' ('+x.reason+')'));disclosure(body,'Preflight column matches',report.matched.map(x=>x.source+' → '+x.field))}
     }
     use.disabled=!parsed?.items.length||!!r.missing.length||!!state.error||!state.choices.units_confirmed||(state.meaning?.requires_ack||expiryReview.length>0)&&!state.ack
+    const needed=[]
+    if(!parsed?.items.length||r.missing.length||state.error)needed.push('Fix the missing data or column matches above.')
+    if(!state.choices.units_confirmed)needed.push('Confirm that sales and stock use the same unit.')
+    if((state.meaning?.requires_ack||expiryReview.length>0)&&!state.ack)needed.push('Review the warnings, then tick Show orders anyway if you accept them.')
+    disabledReason.textContent=needed.join(' ');disabledReason.hidden=!use.disabled
     // Rebuilding a mapping must not strand keyboard users on the page behind it.
     if(focusKey){const replacement=[...body.querySelectorAll('select,input')].find(select=>focusKey.id?select.id===focusKey.id:select.dataset.sheet===focusKey.sheet&&select.dataset.index===focusKey.index);replacement?.focus({preventScroll:true});body.scrollTop=scrollTop}
   }
@@ -7090,20 +7290,21 @@ const smartImportUI = (() => {
       }catch(error){legacyError=error;if(/\.json$/i.test(file.name))throw error}
     }
     let sheets
-    try{sheets=legacyText!=null?[{name:'CSV',rows:importRows(legacyText,importDelimiter(legacyText)),delimiter:importDelimiter(legacyText)}]:await readSmartWorkbook(file)}catch(error){if(legacyError?.message?.includes('UTF-8'))throw legacyError;throw error}
+    try{sheets=legacyText!=null?[{name:'CSV',rows:importRows(legacyText,importDelimiter(legacyText)),delimiter:importDelimiter(legacyText)}]:await readSmartWorkbook(file)}catch(error){if(error.message?.startsWith('This looks like an Excel file'))throw error;if(legacyError?.message?.includes('UTF-8'))throw legacyError;throw error}
     if(!stillCurrent())return null
     // Canonical first-row CSV keeps the old exclusions, preflight report and errors.
     if(legacyError&&sheets.length===1&&['sku','name','unit','on_hand','supplier_days'].every((v,i)=>sheets[0].rows[0]?.[i]===v))throw legacyError
-    const report=understandStockWorkbook(sheets),saved=rules().find(r=>r.fingerprint===report.fingerprint)
-    const state={file,sheets,sheet:saved?.sheet||report.sheet_used,overrides:Object.assign(Object.create(null),saved?.overrides||{}),choices:inputMeaningChoices(saved?.choices),ack:false,legacyParsed,report,stillCurrent,edit:false,focus:document.activeElement}
+    const excel=isExcelWorkbook(sheets),report=excel?excelWorkbookSelection(sheets,null,{},false).report:understandStockWorkbook(sheets),saved=rules().find(r=>r.fingerprint===report.fingerprint)
+    const state={file,sheets,excel,combine:false,sheet:saved?.sheet||report.sheet_used,overrides:Object.assign(Object.create(null),saved?.overrides||{}),choices:inputMeaningChoices(saved?.choices),ack:false,legacyParsed,report,stillCurrent,edit:false,focus:document.activeElement}
+    state.unitsReviewRequired=!state.choices.units_confirmed
     preflight(state)
-    if(!state.report.mapping.some(m=>m.field==='sku')&&!state.report.canonical_rows.slice(1).length){throw new CsvError('Could not find a product code (SKU). Add a product-code column in your spreadsheet, then choose the file again.')}
+    if(!state.report.mapping.some(m=>m.field==='sku')&&!state.report.canonical_rows.slice(1).length){throw new CsvError(state.report.warnings.find(text=>text.startsWith('Could not find a product code column.'))||'Could not find a product code (SKU). Add a product-code column in your spreadsheet, then choose the file again.')}
     let sameWarnings=false
     if(saved){try{sameWarnings=await warningFingerprint(state.report,state.parsed)===saved.warning_fingerprint}catch{}}
     if(!stillCurrent())return null
     // Remember a layout, never permission to drop products from a later file.
     const noRowsSetAside=state.parsed?.import_report?.rows_set_aside?.length===0&&!state.report.warnings.some(w=>w.includes('row omitted'))
-    if(saved&&!state.parsed?.items.some(item=>item.lots?.some(lot=>lot.expiry_acknowledged===false))&&state.choices.units_confirmed&&!state.meaning?.requires_ack&&!reviewRequested&&state.parsed?.items.length&&!state.report.missing.length&&!state.error&&sameWarnings&&noRowsSetAside){retained={file};return {parsed:state.parsed,smart:!state.legacyParsed||state.edit,remembered:true}}
+    if(saved&&(!state.excel||state.sheets.length===1)&&cleanImportCanApplyDirectly(state)&&!state.parsed?.items.some(item=>item.lots?.some(lot=>lot.expiry_acknowledged===false))&&state.choices.units_confirmed&&!state.meaning?.requires_ack&&!reviewRequested&&state.parsed?.items.length&&!state.report.missing.length&&!state.error&&sameWarnings&&noRowsSetAside){retained={file};return {parsed:state.parsed,smart:cleanImportCanApplyDirectly(state),remembered:true}}
     return new Promise(resolve=>{state.resolve=resolve;pending=state;draw(state);dialog.showModal()})
   }
   function status(result,file){
@@ -7114,13 +7315,13 @@ const smartImportUI = (() => {
   }
   function showMeaningResults(parsed){
     document.getElementById('input-meaning-results')?.remove()
-    const affected=(parsed?.items||[]).filter(i=>i.input_warnings?.length),warnings=[...new Set([...(parsed?.input_meaning?.warnings||[]),...affected.flatMap(i=>i.input_warnings)])]
+    const fileWide=fileWideInputWarnings(parsed),affected=(parsed?.items||[]).filter(i=>i.input_warnings?.some(text=>!fileWide.has(text))),warnings=[...new Set([...(parsed?.input_meaning?.warnings||[]),...(parsed?.items||[]).flatMap(i=>i.input_warnings||[])])]
     if(!warnings.length)return
     const banner=el('section',undefined,'input-meaning-results');banner.id='input-meaning-results';banner.setAttribute('aria-label','Check before ordering')
-    banner.append(el('h3','Check before ordering · '+affected.length+' product'+(affected.length===1?'':'s')))
-    for(const text of parsed?.input_meaning?.warnings?.length?parsed.input_meaning.warnings:warnings)banner.append(el('p',text))
+    banner.append(el('h3','Check before ordering'))
+    for(const text of warnings.filter(text=>!parsed?.input_meaning?.warnings?.length||fileWide.has(text)||!affected.some(i=>i.input_warnings.includes(text))))banner.append(el('p',text))
     const list=el('details'),summary=el('summary','Affected products · '+affected.length),rows=el('ul');list.append(summary,rows)
-    for(const entry of affected){const row=el('li',entry.sku+' — '+entry.input_warnings.join(' '));row.dataset.inputWarningSku=entry.sku;rows.append(row)}banner.append(list)
+    for(const entry of affected){const row=el('li',entry.sku+' — '+entry.input_warnings.filter(text=>!fileWide.has(text)).join(' '));row.dataset.inputWarningSku=entry.sku;rows.append(row)}if(affected.length)banner.append(list)
     const dismiss=el('button','Dismiss');dismiss.type='button';dismiss.setAttribute('aria-label','Dismiss input warning summary');dismiss.addEventListener('click',()=>banner.remove());banner.append(dismiss)
     // Summary dismissal is DOM/session-only; item warnings survive and every import redraws it.
     const worklist=document.getElementById('worklist'),layout=document.querySelector('.layout')
@@ -7697,7 +7898,8 @@ gmRelative=function(date){
   return days===0?'On snapshot date':days>0?`In ${days} ${days===1?'day':'days'}`:`${-days} ${days===-1?'day':'days'} before snapshot`
 }
 gmSnapshotLabel=function(){
-  $('snapshot').textContent=`As of ${gmDate(data.as_of)} · ${sourceName==='sample'?'Sample data':'Local CSV'}`
+  const latest=data.months?.at(-1),through=latest?new Date(latest+'-01T00:00:00Z').toLocaleDateString('en-GB',{month:'short',year:'numeric',timeZone:'UTC'}):'unknown'
+  $('snapshot').textContent=`Data through ${through} · today ${gmDate(currentToday)} · ${sourceName==='sample'?'Sample data':sourceName==='demo'?'Synthetic demo':'Local file'}`
 }
 // delivery_date is a confirmed gap-ending receipt, not a calculated new-order arrival.
 // Keep confirmed delivery separate from the chart-focus suggested-order overlay.
@@ -7727,6 +7929,9 @@ fullChart=function(row){
   }
   return figure
 }
+function gmBBigOrderExplanation(g){
+  return bigOrderWarning(g,settings)+' The months describe the suggested order quantity divided by estimated monthly demand, not the time left in your current stock. The Runs out forecast uses existing stock and recorded incoming supply; it excludes this suggested new order. Order now means the buying deadline is today or overdue, allowing for supplier lead time. Check the quantity, sales history and existing orders before buying.'
+}
 const gmBPanel=chartPanel
 chartPanel=function(row){
   const panel=gmBPanel(row),g=row.guidance
@@ -7749,6 +7954,10 @@ chartPanel=function(row){
   if(!messages.length)messages.push('Receipts shown as monthly totals; exact date unavailable')
   context.prepend(node('p',messages.join('. ')+'.','chart-note'))
   about.querySelector('summary').textContent='About this estimate';about.querySelector('summary').title='Chart details, warnings and assumptions'
+  if(bigOrderWarning(g,settings)){
+    const note=node('details',null,'big-order-explanation'),summary=node('summary','Large order · check quantity')
+    summary.title=gmBBigOrderExplanation(g);note.append(summary,node('p',gmBBigOrderExplanation(g)));context.prepend(note)
+  }
   panel.querySelector('.gm-precision').remove()
   return panel
 }
@@ -8264,7 +8473,7 @@ function gmOpenSettings(supplier=null){
 gmSettingsSheet.addEventListener('close',()=>gmSheetReturnFocus?.isConnected&&gmSheetReturnFocus.focus({preventScroll:true}))
 gmSettingsSheet.addEventListener('click',event=>{if(event.target===gmSettingsSheet&&event.clientX<gmSettingsSheet.getBoundingClientRect().left)gmSettingsSheet.close()})
 // Preserve settings across product recalculation, not just the four original controls.
-saveSettings=function(next){settings=normalizeOrderSettings(next);try{localStorage.setItem(gmDatasetSettingsKey,JSON.stringify(gmPortableSettings()));gmStorageStatus.textContent='Settings saved for this dataset on this device. CSV contents are not saved.'}catch{gmStorageStatus.textContent='Settings could not be saved. Changes still apply in this tab.'}render();gmUndoSettingPreset.disabled=!gmSettingPresetUndo||gmSettingPresetUndo.dataset!==data||gmSettingPresetUndo.after!==JSON.stringify(gmPortableSettings());gmUpdateSafetyPreview();gmUpdatePresetNote()}
+saveSettings=function(next){settings=normalizeOrderSettings(next);try{localStorage.setItem(gmDatasetSettingsKey,JSON.stringify(gmPortableSettings()));gmStorageStatus.textContent='Settings saved for this dataset in this browser on this device. Imported data is saved only if you opt in.'}catch{gmStorageStatus.textContent='Settings could not be saved. Changes still apply in this tab.'}render();gmUndoSettingPreset.disabled=!gmSettingPresetUndo||gmSettingPresetUndo.dataset!==data||gmSettingPresetUndo.after!==JSON.stringify(gmPortableSettings());gmUpdateSafetyPreview();gmUpdatePresetNote()}
 const gmSettingsRender=render
 render=function(){gmLoadDatasetSettings();return gmSettingsRender()}
 const gmSettingsPanel=chartPanel
@@ -8361,6 +8570,44 @@ window.addEventListener('focus',()=>{if(currentToday!==localToday())render()})
 setInterval(()=>{if(currentToday!==localToday())render()},60000)
 localOrderLoad();if(data.items.length<=1000)render();else withDatasetEvaluation(()=>{})
 
+// Lifecycle: living. Optional "stock counted on" date for the loaded file only.
+// Adapt input only: the shared core applyStockDate (mirrors engine.py) translates
+// counted stock to the as-of balance; standaloneRows/evaluateDataset/orderGuidance
+// own every projection, run-out, order-by and quantity calculation.
+const stockDate={dataset:null,value:''}
+const stockDateField=node('label',null,'stock-date-control');stockDateField.htmlFor='stock-date'
+const stockDateInput=document.createElement('input');stockDateInput.type='date';stockDateInput.id='stock-date';stockDateInput.setAttribute('aria-describedby','stock-date-message')
+const stockDateMessage=node('p',null,'stock-date-message');stockDateMessage.id='stock-date-message';stockDateMessage.setAttribute('role','status')
+stockDateField.append(node('span','Stock counted on'),stockDateInput)
+document.querySelector('.tools-body').prepend(stockDateField,stockDateMessage)
+function stockDateActive(dataset,today){
+ const value=stockDate.dataset===data?stockDate.value:''
+ return value&&!stockDateReason(value,dataset.as_of,today)?value:''
+}
+function stockDateSync(){
+ if(stockDate.dataset!==data){stockDate.dataset=data;stockDate.value='';stockDateInput.value=''}
+ const today=currentToday||localToday(),reason=stockDate.value?stockDateReason(stockDate.value,data.as_of,today):null,notice=stockDate.value?null:stockDateNotice(data.as_of,today)
+ stockDateInput.min=typeof data.as_of==='string'?data.as_of.slice(0,7)+'-01':'';stockDateInput.max=today
+ stockDateMessage.textContent=reason?reason+' Not applied.':stockDate.value?`Run-out and order dates start from ${gmDate(stockDate.value)}. Sales before the count are not subtracted again.`:notice||''
+ stockDateMessage.classList.toggle('stock-date-warning',!!(reason||notice))
+ stockDateMessage.hidden=!stockDateMessage.textContent
+}
+const stockDateBaseRows=standaloneRows
+standaloneRows=function(dataset,today,options){
+ const value=stockDateActive(dataset,today)
+ return stockDateBaseRows(value?applyStockDate(dataset,value,today,options):dataset,today,options)
+}
+const stockDateBaseLabel=gmSnapshotLabel
+gmSnapshotLabel=function(...args){
+ const result=stockDateBaseLabel(...args),value=stockDateActive(data,currentToday||localToday())
+ if(value)$('snapshot').textContent+=` · stock counted ${gmDate(value)}`
+ return result
+}
+stockDateInput.addEventListener('change',()=>{stockDate.dataset=data;stockDate.value=stockDateInput.value;evaluationSnapshot=null;render()})
+const stockDateBaseRender=render
+render=function(...args){stockDateSync();return stockDateBaseRender(...args)}
+stockDateSync()
+
 // Lifecycle: living. Advisory only: never mutate a product or forecast quantity.
 // Pure planner takes already-rounded NEXT orders, not a new demand calculation.
 function supplierMinimumPlan({minimumValue=0,minimumQty=0,value=0,qty=0,candidates=[]}){
@@ -8445,13 +8692,14 @@ const wlBaseHealth=updateHealth
 updateHealth=function(){wlBaseHealth();const label=healthWarnings.length.toLocaleString('en-US')+' data warnings';$('health-chip').textContent=label;$('health-chip').setAttribute('aria-label',label)}
 updateHealth()
 const wl={status:'all',suppliers:[],categories:[],custom:false,metric:'',sort:'urgency',dir:1,columns:[],selected:new Set(),focus:0,drawer:false,group:'status',collapsed:new Set(),source:null,dataset:null,cache:new WeakMap(),views:[],entries:[],height:44,frame:0}
-const wlColumns=[['product','Product',240],['status','Status',124],['hand','On hand',96],['incoming','On order',96],['monthly','Monthly sales',140],['days','Days left',132],['qty','Order qty',96],['value','Order value',124],['lasts','Order lasts',112],['pattern','Sales pattern',120],['excess','Excess value',124],['last','Last sold',112],['due','Order by',104],['runout','Runs out',104],['supplier','Supplier',160],['category','Product type',160],['lead','Lead time',96],['stockouts','Stock-outs',104],['risk','Run-out risk',124]]
+const wlColumns=[['product','Product',240],['status','Status',124],['hand','On hand',128],['incoming','On order',128],['monthly','Monthly sales',140],['days','Days left',132],['qty','Order qty',128],['value','Order value',124],['lasts','Order lasts',112],['pattern','Sales pattern',120],['excess','Excess value',124],['last','Last sold',112],['due','Order by',104],['runout','Runs out',104],['supplier','Supplier',160],['category','Product type',160],['lead','Lead time',96],['stockouts','Stock-outs',104],['risk','Run-out risk',124]]
 wl.columns=wlColumns.map(c=>c[0])
 const WL_DETAILED_COLUMNS=wl.columns.slice()
 const wlRoot=node('section',null,'worklist');wlRoot.id='worklist';wlRoot.setAttribute('aria-label','Replenishment worklist')
 const wlSummary=node('div',null,'work-summary'),wlViews=node('div',null,'work-views'),wlTabs=node('div',null,'work-tabs'),wlSaved=node('div',null,'work-saved'),wlFilters=node('div',null,'work-filters'),wlActive=node('div',null,'work-active'),wlBulk=node('div',null,'work-bulk'),wlScroll=node('div',null,'work-scroll'),wlHead=node('div',null,'work-head'),wlCanvas=node('div',null,'work-canvas'),wlFoot=node('div',null,'work-footer')
 wlSummary.id='work-summary';wlTabs.setAttribute('role','group');wlTabs.setAttribute('aria-label','Product views');wlScroll.id='work-scroll';wlScroll.tabIndex=0;wlScroll.setAttribute('role','table');wlScroll.setAttribute('aria-label','Products');wlHead.setAttribute('role','row');wlCanvas.setAttribute('role','rowgroup');wlScroll.append(wlHead,wlCanvas);wlViews.append(wlTabs,wlSaved);wlRoot.append(wlSummary,wlViews,wlActive,wlBulk,wlScroll,wlFoot);document.querySelector('.layout').prepend(wlRoot)
 const wlSearch=document.querySelector('label.search');wlSaved.append(wlSearch);$('search').placeholder='Search products';$('search').setAttribute('aria-label','Search products, SKU, supplier or product type');wlSearch.querySelector('span').textContent='';wlSearch.querySelector('span').className='work-search-icon'
+const wlUrgencyNote=node('p','Order now uses the “Order now within N days” setting and includes supply gaps. Deadlines allow for supplier lead time. High risk = more than 40% estimated chance of running out before arrival. The 7-day count uses the stock run-out date.','work-lead-note');wlUrgencyNote.id='work-urgency-note';wlSummary.after(wlUrgencyNote)
 const wlLeadNote=node('p',null,'work-lead-note');wlLeadNote.hidden=true;wlBulk.after(wlLeadNote)
 // One header menu owns occasional actions and diagnostics.
 document.querySelector('.tools-body').append($('health-chip'));$('tools').querySelector('summary').textContent='Import / settings';$('tools').querySelector('summary').setAttribute('aria-label','Import / settings — Main menu')
@@ -8515,7 +8763,12 @@ function wlFacet(key,label){
  return wlPopover(label+' ▾','filter-'+key,content)
 }
 // Presentation-only totals: incomplete costs must never look like a complete order value.
-function wlSummaryNumbers(s,partial=false){const qty=[...s.units].map(([u,q])=>orderAmount(q)+' '+u).join(' · ')||'—';return [[s.orders,'To order','order'],[s.costed&&(!s.missingCost||partial)?wlMoney(s.value):qty,s.costed&&(!s.missingCost||partial)?'Order value'+(s.missingCost?' (known costs) · cost missing for '+s.missingCost+(s.missingCost===1?' product':' products'):''):'To order (qty)','order'],[s.runout,'Running out within 7 days','runout']]}
+function wlSummaryNumbers(s,partial=false){
+ const single=s.units.size===1?[...s.units][0]:null,shared=single&&!['','units','unit','ea'].includes(String(single[0]).trim().toLowerCase())
+ // A default "units" label is not evidence that unlike products are comparable.
+ const qty=shared?orderAmount(single[1])+' '+single[0]:s.orders?'Mixed units':'—',costKnown=s.costed&&(!s.missingCost||partial)
+ return [[s.orders,'To order','order'],[costKnown?wlMoney(s.value):qty,costKnown?'Order value'+(s.missingCost?' (known costs) · cost missing for '+s.missingCost+(s.missingCost===1?' product':' products'):''):shared?'Total quantity':'Quantity not combined','order'],[s.runout,'Running out within 7 days','runout']]
+}
 function wlRenderControls(){
  // Rebuilding controls must not dismiss the menu or lose the chosen section.
  const open=[...wlRoot.querySelectorAll('.work-popover[open]')].map(e=>e.id),focused=document.activeElement?.closest('[data-group],[data-density]'),focusKey=focused?.dataset.group?'[data-group="'+focused.dataset.group+'"]':focused?.dataset.density?'[data-density="'+focused.dataset.density+'"]':null
@@ -8567,7 +8820,7 @@ function wlValue(r,k){
  if(k==='stockouts')return wlStockoutCount(r.item)
  if(k==='incoming')return localOrderIncoming(r.item)
  const m=wlMeta(r),g=r.guidance,i=r.item
- return ({product:i.name,status:wlRank[r.bucket],hand:i.on_hand,days:m.days,qty:g.quantity,due:m.due,runout:g.runout_date||'9999-12-31',supplier:m.supplier,category:m.category,lead:g.lead_days,monthly:m.monthly,value:m.value,lasts:m.lasts,pattern:m.pattern,excess:m.excess,last:m.last})[k]
+ return ({product:i.name,status:wlRank[r.bucket],hand:i.counted_on_hand??i.on_hand,days:m.days,qty:g.quantity,due:m.due,runout:g.runout_date||'9999-12-31',supplier:m.supplier,category:m.category,lead:g.lead_days,monthly:m.monthly,value:m.value,lasts:m.lasts,pattern:m.pattern,excess:m.excess,last:m.last})[k]
 }
 function wlCompare(a,b){let d;if(wl.sort==='urgency')d=wlRank[a.bucket]-wlRank[b.bucket]||wlMeta(a).due.localeCompare(wlMeta(b).due);else{const x=wlValue(a,wl.sort),y=wlValue(b,wl.sort);d=x==null?y==null?0:1:y==null?-1:typeof x==='number'?x-y:String(x).localeCompare(String(y))}return d*wl.dir||a.item.sku.localeCompare(b.item.sku)}
 buildList=function({controls=true}={}){
@@ -8616,7 +8869,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&wl.columnPopup){e.p
 function wlLayout(){wl.phone=matchMedia('(max-width:1023px)').matches;wl.height=wl.phone?104:64;wl.offsets=[];let total=0;for(const entry of wl.entries){wl.offsets.push(total);entry.wlHeight=wl.height;if(!entry.row&&wl.group==='supplier'){const p=supplierMinimumContext(entry.group,entry.rows);if(supplierMinimums.accepted.has(entry.group)||entry.orders&&(p.gapValue||p.gapQty))entry.wlHeight=wl.phone?248:120}total+=entry.wlHeight}wl.totalHeight=total;const cols=wlVisible().map(c=>c[0]==='status'&&wl.status!=='all'&&wl.mode!=='simple'?[c[0],c[1],44]:c);wl.template='44px '+cols.map(c=>c[0]==='product'?`minmax(${c[2]}px, 360px)`:c[2]+'px').join(' ')+' 44px';wlScroll.style.setProperty('--work-columns',wl.template);wlScroll.style.setProperty('--work-min',88+cols.reduce((n,c)=>n+c[2],0)+'px');wlCanvas.style.height=wl.totalHeight+'px';wlScroll.setAttribute('aria-rowcount',String(filteredRows.length+1));wlHead.replaceChildren();const cell=node('div',null,'work-cell');const c=node('input');c.type='checkbox';c.setAttribute('aria-label','Select all filtered products');c.id='work-select-all';c.checked=!!filteredRows.length&&filteredRows.every(r=>wl.selected.has(r.item.sku));c.indeterminate=!c.checked&&filteredRows.some(r=>wl.selected.has(r.item.sku));c.addEventListener('change',()=>{for(const r of filteredRows)if(c.checked)wl.selected.add(r.item.sku);else wl.selected.delete(r.item.sku);wlRenderRows();wlRenderBulk()});cell.append(c);wlHead.append(cell);for(const [key,label]of cols){const h=node('div',null,'work-cell '+(WL_NUMERIC.includes(key)?'numeric':''));h.dataset.column=key;h.setAttribute('role','columnheader');h.setAttribute('aria-sort',wl.sort===key?wl.dir===1?'ascending':'descending':'none');const sort=wlBtn((key==='status'&&wl.status!=='all'&&wl.mode!=='simple'?'':label)+(wl.sort===key?(wl.dir===1?' ↑':' ↓'):''),()=>{if(wl.suppressHeaderClick)return;wl.dir=wl.sort===key?-wl.dir:1;wl.sort=key;buildList();wlHead.querySelector('[data-column="'+key+'"] button')?.focus({preventScroll:true})});sort.setAttribute('aria-label','Sort by '+label);if(key!=='product')sort.setAttribute('aria-keyshortcuts','Alt+ArrowLeft Alt+ArrowRight');h.append(sort);h.dataset.column=key;wlBindHeader(h,key);wlHead.append(h)}wlHead.append(wlHeaderTools());if(wl.phone)wlCloseHeaderColumns();let hint=wlFoot.querySelector('.work-overflow-hint');if(!hint){hint=node('span','Scroll table for more columns →','work-overflow-hint');wlFoot.insertBefore(hint,wlFoot.lastChild)}hint.hidden=wl.phone||wlScroll.scrollWidth<=wlScroll.clientWidth}
 function wlStatusCell(r){const e=node('span',null,'work-status');e.dataset.bucket=r.bucket;const label=wlStatus.find(c=>c[0]===r.bucket)?.[1]||bucketNames[r.bucket];e.setAttribute('aria-label',label);e.setAttribute('role','img');e.append(node('i',null,'dot'));if(wl.status==='all'||wl.mode==='simple')e.append(node('span',label));return e}
 function wlRow(r,index){const m=wlMeta(r),g=r.guidance,i=r.item,e=node('div',null,'work-row');e.dataset.sku=i.sku;e.dataset.bucket=r.bucket;e.setAttribute('role','row');e.setAttribute('aria-rowindex',String(index+2));e.setAttribute('aria-selected',String(wl.selected.has(i.sku)));e.dataset.focus=String(index===wl.focus);e.dataset.current=String(wl.drawer&&selectedSku===i.sku);e.tabIndex=index===wl.focus?0:-1;const select=node('label',null,'work-check'),c=node('input');c.type='checkbox';c.checked=wl.selected.has(i.sku);c.setAttribute('aria-label','Select '+i.name);c.addEventListener('change',()=>{if(c.checked)wl.selected.add(i.sku);else wl.selected.delete(i.sku);wlRenderRows();wlRenderBulk()});select.append(c);e.append(select)
- for(const [key]of wlVisible()){const cell=node('div',null,'work-cell '+(WL_NUMERIC.includes(key)?'numeric':''));cell.dataset.column=key;cell.setAttribute('role','cell');if(key==='product'){const b=wlBtn('',()=>wlOpen(r));b.className='work-product';b.append(node('span',i.name,'work-name'),node('small',null,'work-sku'));b.querySelector('.work-sku').append(node('span',i.sku,'work-sku-code'));if(i.input_warnings?.length){const marker=node('span','Input warning'+(i.input_warnings.length===1?'':'s'),'input-warning-marker');marker.dataset.inputWarningMarker=i.sku;b.querySelector('.work-sku').append(marker)}const large=bigOrderWarning(g,settings);if(large){const note=node('small',large.split(',')[0],'input-warning-marker');note.title=large;note.dataset.bigOrder=i.sku;b.append(note)}const pill=localOrderPill(i.sku);if(pill)b.querySelector('.work-sku').append(pill);cell.append(b)}else if(key==='status')cell.append(wlStatusCell(r));else{const value=wlValue(r,key);cell.textContent=['monthly','value','lasts','pattern','excess','last'].includes(key)?wlDecisionText(r,key):key==='runout'?(!g.runout_date?'—':m.days<=0?'Now':shortDate(g.runout_date)):key==='due'?(g.order_by==='now'?'Today':g.order_by?shortDate(g.order_by):'—'):key==='days'?(m.days===null?'—':m.days<0?`Overdue · ${-m.days} d`:String(m.days)):key==='supplier'?(m.supplier||'Not assigned'):key==='category'?(m.category||'—'):value==null?'—':typeof value==='number'?orderAmount(value):String(value);if(key==='lead'&&value!=null)cell.append(' d');if(['supplier','category'].includes(key))cell.title=cell.textContent;if(key==='days'&&m.days<0)cell.dataset.overdue='true'}e.append(cell)}
+ for(const [key]of wlVisible()){const cell=node('div',null,'work-cell '+(WL_NUMERIC.includes(key)?'numeric':''));cell.dataset.column=key;cell.setAttribute('role','cell');if(key==='product'){const b=wlBtn('',()=>wlOpen(r));b.className='work-product';b.append(node('span',i.name,'work-name'),node('small',null,'work-sku'));b.querySelector('.work-sku').append(node('span',i.sku,'work-sku-code'));const rowWarnings=i.input_warnings||[];if(rowWarnings.length){const marker=node('span','Input warning'+(rowWarnings.length===1?'':'s'),'input-warning-marker');marker.dataset.inputWarningMarker=i.sku;b.querySelector('.work-sku').append(marker)}const large=bigOrderWarning(g,settings);if(large){const note=node('small','Large order · check quantity','big-order-note');note.title=gmBBigOrderExplanation(g); note.dataset.bigOrder=i.sku;b.append(note)}const pill=localOrderPill(i.sku);if(pill)b.querySelector('.work-sku').append(pill);cell.append(b)}else if(key==='status')cell.append(wlStatusCell(r));else{const value=wlValue(r,key);cell.textContent=['monthly','value','lasts','pattern','excess','last'].includes(key)?wlDecisionText(r,key):key==='runout'?(!g.runout_date?'—':m.days<=0?'Now':shortDate(g.runout_date)):key==='due'?(g.order_by==='now'?'Today':g.order_by?shortDate(g.order_by):'—'):key==='days'?(m.days===null?'—':m.days<0?`Overdue · ${-m.days} d`:String(m.days)):key==='supplier'?(m.supplier||'Not assigned'):key==='category'?(m.category||'—'):value==null?'—':typeof value==='number'?orderAmount(value):String(value);if(['hand','incoming','qty'].includes(key)&&value!=null&&i.unit)cell.append(' '+i.unit);if(key==='lead'&&value!=null)cell.append(' d');if(['supplier','category','hand','incoming','qty'].includes(key))cell.title=cell.textContent;if(key==='days'&&m.days<0)cell.dataset.overdue='true'}e.append(cell)}
  if(wl.phone){const detail=wlBtn('',()=>wlOpen(r),'work-phone-summary');detail.append(wlStatusCell(r),node('span',r.bucket==='needs-data'?'Check product data':!['order','running-low'].includes(r.bucket)?'No order needed now':`Order ${g.quantity==null?'—':orderAmount(g.quantity)} ${i.unit} · ${g.order_by==='now'?'Today':g.order_by?'Order by '+shortDate(g.order_by):'No order date'}`),node('small',[(wl.columns.includes('monthly')?'Sales '+wlDecisionText(r,'monthly')+'/mo':null),(wl.columns.includes('value')?'Value '+wlDecisionText(r,'value'):null)].filter(Boolean).join(' · ')||m.supplier||'Supplier not assigned'));e.append(detail)}
  e.addEventListener('click',event=>{if(!event.target.closest('button,input,label'))wlOpen(r)});return e}
 function wlIndex(){
@@ -8708,7 +8961,7 @@ function wlCsv(rows){
  // delivery (order date + lead time), never a confirmed supplier commitment.
  const cols=['sku','name','unit','status','order_qty','order_by','next_confirmed_delivery','arrives_by','run_out','on_hand','on_order','safety_stock','reorder_point','reason','supplier','category','lead_days']
  const ordered=[...rows].sort((a,b)=>{const x=wlMeta(a).supplier,y=wlMeta(b).supplier;return Number(!x)-Number(!y)||x.localeCompare(y)||wlRank[a.bucket]-wlRank[b.bucket]||wlMeta(a).due.localeCompare(wlMeta(b).due)||a.item.sku.localeCompare(b.item.sku)})
- return [cols,...ordered.map(({item:i,guidance:g,bucket})=>[i.sku,i.name,i.unit,bucket,g.quantity,g.order_by,g.delivery_date,null,g.runout_date,i.on_hand,i.on_order,g.safety_stock,g.reorder_point,[g.reason,bigOrderWarning(g,settings),...(i.input_warnings||[]),incomingOrderCaveat(i)].filter(Boolean).join(' '),i.supplier,i.category,g.lead_days])].map(row=>row.map(wlCsvCell).join(',')).join('\r\n')+'\r\n'
+ return [cols,...ordered.map(({item:i,guidance:g,bucket})=>[i.sku,i.name,i.unit,bucket,g.quantity,g.order_by,g.delivery_date,null,g.runout_date,i.counted_on_hand??i.on_hand,i.on_order,g.safety_stock,g.reorder_point,[g.reason,bigOrderWarning(g,settings),...(i.input_warnings||[]),incomingOrderCaveat(i)].filter(Boolean).join(' '),i.supplier,i.category,g.lead_days])].map(row=>row.map(wlCsvCell).join(',')).join('\r\n')+'\r\n'
 }
 // Shared by order and set-aside CSV exports; preserve the original cell after
 // an apostrophe, including whitespace/BOM before a spreadsheet formula marker.
@@ -9402,7 +9655,7 @@ function productInputs(row){
  const head=node('div',null,'product-section-head');head.append(node('h2','Inputs & settings'),wlBtn('Change settings for this product',()=>openProductSettings(i.sku)));section.append(head)
  const add=(label,value,source)=>{const r=node('div',null,'product-input');r.append(node('span',label),node('strong',value==null?'Not set':String(value)),node('small',source));grid.append(r)}
  const qty=x=>x==null?'Unknown':orderAmount(x)+' '+i.unit
- add('On hand',qty(i.on_hand),'File');add('On order',qty(localOrderIncoming(i)),localOrderFor(i.sku)?'File + this device':'File')
+ add('On hand',qty(i.counted_on_hand??i.on_hand),i.stock_counted_on?'File · counted '+gmDate(i.stock_counted_on):'File');add('On order',qty(localOrderIncoming(i)),localOrderFor(i.sku)?'File + this device':'File')
  const receipts=Object.entries(i.receipts||{}).filter(([month])=>month>data.as_of.slice(0,7)).map(([month,quantity])=>`${label(month)} · ${qty(quantity)} (monthly total)`)
  for(const r of i.planning_facts?.incoming_pos||[])if(r.status==='confirmed')receipts.push(`${r.due_date} · ${qty(r.remaining_qty)}`)
  add('Dated receipts',receipts.length?receipts.join('; '):'None in file',localOrderFor(i.sku)?'File + this device':'File')
@@ -9459,7 +9712,7 @@ function drawProductPage(row){
   const text=wlOrderText([row]);let message=action.querySelector('[role=status]');if(!message){message=node('span');message.setAttribute('role','status');action.append(message)}
   try{await navigator.clipboard.writeText(text);message.textContent='Order copied.'}catch{let input=action.querySelector('textarea');if(!input){input=node('textarea');input.readOnly=true;input.setAttribute('aria-label','Order text — select and copy');action.append(input)}input.value=text;input.focus();input.select();message.textContent='Select and copy the order text below.'}
  });const draft=wlBtn('Draft email',()=>wlDraftEmail([row]),'product-draft-email');draft.disabled=!wlEmailGroups([row]).length;copy.disabled=!(g.quantity>0);action.append(copy,draft,localOrderActions([row]),node('p',localOrderFor(i.sku)?localOrderDisplay(localOrderFor(i.sku))+' · '+orderAmount(localOrderFor(i.sku).qty)+' '+i.unit+' · not in your ERP.':g.reason||chartKeyline(row),'product-note'))
- const large=bigOrderWarning(g,settings);if(large){const note=node('p',large,'product-note');note.dataset.bigOrder=i.sku;action.prepend(note)}
+ const large=bigOrderWarning(g,settings);if(large){const note=node('details',null,'big-order-explanation'),summary=node('summary','Large order · check quantity');summary.title=gmBBigOrderExplanation(g);note.append(summary,node('p',gmBBigOrderExplanation(g)));note.dataset.bigOrder=i.sku;action.prepend(note)}
  const inputWarnings=itemInputWarnings(i);if(inputWarnings)action.append(inputWarnings)
  if(localOrderFor(i.sku)){if((i.on_order||0)>0||Object.values(i.receipts||{}).some(v=>v>0))action.append(node('p','Existing incoming stock has no exact PO dates. The shared planner holds mixed incoming data for review; no file stock was replaced.','product-note'))}
  wrap.append(nav,header,figures,chart,productLedger(row),productInputs(row),action);overlay.replaceChildren(wrap);overlay.scrollTop=oldScroll;chart.querySelector('figure')?.drawChart();cleanupCharts();syncProductSettingSources()
@@ -9698,7 +9951,7 @@ wlRenderControls=function(...args){decisionControlsBase(...args);wlSaved.prepend
 const decisionRowBase=wlRow,decisionWhyCache=new WeakMap()
 function decisionWhy(row){const local=localOrderFor(row.item.sku);if(decisionBeyondView(row))return 'No order within the 6-month view. Replenishment date '+row.guidance.order_by+'.'+(local?' '+localOrderDisplay(local):'');let cached=decisionWhyCache.get(row);if(!cached||cached.settings!==settings||cached.today!==currentToday||cached.asof!==data.as_of){cached={settings,today:currentToday,asof:data.as_of,text:whyThisAmount(row.item,currentToday,settings,data.as_of)};decisionWhyCache.set(row,cached)}return cached.text+(local?' '+localOrderDisplay(local):'')}
 function decisionBeyondView(row){const due=dateOrdinal(row.guidance.order_by);return due!=null&&due>monthEndOrdinal(monthAfter(data.as_of.slice(0,7),6))}
-wlRow=function(row,...args){const element=decisionRowBase(row,...args),why='Why this amount: '+decisionWhy(row);const quantity=element.querySelector('[data-column=qty]');quantity?.setAttribute('title',why);if(quantity&&decisionBeyondView(row))quantity.textContent='—';const product=element.querySelector('.work-product');product?.setAttribute('aria-description',why);const phone=element.querySelector('.work-phone-summary');if(phone){phone.title=why;if(wl.mode==='simple'){const small=phone.querySelector('small');small.replaceChildren(node('span','On hand '+(row.item.on_hand==null?'Unknown':orderAmount(row.item.on_hand))+' '+row.item.unit),riskChip(row));phone.setAttribute('aria-description',why)}}return element}
+wlRow=function(row,...args){const element=decisionRowBase(row,...args),why='Why this amount: '+decisionWhy(row);const quantity=element.querySelector('[data-column=qty]');quantity?.setAttribute('title',why);if(quantity&&decisionBeyondView(row))quantity.textContent='—';const product=element.querySelector('.work-product');product?.setAttribute('aria-description',why);const phone=element.querySelector('.work-phone-summary');if(phone){phone.title=why;if(wl.mode==='simple'){const small=phone.querySelector('small');small.replaceChildren(node('span','On hand '+((row.item.counted_on_hand??row.item.on_hand)==null?'Unknown':orderAmount(row.item.counted_on_hand??row.item.on_hand))+' '+row.item.unit),riskChip(row));phone.setAttribute('aria-description',why)}}return element}
 // The full exact ledger remains the tooltip/accessibility description; the
 // first glance is the engine's rate/lead/cover context, without raw decimals.
 function decisionWhyLine(row){const text=decisionWhy(row),start=text.indexOf(' Sells ~');if(start<0)return text;const end=text.indexOf('. ',start),context=text.slice(start+1,end<0?-1:end),notes=end<0?'':text.slice(end+2);return context+' → order '+orderAmount(row.guidance.quantity)+' '+row.item.unit+'.'+(notes?' '+notes:'')}
@@ -9710,7 +9963,7 @@ function decisionProduct(row){
  const toggle=decisionToggle('product-show-detail');figures.after(toggle)
  for(const el of wrap.querySelectorAll('.product-page-chart,.product-ledger,.product-inputs,.product-risk,[data-forecast-method]:not([data-recommended-method])'))el.hidden=!on
  const runs=figures.lastElementChild;runs.hidden=!on
- const hand=node('div');hand.append(node('span','On hand'),node('strong',row.item.on_hand==null?'Unknown':orderAmount(row.item.on_hand)),node('small',row.item.unit));figures.prepend(hand)
+ const hand=node('div');hand.append(node('span','On hand'),node('strong',(row.item.counted_on_hand??row.item.on_hand)==null?'Unknown':orderAmount(row.item.counted_on_hand??row.item.on_hand)),node('small',row.item.unit));figures.prepend(hand)
  const result=productRisk(row),risk=node('p',null,'decision-product-risk');risk.append(node('span','Risk '),riskChip(row,result?.before??null,false));header.append(risk)
  const why=node('p','Why this amount: '+decisionWhyLine(row),'decision-why');why.title=decisionWhy(row);why.setAttribute('aria-description',decisionWhy(row));figures.after(why)
  const action=wrap.querySelector('.product-order-action');why.after(action)
@@ -9723,7 +9976,7 @@ const decisionPanelBase=chartPanel
 chartPanel=function(row){
  const panel=decisionPanelBase(row),section=panel.querySelector('.chart-section'),heading=panel.querySelector('.product-heading'),decision=panel.querySelector('.decision'),on=decisionDetail();if(section)section.hidden=!on
  const why=node('p','Why this amount: '+decisionWhyLine(row),'decision-why');why.title=decisionWhy(row);why.setAttribute('aria-description',decisionWhy(row));heading.after(why,decisionToggle('panel-show-detail'))
- if(!on){heading.after(decision);const dates=decision.querySelector('.dates');dates?.replaceChildren(stat('On hand',row.item.on_hand==null?'Unknown':orderAmount(row.item.on_hand)),stat('Order by',row.guidance.order_by==='now'?'Today':row.guidance.order_by?shortDate(row.guidance.order_by):'Not needed'));const risk=node('p',null,'decision-product-risk');risk.append(node('span','Risk '),riskChip(row,productRisk(row)?.before??null,false));heading.append(risk)}return panel
+ if(!on){heading.after(decision);const dates=decision.querySelector('.dates');dates?.replaceChildren(stat('On hand',(row.item.counted_on_hand??row.item.on_hand)==null?'Unknown':orderAmount(row.item.counted_on_hand??row.item.on_hand)),stat('Order by',row.guidance.order_by==='now'?'Today':row.guidance.order_by?shortDate(row.guidance.order_by):'Not needed'));const risk=node('p',null,'decision-product-risk');risk.append(node('span','Risk '),riskChip(row,productRisk(row)?.before??null,false));heading.append(risk)}return panel
 }
 // Shelf-life presentation reads evaluated shared-core guidance, never recalculates caps.
 function shelfBadge(row,detail=false){
@@ -9980,6 +10233,117 @@ document.addEventListener('click',event=>{
     event.preventDefault();event.stopImmediatePropagation()
   }
 },true)
+
+// Lifecycle: living. Offline first-run and print presentation only; no planning maths.
+// Synthetic templates use the last six complete months, never a partial current month.
+function firstRunTemplate(language='en',today=localToday()){
+ const [year,month]=today.split('-').map(Number),months=Array.from({length:6},(_,i)=>new Date(Date.UTC(year,month-7+i,1)).toISOString().slice(0,7))
+ const headers=language==='ar'?['اسم المنتج','الكمية','الوحدة','المورد']:['Product name','Stock on hand','Unit','Supplier']
+ const rows=[[...headers,...months],...(language==='ar'?[['منتج تجريبي أ',5,'pieces','مورد تجريبي',10,12,11,10,12,11],['منتج تجريبي ب',8,'pieces','مورد تجريبي',4,5,4,5,4,5]]:[['Synthetic sample A',5,'pieces','Synthetic supplier',10,12,11,10,12,11],['Synthetic sample B',8,'pieces','Synthetic supplier',4,5,4,5,4,5]])]
+ return '\uFEFF'+rows.map(row=>row.map(wlCsvCell).join(',')).join('\r\n')+'\r\n'
+}
+function firstRunAgeNotice(source,latest,today){
+ const age=latest?dateOrdinal(today)-monthEndOrdinal(latest):null
+ if(age===null||age<=45)return ''
+ return ['sample','demo'].includes(source)?'Synthetic example data is '+age+' days old, not current stock. Use your own file for your planning snapshot.':'Sales data is '+age+' days old. Refresh your export and check current stock before ordering.'
+}
+const firstRun=node('section',null,'first-run');firstRun.id='first-run';firstRun.setAttribute('aria-label','Start with your file')
+const firstRunActions=node('div',null,'first-run-actions'),firstRunSource=node('span'),firstRunImport=wlBtn('Use your own file',()=>{$('tools').open=true;$('file-panel').open=true;$('csv-file').click()})
+firstRunImport.classList.add('primary');firstRunImport.id='use-own-file';firstRunActions.append(firstRunSource,firstRunImport)
+const firstRunHint=node('div',null,'first-run-hint');firstRunHint.id='file-needs'
+for(const text of ['Product name (product code optional)','Stock on hand, in the same unit as sales','3+ complete sales months (YYYY-MM columns)'])firstRunHint.append(node('div',text))
+const firstRunTemplates=node('div',null,'first-run-templates')
+for(const [language,label]of [['en','Download a template'],['ar','Arabic-header template (browser app)']]){const button=wlBtn(label,()=>wlDownload(firstRunTemplate(language),'inventory-manager-template-'+language+'.csv','text/csv;charset=utf-8'));button.id='template-'+language;button.title=language==='ar'?'Arabic headers work in the browser app; CLI/MCP need English headers. Use the English template.':'English headers work in the browser app, CLI and MCP.';firstRunTemplates.append(button)}
+const firstRunAge=node('p',null,'first-run-age');firstRunAge.id='sales-age-warning';firstRunAge.setAttribute('role','status')
+firstRun.append(firstRunActions,firstRunHint,firstRunTemplates,firstRunAge);wlSummary.before(firstRun)
+function firstRunSync(){
+ firstRunMethodSync()
+ const sample=['sample','demo'].includes(sourceName);firstRunSource.textContent=(sourceName==='sample'?'Sample data':sourceName==='demo'?'Synthetic demo':'Local file')+' · v1.3.0-beta';firstRunHint.hidden=!sample;firstRunTemplates.hidden=!sample
+ const ageNotice=firstRunAgeNotice(sourceName,data.months?.at(-1),currentToday)
+ firstRunAge.hidden=!ageNotice;firstRunAge.textContent=ageNotice
+ $('print-order').disabled=analysisIncomplete||!wlEmailGroups(currentRows).length
+}
+// Keep the complete list: grouping and eligibility come from the same copy/export path.
+function printOrder(){
+ if(analysisDeny())return
+ if(currentToday!==localToday())render()
+ const text=wlOrderText(currentRows),groups=wlEmailGroups(currentRows)
+ if(!groups.length)return
+ const sheet=node('article');sheet.id='print-order-sheet'
+ sheet.append(node('h1','Order list · Inventory Manager'),node('p',$('snapshot').textContent),node('p','Draft only. Review stock, existing orders and supplier lead times before buying. Nothing has been sent.'))
+ const warnings=[...new Set(groups.flatMap(([,rows])=>rows.flatMap(r=>[...(r.item.input_warnings||[]),...(r.guidance.expiry_warnings||[]),bigOrderWarning(r.guidance,settings),r.guidance.used_default_lead?'Supplier lead time missing: using '+r.guidance.lead_days+' days.':''].filter(Boolean))))]
+ if(!firstRunAge.hidden)warnings.unshift(firstRunAge.textContent)
+ sheet.append(node('pre',text))
+ if(warnings.length){sheet.append(node('h2','Check before ordering'));const list=node('ul');for(const warning of warnings)list.append(node('li',warning));sheet.append(list)}
+ document.getElementById('print-order-sheet')?.remove();document.body.append(sheet);document.body.classList.add('order-printing')
+ try{window.print()}finally{document.body.classList.remove('order-printing');sheet.remove()}
+}
+const printOrderButton=wlBtn('Print order',printOrder);printOrderButton.id='print-order';$('copy-po').after(printOrderButton)
+// Current and Auto are the low-choice path. The original picker, listeners,
+// settings import and every experimental method remain intact behind disclosure.
+const methodPicker=$('setting-forecast_method'),methodRow=methodPicker.closest('.setting-row'),methodMore=node('details',null,'more-methods'),methodQuick=node('div',null,'method-quick')
+methodMore.id='more-methods';methodMore.append(node('summary','More methods'));methodMore.append(methodRow.querySelector('.setting-controls'));methodRow.append(methodQuick,methodMore)
+methodQuick.setAttribute('role','group');methodQuick.setAttribute('aria-label','Forecast method')
+for(const [value,label]of [['current','Current (default)'],['auto','Auto (experimental)']]){
+ const button=wlBtn(label,()=>{methodPicker.value=value;methodPicker.dispatchEvent(new Event('change',{bubbles:true}))});button.dataset.quickMethod=value;methodQuick.append(button)
+}
+function firstRunMethodSync(){for(const button of methodQuick.children)button.setAttribute('aria-pressed',String(settings.forecast_method===button.dataset.quickMethod));if(!['current','auto'].includes(settings.forecast_method))methodMore.open=true}
+const firstRunFields=gmSyncFields
+gmSyncFields=function(...args){const result=firstRunFields(...args);firstRunMethodSync();return result}
+const firstRunBuild=buildList
+buildList=function(...args){const result=firstRunBuild(...args);firstRunSync();return result}
+// Imported rows persist only after an explicit, fresh opt-in for this import.
+const deviceDataKey='inventory-manager.device-data.v1',deviceDataLimit=2*1024*1024
+let deviceImportedAt=null,deviceRestored=false,deviceHasSaved=false
+const deviceControls=node('div',null,'device-data-controls'),deviceLabel=node('label'),deviceRemember=node('input'),deviceNotice=node('p'),deviceForget=wlBtn('Forget saved data',()=>{
+ try{localStorage.removeItem(deviceDataKey);deviceHasSaved=false;deviceRemember.checked=false;deviceRestored=false;deviceNotice.textContent='Saved data forgotten. The open file stays in memory until you close or reload this page.';deviceForget.hidden=true;firstRunSync()}
+ catch{deviceNotice.textContent='Could not forget saved data. Clear this browser’s site data before sharing this device.'}
+})
+deviceRemember.type='checkbox';deviceRemember.id='remember-device';deviceForget.id='forget-device-data';deviceNotice.id='device-data-notice';deviceNotice.setAttribute('role','status')
+deviceLabel.append(deviceRemember,node('span','Remember this file on this device'));deviceControls.append(deviceLabel,deviceForget,deviceNotice);firstRun.append(deviceControls)
+function deviceDataSync(){
+ const sample=['sample','demo'].includes(sourceName)
+ deviceLabel.hidden=sample
+ if(sample){deviceRestored=false;deviceRemember.checked=false}
+ else{
+  $('snapshot').title='Local file; never uploaded. Imported data is saved only if you opt in.'
+  for(const text of $('source-status').childNodes)if(text.nodeType===3)text.textContent=text.textContent.replace(' and is not saved.','.')
+ }
+ deviceForget.hidden=!deviceHasSaved
+ if(deviceRestored)firstRunSource.textContent='Restored from this device · imported '+new Date(deviceImportedAt).toLocaleString()+' · v1.3.0-beta'
+}
+const deviceFirstRunSync=firstRunSync
+firstRunSync=function(){deviceFirstRunSync();deviceDataSync()}
+deviceRemember.addEventListener('change',()=>{
+ if(!deviceRemember.checked){deviceForget.click();return}
+ try{
+  if(['sample','demo'].includes(sourceName)||!deviceImportedAt)throw Error('Import your own file first.')
+  const encoded=JSON.stringify({version:1,imported_at:deviceImportedAt,name:sourceName,data})
+  // At most 2 MiB of UTF-16 code units (~4 MiB browser quota), before setItem.
+  if(encoded.length>deviceDataLimit)throw Error('This file is too big to remember on this device. Import it again next time.')
+  localStorage.setItem(deviceDataKey,encoded);deviceHasSaved=true;deviceNotice.textContent='Saved data stays in this browser on this device. Forget it before sharing this device.'
+ }catch(error){deviceRemember.checked=false;deviceNotice.textContent=error.message?.startsWith('This file is too big')?error.message:'Could not save data in this browser. Import your file again next time.'}
+ deviceDataSync()
+})
+const deviceImportStatus=stockImportStatus
+stockImportStatus=function(result,file){
+ deviceImportStatus(result,file);deviceImportedAt=new Date().toISOString();deviceRestored=false;deviceRemember.checked=false
+ deviceNotice.textContent=deviceHasSaved?'A previously saved file remains on this device. Use Forget saved data to remove it.':'Optional: saves imported data in this browser on this device. Leave unticked on a shared device.'
+ deviceDataSync()
+}
+try{
+ const raw=sourceName==='demo'?null:localStorage.getItem(deviceDataKey);deviceHasSaved=raw!==null
+ if(raw){
+  if(raw.length>deviceDataLimit)throw Error('Saved data is too big.')
+  const saved=JSON.parse(raw),restored=saved?.data
+  if(saved.version!==1||typeof saved.name!=='string'||!saved.name||['sample','demo'].includes(saved.name)||typeof saved.imported_at!=='string'||!Number.isFinite(Date.parse(saved.imported_at))||!Array.isArray(restored?.items)||restored.items.length>10000||restored.items.some(item=>!item||typeof item.sku!=='string'||!Array.isArray(item.monthly_sales)))throw Error('Invalid saved data.')
+  validateDataset(restored)
+  data=restored;sourceName=saved.name;deviceImportedAt=saved.imported_at;deviceRestored=true;deviceRemember.checked=true
+  deviceNotice.textContent='Saved data stays in this browser on this device. This is a snapshot, not live stock.'
+  render();smartImportUI.status({parsed:data,smart:false},{name:sourceName})
+ }
+}catch{deviceNotice.textContent='Could not restore saved data. Import your file again, or forget the saved copy.'}
+firstRunMethodSync();firstRunSync();gmSnapshotLabel()
 
 // Template-scoped policy v2 presentation. Never change guidance or forecasts here.
 if (document.body.dataset.design === 'option-gm-b') {

@@ -77,9 +77,9 @@ test('Arctic summary shows three metrics, unit-aware fallback and explicitly inc
   vm.runInContext(worklist.slice(worklist.indexOf('function wlSummaryNumbers'),worklist.indexOf('function wlRenderControls'))+'\nglobalThis.summary=wlSummaryNumbers;',c)
   const s={orders:2,units:new Map([['units',2893],['m',30868]]),costed:0,missingCost:2,value:0,runout:1},before=JSON.stringify({...s,units:[...s.units]})
   const result=JSON.parse(JSON.stringify(c.summary(s)))
-  assert.deepEqual(result,[[2,'To order','order'],['2,893 units · 30,868 m','To order (qty)','order'],[1,'Running out within 7 days','runout']])
+  assert.deepEqual(result,[[2,'To order','order'],['Mixed units','Quantity not combined','order'],[1,'Running out within 7 days','runout']])
   assert.deepEqual(JSON.parse(JSON.stringify(c.summary({...s,costed:2,missingCost:0,value:1200})[1])),['KD 1,200','Order value','order'])
-  assert.equal(c.summary({...s,costed:1,missingCost:1,value:600})[1][0],'2,893 units · 30,868 m','default product retains the unit-aware partial-cost fallback')
+  assert.equal(c.summary({...s,costed:1,missingCost:1,value:600})[1][0],'Mixed units','default product retains the unit-aware partial-cost fallback')
   // Only the synthetic demo opts into a clearly labelled known-cost subtotal.
   assert.deepEqual(JSON.parse(JSON.stringify(c.summary({...s,costed:1,missingCost:1,value:600},true)[1])),['KD 600','Order value (known costs) · cost missing for 1 product','order'])
   assert.equal(c.summary({...s,units:new Map(),orders:0})[1][0],'—')

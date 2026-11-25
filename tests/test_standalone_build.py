@@ -87,6 +87,7 @@ def test_embedded_helpers_are_exact_baseline_including_po_builder(output):
 def test_no_external_dependencies_or_network_calls(output):
     _, path = output
     html = path.read_text()
+    html = html.replace('<a class="version-link" href="https://github.com/usegreymatter/inventory-manager/releases" target="_blank" rel="noopener noreferrer">Check for a newer version</a>', "")  # Explicit click-only release navigation.
     assert not re.search(r"(?:src|href)\s*=\s*['\"]\s*(?:https?:)?//", html, re.I)
     assert not re.search(r"\b(?:fetch|XMLHttpRequest|WebSocket|EventSource|sendBeacon|importScripts)\s*\(", html)
     # Embedded icons/fonts are offline dependencies. Reject every other CSS

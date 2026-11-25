@@ -1596,6 +1596,113 @@ def _guidance_calendar_demand(demand_at, as_of, endpoint):
     raise ValueError("Unsupported calendar")
 
 
+# Optional "stock counted on" date. Sales months end at as_of, but the stock
+# figure may have been counted later. Without a count date the stock is
+# assumed to be at as_of (unchanged behaviour). With one, the counted stock is
+# translated to an equivalent as_of balance so every existing projection,
+# run-out, order-by and quantity formula runs unchanged from the count date.
+STOCK_DATE_NOTICE_DAYS = 7
+STOCK_DATE_ZERO_SALES_WARNING = ("Stock count date is inside the last sales month, whose sales are 0, "
+                                 "so stock was not reduced for sales after the count. "
+                                 "If those sales are missing from the file, check run-out dates by hand.")
+
+
+def stock_date_reason(stock_date, as_of, today):
+    """None when an optional stock count date is usable, else a refusal."""
+    if date_ordinal(stock_date) is None:
+        return "Stock count date must be a real YYYY-MM-DD date."
+    start = as_of[:7] + "-01"
+    if stock_date < start:
+        return (f"Stock count date {stock_date} is before the last sales month ({as_of[:7]}). "
+                f"Use a count date from {start} onwards, or load newer sales.")
+    if date_ordinal(today) is not None and stock_date > today:
+        return f"Stock count date {stock_date} is after today ({today}). Use the date the stock was actually counted."
+    return None
+
+
+def stock_date_notice(as_of, today, stock_date=None):
+    """Warn when stock is silently assumed counted at the last sales month end."""
+    end, now = date_ordinal(as_of), date_ordinal(today)
+    if stock_date or end is None or now is None or now - end <= STOCK_DATE_NOTICE_DAYS:
+        return None
+    return (f"Stock is assumed counted on {as_of} (end of the last sales month), {now - end} days before today. "
+            "If it was counted later, set the stock count date so sales after the count are not subtracted twice.")
+
+
+def stock_date_adjustment(item, as_of, stock_date):
+    """Whole units to add to counted stock for the equivalent as_of balance.
+
+    After as_of: the guidance's own calendar demand from as_of to the end of the
+    count day, rounded down. Inside the last sales month: that month's sales
+    after the count day, rounded up and subtracted. Both round toward less
+    stock, so the translation never hides a need.
+    """
+    count, snapshot = date_ordinal(stock_date), date_ordinal(as_of)
+    if count > snapshot:
+        numerator, denominator = _guidance_calendar_demand(_guidance_demand(item), as_of, count)
+        return numerator // denominator
+    if count == snapshot:
+        return 0
+    year, month = map(int, as_of[:7].split("-"))
+    days = calendar.monthrange(year, month)[1]
+    numerator, denominator = _decimal_ratio(item["monthly_sales"][-1])
+    return -math.ceil(Fraction(numerator * (snapshot - count), denominator * days))
+
+
+def _stock_date_incoming_warning(item, as_of, stock_date):
+    late = [m for m in (item.get("receipts") or {}) if as_of[:7] < m <= stock_date[:7]]
+    facts = item.get("planning_facts")
+    pos = facts.get("incoming_pos") if isinstance(facts, dict) else None
+    if isinstance(pos, list):
+        late += [p for p in pos if isinstance(p, dict) and isinstance(p.get("due_date"), str) and as_of < p["due_date"] <= stock_date]
+    return ("Incoming stock due on or before the stock count date is still added on its date. "
+            "Remove it if it is already in the counted stock.") if late else None
+
+
+def apply_stock_date(data, stock_date, today, settings=None):
+    """Return a copy of data whose stock is translated from the count date.
+
+    Refuses an invalid date. Held items and items with lot quantities keep
+    their stock unchanged (lots carry a warning). No other forecast input moves.
+    """
+    reason = stock_date_reason(stock_date, data["as_of"], today)
+    if reason:
+        raise ValueError(reason)
+    items = []
+    for raw in data["items"]:
+        try:
+            physical = forecast(raw, data["months"], data["as_of"], settings=settings, today=today)
+        except (ValueError, TypeError, KeyError, OverflowError):
+            physical = {"held": True}
+        hand = raw.get("on_hand")
+        if physical.get("held") or not isinstance(hand, (int, float)) or isinstance(hand, bool) or not math.isfinite(hand):
+            items.append(raw)
+            continue
+        if raw.get("lots") is not None:
+            note = "Stock count date not applied: lot quantities must match stock on hand. Check run-out dates by hand."
+            items.append({**raw, "input_warnings": list(dict.fromkeys([*raw.get("input_warnings", []), note]))})
+            continue
+        last = raw["monthly_sales"][-1] if raw.get("monthly_sales") else None
+        usable = isinstance(last, (int, float)) and not isinstance(last, bool) and math.isfinite(last) and last >= 0
+        if stock_date < data["as_of"] and not usable:
+            note = "Stock count date not applied: the last month's sales are missing. Check run-out dates by hand."
+            items.append({**raw, "input_warnings": list(dict.fromkeys([*raw.get("input_warnings", []), note]))})
+            continue
+        item = {**raw, **physical, "on_hand": raw["on_hand"], "monthly_sales": raw["monthly_sales"], "as_of": data["as_of"]}
+        adjust = stock_date_adjustment(item, data["as_of"], stock_date)
+        moved = {**raw, "on_hand": max(0, raw["on_hand"] + adjust), "counted_on_hand": raw["on_hand"],
+                 "stock_counted_on": stock_date, "stock_date_adjustment": adjust}
+        notes = [_stock_date_incoming_warning(raw, data["as_of"], stock_date)]
+        if stock_date < data["as_of"] and last == 0:
+            # Blank sales cells are read as 0, so a 0 here may hide sales after the count.
+            notes.append(STOCK_DATE_ZERO_SALES_WARNING)
+        notes = [note for note in notes if note]
+        if notes:
+            moved["input_warnings"] = list(dict.fromkeys([*raw.get("input_warnings", []), *notes]))
+        items.append(moved)
+    return {**data, "items": items, "stock_counted_on": stock_date}
+
+
 def dated_facts(item, as_of, today):
     """Validate optional per-item bridge facts; never trust a readiness assertion."""
     facts = item.get("planning_facts")

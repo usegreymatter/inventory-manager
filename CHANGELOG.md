@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+### Inventory Manager v1.3.0-beta
+
+- Added a first-screen file button and English/Arabic-header synthetic CSV templates.
+- Separated the latest sales month from today; old sales data is flagged.
+- Added a local printable order list grouped by supplier, retaining caveats.
+- Simplified method choice, mixed-unit headlines and import warning presentation.
+- Added an Odoo/Excel preparation guide. Forecast and reorder calculations are unchanged.
+- [Release notes and feedback](docs/release-notes/v1.3.0-beta.md).
+
 ### Inventory Manager v1.2.2-beta
 
 - Added purchase-review warnings for a single-month sales spike, three or more trailing zero-sales months with a positive order, and zero latest-month sales when no stock remains. These warnings do not automatically change sales history or quantities.

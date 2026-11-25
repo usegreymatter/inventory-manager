@@ -34,7 +34,8 @@ const embedded = block(html, 'CORE'), helpers = block(html, 'HELPERS')
 test('exact unmodified plugin core and baseline helpers including PO builder', () => {
   assert.equal(embedded, expectedCore)
   assert.equal(helpers, baselineHelpers)
-  assert.doesNotMatch(html, /(?:src|href)\s*=\s*['"]\s*(?:https?:)?\/\//i)
+  const offline = html.replace('<a class="version-link" href="https://github.com/usegreymatter/inventory-manager/releases" target="_blank" rel="noopener noreferrer">Check for a newer version</a>', "") // Exact click-only navigation, never a dependency.
+  assert.doesNotMatch(offline, /(?:src|href)\s*=\s*['"]\s*(?:https?:)?\/\//i)
   assert.doesNotMatch(html, /\b(?:fetch|XMLHttpRequest|WebSocket|EventSource|sendBeacon|importScripts)\s*\(/)
 })
 const standalone = load(embedded + '\n' + helpers)

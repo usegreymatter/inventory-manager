@@ -202,7 +202,7 @@ function gmOpenSettings(supplier=null){
 gmSettingsSheet.addEventListener('close',()=>gmSheetReturnFocus?.isConnected&&gmSheetReturnFocus.focus({preventScroll:true}))
 gmSettingsSheet.addEventListener('click',event=>{if(event.target===gmSettingsSheet&&event.clientX<gmSettingsSheet.getBoundingClientRect().left)gmSettingsSheet.close()})
 // Preserve settings across product recalculation, not just the four original controls.
-saveSettings=function(next){settings=normalizeOrderSettings(next);try{localStorage.setItem(gmDatasetSettingsKey,JSON.stringify(gmPortableSettings()));gmStorageStatus.textContent='Settings saved for this dataset on this device. CSV contents are not saved.'}catch{gmStorageStatus.textContent='Settings could not be saved. Changes still apply in this tab.'}render();gmUndoSettingPreset.disabled=!gmSettingPresetUndo||gmSettingPresetUndo.dataset!==data||gmSettingPresetUndo.after!==JSON.stringify(gmPortableSettings());gmUpdateSafetyPreview();gmUpdatePresetNote()}
+saveSettings=function(next){settings=normalizeOrderSettings(next);try{localStorage.setItem(gmDatasetSettingsKey,JSON.stringify(gmPortableSettings()));gmStorageStatus.textContent='Settings saved for this dataset in this browser on this device. Imported data is saved only if you opt in.'}catch{gmStorageStatus.textContent='Settings could not be saved. Changes still apply in this tab.'}render();gmUndoSettingPreset.disabled=!gmSettingPresetUndo||gmSettingPresetUndo.dataset!==data||gmSettingPresetUndo.after!==JSON.stringify(gmPortableSettings());gmUpdateSafetyPreview();gmUpdatePresetNote()}
 const gmSettingsRender=render
 render=function(){gmLoadDatasetSettings();return gmSettingsRender()}
 const gmSettingsPanel=chartPanel

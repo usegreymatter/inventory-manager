@@ -3,7 +3,8 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import fs from 'node:fs'
 import vm from 'node:vm'
-import {execFileSync} from 'node:child_process'
+import pythonStdin from './python-stdin.cjs'
+function pythonExec(args,options){const result=pythonStdin(args,options.input);assert.equal(result.status,0,result.error?.message||result.stderr);return result.stdout}
 const source=fs.readFileSync('desktop/plugin.js','utf8')
 function api(text=source){const ctx=vm.createContext({TextEncoder,TextDecoder,atob,btoa});vm.runInContext(text.slice(text.indexOf('const SAMPLE ='),text.indexOf('const pageStyle =')).replaceAll('export ','')+'\nthis.api={parseCsv,understandStockWorkbook,generatedProductCode,normalizedProductName,demandSafetyWarnings}',ctx);return ctx.api}
 const current=api(),headers=['Name','On Hand','Warehouse','2025-01','2025-02','2025-03'],row=(name,location='East')=>[name,'5',location,'1','1','1'],csv=rows=>rows.map(r=>r.join(',')).join('\n'),smart=(rows,engine=current)=>engine.understandStockWorkbook([{name:'CSV',rows}])
@@ -40,7 +41,7 @@ test('safe name-only, numeric ignored columns, blank-name wording and combined w
 })
 test('NFC and full Unicode casefold identities match Python, including every folding character',()=>{
  const names=['Widget',' WIDGET ','Café','Cafe\u0301','Straße','STRASSE','Σ','ς','Ꭰ','ꭰ','اسم','آخر','İ','ı','ﬃ','👩‍🔬']
- const py=JSON.parse(execFileSync(process.env.PYTHON||'/usr/bin/python3',['-c',`import sys,json,types
+ const py=JSON.parse(pythonExec(['-c',`import sys,json,types
 p=types.ModuleType('sr');p.__path__=['.'];sys.modules['sr']=p
 from sr.csv_import import generated_product_code,normalized_product_name
 names=json.load(sys.stdin)
@@ -51,7 +52,7 @@ print(json.dumps(dict(names=[[normalized_product_name(n),generated_product_code(
 })
 test('safe generated smart-import results match Python, including metadata and blank names',()=>{
  const rows=[['Name','On Hand','Warehouse','2025-01','2025-02','2025-03'],row('Widget'),row('آخر','West'),row('','North')]
- const expected=JSON.parse(execFileSync(process.env.PYTHON||'/usr/bin/python3',['-c',`import sys,json,types
+ const expected=JSON.parse(pythonExec(['-c',`import sys,json,types
 p=types.ModuleType('sr');p.__path__=['.'];sys.modules['sr']=p
 from sr.smart_import import understand_workbook
 print(json.dumps(understand_workbook(json.load(sys.stdin))))`],{input:JSON.stringify([{name:'CSV',rows}]),encoding:'utf8'}))
@@ -66,7 +67,7 @@ for(const count of [1,3,4,500])test(`duplicate-name error is exactly bounded and
  if(count>3)shown.push(`…and ${count-3} more repeated names.`)
  const expected=shown.join(' ')
  for(const load of [()=>current.parseCsv(csv(rows)),()=>smart(rows)])assert.throws(load,e=>{assert.equal(e.message,expected);return true})
- const py=JSON.parse(execFileSync(process.env.PYTHON||'/usr/bin/python3',['-c',`import sys,json,types
+ const py=JSON.parse(pythonExec(['-c',`import sys,json,types
 p=types.ModuleType('sr');p.__path__=['.'];sys.modules['sr']=p
 from sr.csv_import import preflight_csv
 from sr.smart_import import understand_workbook
@@ -93,7 +94,7 @@ for(const header of ['Article No','Ref','Unmapped quantity','Mystery No'])test(`
  const report=smart(rows)
  if(blocked){assert.ok(report.missing.includes('Product code (SKU)'));assert.ok(report.warnings.includes(expected))}
  else assert.equal(report.missing.length,0)
- const py=JSON.parse(execFileSync(process.env.PYTHON||'/usr/bin/python3',['-c',`import sys,json,types
+ const py=JSON.parse(pythonExec(['-c',`import sys,json,types
 p=types.ModuleType('sr');p.__path__=['.'];sys.modules['sr']=p
 from sr.csv_import import preflight_csv
 from sr.smart_import import understand_workbook

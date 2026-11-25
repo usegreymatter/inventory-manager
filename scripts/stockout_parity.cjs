@@ -9,9 +9,11 @@ const {execFileSync} = require('node:child_process')
 const root = path.resolve(__dirname, '..')
 const python = process.env.PYTHON || '/usr/bin/python3'
 const bridge = path.join(root, 'tests/stockout_advisory_bridge.py')
-const options = {cwd: root, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024}
+const options = {cwd: root, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024, timeout:120000}
 const cases = JSON.parse(execFileSync(python, [bridge, '--corpus'], options))
-const expected = JSON.parse(execFileSync(python, [bridge], {...options, input: JSON.stringify(cases)}))
+const expectedRun = require('../tests/python-stdin.cjs')([bridge],JSON.stringify(cases),options)
+assert.equal(expectedRun.status,0,expectedRun.error?.message||expectedRun.stderr)
+const expected = JSON.parse(expectedRun.stdout)
 const source = fs.readFileSync(path.join(root, 'desktop/plugin.js'), 'utf8')
 const context = vm.createContext({TextEncoder, TextDecoder, atob, btoa})
 vm.runInContext(source.slice(source.indexOf('const SAMPLE ='), source.indexOf('const pageStyle =')).replaceAll('export ', '') +

@@ -5,7 +5,8 @@ gmRelative=function(date){
   return days===0?'On snapshot date':days>0?`In ${days} ${days===1?'day':'days'}`:`${-days} ${days===-1?'day':'days'} before snapshot`
 }
 gmSnapshotLabel=function(){
-  $('snapshot').textContent=`As of ${gmDate(data.as_of)} · ${sourceName==='sample'?'Sample data':'Local CSV'}`
+  const latest=data.months?.at(-1),through=latest?new Date(latest+'-01T00:00:00Z').toLocaleDateString('en-GB',{month:'short',year:'numeric',timeZone:'UTC'}):'unknown'
+  $('snapshot').textContent=`Data through ${through} · today ${gmDate(currentToday)} · ${sourceName==='sample'?'Sample data':sourceName==='demo'?'Synthetic demo':'Local file'}`
 }
 // delivery_date is a confirmed gap-ending receipt, not a calculated new-order arrival.
 // Keep confirmed delivery separate from the chart-focus suggested-order overlay.
@@ -35,6 +36,9 @@ fullChart=function(row){
   }
   return figure
 }
+function gmBBigOrderExplanation(g){
+  return bigOrderWarning(g,settings)+' The months describe the suggested order quantity divided by estimated monthly demand, not the time left in your current stock. The Runs out forecast uses existing stock and recorded incoming supply; it excludes this suggested new order. Order now means the buying deadline is today or overdue, allowing for supplier lead time. Check the quantity, sales history and existing orders before buying.'
+}
 const gmBPanel=chartPanel
 chartPanel=function(row){
   const panel=gmBPanel(row),g=row.guidance
@@ -57,6 +61,10 @@ chartPanel=function(row){
   if(!messages.length)messages.push('Receipts shown as monthly totals; exact date unavailable')
   context.prepend(node('p',messages.join('. ')+'.','chart-note'))
   about.querySelector('summary').textContent='About this estimate';about.querySelector('summary').title='Chart details, warnings and assumptions'
+  if(bigOrderWarning(g,settings)){
+    const note=node('details',null,'big-order-explanation'),summary=node('summary','Large order · check quantity')
+    summary.title=gmBBigOrderExplanation(g);note.append(summary,node('p',gmBBigOrderExplanation(g)));context.prepend(note)
+  }
   panel.querySelector('.gm-precision').remove()
   return panel
 }

@@ -379,3 +379,54 @@ def test_name_generated_duplicate_fails_closed_in_mcp(tmp_path):
     assert result.returncode != 0
     assert result.stdout == b''
     assert result.stderr, 'startup rejects ambiguous source before serving tools'
+
+
+def test_demo_without_file_and_mutually_exclusive_sources():
+    args = server.parser().parse_args(['--demo'])
+    s = server.Snapshot(args)
+    assert s.today == '2026-11-01'
+    assert s.meta['source_kind'] == 'bundled_synthetic_sample'
+    assert s.data['as_of'] == '2026-10-31'
+    assert len(s.call('list_reorders', {'status':'all'})['items']) > 0
+    for other in ('--csv', '--bundle'):
+        with pytest.raises(SystemExit):
+            server.parser().parse_args(['--demo', other, '/private/not-opened'])
+    messages = [request('initialize', {'protocolVersion':'2025-11-25','capabilities':{},'clientInfo':{}}, False),
+                dict(jsonrpc='2.0',method='notifications/initialized'), request('tools/list',modern=False),
+                *[request('tools/call', {'name':name, 'arguments':args}, False, id=i+3)
+                  for i,(name,args) in enumerate([('list_reorders', {'status':'all'}), ('explain_item', {'sku':s.rows[0]['sku']}), ('data_health', {})])]]
+    result = subprocess.run([sys.executable,'-B',str(ROOT/'mcp_server.py'),'--demo'],
+                            input=''.join(json.dumps(m)+'\n' for m in messages),capture_output=True,text=True)
+    assert result.returncode == 0 and result.stderr == ''
+    output = [json.loads(line) for line in result.stdout.splitlines()]
+    assert len(output) == 5 and all('error' not in response for response in output)
+    assert output[0]['result']['serverInfo']['version'] == '1.3.0-beta'
+    assert len(output[1]['result']['tools']) == 3
+    for response in output[2:]:
+        assert response['result']['structuredContent']['source_kind'] == 'bundled_synthetic_sample'
+
+
+def test_risk_startup_names_incomplete_month_and_missing_incoming(tmp_path):
+    path = tmp_path/'private-file.csv'
+    path.write_text('sku,name,unit,on_hand,supplier_days,2026-09,2026-10,2026-11\nA,Synthetic,pieces,0,14,30,30,12\n')
+    result = subprocess.run([sys.executable,'-B',str(ROOT/'mcp_server.py'),'--csv',str(path),'--today','2026-11-24'],capture_output=True,text=True)
+    assert result.returncode == 1 and result.stdout == ''
+    assert 'Latest month (2026-11) is still in progress' in result.stderr
+    assert 'Incoming orders column missing or incomplete' in result.stderr
+    assert '--show-orders-anyway' in result.stderr
+    assert str(tmp_path) not in result.stderr and path.name not in result.stderr
+
+
+def test_duplicate_startup_names_bounded_examples_and_escapes_paths(tmp_path):
+    path = tmp_path/'private-file.csv'
+    header = 'name,unit,on_hand,supplier_days,on_order,2026-08,2026-09,2026-10\n'
+    path.write_text(header+''.join(f'{name},pieces,0,14,0,30,30,30\n' for name in ['Bolt M8','Bolt M8','Nut M8','Nut M8']))
+    result = subprocess.run([sys.executable,'-B',str(ROOT/'mcp_server.py'),'--csv',str(path)],capture_output=True,text=True)
+    assert result.returncode == 1 and result.stdout == ''
+    assert 'Duplicate product names: "Bolt M8", "Nut M8"' in result.stderr
+    assert str(tmp_path) not in result.stderr
+    error = ValueError('Two rows share the name "/private/secret" and there is no product code column')
+    assert '/private' not in server.safe_source_reason(error)
+    error = ValueError('Two rows share the name "Bolt\x1b[31m" and there is no product code column')
+    assert '\x1b' not in server.safe_source_reason(error)
+    assert str(tmp_path) not in server.safe_source_reason(OSError(str(tmp_path)))

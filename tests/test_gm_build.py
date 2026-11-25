@@ -49,6 +49,7 @@ def test_gm_shares_a3_logic_verbatim(variant):
 @pytest.mark.parametrize('variant', ['option-gm-a', 'option-gm-b', 'option-gm-c'])
 def test_gm_is_offline_with_shared_tokens(variant):
     html = BUILDER.build(variant)
+    html = html.replace('<a class="version-link" href="https://github.com/usegreymatter/inventory-manager/releases" target="_blank" rel="noopener noreferrer">Check for a newer version</a>', "")  # Explicit click-only release navigation.
     assert not re.search(r'(?:src|href)\s*=\s*[\'\"]\s*(?:https?:)?//', html, re.I)
     assert not re.search(r'\b(?:fetch|XMLHttpRequest|WebSocket|EventSource|sendBeacon)\s*\(', html)
     assert (DESIGN / 'styles-gm.css').read_text() in html

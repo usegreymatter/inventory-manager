@@ -6,6 +6,7 @@ import vm from 'node:vm'
 import path from 'node:path'
 import test from 'node:test'
 import {spawnSync,execFileSync} from 'node:child_process'
+import pythonStdin from './python-stdin.cjs'
 const source=fs.readFileSync(new URL('../desktop/plugin.js',import.meta.url),'utf8')
 const health=fs.readFileSync(new URL('../standalone/design/health.js',import.meta.url),'utf8')
 function core(source,withHealth=false){
@@ -96,7 +97,7 @@ test('seeded combined supply/customer/reservation parity on all calculation outp
  const seasonal=caseOf(committed(item(100),[order(50,'2026-12-31',false)]))
  seasonal.months=Array.from({length:12},(_,i)=>`${2025+Math.floor((i+10)/12)}-${String((i+10)%12+1).padStart(2,'0')}`)
  seasonal.item.monthly_sales=[10,20,30,15,40,50,35,20,10,25,60,45];cases.push(seasonal)
- const py=spawnSync('/usr/bin/python3',['tests/phase2_bridge.py'],{input:JSON.stringify(cases),encoding:'utf8',env:{...process.env,TMPDIR:process.cwd()+'/.scratch'},maxBuffer:32*1024*1024})
+ const py=pythonStdin(['tests/phase2_bridge.py'],JSON.stringify(cases))
  assert.equal(py.status,0,py.stderr)
  const expected=JSON.parse(py.stdout)
  cases.forEach((c,i)=>assert.deepEqual(evaluate(c),expected[i],`combined seed ${i}: ${JSON.stringify(c)}`))
@@ -128,13 +129,13 @@ test('review F3: all optional physical fields use today for safety and late PO',
  const raw=item(10);raw.planning_facts={version:'1.0',warehouses:['MAIN'],incoming_pos:[{po_line_id:'P',sku:'A',warehouse:'MAIN',supplier:'S',remaining_qty:60,due_date:'2026-11-01',status:'confirmed'}]}
  const c=caseOf(raw,'2026-11-02',{big_order_months:6}),r=evaluate(c)
  assert.equal(r.physical.suggested_order,null);assert.equal(r.physical.purchase_hold,true)
- const py=spawnSync('/usr/bin/python3',['tests/phase2_bridge.py'],{input:JSON.stringify([c]),encoding:'utf8'})
+ const py=pythonStdin(['tests/phase2_bridge.py'],JSON.stringify([c]))
  assert.equal(py.status,0,py.stderr);assert.deepEqual(r,JSON.parse(py.stdout)[0])
 })
 test('review notes: malformed error shapes and prototype SKU gates stay in parity',()=>{
  for(const errors of [null,{dated_incoming:true},{committed_demand:true}]){
   const c=caseOf(committed());c.item.planning_facts.errors=errors
-  const py=spawnSync('/usr/bin/python3',['tests/phase2_bridge.py'],{input:JSON.stringify([c]),encoding:'utf8'})
+  const py=pythonStdin(['tests/phase2_bridge.py'],JSON.stringify([c]))
   assert.equal(py.status,0,py.stderr);assert.deepEqual(evaluate(c),JSON.parse(py.stdout)[0])
  }
  const raw=committed();raw.sku='__proto__';raw.planning_facts.customer_orders[0].sku='__proto__';raw.planning_facts.stock_states[0].sku='__proto__'

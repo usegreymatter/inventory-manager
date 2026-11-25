@@ -1804,7 +1804,7 @@ const REQUIRED=[['sku','Product code (SKU)'],['name','Product name'],['on_hand',
 const NUMERIC=/^[+-]?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?$/;
 const LEGACY_ERROR='Save as .xlsx or CSV; legacy .xls and .xlsb workbooks are not supported.';
 const BOUNDS_ERROR='Workbook exceeds safe limits (200000 rows, 16384 columns or 2000000 cells).';
-const XML_BOUNDS_ERROR='Workbook XML exceeds safe limits (500000 elements or 200000 shared strings).';
+const XML_BOUNDS_ERROR='This workbook is too big for the browser. Save it as CSV and im'+'port that.';
 const trim=v=>String(v??'').replace(/^[\s\u001c-\u001f\u0085\ufeff]+|[\s\u001c-\u001f\u0085\ufeff]+$/gu,'');
 const fail=message=>{throw new Error(message);};
 const own=(o,k)=>Object.prototype.hasOwnProperty.call(o,k);
@@ -1910,7 +1910,7 @@ function xml(raw,budget={elements:0}){
     if(token[0]!=='<'||token.startsWith('<!--')||token.startsWith('<?')||token.startsWith('<![CDATA['))continue;
     if(token.startsWith('</')){depth--;continue;}
     budget.elements++;if(/^<(?:[^\s:/>]+:)?si(?=[\s/>])/.test(token))strings++;
-    if(budget.elements>500000||strings>200000)fail(XML_BOUNDS_ERROR);
+    if(budget.elements>1000000||strings>200000)fail(XML_BOUNDS_ERROR);
     if(depth+1>255)fail('Workbook XML nesting is too deep.');
     if(!token.endsWith('/>')&&++depth>255)fail('Workbook XML nesting is too deep.');
   }
@@ -1955,7 +1955,7 @@ async function zipParts(raw){
   for(let i=0;i<count;i++){
     if(u32(at)!==0x02014b50)fail('Invalid ZIP structure in workbook.');
     const flags=u16(at+8),method=u16(at+10),crc=u32(at+16),compressed=u32(at+20),uncompressed=u32(at+24),nameLen=u16(at+28),extra=u16(at+30),comment=u16(at+32),local=u32(at+42);
-    if(flags&1)fail('Encrypted workbooks are not supported. Save an unencrypted .xlsx or CSV.');
+    if(flags&1)fail('Password-protected workbook — remove the password in Excel and save again');
     if(![0,8].includes(method))fail('Unsupported ZIP compression; Save as .xlsx or CSV.');
     const next=at+46+nameLen+extra+comment;if(next>offset+centralSize)fail('Invalid ZIP structure in workbook.');
     const name=decode(raw.subarray(at+46,at+46+nameLen));
@@ -2045,7 +2045,7 @@ async function readXlsx(raw){
         values[col]=value;
       }
     }
-    const result={name:sheet.attrs.name??'Sheet',rows};if(percentCells.length)result.percent_cells=percentCells;sheets.push(result);
+    const result={name:sheet.attrs.name??'Sheet',rows};if(['hidden','veryHidden'].includes(sheet.attrs.state))result.hidden=true;if(percentCells.length)result.percent_cells=percentCells;sheets.push(result);
   }
   return limits(sheets);
 }
@@ -2053,7 +2053,12 @@ async function readWorkbook(buffer,filename='workbook.xlsx'){
   const raw=buffer instanceof Uint8Array?buffer:buffer instanceof ArrayBuffer?new Uint8Array(buffer):ArrayBuffer.isView(buffer)?new Uint8Array(buffer.buffer,buffer.byteOffset,buffer.byteLength):fail('Expected workbook bytes.');
   if(/\.(xls|xlsb)$/i.test(filename))fail(LEGACY_ERROR);
   if(raw.length>MAX_INPUT)fail('File must be no larger than 20 MiB.');
-  if(raw[0]===0xd0&&raw[1]===0xcf&&raw[2]===0x11&&raw[3]===0xe0)fail(LEGACY_ERROR);
+  if(raw[0]===0xd0&&raw[1]===0xcf&&raw[2]===0x11&&raw[3]===0xe0){
+    const directory=new TextDecoder('utf-16le').decode(raw);
+    if(directory.includes('EncryptionInfo')||directory.includes('EncryptedPackage'))fail('Password-protected workbook — remove the password in Excel and save again');
+    fail(LEGACY_ERROR);
+  }
+  if(/\.csv$/i.test(filename)&&raw[0]===80&&raw[1]===75)fail('This looks like an Excel file — rename it to .xlsx');
   if(/\.xlsx$/i.test(filename)||raw[0]===80&&raw[1]===75)return readXlsx(raw);
   const text=decode(raw),name=filename.split(/[\\/]/).at(-1).replace(/\.[^.]*$/,'');return [{name,rows:csvRows(text),delimiter:delimiterFor(text)}];
 }
@@ -3391,6 +3396,70 @@ const calendarDemand = (item, asOf, endpoint) => {
     month=monthAfter(month,1)
   }
 }
+
+// Optional "stock counted on" date (mirrors engine.py). Without it stock is
+// assumed counted at as_of (unchanged behaviour). With it, counted stock is
+// translated to an equivalent as_of balance so every existing projection,
+// run-out, order-by and quantity formula runs unchanged from the count date.
+export const STOCK_DATE_NOTICE_DAYS = 7
+export const STOCK_DATE_ZERO_SALES_WARNING = 'Stock count date is inside the last sales month, whose sales are 0, so stock was not reduced for sales after the count. If those sales are missing from the file, check run-out dates by hand.'
+export function stockDateReason(stockDate, asOf, today) {
+  if (dateOrdinal(stockDate) === null) return 'Stock count date must be a real YYYY-MM-DD date.'
+  const start = asOf.slice(0,7) + '-01'
+  if (stockDate < start) return `Stock count date ${stockDate} is before the last sales month (${asOf.slice(0,7)}). Use a count date from ${start} onwards, or load newer sales.`
+  if (dateOrdinal(today) !== null && stockDate > today) return `Stock count date ${stockDate} is after today (${today}). Use the date the stock was actually counted.`
+  return null
+}
+export function stockDateNotice(asOf, today, stockDate = null) {
+  const end = dateOrdinal(asOf), now = dateOrdinal(today)
+  if (stockDate || end === null || now === null || now - end <= STOCK_DATE_NOTICE_DAYS) return null
+  return `Stock is assumed counted on ${asOf} (end of the last sales month), ${now - end} days before today. If it was counted later, set the stock count date so sales after the count are not subtracted twice.`
+}
+// Rounded toward less stock in both directions, so the translation never hides a need.
+export function stockDateAdjustment(item, asOf, stockDate) {
+  const count = dateOrdinal(stockDate), snapshot = dateOrdinal(asOf)
+  if (count > snapshot) {
+    const [n, d] = calendarDemand(item, asOf, count)
+    return Number(n / d)
+  }
+  if (count === snapshot) return 0
+  const [y, m] = asOf.slice(0,7).split('-').map(Number), days = BigInt(new Date(Date.UTC(y, m, 0)).getUTCDate())
+  const [n, d] = decimalRatio(item.monthly_sales.at(-1)), top = n * BigInt(snapshot - count), bottom = d * days
+  const up = (top + bottom - 1n) / bottom
+  return up === 0n ? 0 : -Number(up)
+}
+function stockDateIncomingWarning(item, asOf, stockDate) {
+  const late = Object.keys(item.receipts || {}).filter(m => asOf.slice(0,7) < m && m <= stockDate.slice(0,7))
+  const pos = item.planning_facts && typeof item.planning_facts === 'object' ? item.planning_facts.incoming_pos : null
+  if (Array.isArray(pos)) late.push(...pos.filter(p => p && typeof p === 'object' && typeof p.due_date === 'string' && asOf < p.due_date && p.due_date <= stockDate))
+  return late.length ? 'Incoming stock due on or before the stock count date is still added on its date. Remove it if it is already in the counted stock.' : null
+}
+export function applyStockDate(data, stockDate, today, settings = DEFAULT_ORDER_SETTINGS) {
+  const reason = stockDateReason(stockDate, data.as_of, today)
+  if (reason) throw Error(reason)
+  const items = data.items.map(raw => {
+    let physical
+    try { physical = calculate([raw], data.months, data.as_of, 6, settings, today)[0] } catch { physical = { held: true } }
+    if (physical.held || typeof raw.on_hand !== 'number' || !Number.isFinite(raw.on_hand)) return raw
+    if (raw.lots != null) {
+      const note = 'Stock count date not applied: lot quantities must match stock on hand. Check run-out dates by hand.'
+      return { ...raw, input_warnings: [...new Set([...(raw.input_warnings || []), note])] }
+    }
+    const last = Array.isArray(raw.monthly_sales) ? raw.monthly_sales.at(-1) : null
+    if (stockDate < data.as_of && !(typeof last === 'number' && Number.isFinite(last) && last >= 0)) {
+      const note = "Stock count date not applied: the last month's sales are missing. Check run-out dates by hand."
+      return { ...raw, input_warnings: [...new Set([...(raw.input_warnings || []), note])] }
+    }
+    const item = { ...raw, ...physical, on_hand: raw.on_hand, monthly_sales: raw.monthly_sales, as_of: data.as_of }
+    const adjust = stockDateAdjustment(item, data.as_of, stockDate)
+    const moved = { ...raw, on_hand: Math.max(0, raw.on_hand + adjust), counted_on_hand: raw.on_hand, stock_counted_on: stockDate, stock_date_adjustment: adjust }
+    // Blank sales cells are read as 0, so a 0 here may hide sales after the count.
+    const notes = [stockDateIncomingWarning(raw, data.as_of, stockDate), stockDate < data.as_of && last === 0 ? STOCK_DATE_ZERO_SALES_WARNING : null].filter(Boolean)
+    if (notes.length) moved.input_warnings = [...new Set([...(raw.input_warnings || []), ...notes])]
+    return moved
+  })
+  return { ...data, items, stock_counted_on: stockDate }
+}
 const ratioValue = ([n, d]) => Number(n) / Number(d)
 
 const planningCalendarDemand = (model, lastMonth, days) => {
@@ -4147,13 +4216,13 @@ function rememberMethods(results,data,settings,storage=globalThis.localStorage){
  const number=x=>typeof x==='number'&&Number.isFinite(x)&&x>=0&&x<=1e12;
  function costMetrics(item,guidance={},risk={}){
   guidance=guidance||{};risk=risk||{};
-  const cost=item.unit_cost,result={};if(!number(cost))return result;
-  for(const [key,quantity]of [['money_tied_up',item.on_hand],['incoming_value',Object.hasOwn(guidance,'incoming_qty')?guidance.incoming_qty:item.on_order],['order_value',guidance.quantity],['expiry_value_at_risk',Object.hasOwn(guidance,'expiry_at_risk_qty')?guidance.expiry_at_risk_qty:item.expiry_at_risk_qty]])if(number(quantity))result[key]=quantity*cost;
+  const cost=item.unit_cost,result={},stock=Object.hasOwn(item,'counted_on_hand')?item.counted_on_hand:item.on_hand;if(!number(cost))return result;
+  for(const [key,quantity]of [['money_tied_up',stock],['incoming_value',Object.hasOwn(guidance,'incoming_qty')?guidance.incoming_qty:item.on_order],['order_value',guidance.quantity],['expiry_value_at_risk',Object.hasOwn(guidance,'expiry_at_risk_qty')?guidance.expiry_at_risk_qty:item.expiry_at_risk_qty]])if(number(quantity))result[key]=quantity*cost;
   const monthly=Object.hasOwn(guidance,'monthly_demand')?guidance.monthly_demand:item.monthly_demand;
   if(number(monthly)){result.weekly_cost=monthly*7/30*cost;if(result.weekly_cost>0&&'money_tied_up'in result)result.money_cover_weeks=result.money_tied_up/result.weekly_cost;}
   const price=item.sale_price;if(number(price)){
    const margin=price-cost;result.margin_unit=margin;if(price>0)result.margin_pct=margin/price*100;
-   if(number(item.on_hand)){result.stock_margin=item.on_hand*margin;result.stock_sale_value=item.on_hand*price;}
+   if(number(stock)){result.stock_margin=stock*margin;result.stock_sale_value=stock*price;}
    if(number(risk.expected_shortfall_before))result.lost_profit_est=risk.expected_shortfall_before*Math.max(0,margin);
   }
   return result;

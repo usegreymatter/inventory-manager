@@ -22,7 +22,7 @@ _cli_spec.loader.exec_module(cli)
 MODERN = '2026-07-28'
 LEGACY = ('2025-11-25', '2025-06-18', '2024-11-05')
 VERSIONS = (MODERN, *LEGACY)
-INFO = {'name': 'inventory-manager', 'version': '1.2.2-beta'}
+INFO = {'name': 'inventory-manager', 'version': '1.3.0-beta'}
 MAX_LINE = 1024 * 1024
 MAX_RESPONSE = 2 * 1024 * 1024
 PREFIX = 'io.modelcontextprotocol/'
@@ -69,15 +69,46 @@ def regular(path):
     return p
 
 
+class InputReviewError(ValueError):
+    """Trusted review diagnostics, never raw importer exceptions or file paths."""
+
+
+def input_review_message(review):
+    risks = []
+    # Reasons can include source SKUs. Only complete known diagnostics are safe.
+    fixed = (
+        'Sales dates are in the future. Dates may be shifted — check the sales period before ordering.',
+        'Sales and stock units disagree — convert both to the same unit before ordering.',
+        'More than 20% of rows lack stock or sales. Missing sales can look like zero demand; check the file before ordering.',
+    )
+    for reason in review.get('reasons', []):
+        if not isinstance(reason, str) or len(reason) > 500 or any(ord(c) < 0x20 or 0x7f <= ord(c) <= 0x9f for c in reason):
+            continue
+        if reason in fixed or re.fullmatch(
+                r'Reserved stock could not be subtracted for (?:[1-9][0-9]{0,3}|10000) rows — they were set aside\. Check stock and reserved quantities before ordering\.', reason) or re.fullmatch(
+                r'Latest month \([1-9][0-9]{3}-(?:0[1-9]|1[0-2])\) is still in progress — partial sales may lower the forecast\. Remove it or wait for month end\.', reason):
+            risks.append(reason)
+    if review.get('incoming_unknown'):
+        risks.append('Incoming orders column missing or incomplete: incoming supply is unknown and purchase estimates assume 0. Check existing orders before buying.')
+    return ' '.join(risks or ['Input review flagged risks.']) + ' Check the file, then use --show-orders-anyway to acknowledge these risks.'
+
+
 def safe_source_reason(error):
-    text = str(error)
+    if isinstance(error, InputReviewError):
+        return str(error)
+    text = str(error)[:2048]
     if text in ('CSV must be a local file no larger than 2 MiB.', 'CSV contains more than 10000 rows.', 'Add at least three YYYY-MM monthly sales columns after supplier_days.'):
         return text
     match = re.fullmatch(r'CSV is missing required ([a-z ,]+) columns?\. Required columns are product code, product name and stock on hand; unit and supplier lead time are optional\. Common ERP names also work, e\.g\. Item Code, Item Name, UoM, Qty On Hand, Lead Time\.', text)
     if match:
         return text
-    if text.endswith('use --show-orders-anyway to acknowledge these risks.'):
-        return 'Input review flagged risks. Check the file, then add --show-orders-anyway to acknowledge them.'
+    # Only the exact duplicate-name diagnostic may expose bounded source labels.
+    # JSON quoting escapes terminal controls; path-like labels are withheld.
+    if len(text) <= 2048:
+        names = re.findall(r'Two rows share the name "(.*?)" and there is no product code column', text)[:3]
+        if names:
+            labels = [json.dumps(name[:128] if not any(c in name for c in '/\\') else '[path-like name omitted]', ensure_ascii=True) for name in names]
+            return 'Duplicate product names: ' + ', '.join(labels) + '. Add a product code column so rows are not mixed up.'
     return 'Check the local CSV or bundle path, required columns (product code, product name, stock on hand, three or more monthly sales columns) and whether flagged risks need --show-orders-anyway.'
 
 
@@ -103,6 +134,7 @@ def parser():
     group = p.add_mutually_exclusive_group(required=True)
     group.add_argument('--csv')
     group.add_argument('--bundle')
+    group.add_argument('--demo', action='store_true', help='Serve the bundled synthetic sample; no input file required.')
     p.add_argument('--settings')
     p.add_argument('--today', type=cli._iso_date)
     p.add_argument('--show-orders-anyway', action='store_true')
@@ -113,7 +145,7 @@ def parser():
 
 class Snapshot:
     def __init__(self, args):
-        self.today = args.today or date.today().isoformat()
+        self.today = args.today or ('2026-11-01' if args.demo else date.today().isoformat())
         engine, sources = cli._load_modules()
         self.settings = {}
         if args.settings:
@@ -126,7 +158,11 @@ class Snapshot:
                 raise ValueError()
             self.settings = engine.validate_order_settings(saved)
             self.settings['show_costs'] = costs
-        if args.bundle:
+        if args.demo:
+            if args.stock_includes_reserved or args.incoming_not_in_file:
+                raise ValueError()
+            self.data = sources.load_sample()
+        elif args.bundle:
             root = Path(args.bundle).expanduser()
             if not root.is_dir() or args.stock_includes_reserved or args.incoming_not_in_file:
                 raise ValueError()
@@ -141,7 +177,7 @@ class Snapshot:
             meaning = importlib.import_module(engine.__package__+'.input_meaning')
             self.data = meaning.interpret_csv(str(p), self.data, dict(stock_includes_reserved=args.stock_includes_reserved, incoming_not_in_file=args.incoming_not_in_file), self.today)
             if self.data['input_meaning']['requires_ack'] and not args.show_orders_anyway:
-                raise ValueError('Input review flagged risks; use --show-orders-anyway to acknowledge these risks.')
+                raise InputReviewError(input_review_message(self.data['input_meaning']))
         if args.show_orders_anyway:
             for item in self.data['items']:
                 for lot in item.get('lots', []):
@@ -152,7 +188,10 @@ class Snapshot:
         self.health = health.data_health(self.data, self.today, self.settings)
         self.meta = dict(planning_date=self.today, as_of=self.data['as_of'],
                          data_age_days=(date.fromisoformat(self.today)-date.fromisoformat(self.data['as_of'])).days,
-                         model_version='1.2.2-beta', source_loaded_once=True)
+                         model_version='1.3.0-beta', source_loaded_once=True)
+        if args.demo:
+            self.meta['source_kind'] = 'bundled_synthetic_sample'
+            self.meta['input_notes'] = ['Synthetic demo only; default planning date is fixed at 2026-11-01.']
         generated_note = 'No product code column found — codes were made from product names.'
         if generated_note in self.data.get('import_report', {}).get('warnings', []):
             # Fixed message only: never echo arbitrary importer text or paths.

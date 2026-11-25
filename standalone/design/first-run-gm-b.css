@@ -1,0 +1,46 @@
+/* Device storage is opt-in, never a sample-data action. */
+[data-design=option-gm-b] .device-data-controls label { display:flex; align-items:flex-start; gap:8px; font-size:13px; line-height:20px; margin-top:8px; }
+[data-design=option-gm-b] .device-data-controls label[hidden] { display:none; }
+[data-design=option-gm-b] .device-data-controls input { flex:0 0 20px; width:20px; height:20px; margin:0; }
+[data-design=option-gm-b] .device-data-controls p { font-size:12px; line-height:18px; color:var(--muted); margin:4px 0; }
+[data-design=option-gm-b] .device-data-controls p:empty { display:none; }
+[data-design=option-gm-b] .device-data-controls button { min-height:44px; padding:6px 0; border:0; background:none; text-decoration:underline; }
+/* Lifecycle: living. Reuse the shipped page's tokens and native disclosures. */
+[data-design=option-gm-b] .first-run { flex-shrink:0; padding:12px 0; border-bottom:1px solid var(--line); }
+[data-design=option-gm-b] .first-run-actions { display:flex; flex-wrap:wrap; align-items:center; gap:8px 16px; }
+[data-design=option-gm-b] .first-run-actions>span { font-size:13px; color:var(--muted); }
+[data-design=option-gm-b] .first-run-actions button { min-height:44px; padding:8px 14px; }
+[data-design=option-gm-b] .first-run-hint { margin-top:8px; font-size:13px; line-height:20px; color:var(--muted); }
+[data-design=option-gm-b] .first-run-templates { display:flex; flex-wrap:wrap; gap:0 16px; }
+[data-design=option-gm-b] .first-run-templates button { min-height:44px; border:0; padding:4px 0; background:none; font-size:13px; text-decoration:underline; }
+[data-design=option-gm-b] .first-run-age { margin:8px 0 0; font-size:13px; color:var(--muted); }
+[data-design=option-gm-b] .method-quick { display:flex; flex-wrap:wrap; gap:8px; }
+[data-design=option-gm-b] .method-quick button { min-height:44px; padding:8px 12px; }
+[data-design=option-gm-b] .method-quick [aria-pressed=true] { background:var(--subtle); border-color:var(--accent); }
+[data-design=option-gm-b] .more-methods { margin-top:8px; }
+[data-design=option-gm-b] .more-methods summary { min-height:44px; padding:10px 0; cursor:pointer; }
+[data-design=option-gm-b] .more-methods .setting-controls { margin-top:8px; }
+#print-order-sheet { display:none; }
+@media(max-width:700px) {
+ [data-design=option-gm-b].table-mode .topbar { height:auto; min-height:92px; grid-template-rows:44px auto; }
+ [data-design=option-gm-b].table-mode .provenance { white-space:normal; overflow:visible; font-size:11px; line-height:16px; }
+ [data-design=option-gm-b] .first-run { padding:8px 0; }
+}
+@media print {
+ body.order-printing>*:not(#print-order-sheet) { display:none!important; }
+ body.order-printing { height:auto!important; overflow:visible!important; background:white!important; color:black!important; }
+ body.order-printing #print-order-sheet { display:block!important; margin:0; padding:12mm; color:black; background:white; font:12pt/1.5 system-ui,sans-serif; }
+ #print-order-sheet h1 { font-size:20pt; }
+ #print-order-sheet h2 { font-size:14pt; }
+ #print-order-sheet pre { white-space:pre-wrap; overflow-wrap:anywhere; font:inherit; }
+ #print-order-sheet li { break-inside:avoid; }
+ @page { margin:12mm; }
+}
+
+[data-design=option-gm-b] .app-version { display:block; line-height:16px; font-size:11px; font-weight:400; color:var(--muted); white-space:nowrap; }
+[data-design=option-gm-b] .version-link { display:block; padding:12px 0; min-height:44px; font-size:13px; color:var(--accent); }
+[data-design=option-gm-b] .big-order-note { display:block; margin:2px 0 0; width:fit-content; max-width:100%; overflow:hidden; text-overflow:ellipsis; border-radius:4px; padding:0 5px; background:var(--warning-surface); color:var(--amber); font-size:12px; line-height:18px; font-weight:500; text-decoration:none; }
+[data-design=option-gm-b] .work-product:has(.big-order-note) .work-name { -webkit-line-clamp:1; }
+[data-design=option-gm-b] .big-order-explanation { padding:8px 10px; border:1px solid var(--line); border-radius:6px; background:var(--warning-surface); color:var(--ink); font-size:13px; line-height:20px; }
+[data-design=option-gm-b] .big-order-explanation summary { min-height:32px; cursor:pointer; color:var(--amber); font-weight:500; }
+[data-design=option-gm-b] .big-order-explanation p { max-width:65ch; margin:8px 0 0; }

@@ -88,7 +88,13 @@ class V12CliReviewTests(unittest.TestCase):
                                 self.assertEqual(row['reason'].count(note), 1)
                         reviewed = after.stdout.replace((' '+note).encode(), b'').replace(note.encode(), b'')
                     self.assertEqual(reviewed, before.stdout)
-                    self.assertEqual(after.stderr, before.stderr)
+                    # v1.3 adds one stale stock-count warning line; all other stderr bytes stay frozen.
+                    lines = after.stderr.splitlines(keepends=True)
+                    stock = [line for line in lines if line.startswith(b'Warning: Stock is assumed counted on ')]
+                    self.assertLessEqual(len(stock), 1)
+                    for line in stock:
+                        self.assertTrue(line.rstrip().endswith(b'Use --stock-date YYYY-MM-DD.'))
+                    self.assertEqual(b''.join(line for line in lines if line not in stock), before.stderr)
 
     def test_default_output_files_and_summary_match_freeze_bytes(self):
         target = self.folder / 'orders.out'

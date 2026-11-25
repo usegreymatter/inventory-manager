@@ -4,6 +4,7 @@ import fs from 'node:fs'
 import vm from 'node:vm'
 import {createHash} from 'node:crypto'
 import beforeV122 from './reviewed-v122-delta.cjs'
+import beforeV130 from './reviewed-v130-delta.cjs'
 const read=f=>fs.readFileSync(f,'utf8'),sha=s=>createHash('sha256').update(s).digest('hex')
 const source=read('desktop/plugin.js'),ctx=vm.createContext({TextEncoder,TextDecoder,Uint8Array,atob,btoa})
 vm.runInContext(source.slice(source.indexOf('const SAMPLE ='),source.indexOf('const pageStyle =')).replaceAll('export ','')+'\nglobalThis.api={calculate,orderGuidance,demandSafetyWarnings,parseCsv,understandStockWorkbook}',ctx)
@@ -36,7 +37,8 @@ test('v1.2.2 safe no-code CSV and smart workbook generate unique stable codes vi
 const delta=JSON.parse(read('tests/fixtures/v122-approved-delta.json'))
 for(const [kind,file]of [['plugin','desktop/plugin.js'],['engine','engine.py'],['csv','csv_import.py'],['smartImport','standalone/design/smart-import.js'],['cli','stock_runway.py']])test(`v1.2.2 ${kind} exact delta reconstructs baseline and rejects mutations`,()=>{
  const text=read(file);assert.equal(sha(beforeV122(text,kind)),delta.baseline_sha256[kind])
- for(const {after}of delta[kind])assert.throws(()=>beforeV122(text.replace(after,'UNKNOWN'+after.slice(1)),kind))
+ const previous=beforeV130(text,kind)
+ for(const {after}of delta[kind])assert.throws(()=>beforeV122.previous(previous.replace(after,'UNKNOWN'+after.slice(1)),kind))
  assert.notEqual(sha(beforeV122(text+'\nUNKNOWN',kind)),delta.baseline_sha256[kind])
 })
 

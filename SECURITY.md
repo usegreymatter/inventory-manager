@@ -1,15 +1,15 @@
+Lifecycle: living
+
 # Security policy
 
-## Reporting a vulnerability
+## Report a vulnerability
 
-Please report security issues **privately**, not in a public issue. Use GitHub's "Report a vulnerability" (private security advisory) on this repository. Include steps to reproduce and the affected file or version. We aim to reply within 7 days.
+Please report vulnerabilities privately through this repository’s [Security tab → Report a vulnerability](https://github.com/usegreymatter/inventory-manager/security/advisories/new). Include the affected version, steps to reproduce and a small synthetic example. Do not include credentials, customer data or private inventory in a report, and do not post vulnerabilities in public issues.
 
-## Scope and data handling
+Replies and fixes are best effort, with no guaranteed response time. There is no bug bounty or paid reward program. Only the latest release receives fixes.
 
-- Inventory Manager runs locally. The offline page and the CLI make no network requests, collect no analytics and send no data anywhere. Imported files, settings and local order lists stay in your browser storage or on your disk.
-- The optional Odoo source is read-only. Credentials come from environment variables or your secret store and are never written to output.
-- Useful reports include: a crafted spreadsheet/CSV that executes script in the page, formula injection in exported CSV, a way to make the page fetch a remote URL, or credential leakage in CLI output.
+## Scope
 
-## Supported versions
+Reports about the offline HTML page, Python CLI and local read-only MCP server are welcome. Examples include script execution from a spreadsheet, formula injection in exports, unexpected network access, local file exposure or sensitive information in errors.
 
-Only the latest release receives fixes.
+The offline page processes files locally. The CLI’s CSV/bundle route and local MCP server do not upload data or send orders. The optional CLI Odoo source makes read-only requests only when explicitly configured. No surface places an order or writes to an ERP. Browser settings and local order lists may persist on the device; imported product data stays in page memory.
